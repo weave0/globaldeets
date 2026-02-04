@@ -52,6 +52,9 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- GFD Ecosystem Navigation -->
+    <link rel="stylesheet" href="shared/ecosystem-nav.css">
 
     <!-- Password Gate -->
     <script src="auth.js"></script>
@@ -161,6 +164,72 @@
 </head>
 
 <body>
+    <!-- GFD Ecosystem Navigation -->
+    <nav class="gfd-ecosystem-nav" aria-label="Ecosystem navigation">
+        <div class="ecosystem-nav-container">
+            <div class="ecosystem-brand">
+                <svg viewBox="324 324 1352 1352" fill="currentColor" class="ecosystem-logo" aria-hidden="true">
+                    <path transform="matrix(1.542,0,0,1.542,-480.343,167.307)" d="M896.648,101.831L1398.17,101.831L1304.42,289.331L1154.42,289.331L1185.67,226.831L984.148,226.831L859.148,476.831L859.331,476.831L960,678.169L990,618.169L1065,768.169L960,978.169L709.24,476.648L896.648,101.831Z" />
+                    <path transform="matrix(1.542,0,0,1.542,-480.343,167.307)" d="M521.831,101.831L836.648,101.831L679.24,416.648L521.831,101.831Z" />
+                    <path transform="matrix(1.542,0,0,1.542,-480.343,167.307)" d="M1273.17,351.831L1095,708.169L1020,558.169L1060.67,476.831L919.331,476.831L919.24,476.648L981.648,351.831L1273.17,351.831Z" />
+                </svg>
+                <span class="ecosystem-title">GFD Ecosystem</span>
+            </div>
+            <button class="ecosystem-toggle" aria-label="Open ecosystem menu" aria-expanded="false" aria-controls="ecosystem-dropdown">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="ecosystem-dropdown" id="ecosystem-dropdown" role="menu" aria-hidden="true">
+            <div class="dropdown-content">
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Production Platforms</h3>
+                    <a href="https://goodflippindesign.com" class="nav-link" role="menuitem" target="_blank" rel="noopener">
+                        <span class="nav-icon" aria-hidden="true">🎨</span>
+                        <div class="nav-link-content">
+                            <strong class="nav-link-title">Good Flippin Design</strong>
+                            <small class="nav-link-subtitle">Strategic Web Development</small>
+                        </div>
+                    </a>
+                    <a href="https://aiaimate.com" class="nav-link" role="menuitem" target="_blank" rel="noopener">
+                        <span class="nav-icon" aria-hidden="true">🧠</span>
+                        <div class="nav-link-content">
+                            <strong class="nav-link-title">AI Aimate</strong>
+                            <small class="nav-link-subtitle">AI Education Platform</small>
+                        </div>
+                    </a>
+                    <a href="https://culturesherpa.org" class="nav-link" role="menuitem" target="_blank" rel="noopener">
+                        <span class="nav-icon" aria-hidden="true">🌍</span>
+                        <div class="nav-link-content">
+                            <strong class="nav-link-title">CultureSherpa</strong>
+                            <small class="nav-link-subtitle">Interactive Cultural Atlas</small>
+                        </div>
+                    </a>
+                    <a href="https://goodflippinvibes.com" class="nav-link" role="menuitem" target="_blank" rel="noopener">
+                        <span class="nav-icon" aria-hidden="true">✨</span>
+                        <div class="nav-link-content">
+                            <strong class="nav-link-title">Good Flippin Vibes</strong>
+                            <small class="nav-link-subtitle">Holistic Wellness Platform</small>
+                        </div>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Research & Intelligence</h3>
+                    <a href="https://citizenapproved.org" class="nav-link" role="menuitem" target="_blank" rel="noopener">
+                        <span class="nav-icon" aria-hidden="true">🗳️</span>
+                        <div class="nav-link-content">
+                            <strong class="nav-link-title">CitizenApproved</strong>
+                            <small class="nav-link-subtitle">U.S. Citizenship Pathways</small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <!-- Glass Header -->
     <header>
@@ -359,6 +428,7 @@
     <script src="ui-effects.js"></script>
     <script src="interactions.js"></script>
     <script src="app.js"></script>
+    <script src="shared/ecosystem-nav.js"></script>
     <script>
         // Service worker registration (progressive enhancement)
         if ('serviceWorker' in navigator) {
