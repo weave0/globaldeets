@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Analytics - GlobalDeets</title>
+    <meta name="description" content="Portfolio analytics and insights across GlobalDeets projects">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="auth.js"></script>
+    <style>
+        .analytics-hero {
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+            background: var(--glass);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            margin: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .analytics-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #60a5fa 0%, #8b5cf6 25%, #ec4899 50%, #f59e0b 75%, #10b981 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 10s ease infinite;
+        }
+        
+        .analytics-container {
+            max-width: 1400px;
+            margin: 0 auto 4rem;
+            padding: 0 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: var(--glass);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            border-color: rgba(59, 130, 246, 0.6);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg), var(--glow-primary);
+        }
+        
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa 0%, #8b5cf6 25%, #ec4899 50%, #f59e0b 75%, #10b981 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 12s ease infinite;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .chart-section {
+            background: var(--glass);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 2rem;
+        }
+        
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            }
+        
+        .chart-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .chart-bar-label {
+            min-width: 120px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .chart-bar-track {
+            flex: 1;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .chart-bar-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 15px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .chart-bar-value {
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .tag-item {
+            padding: 0.75rem 1.5rem;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: default;
+            color: var(--primary-light);
+            backdrop-filter: blur(10px);
+        }
+        
+        .tag-item:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+            background: rgba(59, 130, 246, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .tag-size-1 { font-size: 0.9rem; opacity: 0.7; }
+        .tag-size-2 { font-size: 1rem; opacity: 0.8; }
+        .tag-size-3 { font-size: 1.2rem; opacity: 0.9; }
+        .tag-size-4 { font-size: 1.4rem; opacity: 1; }
+        
+        .projects-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .projects-table th {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .projects-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--text-primary);
+        }
+        
+        .projects-table tr:hover {
+            background: rgba(59, 130, 246, 0.08);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-beta {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .status-maintenance {
+            background: #6366f1;
+            color: white;
+        }
+        
+        .status-archived {
+            background: #6b7280;
+            color: white;
+        }
+    </style>
+    <!-- Accessibility Skip Link (global styles in styles.css) -->
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Glass Header -->
+    <header>
+        <div class="container">
+            <div class="header">
+                <div class="logo">
+                    <h1>GlobalDeets</h1>
+                    <p class="tagline">Exclusive Intelligence • Strategic Capabilities • Premium Solutions</p>
+                </div>
+                <nav role="navigation" aria-label="Primary navigation" style="display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center; align-items: center;">
+                    <a href="index.html" class="nav-icon-btn" title="Home">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="3" opacity="0.3"/>
+                            <circle cx="50" cy="50" r="20" fill="currentColor" opacity="0.6"/>
+                            <circle cx="50" cy="50" r="8" fill="currentColor"/>
+                        </svg>
+                    </a>
+                    <a href="categories.html" class="nav-icon-btn" title="Categories">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <rect x="15" y="15" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.3"/>
+                            <rect x="55" y="15" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.3"/>
+                            <rect x="15" y="55" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.3"/>
+                            <rect x="55" y="55" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.6"/>
+                        </svg>
+                    </a>
+                    <a href="timeline.html" class="nav-icon-btn" title="Timeline">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <line x1="50" y1="15" x2="50" y2="85" stroke="currentColor" stroke-width="3" opacity="0.4"/>
+                            <circle cx="50" cy="25" r="8" fill="currentColor" opacity="0.8"/>
+                            <circle cx="50" cy="50" r="10" fill="currentColor"/>
+                            <circle cx="50" cy="75" r="6" fill="currentColor" opacity="0.6"/>
+                        </svg>
+                    </a>
+                    <a href="analytics.html" class="nav-icon-btn active" title="Analytics" aria-current="page">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <rect x="15" y="60" width="15" height="25" rx="4" fill="currentColor" opacity="0.4"/>
+                            <rect x="35" y="40" width="15" height="45" rx="4" fill="currentColor" opacity="0.6"/>
+                            <rect x="55" y="25" width="15" height="60" rx="4" fill="currentColor" opacity="0.8"/>
+                            <rect x="75" y="35" width="15" height="50" rx="4" fill="currentColor"/>
+                        </svg>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+    <div class="analytics-hero">
+        <h1>Portfolio Analytics</h1>
+        <p>Insights into our project ecosystem</p>
+    </div>
+
+    <div class="analytics-container" role="region" aria-label="Analytics dashboard">
+        <div class="stats-grid" id="stats-grid">
+            <!-- Stats will be dynamically generated -->
+        </div>
+
+        <div class="chart-section">
+            <h2 class="chart-title">Projects by Category</h2>
+            <div class="chart-bars" id="category-chart">
+                <!-- Chart will be dynamically generated -->
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <h2 class="chart-title">Status Distribution</h2>
+            <div class="chart-bars" id="status-chart">
+                <!-- Chart will be dynamically generated -->
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <h2 class="chart-title">Popular Tags</h2>
+            <div class="tag-cloud" id="tag-cloud">
+                <!-- Tags will be dynamically generated -->
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <h2 class="chart-title">All Projects Overview</h2>
+            <table class="projects-table" id="projects-table">
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table rows will be dynamically generated -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </main>
+
+    <!-- Unified Premium Footer -->
+    <footer class="footer">
+        <div class="container" style="display:flex;flex-direction:column;gap:1rem;align-items:center;text-align:center;">
+            <p>© 2025 GlobalDeets · Exclusive Intelligence Platform</p>
+            <div class="footer-links" style="display:flex;gap:1.25rem;flex-wrap:wrap;justify-content:center;">
+                <button id="themeToggle" type="button" aria-label="Toggle theme" class="view-details">Theme</button>
+                <a href="index.html" class="view-details" aria-label="Go to home">Home</a>
+                <a href="#" id="exportAnalytics" class="view-details" aria-label="Export analytics data">Export</a>
+                <a href="https://github.com" target="_blank" rel="noopener" class="view-details" aria-label="GitHub link">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" class="scroll-to-top" aria-label="Scroll to top" style="display:flex;align-items:center;justify-content:center;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+    </button>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="projects-data.js"></script>
+    <script src="ui-effects.js"></script>
+    <script src="interactions.js"></script>
+    <script src="pwa-install.js"></script>
+    <script src="sw-register.js"></script>
+    <script>
+        // Export analytics basic handler
+        const exportAnalytics = document.getElementById('exportAnalytics');
+        if(exportAnalytics){
+            exportAnalytics.addEventListener('click', e=>{e.preventDefault();
+                const snapshot = { stats: calculateStats(), categories: Array.from(document.querySelectorAll('#category-chart .chart-bar-item')).length };
+                const blob=new Blob([JSON.stringify(snapshot,null,2)],{type:'application/json'});
+                const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='analytics-export.json';a.click();URL.revokeObjectURL(url);
+                if(window.showToast) window.showToast('Analytics exported','success');
+            });
+        }
+
+        // Calculate statistics
+        function calculateStats() {
+            const totalProjects = projects.length;
+            const activeProjects = projects.filter(p => p.status === 'Active').length;
+            
+            const uniqueTags = new Set();
+            projects.forEach(p => p.tags.forEach(tag => uniqueTags.add(tag)));
+            
+            const uniqueCategories = new Set(projects.map(p => p.category));
+            
+            return {
+                total: totalProjects,
+                active: activeProjects,
+                tags: uniqueTags.size,
+                categories: uniqueCategories.size
+            };
+        }
+
+        // Render stats
+        function renderStats() {
+            const stats = calculateStats();
+            const statsGrid = document.getElementById('stats-grid');
+            
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total}</div>
+                    <div class="stat-label">Total Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.active}</div>
+                    <div class="stat-label">Active Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.categories}</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.tags}</div>
+                    <div class="stat-label">Unique Tags</div>
+                </div>
+            `;
+        }
+
+        // Render category chart
+        function renderCategoryChart() {
+            const categoryCount = {};
+            projects.forEach(p => {
+                categoryCount[p.category] = (categoryCount[p.category] || 0) + 1;
+            });
+
+            const max = Math.max(...Object.values(categoryCount));
+            const chart = document.getElementById('category-chart');
+            
+            Object.entries(categoryCount).sort((a, b) => b[1] - a[1]).forEach(([category, count]) => {
+                const percentage = (count / max) * 100;
+                const item = document.createElement('div');
+                item.className = 'chart-bar-item';
+                item.innerHTML = `
+                    <div class="chart-bar-label">${category}</div>
+                    <div class="chart-bar-track">
+                        <div class="chart-bar-fill" style="width: ${percentage}%">
+                            <span class="chart-bar-value">${count}</span>
+                        </div>
+                    </div>
+                `;
+                chart.appendChild(item);
+            });
+        }
+
+        // Render status chart
+        function renderStatusChart() {
+            const statusCount = {};
+            projects.forEach(p => {
+                statusCount[p.status] = (statusCount[p.status] || 0) + 1;
+            });
+
+            const max = Math.max(...Object.values(statusCount));
+            const chart = document.getElementById('status-chart');
+            
+            Object.entries(statusCount).sort((a, b) => b[1] - a[1]).forEach(([status, count]) => {
+                const percentage = (count / max) * 100;
+                const item = document.createElement('div');
+                item.className = 'chart-bar-item';
+                item.innerHTML = `
+                    <div class="chart-bar-label">${status}</div>
+                    <div class="chart-bar-track">
+                        <div class="chart-bar-fill" style="width: ${percentage}%">
+                            <span class="chart-bar-value">${count}</span>
+                        </div>
+                    </div>
+                `;
+                chart.appendChild(item);
+            });
+        }
+
+        // Render tag cloud
+        function renderTagCloud() {
+            const tagCount = {};
+            projects.forEach(p => {
+                p.tags.forEach(tag => {
+                    tagCount[tag] = (tagCount[tag] || 0) + 1;
+                });
+            });
+
+            const tagCloud = document.getElementById('tag-cloud');
+            const max = Math.max(...Object.values(tagCount));
+            
+            Object.entries(tagCount).sort((a, b) => b[1] - a[1]).slice(0, 20).forEach(([tag, count]) => {
+                const size = Math.ceil((count / max) * 4);
+                const item = document.createElement('div');
+                item.className = `tag-item tag-size-${size}`;
+                item.textContent = `${tag} (${count})`;
+                tagCloud.appendChild(item);
+            });
+        }
+
+        // Render projects table
+        function renderProjectsTable() {
+            const tbody = document.querySelector('#projects-table tbody');
+            
+            projects.forEach(project => {
+                const row = document.createElement('tr');
+                const statusClass = `status-${project.status.toLowerCase()}`;
+                
+                row.innerHTML = `
+                    <td><a href="${project.url}" target="_blank" rel="noopener" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">${project.name}</a></td>
+                    <td>${project.category}</td>
+                    <td><span class="status-badge ${statusClass}">${project.status}</span></td>
+                    <td>${new Date(project.lastUpdated).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Initialize all analytics
+        renderStats();
+        renderCategoryChart();
+        renderStatusChart();
+        renderTagCloud();
+        renderProjectsTable();
+        if(window.initUiEffects) window.initUiEffects();
+    </script>
+</body>
+</html>

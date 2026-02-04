@@ -1,0 +1,31 @@
+{
+  "name": "globaldeets-landing",
+  "version": "1.0.0",
+  "description": "GlobalDeets project hub and landing page",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx live-server --port=5500 --open=index.html",
+    "format": "npx prettier --write \"**/*.{html,css,js,json}\"",
+    "lint": "npx eslint \"**/*.js\"",
+    "lint:fix": "npx eslint \"**/*.js\" --fix",
+    "build": "npm run format && npm run lint:fix",
+    "deploy": "echo 'Ready to deploy to www.globaldeets.com'",
+    "start": "npm run dev",
+    "generate-icons": "node generate-icons.js"
+  },
+  "keywords": [
+    "landing-page",
+    "portfolio",
+    "project-hub"
+  ],
+  "author": "GlobalDeets",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "live-server": "^1.2.2",
+    "prettier": "^3.6.2"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.33.0"
+  }
+}

@@ -1,0 +1,46 @@
+# robots.txt for GlobalDeets Portfolio Hub
+# Updated: February 3, 2026
+
+# Allow all search engines
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://globaldeets.com/sitemap.xml
+
+# Block development files and sensitive data
+Disallow: /_SECURE_KEYS/
+Disallow: /.git/
+Disallow: /.netlify/
+Disallow: /node_modules/
+Disallow: /.vscode/
+Disallow: /.mypy_cache/
+Disallow: /tools/
+
+# Block offline page (only shown when offline, not for indexing)
+Disallow: /offline.html
+
+# Block deprecated files
+Disallow: /styles-old.css
+Disallow: /bb-content.html
+
+# Allow critical assets and pages
+Allow: /index.html
+Allow: /analytics.html
+Allow: /timeline.html
+Allow: /categories.html
+Allow: /contact.html
+Allow: /assets/
+Allow: /manifest.json
+Allow: /service-worker.js
+
+# Specific bot instructions
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Crawl delay for aggressive bots
+User-agent: *
+Crawl-delay: 1

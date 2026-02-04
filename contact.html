@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact GlobalDeets - Get in touch for collaboration opportunities">
+    <meta name="keywords" content="contact, collaboration, globaldeets, business inquiry">
+    <meta name="author" content="GlobalDeets">
+    
+    <!-- PWA Support -->
+    <meta name="theme-color" content="#2563eb">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    
+    <title>Contact - GlobalDeets</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css?v=20251123-2">
+    
+    <!-- Password Gate -->
+    <script src="auth.js"></script>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Glass Header -->
+    <header class="header glass">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">GlobalDeets</h1>
+                <nav role="navigation" aria-label="Primary navigation">
+                    <div class="nav-icons">
+                        <a href="index.html" class="nav-icon-btn" aria-label="Home">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                        </a>
+                        <a href="categories.html" class="nav-icon-btn" aria-label="Categories">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                        </a>
+                        <a href="timeline.html" class="nav-icon-btn" aria-label="Timeline">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </a>
+                        <a href="analytics.html" class="nav-icon-btn" aria-label="Analytics">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="20" x2="12" y2="10"/>
+                                <line x1="18" y1="20" x2="18" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="16"/>
+                            </svg>
+                        </a>
+                        <a href="contact.html" class="nav-icon-btn" aria-current="page" aria-label="Contact">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" class="main-content">
+        <div class="container">
+            <div class="contact-hero">
+                <h2 class="contact-title">Get In Touch</h2>
+                <p class="contact-subtitle">Interested in collaboration? Send me a message and I'll get back to you within 24-48 hours.</p>
+            </div>
+
+            <div class="contact-wrapper">
+                <form name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" class="contact-form glass" id="contactForm">
+                    <!-- Netlify Form Detection -->
+                    <input type="hidden" name="form-name" value="contact">
+                    
+                    <!-- Honeypot for spam protection -->
+                    <p class="hidden">
+                        <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+                    </p>
+
+                    <div class="form-group">
+                        <label for="name" class="form-label">
+                            Name <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            class="form-input"
+                            required 
+                            minlength="2"
+                            maxlength="100"
+                            placeholder="Your full name"
+                            aria-required="true"
+                        >
+                        <span class="form-error" id="name-error" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            Email <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-input"
+                            required
+                            placeholder="your.email@example.com"
+                            aria-required="true"
+                        >
+                        <span class="form-error" id="email-error" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company" class="form-label">
+                            Company/Organization
+                        </label>
+                        <input 
+                            type="text" 
+                            id="company" 
+                            name="company" 
+                            class="form-input"
+                            maxlength="100"
+                            placeholder="Optional"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inquiry-type" class="form-label">
+                            Inquiry Type <span class="required">*</span>
+                        </label>
+                        <select 
+                            id="inquiry-type" 
+                            name="inquiry-type" 
+                            class="form-input form-select"
+                            required
+                            aria-required="true"
+                        >
+                            <option value="">Select...</option>
+                            <option value="collaboration">Collaboration Opportunity</option>
+                            <option value="project">Project Inquiry</option>
+                            <option value="consulting">Consulting Request</option>
+                            <option value="feedback">Feedback/Suggestion</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <span class="form-error" id="inquiry-type-error" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project-reference" class="form-label">
+                            Project Reference
+                        </label>
+                        <select 
+                            id="project-reference" 
+                            name="project-reference" 
+                            class="form-input form-select"
+                        >
+                            <option value="general">General / All Projects</option>
+                            <option value="fantasy-penpal">Fantasy Penpal</option>
+                            <option value="eliassen-insights">Consulting Insights Portal</option>
+                            <option value="noran-neurology">Neurology Practice Analytics</option>
+                            <option value="ldi-partner-hub">Manufacturing Partner Hub</option>
+                            <option value="musco-executive">Sports Lighting Executive Profile</option>
+                            <option value="kaiser-permanente">National Health System Intelligence</option>
+                            <option value="community-health">Community Health Network</option>
+                            <option value="medical-compliance">Medical Compliance Portal</option>
+                            <option value="ai-aimate">AI Aimate</option>
+                            <option value="steve-b-tribute">Steve B Tribute</option>
+                            <option value="culturesherpa">CultureSherpa</option>
+                            <option value="brown-brown">Global Insurance Intelligence Platform</option>
+                        </select>
+                        <span class="form-hint">Select a specific project or leave as "General"</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message" class="form-label">
+                            Message <span class="required">*</span>
+                        </label>
+                        <textarea 
+                            id="message" 
+                            name="message" 
+                            class="form-input form-textarea"
+                            required
+                            minlength="10"
+                            maxlength="2000"
+                            rows="6"
+                            placeholder="Tell me about your inquiry..."
+                            aria-required="true"
+                        ></textarea>
+                        <span class="form-hint">
+                            <span id="charCount">0</span> / 2000 characters
+                        </span>
+                        <span class="form-error" id="message-error" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input 
+                                type="checkbox" 
+                                id="privacy" 
+                                name="privacy" 
+                                required
+                                aria-required="true"
+                            >
+                            <span>I agree to the privacy policy and understand my message will be stored securely. <span class="required">*</span></span>
+                        </label>
+                        <span class="form-error" id="privacy-error" aria-live="polite"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-submit" id="submitBtn">
+                        <span class="btn-text">Send Message</span>
+                        <span class="btn-loader hidden" aria-hidden="true">
+                            <svg class="spinner" viewBox="0 0 24 24" width="20" height="20">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="32" stroke-dashoffset="32">
+                                    <animate attributeName="stroke-dashoffset" dur="1s" repeatCount="indefinite" from="32" to="0"/>
+                                </circle>
+                            </svg>
+                            Sending...
+                        </span>
+                    </button>
+                </form>
+
+                <div class="contact-info glass">
+                    <h3 class="info-title">Why Contact Me?</h3>
+                    <ul class="info-list">
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            <span>Collaboration opportunities</span>
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                            </svg>
+                            <span>Project consultations</span>
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            <span>Feedback and suggestions</span>
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <span>Response within 24-48 hours</span>
+                        </li>
+                    </ul>
+
+                    <div class="privacy-notice">
+                        <h4>Privacy & Security</h4>
+                        <p>Your information is transmitted securely and never shared with third parties. Messages are stored on Netlify's secure servers and reviewed only by me.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="18 15 12 9 6 15"/>
+        </svg>
+    </button>
+
+    <!-- Premium Footer -->
+    <footer class="footer glass">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <p>&copy; 2025 GlobalDeets. All rights reserved.</p>
+                    <div class="footer-links">
+                        <a href="index.html">Home</a>
+                        <a href="categories.html">Categories</a>
+                        <a href="timeline.html">Timeline</a>
+                        <a href="analytics.html">Analytics</a>
+                        <a href="contact.html" aria-current="page">Contact</a>
+                    </div>
+                </div>
+                <div class="footer-right">
+                    <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark mode">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+
+
+    <!-- Scripts -->
+    <script src="ui-effects.js"></script>
+    <script src="interactions.js"></script>
+    <script src="sw-register.js"></script>
+    <script>
+        // Auto-select project from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectParam = urlParams.get('project');
+        if (projectParam) {
+            const projectSelect = document.getElementById('project-reference');
+            if (projectSelect) {
+                const option = Array.from(projectSelect.options).find(opt => 
+                    opt.value === projectParam
+                );
+                if (option) {
+                    projectSelect.value = projectParam;
+                    // Auto-select inquiry type to feedback
+                    const inquiryType = document.getElementById('inquiry-type');
+                    if (inquiryType && inquiryType.value === '') {
+                        inquiryType.value = 'feedback';
+                    }
+                }
+            }
+        }
+
+        // Form validation and submission handling
+        const form = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoader = submitBtn.querySelector('.btn-loader');
+
+        // Character counter for message field
+        const messageField = document.getElementById('message');
+        const charCount = document.getElementById('charCount');
+        if (messageField && charCount) {
+            messageField.addEventListener('input', () => {
+                const count = messageField.value.length;
+                charCount.textContent = count;
+                charCount.style.color = count > 1900 ? 'var(--danger)' : count > 1500 ? 'var(--warning)' : 'var(--text-secondary)';
+            });
+        }
+
+        // Real-time validation
+        const inputs = form.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('blur', () => validateField(input));
+            input.addEventListener('input', () => {
+                const errorEl = document.getElementById(`${input.id}-error`);
+                if (errorEl && errorEl.textContent) {
+                    validateField(input);
+                }
+            });
+        });
+
+        function validateField(field) {
+            const errorEl = document.getElementById(`${field.id}-error`);
+            if (!errorEl) return true;
+
+            let errorMsg = '';
+
+            if (field.hasAttribute('required') && !field.value.trim()) {
+                errorMsg = 'This field is required';
+            } else if (field.type === 'email' && field.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(field.value)) {
+                    errorMsg = 'Please enter a valid email address';
+                }
+            } else if (field.hasAttribute('minlength')) {
+                const min = parseInt(field.getAttribute('minlength'));
+                if (field.value.length < min) {
+                    errorMsg = `Minimum ${min} characters required`;
+                }
+            } else if (field.type === 'checkbox' && field.hasAttribute('required') && !field.checked) {
+                errorMsg = 'You must agree to continue';
+            }
+
+            errorEl.textContent = errorMsg;
+            field.classList.toggle('error', !!errorMsg);
+            
+            return !errorMsg;
+        }
+
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validate all fields
+            let isValid = true;
+            inputs.forEach(input => {
+                if (!validateField(input)) {
+                    isValid = false;
+                }
+            });
+
+            if (!isValid) {
+                showToast('Please fix the errors before submitting', 'error');
+                return;
+            }
+
+            // Show loading state
+            submitBtn.disabled = true;
+            btnText.classList.add('hidden');
+            btnLoader.classList.remove('hidden');
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(formData).toString()
+                });
+
+                if (response.ok) {
+                    showToast('Message sent successfully! I\'ll get back to you soon.', 'success');
+                    form.reset();
+                    // Redirect to thank you state
+                    setTimeout(() => {
+                        window.location.href = '?success=true';
+                    }, 2000);
+                } else {
+                    throw new Error('Form submission failed');
+                }
+            } catch (error) {
+                console.error('Form submission error:', error);
+                showToast('Failed to send message. Please try again or email directly.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                btnText.classList.remove('hidden');
+                btnLoader.classList.add('hidden');
+            }
+        });
+
+        // Check for success redirect
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success') === 'true') {
+            const successMsg = document.createElement('div');
+            successMsg.className = 'success-message glass';
+            successMsg.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <h2>Thank You!</h2>
+                <p>Your message has been received. I'll respond within 24-48 hours.</p>
+                <a href="index.html" class="btn btn-primary">Back to Home</a>
+            `;
+            document.querySelector('.contact-wrapper').replaceWith(successMsg);
+        }
+
+        // Initialize UI effects
+        if (typeof initUiEffects === 'function') {
+            initUiEffects();
+        }
+    </script>
+</body>
+</html>

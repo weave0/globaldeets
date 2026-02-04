@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlobalDeets Icon Generator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      min-height: 100vh;
+      color: #e2e8f0;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 2rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .preview-section {
+      background: #1e293b;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .preview-section h2 {
+      margin-bottom: 1rem;
+      color: #93c5fd;
+    }
+    #svgPreview {
+      max-width: 200px;
+      height: auto;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+    }
+    .icons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .icon-card {
+      background: #1e293b;
+      border-radius: 1rem;
+      padding: 1rem;
+      text-align: center;
+      border: 1px solid #334155;
+      transition: all 0.3s;
+    }
+    .icon-card:hover {
+      border-color: #3b82f6;
+      transform: translateY(-2px);
+    }
+    .icon-card canvas {
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      max-width: 100%;
+      height: auto;
+      background: #0f172a;
+    }
+    .icon-card .size {
+      font-size: 0.875rem;
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+    }
+    .icon-card button {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .icon-card button:hover {
+      opacity: 0.9;
+    }
+    .icon-card button:disabled {
+      background: #475569;
+      cursor: not-allowed;
+    }
+    .actions {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .actions button {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0.5rem;
+      transition: all 0.2s;
+    }
+    .actions button:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+    }
+    .instructions {
+      background: #1e293b;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      border-left: 4px solid #3b82f6;
+    }
+    .instructions h3 {
+      color: #93c5fd;
+      margin-bottom: 0.75rem;
+    }
+    .instructions ol {
+      padding-left: 1.5rem;
+      color: #cbd5e1;
+      line-height: 1.8;
+    }
+    .instructions code {
+      background: #0f172a;
+      padding: 0.125rem 0.5rem;
+      border-radius: 0.25rem;
+      font-family: 'Consolas', monospace;
+      color: #a5f3fc;
+    }
+    .status {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      display: none;
+    }
+    .status.success {
+      display: block;
+      background: #064e3b;
+      color: #6ee7b7;
+    }
+    .status.error {
+      display: block;
+      background: #7f1d1d;
+      color: #fca5a5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 GlobalDeets Icon Generator</h1>
+    <p class="subtitle">Convert SVG to PNG icons for PWA — No npm required!</p>
+
+    <div class="preview-section">
+      <h2>Source Icon</h2>
+      <img id="svgPreview" src="icon-base.svg" alt="Base icon">
+    </div>
+
+    <div class="actions">
+      <button onclick="generateAll()">⚡ Generate All PNGs</button>
+      <button onclick="downloadAll()">📦 Download All</button>
+    </div>
+
+    <div id="status" class="status"></div>
+
+    <div class="icons-grid" id="iconsGrid"></div>
+
+    <div class="instructions">
+      <h3>📋 Instructions</h3>
+      <ol>
+        <li>Click <strong>"Generate All PNGs"</strong> to render icons at all required sizes</li>
+        <li>Click <strong>"Download All"</strong> or download individual icons</li>
+        <li>Move downloaded PNGs to <code>assets/</code> folder</li>
+        <li>Update <code>manifest.json</code> to include PNG icons alongside SVGs</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    const SIZES = [72, 96, 128, 144, 152, 192, 384, 512];
+    const canvases = {};
+    const generated = {};
+
+    function init() {
+      const grid = document.getElementById('iconsGrid');
+      SIZES.forEach(size => {
+        const card = document.createElement('div');
+        card.className = 'icon-card';
+        card.innerHTML = `
+          <canvas id="canvas-${size}" width="${size}" height="${size}"></canvas>
+          <div class="size">${size}×${size}px</div>
+          <button id="btn-${size}" onclick="downloadOne(${size})" disabled>Download</button>
+        `;
+        grid.appendChild(card);
+        canvases[size] = document.getElementById(`canvas-${size}`);
+      });
+    }
+
+    function showStatus(message, isError = false) {
+      const status = document.getElementById('status');
+      status.textContent = message;
+      status.className = 'status ' + (isError ? 'error' : 'success');
+    }
+
+    async function generateAll() {
+      const svgUrl = 'icon-base.svg';
+      
+      try {
+        // Load SVG as image.
+        // Using fetch->blob URL is more reliable across browsers than pointing Image() directly at an SVG.
+        const res = await fetch(svgUrl, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status} loading ${svgUrl}`);
+        const blob = await res.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        const img = new Image();
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = objectUrl;
+        });
+
+        // Render to each canvas
+        SIZES.forEach(size => {
+          const canvas = canvases[size];
+          const ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, size, size);
+          ctx.drawImage(img, 0, 0, size, size);
+          generated[size] = true;
+          document.getElementById(`btn-${size}`).disabled = false;
+        });
+
+        URL.revokeObjectURL(objectUrl);
+
+        showStatus(`✅ Generated ${SIZES.length} PNG icons successfully!`);
+      } catch (err) {
+        showStatus(
+          '❌ Error generating icons. Make sure you are serving this folder over http:// (not opening the HTML file directly). Details: ' + err.message,
+          true
+        );
+      }
+    }
+
+    function downloadOne(size) {
+      if (!generated[size]) return;
+      const canvas = canvases[size];
+      const link = document.createElement('a');
+      link.download = `icon-${size}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function downloadAll() {
+      const generatedSizes = SIZES.filter(s => generated[s]);
+      if (generatedSizes.length === 0) {
+        showStatus('⚠️ Please generate icons first!', true);
+        return;
+      }
+      
+      generatedSizes.forEach((size, i) => {
+        setTimeout(() => downloadOne(size), i * 200);
+      });
+      
+      showStatus(`📦 Downloading ${generatedSizes.length} icons...`);
+    }
+
+    init();
+  </script>
+</body>
+</html>

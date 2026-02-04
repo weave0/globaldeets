@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="35%" stop-color="#8b5cf6"/>
+      <stop offset="65%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background for maskable icons -->
+  <rect width="512" height="512" rx="112" fill="#0f1629"/>
+  
+  <!-- Outer coin edge -->
+  <circle cx="256" cy="256" r="248" fill="#0b1224" opacity="0.85"/>
+  <circle cx="256" cy="256" r="240" fill="#0f1629"/>
+  <circle cx="256" cy="256" r="232" fill="none" stroke="#1e293b" stroke-width="4" opacity="0.9"/>
+  
+  <!-- Gradient ring -->
+  <circle cx="256" cy="256" r="214" fill="none" stroke="url(#grad)" stroke-width="10" opacity="0.75"/>
+  
+  <!-- Inner coin face -->
+  <circle cx="256" cy="256" r="190" fill="#0f1629"/>
+
+  <!-- Engraved geometric monogram (no fonts).
+       Designed to read as GD, but built from perfect arcs/lines with shared radii. -->
+  <g stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Shadow (depth) -->
+    <g opacity="0.55" stroke="#020617" stroke-width="34" transform="translate(2 3)">
+      <circle cx="256" cy="256" r="118"/>
+      <path d="M 280 172 L 280 340"/>
+      <path d="M 280 194 A 74 74 0 0 1 280 318"/>
+      <path d="M 240 270 L 270 270"/>
+      <path d="M 270 270 L 270 296"/>
+    </g>
+
+    <!-- Main stroke (metal) -->
+    <g opacity="0.92" stroke="#cbd5e1" stroke-width="32">
+      <circle cx="256" cy="256" r="118"/>
+      <path d="M 280 172 L 280 340"/>
+      <path d="M 280 194 A 74 74 0 0 1 280 318"/>
+      <path d="M 240 270 L 270 270"/>
+      <path d="M 270 270 L 270 296"/>
+    </g>
+
+    <!-- Highlight (edge catch) -->
+    <g opacity="0.22" stroke="#f8fafc" stroke-width="32" transform="translate(-1 -1)">
+      <circle cx="256" cy="256" r="118"/>
+      <path d="M 280 172 L 280 340"/>
+      <path d="M 280 194 A 74 74 0 0 1 280 318"/>
+      <path d="M 240 270 L 270 270"/>
+      <path d="M 270 270 L 270 296"/>
+    </g>
+
+    <!-- Carve the G opening (crisp) -->
+    <path d="M 363 206 A 118 118 0 0 1 363 306" stroke="#0f1629" stroke-width="56"/>
+  </g>
+</svg>

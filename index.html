@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QPPVJM1B60"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-QPPVJM1B60');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GlobalDeets - Your hub for development, creative, and business projects">
+    <meta name="keywords" content="projects, portfolio, development, creative, business, globaldeets">
+    <meta name="author" content="GlobalDeets">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.globaldeets.com/">
+    <meta property="og:title" content="GlobalDeets - Project Hub">
+    <meta property="og:description" content="Explore our collection of development, creative, and business projects">
+    <meta property="og:image" content="https://www.globaldeets.com/assets/og-image.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="GlobalDeets - Project Hub">
+    <meta name="twitter:description" content="Explore our collection of development, creative, and business projects">
+    <meta name="twitter:image" content="https://www.globaldeets.com/assets/og-image.png">
+
+    <!-- PWA Support -->
+    <meta name="theme-color" content="#2563eb">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+    <title>GlobalDeets - Project Hub</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Animation Library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Password Gate -->
+    <script src="auth.js"></script>
+
+    <!-- JSON-LD Structured Data for Google -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "GlobalDeets",
+        "alternateName": "Global Deets Portfolio Hub",
+        "url": "https://globaldeets.com",
+        "description": "Portfolio hub showcasing strategic web development projects, business intelligence dashboards, and data visualization platforms",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Good Flippin Design",
+            "url": "https://goodflippindesign.com"
+        },
+        "creator": {
+            "@type": "Person",
+            "name": "Brett Weaver",
+            "url": "https://goodflippindesign.com"
+        },
+        "inLanguage": "en-US",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://globaldeets.com/categories.html?search={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+
+    <!-- Schema: CreativeWork Portfolio -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "GlobalDeets Portfolio",
+        "description": "Collection of strategic web development projects including business intelligence dashboards, AI-integrated applications, and data visualization platforms",
+        "url": "https://globaldeets.com",
+        "creator": {
+            "@type": "Person",
+            "name": "Brett Weaver",
+            "jobTitle": "Full-Stack Developer & AI Integration Specialist",
+            "url": "https://goodflippindesign.com",
+            "sameAs": "https://github.com/weave0"
+        },
+        "hasPart": [
+            {
+                "@type": "CreativeWork",
+                "name": "AI Aimate",
+                "description": "AI education platform with RAG-powered search",
+                "url": "https://aiaimate.com"
+            },
+            {
+                "@type": "CreativeWork",
+                "name": "CultureSherpa",
+                "description": "Interactive cultural atlas with 470+ mapped cultures",
+                "url": "https://culturesherpa.org"
+            },
+            {
+                "@type": "CreativeWork",
+                "name": "Good Flippin Vibes",
+                "description": "Community wellness platform",
+                "url": "https://goodflippinvibes.com"
+            }
+        ]
+    }
+    </script>
+
+    <!-- Schema: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://globaldeets.com"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Categories",
+                "item": "https://globaldeets.com/categories.html"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Timeline",
+                "item": "https://globaldeets.com/timeline.html"
+            },
+            {
+                "@type": "ListItem",
+                "position": 4,
+                "name": "Analytics",
+                "item": "https://globaldeets.com/analytics.html"
+            }
+        ]
+    }
+    </script>
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Glass Header -->
+    <header>
+        <div class="container">
+            <div class="header">
+                <div class="logo">
+                    <h1>GlobalDeets</h1>
+                    <p class="tagline">Exclusive Intelligence • Strategic Capabilities • Premium Solutions</p>
+                </div>
+                <nav role="navigation" aria-label="Primary navigation" style="display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center; align-items: center;">
+                    <a href="index.html" class="nav-icon-btn active" title="Home" aria-current="page">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="3" opacity="0.3" />
+                            <circle cx="50" cy="50" r="20" fill="currentColor" opacity="0.6" />
+                            <circle cx="50" cy="50" r="8" fill="currentColor" />
+                        </svg>
+                    </a>
+                    <a href="categories.html" class="nav-icon-btn" title="Categories">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <rect x="15" y="15" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.3" />
+                            <rect x="55" y="15" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.3" />
+                            <rect x="15" y="55" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.3" />
+                            <rect x="55" y="55" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.6" />
+                        </svg>
+                    </a>
+                    <a href="timeline.html" class="nav-icon-btn" title="Timeline">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <line x1="50" y1="15" x2="50" y2="85" stroke="currentColor" stroke-width="3" opacity="0.4" />
+                            <circle cx="50" cy="25" r="8" fill="currentColor" opacity="0.8" />
+                            <circle cx="50" cy="50" r="10" fill="currentColor" />
+                            <circle cx="50" cy="75" r="6" fill="currentColor" opacity="0.6" />
+                        </svg>
+                    </a>
+                    <a href="analytics.html" class="nav-icon-btn" title="Analytics">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <rect x="15" y="60" width="15" height="25" rx="4" fill="currentColor" opacity="0.4" />
+                            <rect x="35" y="40" width="15" height="45" rx="4" fill="currentColor" opacity="0.6" />
+                            <rect x="55" y="25" width="15" height="60" rx="4" fill="currentColor" opacity="0.8" />
+                            <rect x="75" y="35" width="15" height="50" rx="4" fill="currentColor" />
+                        </svg>
+                    </a>
+                    <a href="contact.html" class="nav-icon-btn" title="Contact">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <rect x="20" y="25" width="60" height="50" rx="8" stroke="currentColor" stroke-width="4" fill="none" opacity="0.4" />
+                            <path d="M20 35 L50 55 L80 35" stroke="currentColor" stroke-width="4" fill="none" opacity="0.8" />
+                        </svg>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Controls -->
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search projects..." class="search-input">
+            </div>
+            <div class="filter-group">
+                <select id="filterCategory" class="filter-select">
+                    <option value="all">All Categories</option>
+                    <option value="development">Development</option>
+                    <option value="creative">Creative</option>
+                    <option value="business">Business</option>
+                    <option value="experimental">Experimental</option>
+                </select>
+                <select id="filterStatus" class="filter-select">
+                    <option value="all">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="beta">Beta</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="archived">Archived</option>
+                </select>
+            </div>
+            <div class="view-toggle" role="group" aria-label="View mode">
+                <button id="gridView" class="view-btn active" aria-label="Grid view" title="Grid view">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" />
+                        <rect x="14" y="3" width="7" height="7" />
+                        <rect x="14" y="14" width="7" height="7" />
+                        <rect x="3" y="14" width="7" height="7" />
+                    </svg>
+                </button>
+                <button id="listView" class="view-btn" aria-label="List view" title="List view">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="8" y1="6" x2="21" y2="6" />
+                        <line x1="8" y1="12" x2="21" y2="12" />
+                        <line x1="8" y1="18" x2="21" y2="18" />
+                        <line x1="3" y1="6" x2="3.01" y2="6" />
+                        <line x1="3" y1="12" x2="3.01" y2="12" />
+                        <line x1="3" y1="18" x2="3.01" y2="18" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Dashboard -->
+        <main class="main-content" id="main-content" role="main" aria-label="Project showcase">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalProjects">0</span>
+                    <span class="stat-label">Total Projects</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="activeProjects">0</span>
+                    <span class="stat-label">Active</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="recentUpdates">0</span>
+                    <span class="stat-label">Recent Updates</span>
+                </div>
+            </div>
+
+            <!-- Projects Showcase -->
+            <div id="projectsGrid" class="projects-grid">
+                <!-- Projects dynamically rendered -->
+            </div>
+
+            <div id="noResults" class="no-results" style="display: none;">
+                <p>✨ No projects found matching your criteria</p>
+            </div>
+        </main>
+
+        <!-- Premium Footer -->
+        <footer class="footer" role="contentinfo">
+            <p>© 2025 GlobalDeets · Exclusive Intelligence Platform</p>
+            <div class="footer-links" aria-label="Footer controls and links">
+                <button id="themeToggle" type="button" aria-label="Toggle theme">Theme</button>
+                <a href="#" id="addProjectBtn" aria-label="Add a new project">Add Project</a>
+                <a href="#" id="exportBtn" aria-label="Export project data">Export Data</a>
+                <a href="https://github.com" target="_blank" rel="noopener" aria-label="External GitHub link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Ecosystem Footer Attribution -->
+    <footer style="margin-top: 4rem; padding: 3rem 2rem; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3);">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; text-align: center;">
+            <div style="margin-bottom: 2rem;">
+                <p style="color: rgba(255,255,255,0.6); font-size: 0.875rem; margin-bottom: 1rem;">Part of the GFD Ecosystem</p>
+                <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                    <a href="https://goodflippindesign.com" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">🎨 Good Flippin Design</a>
+                    <a href="https://aiaimate.com" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">🧠 AI Aimate</a>
+                    <a href="https://culturesherpa.org" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">🌍 CultureSherpa</a>
+                    <a href="https://goodflippinvibes.com" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">✨ Good Flippin Vibes</a>
+                </div>
+            </div>
+            <div style="color: rgba(255,255,255,0.5); font-size: 0.8125rem;">
+                <p style="margin: 0.5rem 0;">Built by <a href="https://goodflippindesign.com" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 500;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Good Flippin Design</a></p>
+                <p style="margin: 0.5rem 0;">© 2026 GFV LLC • Strategic Web Development</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" class="scroll-to-top" aria-label="Scroll to top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5" />
+            <polyline points="5 12 12 5 19 12" />
+        </svg>
+    </button>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- PWA Install Banner -->
+    <div id="installBanner" class="install-banner hidden">
+        <div class="install-content">
+            <strong>📲 Install GlobalDeets</strong>
+            <p>Get quick access from your home screen</p>
+        </div>
+        <div class="install-actions">
+            <button id="installPWA" class="view-details">Install</button>
+            <button id="dismissInstall" class="view-details" style="background: transparent;">Later</button>
+        </div>
+    </div>
+
+    <!-- Project Detail Modal -->
+    <div id="projectModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalHeading" aria-describedby="modalBody">
+        <div class="modal-content" tabindex="-1">
+            <button class="close" type="button" aria-label="Close dialog">&times;</button>
+            <h2 id="modalHeading" class="visually-hidden">Project Details</h2>
+            <div id="modalBody">
+                <!-- Modal content will be dynamically inserted -->
+            </div>
+        </div>
+    </div>
+
+    <script src="projects-data.js"></script>
+    <script src="projects-render.js"></script>
+    <script src="ui-effects.js"></script>
+    <script src="interactions.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Service worker registration (progressive enhancement)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js').catch(err => console.warn('SW registration failed', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

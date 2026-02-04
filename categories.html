@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Categories - GlobalDeets</title>
+    <meta name="description" content="Browse GlobalDeets projects grouped by category">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="auth.js"></script>
+    <style>
+        .category-hero {
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+            background: var(--glass);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            margin-bottom: 3rem;
+        }
+        
+        .category-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #60a5fa 0%, #8b5cf6 25%, #ec4899 50%, #f59e0b 75%, #10b981 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 10s ease infinite;
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .category-card {
+            background: var(--glass);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-radius: 24px;
+            padding: 2rem;
+            border: 1px solid var(--glass-border);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 
+                0 32px 80px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(59, 130, 246, 0.4),
+                var(--glow-primary);
+        }
+        
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .category-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .category-count {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .category-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .category-projects-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .category-projects-list li {
+            padding: 0.5rem 0;
+            color: var(--text-primary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        
+        .category-projects-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .category-projects-list a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .category-projects-list a:hover {
+            color: var(--accent);
+        }
+    </style>
+    <!-- Skip link styles now centralized in styles.css -->
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Glass Header -->
+    <header>
+        <div class="container">
+            <div class="header">
+                <div class="logo">
+                    <h1>GlobalDeets</h1>
+                    <p class="tagline">Exclusive Intelligence • Strategic Capabilities • Premium Solutions</p>
+                </div>
+                <nav role="navigation" aria-label="Primary navigation" style="display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center; align-items: center;">
+                    <a href="index.html" class="nav-icon-btn" title="Home">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="3" opacity="0.3"/>
+                            <circle cx="50" cy="50" r="20" fill="currentColor" opacity="0.6"/>
+                            <circle cx="50" cy="50" r="8" fill="currentColor"/>
+                        </svg>
+                    </a>
+                    <a href="categories.html" class="nav-icon-btn active" title="Categories" aria-current="page">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <rect x="15" y="15" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.3"/>
+                            <rect x="55" y="15" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.3"/>
+                            <rect x="15" y="55" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.3"/>
+                            <rect x="55" y="55" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.6"/>
+                        </svg>
+                    </a>
+                    <a href="timeline.html" class="nav-icon-btn" title="Timeline">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <line x1="50" y1="15" x2="50" y2="85" stroke="currentColor" stroke-width="3" opacity="0.4"/>
+                            <circle cx="50" cy="25" r="8" fill="currentColor" opacity="0.8"/>
+                            <circle cx="50" cy="50" r="10" fill="currentColor"/>
+                            <circle cx="50" cy="75" r="6" fill="currentColor" opacity="0.6"/>
+                        </svg>
+                    </a>
+                    <a href="analytics.html" class="nav-icon-btn" title="Analytics">
+                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                            <rect x="15" y="60" width="15" height="25" rx="4" fill="currentColor" opacity="0.4"/>
+                            <rect x="35" y="40" width="15" height="45" rx="4" fill="currentColor" opacity="0.6"/>
+                            <rect x="55" y="25" width="15" height="60" rx="4" fill="currentColor" opacity="0.8"/>
+                            <rect x="75" y="35" width="15" height="50" rx="4" fill="currentColor"/>
+                        </svg>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+    <div class="container" role="region" aria-label="Categories listing">
+        <div class="category-hero">
+            <h1>Project Categories</h1>
+            <p>Explore our projects organized by purpose and domain</p>
+        </div>
+
+        <div class="category-grid" id="categories-container">
+            <!-- Categories will be dynamically generated here -->
+        </div>
+
+        <footer class="footer">
+            <p>© 2025 GlobalDeets · Exclusive Intelligence Platform</p>
+            <div class="footer-links" style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:.5rem;">
+                <button id="themeToggle" type="button" aria-label="Toggle theme" class="view-details">Theme</button>
+                <a href="index.html" class="view-details" aria-label="Home">Home</a>
+                <a href="analytics.html" class="view-details" aria-label="Analytics">Analytics</a>
+                <a href="timeline.html" class="view-details" aria-label="Timeline">Timeline</a>
+            </div>
+        </footer>
+    </div>
+    </main>
+
+    <button id="scrollToTop" class="scroll-to-top" aria-label="Scroll to top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+    </button>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="projects-data.js"></script>
+    <script src="ui-effects.js"></script>
+    <script src="interactions.js"></script>
+    <script src="sw-register.js"></script>
+    <script>
+
+        // Category definitions
+        const categoryInfo = {
+            'Business': {
+                icon: '💼',
+                description: 'Strategic intelligence, analytics platforms, and business development tools powering data-driven decisions.'
+            },
+            'Creative': {
+                icon: '🎨',
+                description: 'Storytelling, artistic tributes, and interactive experiences that inspire and engage.'
+            },
+            'Experimental': {
+                icon: '🔬',
+                description: 'Cutting-edge research, AI exploration, and innovative prototypes pushing boundaries.'
+            },
+            'Development': {
+                icon: '⚡',
+                description: 'Developer tools, APIs, and technical infrastructure supporting modern applications.'
+            }
+        };
+
+        // Generate categories
+        function renderCategories() {
+            const categoriesContainer = document.getElementById('categories-container');
+            const categoryGroups = {};
+
+            // Group projects by category
+            projects.forEach(project => {
+                if (!categoryGroups[project.category]) {
+                    categoryGroups[project.category] = [];
+                }
+                categoryGroups[project.category].push(project);
+            });
+
+            // Create category cards
+            Object.keys(categoryGroups).sort().forEach(category => {
+                const projectsInCategory = categoryGroups[category];
+                const info = categoryInfo[category] || { icon: '📁', description: 'Various projects' };
+
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerHTML = `
+                    <div class="category-icon">${info.icon}</div>
+                    <h2 class="category-name">${category}</h2>
+                    <p class="category-count">${projectsInCategory.length} project${projectsInCategory.length !== 1 ? 's' : ''}</p>
+                    <p class="category-description">${info.description}</p>
+                    <ul class="category-projects-list">
+                        ${projectsInCategory.map(p => `
+                            <li><a href="${p.url}" target="_blank" rel="noopener">${p.name}</a></li>
+                        `).join('')}
+                    </ul>
+                `;
+                categoriesContainer.appendChild(card);
+            });
+        }
+
+        renderCategories();
+        if(window.initUiEffects) window.initUiEffects();
+    </script>
+</body>
+</html>

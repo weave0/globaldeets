@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Global Insurance Intelligence Platform | Strategic Globalization Intelligence</title>
+    <meta name="description" content="Strategic globalization intelligence platform: language gaps, market readiness, ROI." />
+    <meta name="theme-color" content="#2563eb" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="assets/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Global skip-link styles loaded via styles.css -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="brand">
+          <h1>Global Insurance Intelligence Platform</h1>
+          <p class="tagline">Strategic Globalization Intelligence Platform</p>
+        </div>
+        <nav class="nav" role="navigation" aria-label="Platform sections">
+          <button class="nav-btn active" data-section="dashboard" aria-current="page">
+            Dashboard
+          </button>
+          <button class="nav-btn" data-section="assessment">
+            Client Assessment
+          </button>
+          <button class="nav-btn" data-section="intelligence">
+            Market Intelligence
+          </button>
+          <button class="nav-btn" data-section="calculator">
+            ROI Calculator
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main" id="main-content" role="main" aria-label="Strategic globalization intelligence dashboard">
+      <!-- Live region for announcing section changes -->
+      <div id="sectionAnnouncer" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+      <div class="container">
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="section active">
+          <div class="section-header">
+            <h2>Global Opportunity Dashboard</h2>
+            <p>
+              Real-time intelligence on insurance market opportunities for
+              multinational clients
+            </p>
+          </div>
+
+          <div class="metrics">
+            <div class="metric primary">
+              <div class="metric-label">Total Addressable Market</div>
+              <div class="metric-value">$117.2T</div>
+              <div class="metric-sub">Top 50 economies by GDP</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">High-Priority Markets</div>
+              <div class="metric-value" id="priority-count">18</div>
+              <div class="metric-sub">Critical language gaps</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Revenue Opportunity</div>
+              <div class="metric-value">$45M</div>
+              <div class="metric-sub">3-year partnership projection</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Time Saved</div>
+              <div class="metric-value">14mo</div>
+              <div class="metric-sub">Avg market entry reduction</div>
+            </div>
+          </div>
+
+          <div class="chart-box">
+            <h3>Top 20 Markets by GDP & Language Gap Severity</h3>
+            <canvas id="marketChart"></canvas>
+          </div>
+
+          <div class="insights">
+            <div class="insight critical">
+              <h4>≡ƒö┤ Critical Language Gaps</h4>
+              <ul id="critical-list"></ul>
+            </div>
+            <div class="insight high">
+              <h4>≡ƒƒí High-Priority Markets</h4>
+              <ul id="high-list"></ul>
+            </div>
+            <div class="insight strategic">
+              <h4>≡ƒƒó Strategic Advantages</h4>
+              <ul id="strategic-list"></ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- CLIENT ASSESSMENT -->
+        <section id="assessment" class="section">
+          <div class="section-header">
+            <h2>Client Globalization Assessment</h2>
+            <p>
+              Evaluate multinational expansion readiness and identify language
+              service needs
+            </p>
+          </div>
+
+          <div class="form-box">
+            <div class="form-group">
+              <label>Client Industry</label>
+              <select id="industry" class="form-control">
+                <option value="">Select industry...</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="energy">Energy</option>
+                <option value="manufacturing">Manufacturing</option>
+                <option value="financial">Financial Services</option>
+                <option value="construction">Construction & Engineering</option>
+                <option value="marine">Marine & Aviation</option>
+                <option value="agriculture">Agriculture & Food</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Target Expansion Market</label>
+              <select id="expansion-market" class="form-control">
+                <option value="">Select market...</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Projected Annual Revenue ($M)</label>
+              <input
+                type="number"
+                id="revenue"
+                class="form-control"
+                value="10"
+                min="1"
+                max="500"
+              />
+            </div>
+
+            <button id="run-assessment" class="btn-primary">
+              Generate Assessment
+            </button>
+          </div>
+
+          <div id="assessment-results" class="results-box hidden">
+            <h3>Assessment Report</h3>
+            <div class="result-grid">
+              <div class="result-card">
+                <h4>Language Requirements</h4>
+                <div id="lang-reqs"></div>
+              </div>
+              <div class="result-card">
+                <h4>Regulatory Complexity</h4>
+                <div id="reg-complexity"></div>
+              </div>
+              <div class="result-card">
+                <h4>Language Services Solution</h4>
+                <div id="solution"></div>
+              </div>
+              <div class="result-card">
+                <h4>Investment & Timeline</h4>
+                <div id="investment"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MARKET INTELLIGENCE -->
+        <section id="intelligence" class="section">
+          <div class="section-header">
+            <h2>Market Intelligence Dashboard</h2>
+            <p>
+              Compliance requirements, language demographics, and regulatory
+              complexity by market
+            </p>
+          </div>
+
+          <div class="form-box">
+            <div class="form-group">
+              <label>Select Market</label>
+              <select id="market-select" class="form-control">
+                <option value="">Choose market...</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="market-details" class="market-box hidden">
+            <div class="market-header">
+              <h3 id="market-name"></h3>
+              <div class="market-stats">
+                <span id="market-gdp"></span>
+                <span id="market-english"></span>
+              </div>
+            </div>
+
+            <div class="detail-grid">
+              <div class="detail-card">
+                <h4>Language Profile</h4>
+                <div id="lang-profile"></div>
+              </div>
+              <div class="detail-card">
+                <h4>Regulatory Requirements</h4>
+                <div id="reg-reqs"></div>
+              </div>
+              <div class="detail-card">
+                <h4>Business Context</h4>
+                <div id="business-context"></div>
+              </div>
+              <div class="detail-card">
+                <h4>Language Services Capabilities</h4>
+                <div id="capabilities"></div>
+              </div>
+            </div>
+
+            <div class="chart-box">
+              <h4>Language Proficiency Distribution</h4>
+              <canvas id="langChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- ROI CALCULATOR -->
+        <section id="calculator" class="section">
+          <div class="section-header">
+            <h2>Partnership ROI Calculator</h2>
+            <p>
+              Calculate the financial impact of specialized language services
+              for market expansion
+            </p>
+          </div>
+
+          <div class="form-box">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Target Market</label>
+                <select id="roi-market" class="form-control">
+                  <option value="">Select market...</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Expansion Type</label>
+                <select id="expansion-type" class="form-control">
+                  <option value="new">New Market Entry</option>
+                  <option value="expansion">Market Expansion</option>
+                  <option value="compliance">Compliance Upgrade</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Projected Annual Revenue ($M)</label>
+                <input
+                  type="number"
+                  id="roi-revenue"
+                  class="form-control"
+                  value="10"
+                  min="1"
+                  max="1000"
+                />
+              </div>
+              <div class="form-group">
+                <label>Monthly Document Volume</label>
+                <input
+                  type="number"
+                  id="doc-volume"
+                  class="form-control"
+                  value="500"
+                  min="10"
+                  max="10000"
+                />
+              </div>
+            </div>
+
+            <button id="calculate-roi" class="btn-primary">
+              Calculate ROI
+            </button>
+          </div>
+
+          <div id="roi-results" class="results-box hidden">
+            <h3>ROI Analysis</h3>
+
+            <div class="roi-metrics">
+              <div class="roi-metric">
+                <div class="roi-label">Total Investment</div>
+                <div class="roi-value" id="investment-total">$0</div>
+              </div>
+              <div class="roi-metric highlight">
+                <div class="roi-label">3-Year ROI</div>
+                <div class="roi-value" id="roi-percentage">0%</div>
+              </div>
+              <div class="roi-metric">
+                <div class="roi-label">Payback Period</div>
+                <div class="roi-value" id="payback">0 months</div>
+              </div>
+              <div class="roi-metric">
+                <div class="roi-label">Time Savings</div>
+                <div class="roi-value" id="time-saved">0 months</div>
+              </div>
+            </div>
+
+            <div class="chart-box">
+              <h4>Cost-Benefit Analysis (3-Year Projection)</h4>
+              <canvas id="roiChart"></canvas>
+            </div>
+
+            <div class="breakdown-box">
+              <h4>Investment Breakdown</h4>
+              <div id="breakdown"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <h4>About This Platform</h4>
+            <p>
+              Strategic intelligence demonstrating how a language services partner enables
+              a global insurance brokerage to serve multinational enterprise clients across
+              200+ languages and 50+ global markets.
+            </p>
+          </div>
+          <div>
+            <h4>Data Sources</h4>
+            <ul>
+              <li>IMF World Economic Outlook 2024</li>
+              <li>World Bank GDP Data</li>
+              <li>McKinsey Insurance Reports</li>
+              <li>Language Demographics (Census/Ethnologue)</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Partnership Inquiry</h4>
+            <p><strong>Language Services Partner</strong><br />example.com</p>
+            <p><strong>Global Insurance Brokerage</strong><br />example.com</p>
+          </div>
+        </div>
+        <div class="footer-bottom" style="display:flex;flex-direction:column;gap:.75rem;align-items:center;">
+          <div style="display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;">
+            <button id="themeToggle" type="button" class="view-details" aria-label="Toggle theme">Theme</button>
+            <a href="index.html" class="view-details" aria-label="GlobalDeets Home">GlobalDeets</a>
+            <a href="categories.html" class="view-details" aria-label="Categories">Categories</a>
+            <a href="timeline.html" class="view-details" aria-label="Timeline">Timeline</a>
+            <a href="analytics.html" class="view-details" aria-label="Analytics">Analytics</a>
+          </div>
+          <p>© 2025 Strategic Globalization Intelligence Platform</p>
+        </div>
+      </div>
+    </footer>
+
+    <button id="scrollToTop" class="scroll-to-top" aria-label="Scroll to top" style="display:flex;align-items:center;justify-content:center;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+    </button>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="ui-effects.js"></script>
+    <script src="interactions.js"></script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <script src="sw-register.js"></script>
+    <script>
+      // Section announcement, persistence, keyboard nav & aria-current management
+      (function(){
+        const STORAGE_KEY = 'bb-platform-section';
+        const navButtons = Array.from(document.querySelectorAll('.nav-btn'));
+        const sections = Array.from(document.querySelectorAll('.section'));
+        const announcer = document.getElementById('sectionAnnouncer');
+
+        function activateSection(targetId, announce=true){
+          sections.forEach(sec=>{sec.classList.toggle('active', sec.id===targetId);});
+          navButtons.forEach(btn=>{
+            const isActive = btn.getAttribute('data-section')===targetId;
+            btn.classList.toggle('active', isActive);
+            if(isActive){btn.setAttribute('aria-current','page');}
+            else {btn.removeAttribute('aria-current');}
+          });
+          localStorage.setItem(STORAGE_KEY, targetId);
+          if(announce){ announcer.textContent = 'Section changed: ' + targetId.replace(/-/g,' '); }
+        }
+
+        // Restore last viewed section
+        const last = localStorage.getItem(STORAGE_KEY);
+        const initial = last && sections.some(s=>s.id===last) ? last : 'dashboard';
+        activateSection(initial, false);
+
+        // Click handlers
+        navButtons.forEach(btn=>btn.addEventListener('click', ()=>activateSection(btn.getAttribute('data-section'))));
+
+        // Keyboard arrow navigation among nav buttons
+        function focusButtonByOffset(current, offset){
+          const idx = navButtons.indexOf(current);
+          if(idx===-1) return; const nextIdx = (idx + offset + navButtons.length) % navButtons.length;
+          navButtons[nextIdx].focus();
+        }
+        navButtons.forEach(btn=>{
+          btn.addEventListener('keydown', e => {
+            if(['ArrowRight','ArrowDown'].includes(e.key)){ e.preventDefault(); focusButtonByOffset(btn, 1); }
+            if(['ArrowLeft','ArrowUp'].includes(e.key)){ e.preventDefault(); focusButtonByOffset(btn, -1); }
+            if(e.key==='Enter' || e.key===' '){ e.preventDefault(); activateSection(btn.getAttribute('data-section')); }
+          });
+        });
+      })();
+      if(window.initUiEffects) window.initUiEffects();
+    </script>
+  </body>
+</html>
