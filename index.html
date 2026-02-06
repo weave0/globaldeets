@@ -52,6 +52,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="bi-ecosystem.css">
 
     <!-- GFD Ecosystem Navigation -->
     <link rel="stylesheet" href="shared/ecosystem-nav.css">
@@ -185,7 +186,7 @@
                     <h3 class="nav-section-title">Production Platforms</h3>
                     <a href="https://goodflippindesign.com" class="nav-link" role="menuitem" target="_blank" rel="noopener">
                         <span class="nav-icon" aria-hidden="true">
-                            <img src="assets/logo-nav.png" alt="GFD" width="24" height="24" style="border-radius: 4px;" />
+                            <img src="assets/logo-nav.png" alt="GFD" width="24" height="24" class="ecosystem-logo-nav" />
                         </span>
                         <div class="nav-link-content">
                             <strong class="nav-link-title">Good Flippin Design</strong>
@@ -256,7 +257,7 @@
                     <h1>GlobalDeets</h1>
                     <p class="tagline">Business Intelligence Ecosystem • Strategic Insights • Live Data Platforms</p>
                 </div>
-                <nav role="navigation" aria-label="Primary navigation" style="display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center; align-items: center;">
+                <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
                     <a href="index.html" class="nav-icon-btn active" title="Home" aria-current="page">
                         <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
                             <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="3" opacity="0.3" />
@@ -301,28 +302,28 @@
 
     <div class="container">
         <!-- Hero Section with BI Focus -->
-        <section class="hero-section" style="margin: 3rem 0; padding: 3rem 2rem; background: linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(99,102,241,0.1) 100%); border-radius: 16px; border: 1px solid rgba(139,92,246,0.2);">
-            <div style="text-align: center; max-width: 900px; margin: 0 auto;">
-                <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #60a5fa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Strategic Intelligence. Live Data. Free Access.</h2>
-                <p style="font-size: 1.25rem; color: rgba(255,255,255,0.8); margin-bottom: 2rem; line-height: 1.6;">Proprietary business intelligence platforms across healthcare, consulting, and enterprise sectors. Built with ethical AI, DuckDB analytics, and public data sources.</p>
+        <section class="hero-section scroll-reveal">
+            <div class="hero-content">
+                <h2 class="hero-title">Strategic Intelligence. Live Data. Free Access.</h2>
+                <p class="hero-subtitle">Proprietary business intelligence platforms across healthcare, consulting, and enterprise sectors. Built with ethical AI, DuckDB analytics, and public data sources.</p>
 
-                <!-- Data Stats Ticker -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
-                    <div style="padding: 1.5rem; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(139,92,246,0.3);">
-                        <div style="font-size: 2rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.25rem;">433K+</div>
-                        <div style="font-size: 0.875rem; color: rgba(255,255,255,0.6);">Records Analyzed</div>
+                <!-- Data Stats Ticker with Count-Up Animation -->
+                <div class="stats-grid">
+                    <div class="stat-card stat-card--purple">
+                        <div class="stat-value stat-value--purple" data-count="433000">433K+</div>
+                        <div class="stat-label">Records Analyzed</div>
                     </div>
-                    <div style="padding: 1.5rem; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(99,102,241,0.3);">
-                        <div style="font-size: 2rem; font-weight: 700; color: #6366f1; margin-bottom: 0.25rem;">$110B</div>
-                        <div style="font-size: 0.875rem; color: rgba(255,255,255,0.6);">Revenue Tracked</div>
+                    <div class="stat-card stat-card--indigo">
+                        <div class="stat-value stat-value--indigo" data-count="110000000000">$110B+</div>
+                        <div class="stat-label">Revenue Tracked</div>
                     </div>
-                    <div style="padding: 1.5rem; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(96,165,250,0.3);">
-                        <div style="font-size: 2rem; font-weight: 700; color: #60a5fa; margin-bottom: 0.25rem;">$615M+</div>
-                        <div style="font-size: 0.875rem; color: rgba(255,255,255,0.6);">Pipeline Insights</div>
+                    <div class="stat-card stat-card--blue">
+                        <div class="stat-value stat-value--blue" data-count="615000000">$615M+</div>
+                        <div class="stat-label">Pipeline Insights</div>
                     </div>
-                    <div style="padding: 1.5rem; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(139,92,246,0.3);">
-                        <div style="font-size: 2rem; font-weight: 700; color: #a78bfa; margin-bottom: 0.25rem;">5</div>
-                        <div style="font-size: 0.875rem; color: rgba(255,255,255,0.6);">Active Platforms</div>
+                    <div class="stat-card stat-card--purple">
+                        <div class="stat-value stat-value--lavender" data-count="5">5</div>
+                        <div class="stat-label">Active Platforms</div>
                     </div>
                 </div>
             </div>
@@ -330,130 +331,130 @@
 
         <!-- BI Platform Showcase -->
         <main class="main-content" id="main-content" role="main" aria-label="Business Intelligence Platforms">
-            
+
             <!-- Featured Platform Spotlight -->
-            <section class="featured-platform" style="margin: 3rem 0; padding: 2.5rem; background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0.05) 100%); border-radius: 16px; border: 1px solid rgba(16,185,129,0.2);">
-                <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: start;">
-                    <div class="platform-preview" style="position: relative;">
-                        <div style="position: absolute; top: 12px; right: 12px; background: rgba(16,185,129,0.9); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8125rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; z-index: 2;">
-                            <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981;"></span>
+            <section class="featured-platform scroll-reveal scroll-reveal--delay-1" data-platform-id="kaiser-permanente">
+                <div class="platform-grid">
+                    <div class="platform-preview">
+                        <div class="live-badge">
+                            <span class="live-indicator"></span>
                             Live Data
                         </div>
-                        <img src="assets/screenshots/kp-strategic-dashboard.png" alt="Healthcare Strategic Intelligence Dashboard Preview" style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-                        <div style="display: none; width: 100%; aspect-ratio: 16/10; background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(16,185,129,0.1) 100%); border-radius: 12px; border: 2px dashed rgba(16,185,129,0.3); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); font-size: 0.875rem;">Dashboard Preview</div>
+                        <img src="assets/screenshots/kp-strategic-dashboard.png" alt="Healthcare Strategic Intelligence Dashboard Preview" class="platform-screenshot" onerror="this.style.display='none'; this.nextElementSibling.classList.add('visible');" />
+                        <div class="screenshot-fallback">Dashboard Preview</div>
                     </div>
                     <div class="platform-info">
-                        <div style="display: inline-block; padding: 0.375rem 0.875rem; background: rgba(16,185,129,0.15); color: #10b981; border-radius: 20px; font-size: 0.8125rem; font-weight: 600; margin-bottom: 1rem;">🏥 Healthcare Intelligence</div>
-                        <h3 style="font-size: 2rem; font-weight: 700; margin-bottom: 1rem; color: #fff;">Kaiser Permanente Strategic Intelligence</h3>
-                        <p style="font-size: 1.125rem; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem; line-height: 1.6;">433,127 IRS 990 records analyzed • $110B revenue tracked • 700+ facilities mapped across 8 states</p>
-                        
-                        <div class="insight-preview" style="background: rgba(0,0,0,0.3); border-left: 3px solid #10b981; padding: 1.25rem; border-radius: 8px; margin: 1.5rem 0;">
-                            <strong style="color: rgba(255,255,255,0.9); font-size: 0.9375rem;">Latest Insight:</strong>
-                            <p style="color: rgba(255,255,255,0.75); margin-top: 0.5rem; font-size: 1rem; line-height: 1.6;">Kaiser Permanente leads integrated healthcare with 12.8M members across 39 hospitals and 622 medical offices. 92% inpatient capacity utilization indicates operational efficiency surpassing industry benchmarks.</p>
+                        <div class="platform-category-badge">🏥 Healthcare Intelligence</div>
+                        <h3 class="platform-title">Kaiser Permanente Strategic Intelligence</h3>
+                        <p class="platform-description">433,127 IRS 990 records analyzed • $110B revenue tracked • 700+ facilities mapped across 8 states</p>
+
+                        <div class="insight-preview">
+                            <div class="insight-label">Latest Insight:</div>
+                            <p class="insight-text">Kaiser Permanente leads integrated healthcare with 12.8M members across 39 hospitals and 622 medical offices. 92% inpatient capacity utilization indicates operational efficiency surpassing industry benchmarks.</p>
                         </div>
-                        
-                        <div class="platform-actions" style="display: flex; gap: 1rem; margin: 1.5rem 0;">
-                            <a href="https://kp-strategic-globalization.netlify.app" target="_blank" rel="noopener" style="flex: 1; padding: 0.875rem 1.5rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; text-align: center; transition: transform 0.2s, box-shadow 0.2s; display: block;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(16,185,129,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+
+                        <div class="platform-actions">
+                            <a href="https://kp-strategic-globalization.netlify.app" target="_blank" rel="noopener" class="btn-launch">
                                 Launch Platform →
                             </a>
-                            <button style="flex: 0.6; padding: 0.875rem 1.5rem; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" onclick="alert('Sample insights: Geographic concentration analysis reveals 73% California dominance with strategic expansion corridors in Colorado (+15% YoY) and Washington state.')">
-                                View Sample Data
+                            <button class="btn-sample" data-platform-modal="kaiser-permanente">
+                                View Sample Insights
                             </button>
                         </div>
-                        
-                        <div class="platform-meta" style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem;">
-                            <span style="padding: 0.375rem 0.75rem; background: rgba(0,0,0,0.3); border-radius: 6px; font-size: 0.8125rem; color: rgba(255,255,255,0.8);">🔍 DuckDB Analytics</span>
-                            <span style="padding: 0.375rem 0.75rem; background: rgba(0,0,0,0.3); border-radius: 6px; font-size: 0.8125rem; color: rgba(255,255,255,0.8);">🤖 Ethical AI</span>
-                            <span style="padding: 0.375rem 0.75rem; background: rgba(0,0,0,0.3); border-radius: 6px; font-size: 0.8125rem; color: rgba(255,255,255,0.8);">📊 IRS 990 Public Data</span>
-                            <span style="padding: 0.375rem 0.75rem; background: rgba(0,0,0,0.3); border-radius: 6px; font-size: 0.8125rem; color: rgba(255,255,255,0.8);">⚡ Real-time Queries</span>
+
+                        <div class="platform-meta">
+                            <span class="meta-badge">🔍 DuckDB Analytics</span>
+                            <span class="meta-badge">🤖 Ethical AI</span>
+                            <span class="meta-badge">📊 IRS 990 Public Data</span>
+                            <span class="meta-badge">⚡ Real-time Queries</span>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- Industry Segmentation -->
-            <section class="industries-section" style="margin: 4rem 0;">
-                <h2 style="font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; text-align: center;">Strategic Intelligence By Industry</h2>
-                <p style="text-align: center; color: rgba(255,255,255,0.7); font-size: 1.125rem; margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;">Explore live business intelligence platforms across healthcare, consulting, and enterprise sectors</p>
-                
-                <div class="industry-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem;">
-                    
+            <section class="industries-section scroll-reveal scroll-reveal--delay-2">
+                <h2 class="section-title">Strategic Intelligence By Industry</h2>
+                <p class="section-subtitle">Explore live business intelligence platforms across healthcare, consulting, and enterprise sectors</p>
+
+                <div class="industry-grid">
+
                     <!-- Healthcare Intelligence -->
-                    <article class="industry-card" style="background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0.05) 100%); border: 1px solid rgba(16,185,129,0.2); border-radius: 16px; padding: 2rem; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(16,185,129,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">🏥</div>
-                        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #10b981;">Healthcare Intelligence</h3>
-                        <ul style="list-style: none; padding: 0; margin: 1.5rem 0; color: rgba(255,255,255,0.8);">
-                            <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><span style="color: #10b981;">✓</span> 433K+ provider records</li>
-                            <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><span style="color: #10b981;">✓</span> $110B revenue analysis</li>
-                            <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><span style="color: #10b981;">✓</span> Facility capacity modeling</li>
-                            <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><span style="color: #10b981;">✓</span> Geographic expansion tracking</li>
+                    <article class="industry-card industry-card--healthcare scroll-reveal scroll-reveal--delay-3">
+                        <div class="industry-icon">🏥</div>
+                        <h3 class="industry-title industry-title--healthcare">Healthcare Intelligence</h3>
+                        <ul class="industry-features">
+                            <li class="industry-feature"><span class="feature-check feature-check--healthcare">✓</span> 433K+ provider records</li>
+                            <li class="industry-feature"><span class="feature-check feature-check--healthcare">✓</span> $110B revenue analysis</li>
+                            <li class="industry-feature"><span class="feature-check feature-check--healthcare">✓</span> Facility capacity modeling</li>
+                            <li class="industry-feature"><span class="feature-check feature-check--healthcare">✓</span> Geographic expansion tracking</li>
                         </ul>
-                        <a href="#healthcare-platforms" style="display: inline-block; color: #10b981; text-decoration: none; font-weight: 600; margin-top: 1rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='translateX(0)'">Explore Healthcare Platforms →</a>
+                        <a href="#healthcare-platforms" class="industry-link industry-link--healthcare">Explore Healthcare Platforms →</a>
                     </article>
-                    
+
                     <!-- Consulting Insights -->
-                    <article class="industry-card" style="background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(99,102,241,0.05) 100%); border: 1px solid rgba(99,102,241,0.2); border-radius: 16px; padding: 2rem; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(99,102,241,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">💼</div>
-                        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #6366f1;">Consulting Insights</h3>
-                        <ul style="list-style: none; padding: 0; margin: 1.5rem 0; color: rgba(255,255,255,0.8);">
-                            <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><span style="color: #6366f1;">✓</span> $615M+ pipeline tracking</li>
-                            <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><span style="color: #6366f1;">✓</span> Competitive intelligence</li>
-                            <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><span style="color: #6366f1;">✓</span> Market positioning analysis</li>
-                            <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><span style="color: #6366f1;">✓</span> Strategic playbook development</li>
+                    <article class="industry-card industry-card--consulting scroll-reveal scroll-reveal--delay-3">
+                        <div class="industry-icon">💼</div>
+                        <h3 class="industry-title industry-title--consulting">Consulting Insights</h3>
+                        <ul class="industry-features">
+                            <li class="industry-feature"><span class="feature-check feature-check--consulting">✓</span> $615M+ pipeline tracking</li>
+                            <li class="industry-feature"><span class="feature-check feature-check--consulting">✓</span> Competitive intelligence</li>
+                            <li class="industry-feature"><span class="feature-check feature-check--consulting">✓</span> Market positioning analysis</li>
+                            <li class="industry-feature"><span class="feature-check feature-check--consulting">✓</span> Strategic playbook development</li>
                         </ul>
-                        <a href="#consulting-platforms" style="display: inline-block; color: #6366f1; text-decoration: none; font-weight: 600; margin-top: 1rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='translateX(0)'">Explore Consulting Platforms →</a>
+                        <a href="#consulting-platforms" class="industry-link industry-link--consulting">Explore Consulting Platforms →</a>
                     </article>
-                    
+
                     <!-- Manufacturing & Enterprise -->
-                    <article class="industry-card" style="background: linear-gradient(135deg, rgba(245,158,11,0.1) 0%, rgba(245,158,11,0.05) 100%); border: 1px solid rgba(245,158,11,0.2); border-radius: 16px; padding: 2rem; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(245,158,11,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">🏭</div>
-                        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #f59e0b;">Manufacturing Intelligence</h3>
-                        <ul style="list-style: none; padding: 0; margin: 1.5rem 0; color: rgba(255,255,255,0.8);">
-                            <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><span style="color: #f59e0b;">✓</span> Supply chain mapping</li>
-                            <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><span style="color: #f59e0b;">✓</span> Vendor ecosystem analysis</li>
-                            <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><span style="color: #f59e0b;">✓</span> Sustainability metrics</li>
-                            <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;"><span style="color: #f59e0b;">✓</span> Operational capacity tracking</li>
+                    <article class="industry-card industry-card--manufacturing scroll-reveal scroll-reveal--delay-3">
+                        <div class="industry-icon">🏭</div>
+                        <h3 class="industry-title industry-title--manufacturing">Manufacturing Intelligence</h3>
+                        <ul class="industry-features">
+                            <li class="industry-feature"><span class="feature-check feature-check--manufacturing">✓</span> Supply chain mapping</li>
+                            <li class="industry-feature"><span class="feature-check feature-check--manufacturing">✓</span> Vendor ecosystem analysis</li>
+                            <li class="industry-feature"><span class="feature-check feature-check--manufacturing">✓</span> Sustainability metrics</li>
+                            <li class="industry-feature"><span class="feature-check feature-check--manufacturing">✓</span> Operational capacity tracking</li>
                         </ul>
-                        <a href="#manufacturing-platforms" style="display: inline-block; color: #f59e0b; text-decoration: none; font-weight: 600; margin-top: 1rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='translateX(0)'">Explore Manufacturing Platforms →</a>
+                        <a href="#manufacturing-platforms" class="industry-link industry-link--manufacturing">Explore Manufacturing Platforms →</a>
                     </article>
-                    
+
                 </div>
             </section>
 
             <!-- Methodology Section -->
-            <section class="methodology-section" style="margin: 4rem 0; padding: 3rem; background: rgba(0,0,0,0.3); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
-                <h2 style="font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; text-align: center;">Our Approach</h2>
-                <p style="text-align: center; color: rgba(255,255,255,0.7); font-size: 1.125rem; margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;">Transparent methodology, ethical AI, and commitment to open access</p>
-                
-                <div class="methodology-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem;">
-                    
-                    <div class="method-item" style="text-align: center; padding: 1.5rem;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-                        <h4 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem; color: rgba(255,255,255,0.95);">Public Data Sources</h4>
-                        <p style="color: rgba(255,255,255,0.7); font-size: 0.9375rem; line-height: 1.6;">IRS 990 filings, SEC records, government databases, and publicly available datasets</p>
+            <section class="methodology-section scroll-reveal scroll-reveal--delay-4">
+                <h2 class="section-title">Our Approach</h2>
+                <p class="section-subtitle">Transparent methodology, ethical AI, and commitment to open access</p>
+
+                <div class="methodology-grid">
+
+                    <div class="method-item">
+                        <div class="method-icon">📊</div>
+                        <h4 class="method-title">Public Data Sources</h4>
+                        <p class="method-description">IRS 990 filings, SEC records, government databases, and publicly available datasets</p>
                     </div>
-                    
-                    <div class="method-item" style="text-align: center; padding: 1.5rem;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
-                        <h4 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem; color: rgba(255,255,255,0.95);">Ethical AI</h4>
-                        <p style="color: rgba(255,255,255,0.7); font-size: 0.9375rem; line-height: 1.6;">Anthropic Claude, OpenAI GPT-4 with privacy guardrails and transparent usage policies</p>
+
+                    <div class="method-item">
+                        <div class="method-icon">🤖</div>
+                        <h4 class="method-title">Ethical AI</h4>
+                        <p class="method-description">Anthropic Claude, OpenAI GPT-4 with privacy guardrails and transparent usage policies</p>
                     </div>
-                    
-                    <div class="method-item" style="text-align: center; padding: 1.5rem;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">⚡</div>
-                        <h4 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem; color: rgba(255,255,255,0.95);">DuckDB Analytics</h4>
-                        <p style="color: rgba(255,255,255,0.7); font-size: 0.9375rem; line-height: 1.6;">Sub-second queries on 500K+ records, in-browser analytics with Parquet compression</p>
+
+                    <div class="method-item">
+                        <div class="method-icon">⚡</div>
+                        <h4 class="method-title">DuckDB Analytics</h4>
+                        <p class="method-description">Sub-second queries on 500K+ records, in-browser analytics with Parquet compression</p>
                     </div>
-                    
-                    <div class="method-item" style="text-align: center; padding: 1.5rem;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">🔓</div>
-                        <h4 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem; color: rgba(255,255,255,0.95);">Free & Open</h4>
-                        <p style="color: rgba(255,255,255,0.7); font-size: 0.9375rem; line-height: 1.6;">No paywalls, no registration required—just intelligence for strategic decision-makers</p>
+
+                    <div class="method-item">
+                        <div class="method-icon">🔓</div>
+                        <h4 class="method-title">Free & Open</h4>
+                        <p class="method-description">No paywalls, no registration required—just intelligence for strategic decision-makers</p>
                     </div>
-                    
+
                 </div>
             </section>
-            
+
         </main>
 
         <!-- Premium Footer -->
@@ -463,7 +464,7 @@
                 <a href="methodology.html" aria-label="View our methodology">Methodology</a>
                 <a href="insights.html" aria-label="Read insights blog">Insights</a>
                 <a href="contact.html" aria-label="Contact us">Contact</a>
-                <a href="https://goodflippindesign.com/contact" target="_blank" rel="noopener" aria-label="Need custom intelligence platform?" style="font-weight: 600; color: #60a5fa;">Need Custom BI? →</a>
+                <a href="https://goodflippindesign.com/contact" target="_blank" rel="noopener" aria-label="Need custom intelligence platform?" class="footer-cta-link">Need Custom BI? →</a>
             </div>
         </footer>
     </div>
@@ -474,22 +475,22 @@
     </div>
 
     <!-- Ecosystem Footer Attribution -->
-    <footer style="margin-top: 4rem; padding: 3rem 2rem; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3);">
-        <div class="container" style="max-width: 1200px; margin: 0 auto; text-align: center;">
-            <div style="margin-bottom: 2rem;">
-                <p style="color: rgba(255,255,255,0.6); font-size: 0.875rem; margin-bottom: 1rem;">Part of the GFD Ecosystem</p>
-                <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
-                    <a href="https://goodflippindesign.com" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">🎨 Good Flippin Design</a>
-                    <a href="https://aiaimate.com" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">🧠 AI Aimate</a>
-                    <a href="https://culturesherpa.org" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">🌍 CultureSherpa</a>
-                    <a href="https://goodflippinvibes.com" target="_blank" rel="noopener" style="color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">✨ Good Flippin Vibes</a>
+    <footer class="ecosystem-footer">
+        <div class="ecosystem-footer-container">
+            <div class="ecosystem-footer-section">
+                <p class="ecosystem-tagline">Part of the GFD Ecosystem</p>
+                <div class="ecosystem-links">
+                    <a href="https://goodflippindesign.com" target="_blank" rel="noopener" class="ecosystem-link">🎨 Good Flippin Design</a>
+                    <a href="https://aiaimate.com" target="_blank" rel="noopener" class="ecosystem-link">🧠 AI Aimate</a>
+                    <a href="https://culturesherpa.org" target="_blank" rel="noopener" class="ecosystem-link">🌍 CultureSherpa</a>
+                    <a href="https://goodflippinvibes.com" target="_blank" rel="noopener" class="ecosystem-link">✨ Good Flippin Vibes</a>
                 </div>
             </div>
-            <div style="color: rgba(255,255,255,0.5); font-size: 0.8125rem;">
-                <p style="margin: 1rem 0 0.5rem; font-size: 0.9375rem; color: rgba(255,255,255,0.8);">These intelligence platforms are built by <a href="https://goodflippindesign.com" target="_blank" rel="noopener" style="color: #60a5fa; text-decoration: none; font-weight: 600;" onmouseover="this.style.color='#93c5fd'" onmouseout="this.style.color='#60a5fa'">Good Flippin Design</a> — Web development consultancy specializing in data platforms, business intelligence, and AI integration.</p>
-                <p style="margin: 1rem 0;"><a href="https://goodflippindesign.com/contact" target="_blank" rel="noopener" style="display: inline-block; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 16px rgba(139,92,246,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">Need a Custom Intelligence Platform? →</a></p>
-                <p style="margin: 0.5rem 0;"><a href="https://goodflippindesign.com/donate.html" target="_blank" rel="noopener" style="color: #8b5cf6; text-decoration: none; font-weight: 600;" onmouseover="this.style.color='#a78bfa'" onmouseout="this.style.color='#8b5cf6'">❤️ Support the GFD Ecosystem</a></p>
-                <p style="margin: 0.5rem 0;">© 2026 GFV LLC • Strategic Web Development & Business Intelligence</p>
+            <div class="ecosystem-footer-details">
+                <p class="ecosystem-description">These intelligence platforms are built by <a href="https://goodflippindesign.com" target="_blank" rel="noopener" class="ecosystem-gfd-link">Good Flippin Design</a> — Web development consultancy specializing in data platforms, business intelligence, and AI integration.</p>
+                <p><a href="https://goodflippindesign.com/contact" target="_blank" rel="noopener" class="ecosystem-cta-button">Need a Custom Intelligence Platform? →</a></p>
+                <p><a href="https://goodflippindesign.com/donate.html" target="_blank" rel="noopener" class="ecosystem-donate-link">❤️ Support the GFD Ecosystem</a></p>
+                <p class="ecosystem-copyright">© 2026 GFV LLC • Strategic Web Development & Business Intelligence</p>
             </div>
         </div>
     </footer>
@@ -513,7 +514,7 @@
         </div>
         <div class="install-actions">
             <button id="installPWA" class="view-details">Install</button>
-            <button id="dismissInstall" class="view-details" style="background: transparent;">Later</button>
+            <button id="dismissInstall" class="view-details install-dismiss">Later</button>
         </div>
     </div>
 
@@ -534,6 +535,8 @@
     <script src="interactions.js"></script>
     <script src="app.js"></script>
     <script src="shared/ecosystem-nav.js"></script>
+    <script src="ux-animations.js"></script>
+    <script src="platform-modal.js"></script>
     <script>
         // Service worker registration (progressive enhancement)
         if ('serviceWorker' in navigator) {
