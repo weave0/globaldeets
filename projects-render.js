@@ -77,8 +77,8 @@
                 <span class="last-updated">Updated: ${formatDate(project.lastUpdated)}</span>
                 <div class="footer-actions">
                     <button class="view-details" type="button" onclick="event.stopPropagation()">View Details</button>
-                    <a href="contact.html?project=${encodeURIComponent(project.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''))}" 
-                       class="btn-feedback" 
+                    <a href="contact.html?project=${encodeURIComponent(project.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''))}"
+                       class="btn-feedback"
                        title="Send feedback about this project"
                        onclick="event.stopPropagation()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -96,18 +96,20 @@
     }
 
     function renderProjects(projectsToRender) {
+        if (!projectsGrid) return; // Guard: element doesn't exist on this page
         projectsGrid.innerHTML = '';
         if (!projectsToRender.length) {
-            noResults.style.display = 'block';
+            if (noResults) noResults.style.display = 'block';
             return;
         }
-        noResults.style.display = 'none';
+        if (noResults) noResults.style.display = 'none';
         projectsToRender.forEach((p, i) => projectsGrid.appendChild(createProjectCard(p, i)));
         // After rendering, initialize effects (defined in ui-effects.js) if available
         if (window.initUiEffects) window.initUiEffects();
     }
 
     function openProjectModal(project) {
+        if (!modal || !modalBody) return; // Guard: modal elements don't exist on this page
         const statusClass = `status-${project.status.toLowerCase()}`;
         const categoryClass = `category-${project.category.toLowerCase()}`;
         const safeUrl = isValidProjectUrl(project.url) ? escapeHtml(project.url) : null;
@@ -154,6 +156,7 @@
     }
 
     function updateStats(projectsToCount) {
+        if (!totalProjectsEl || !activeProjectsEl || !recentUpdatesEl) return; // Guard: elements don't exist on this page
         totalProjectsEl.textContent = projects.length;
         activeProjectsEl.textContent = projects.filter(p => p.status.toLowerCase() === 'active').length;
         const thirtyDaysAgo = new Date();
@@ -177,6 +180,7 @@
     }
 
     function filterProjects() {
+        if (!searchInput || !filterCategory || !filterStatus) return; // Guard: filter elements don't exist on this page
         const searchTerm = searchInput.value.trim().toLowerCase();
         const category = filterCategory.value;
         const status = filterStatus.value;
@@ -191,11 +195,13 @@
     }
 
     // Close modal handler (focus return handled in interactions.js focus trap cleanup)
-    closeModalBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-        if (window.deactivateFocusTrap) window.deactivateFocusTrap();
-    });
-    window.addEventListener('click', e => { if (e.target === modal) { modal.style.display = 'none'; if (window.deactivateFocusTrap) window.deactivateFocusTrap(); } });
+    if (closeModalBtn && modal) {
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            if (window.deactivateFocusTrap) window.deactivateFocusTrap();
+        });
+        window.addEventListener('click', e => { if (e.target === modal) { modal.style.display = 'none'; if (window.deactivateFocusTrap) window.deactivateFocusTrap(); } });
+    }
 
     // Expose globals
     window.renderProjects = renderProjects;

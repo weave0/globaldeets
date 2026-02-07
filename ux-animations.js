@@ -217,12 +217,17 @@
     function monitorPerformance() {
         if (window.performance && window.performance.timing) {
             window.addEventListener('load', () => {
-                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-                console.log(`🚀 Page loaded in ${loadTime}ms`);
+                setTimeout(() => {
+                    const timing = performance.timing;
+                    if (timing.loadEventEnd && timing.navigationStart) {
+                        const loadTime = timing.loadEventEnd - timing.navigationStart;
+                        console.log(`🚀 Page loaded in ${loadTime}ms`);
 
-                if (loadTime > 3000) {
-                    console.warn('⚠️ Page load time exceeds 3 seconds - consider optimization');
-                }
+                        if (loadTime > 3000) {
+                            console.warn('⚠️ Page load time exceeds 3 seconds - consider optimization');
+                        }
+                    }
+                }, 100);
             });
         }
     }
