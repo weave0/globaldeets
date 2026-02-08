@@ -15,6 +15,12 @@
   border-bottom: 1px solid rgba(139, 92, 246, 0.2);
   padding: 0.75rem 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease;
+}
+
+/* Solid background when menu is open for better readability */
+.gfd-ecosystem-nav.menu-open {
+  background: rgba(10, 10, 10, 1);
 }
 
 .ecosystem-nav-container {
@@ -251,6 +257,39 @@
   .ecosystem-title {
     display: none; /* Hide text on very small screens, show only logo */
   }
+
+  .nav-link-title {
+    font-size: 0.875rem; /* Smaller on mobile */
+  }
+
+  .nav-link-subtitle {
+    font-size: 0.75rem;
+  }
+}
+
+/* Backdrop overlay when menu is open */
+.ecosystem-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 149; /* Below nav (150), above page content */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+  pointer-events: none;
+}
+
+.ecosystem-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 /* Accessibility - Reduced Motion */
