@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<!-- Cache bust: 2026-02-05-22:28 -->
+<html lang="en">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QPPVJM1B60"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-QPPVJM1B60');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 Join the Movement - Power World-Changing Tech</title>
+    <meta name="description" content="Every contribution funds zero-cost AI education, cultural preservation, and civic tech. Your vision + your support = real change. Join us.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --bg-elevated: #111;
+            --bg-card: #151515;
+            --text: #fafafa;
+            --text-secondary: #c8c8c8;
+            --text-muted: #8a8a8a;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(139, 92, 246, 0.3);
+
+            /* Gradient system */
+            --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #10b981 50%, #fbbf24 100%);
+            --gradient-purple: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+            --gradient-green: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            --gradient-gold: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+            --gradient-urgency: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #dc2626 100%);
+
+            /* Glass morphism */
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+
+            /* Glow effects */
+            --glow-purple: 0 0 30px rgba(139, 92, 246, 0.5);
+            --glow-green: 0 0 30px rgba(16, 185, 129, 0.5);
+            --glow-gold: 0 0 30px rgba(251, 191, 36, 0.5);
+            --glow-urgent: 0 0 40px rgba(251, 191, 36, 0.6);
+        }
+
+        @keyframes gradientFlow {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                box-shadow: var(--glow-purple);
+            }
+
+            50% {
+                box-shadow: var(--glow-gold);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d2e 25%, #0d1a1a 50%, #1a0d0a 75%, #0a0a0a 100%);
+            background-size: 400% 400%;
+            animation: gradientFlow 20s ease infinite;
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Particle effect background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 10, 0.8);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .logo img {
+            height: 36px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-size: 1rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .back-link {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0 3rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .urgency-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #fcd34d;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        .urgency-badge::before {
+            content: '⚡';
+            font-size: 1.125rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.25rem, 5vw, 3.5rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero h1 .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: gradientFlow 5s ease infinite;
+        }
+
+        .hero h1 .urgent-text {
+            background: var(--gradient-urgency);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: gradientFlow 3s ease infinite;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.125rem, 2vw, 1.375rem);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+        }
+
+        .mission-statement {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 3rem 0;
+            box-shadow: var(--glow-purple);
+        }
+
+        .mission-statement h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mission-statement p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .mission-statement p:last-child {
+            margin-bottom: 0;
+        }
+
+        .mission-statement strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* Impact Cards */
+        .impact-section {
+            margin: 4rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .impact-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .impact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .impact-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--border-glow);
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.3);
+        }
+
+        .impact-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .impact-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+        }
+
+        .impact-card h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        .impact-card p {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Dual Section: Donate + Share Vision */
+        .contribution-section {
+            margin: 4rem 0;
+        }
+
+        .dual-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .dual-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .column-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 8px 40px rgba(139, 92, 246, 0.15);
+            transition: all 0.4s ease;
+        }
+
+        .column-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 60px rgba(139, 92, 246, 0.25);
+        }
+
+        .column-card h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .column-card h2 .icon {
+            font-size: 1.75rem;
+        }
+
+        .column-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        /* Donation amounts */
+        .donation-type-toggle {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .donation-type-toggle button {
+            background: rgba(13, 13, 13, 0.8);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9375rem;
+        }
+
+        .donation-type-toggle button.active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.6);
+            color: var(--text);
+            box-shadow: var(--glow-purple);
+        }
+
+        .donation-amounts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .donation-amount {
+            background: rgba(13, 13, 13, 0.9);
+            color: var(--text);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            font-weight: 700;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .donation-amount:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .donation-amount.active {
+            border-color: rgba(139, 92, 246, 0.9);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(16, 185, 129, 0.15) 100%);
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+        }
+
+        .donation-amount.recommended::after {
+            content: '⭐';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--gradient-gold);
+            color: #0a0a0a;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            box-shadow: var(--glow-gold);
+        }
+
+        .custom-amount input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1rem;
+            margin-top: 0.75rem;
+        }
+
+        .custom-amount input:focus {
+            outline: none;
+            border-color: rgba(139, 92, 246, 0.6);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        /* Vision Form */
+        .vision-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 0.875rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.9375rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.6;
+        }
+
+        .form-hint {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Payment Method Selection */
+        .payment-method-selector {
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-tabs {
+            display: flex;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .payment-tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .payment-tab.active {
+            background: var(--gradient-primary);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .payment-tab-icon {
+            font-size: 1.125rem;
+        }
+
+        .payment-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-option {
+            display: none;
+        }
+
+        .payment-option.active {
+            display: block;
+        }
+
+        /* PayPal Container */
+        #paypal-button-container {
+            margin-bottom: 1rem;
+        }
+
+        /* PayPal Simple Form */
+        .paypal-simple-form {
+            padding: 1rem;
+        }
+
+        .paypal-amount-input {
+            margin-bottom: 1.5rem;
+        }
+
+        .paypal-amount-input label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .amount-input-group {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+
+        .amount-input-group:focus-within {
+            border-color: var(--border-glow);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
+        }
+
+        .currency-symbol {
+            background: var(--bg);
+            color: var(--text-secondary);
+            padding: 0.75rem;
+            font-weight: 600;
+            border-right: 1px solid var(--border);
+        }
+
+        .amount-input-group input {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .amount-input-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-paypal {
+            width: 100%;
+            background: var(--gradient-purple);
+            background-size: 200% 200%;
+            color: #fff;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.35);
+        }
+
+        .btn-paypal:hover {
+            animation: gradientFlow 2s ease infinite;
+            transform: translateY(-1px);
+            box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5);
+        }
+
+        .paypal-logo {
+            font-size: 1.25rem;
+        }
+
+        .paypal-note {
+            margin-top: 0.75rem;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* PayPal Simple Form */
+        .paypal-simple-form {
+            padding: 1rem;
+        }
+
+        .paypal-amount-input {
+            margin-bottom: 1.5rem;
+        }
+
+        .paypal-amount-input label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .amount-input-group {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+
+        .amount-input-group:focus-within {
+            border-color: var(--border-glow);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
+        }
+
+        .currency-symbol {
+            background: var(--bg);
+            color: var(--text-secondary);
+            padding: 0.75rem;
+            font-weight: 600;
+            border-right: 1px solid var(--border);
+        }
+
+        .amount-input-group input {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .amount-input-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-paypal {
+            width: 100%;
+            background: var(--gradient-purple);
+            background-size: 200% 200%;
+            color: #fff;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.35);
+        }
+
+        .btn-paypal:hover {
+            animation: gradientFlow 2s ease infinite;
+            transform: translateY(-1px);
+            box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5);
+        }
+
+        .paypal-link-preview {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        .paypal-link-label {
+            color: var(--text-muted);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .paypal-link-preview a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8125rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .paypal-link-preview a:hover {
+            color: var(--text);
+        }
+
+        .paypal-logo {
+            font-size: 1.25rem;
+        }
+
+        .paypal-note {
+            margin-top: 0.75rem;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            background: var(--gradient-primary);
+            background-size: 200% 200%;
+            color: #fff;
+            padding: 1.125rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.0625rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 50px rgba(139, 92, 246, 0.7);
+            animation: gradientFlow 2s ease infinite;
+        }
+
+        .btn-primary:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--gradient-green);
+            background-size: 200% 200%;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 16px 50px rgba(16, 185, 129, 0.7);
+        }
+
+        /* Payment Element */
+        .payment-element {
+            margin: 1.5rem 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: none;
+        }
+
+        .payment-element.active {
+            display: block;
+        }
+
+        /* Trust Indicators */
+        .trust-section {
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .trust-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .trust-badge svg {
+            width: 24px;
+            height: 24px;
+            fill: #10b981;
+        }
+
+        /* Contributor Wall */
+        .contributor-wall {
+            margin: 4rem 0;
+            padding: 3rem 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .contributor-wall h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contributor-wall p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.0625rem;
+        }
+
+        .vision-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            text-align: left;
+        }
+
+        .vision-card {
+            background: rgba(13, 13, 13, 0.8);
+            border: 1px solid var(--border);
+            border-left: 3px solid;
+            border-image: var(--gradient-primary) 1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .vision-card:hover {
+            transform: translateX(8px);
+            box-shadow: -4px 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .vision-card .quote {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .vision-card .author {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 6rem;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--text);
+        }
+
+        /* Success Message */
+        .success-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .success-overlay.active {
+            display: flex;
+        }
+
+        .success-content {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 80px rgba(139, 92, 246, 0.4);
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+            animation: float 3s ease-in-out infinite, glow-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.6));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 40px rgba(139, 92, 246, 0.9));
+            }
+        }
+
+        .success-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .success-content p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .hero {
+                padding: 3rem 0 2rem;
+            }
+
+            .mission-statement {
+                padding: 1.5rem;
+            }
+
+            .column-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .donation-amounts {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-icons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <img src="assets/logo-nav.png" alt="GFD Logo">
+                    <span class="logo-text">Good Flippin Design</span>
+                </a>
+                <div class="header-actions">
+                    <a href="https://gofund.me/f07ea3faf" target="_blank" rel="noopener" class="back-link">GoFundMe →</a>
+                    <a href="index.html" class="back-link">← Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="urgency-badge">Critical Funding Needed - Projects at Risk</div>
+                <h1>
+                    <span class="gradient-text">Power the Future</span><br>
+                    of <span class="urgent-text">Free</span> AI Education &<br>
+                    World-Changing Tech
+                </h1>
+                <p class="hero-subtitle">
+                    Every night, someone learns AI for free. Every day, cultures are preserved. Every moment, democracy tech gets stronger. <strong>But without funding, this work stops.</strong> Join us as a <em>builder</em>, not just a donor.
+                </p>
+            </section>
+
+            <!-- Mission Statement -->
+            <div class="mission-statement">
+                <h2>🌍 Why Your Support Matters Right Now</h2>
+                <p>
+                    <strong>Zero funding = Zero progress.</strong> Every tool you see in our ecosystem—AI Aimate, CultureSherpa, GlobalDeets, Good Flippin Vibes, CitizenApproved—exists because we believe technology should <em>empower everyone</em>, not just those who can pay.
+                </p>
+                <p>
+                    <strong>We've bootstrapped everything so far.</strong> No investors. No ads. No paywalls. Just world-class tools, freely available. But servers cost money. Development time is finite. And right now, <strong>this work is at risk of pausing</strong> unless we find sustainable funding.
+                </p>
+                <p>
+                    <strong>Your contribution isn't charity—it's co-creation.</strong> You're not just donating. You're joining a movement to democratize AI, preserve cultures, strengthen democracy, and build dashboards that reveal truth. Share your vision below. We're building <em>your</em> future too.
+                </p>
+            </div>
+
+            <!-- Impact Cards -->
+            <section class="impact-section">
+                <div class="section-header">
+                    <h2>What Your Contribution Funds</h2>
+                    <p>Real impact across 6 world-changing platforms</p>
+                </div>
+                <div class="impact-grid">
+                    <div class="impact-card">
+                        <div class="icon">🧠</div>
+                        <h3>AI Education Access</h3>
+                        <p>Free AI training courses, interactive tutorials, and cutting-edge research—accessible to anyone, anywhere.</p>
+                    </div>
+                    <div class="impact-card">
+                        <div class="icon">🌍</div>
+                        <h3>Cultural Preservation</h3>
+                        <p>Translate indigenous languages, preserve disappearing cultures, and connect communities worldwide.</p>
+                    </div>
+                    <div class="impact-card">
+                        <div class="icon">📊</div>
+                        <h3>Data Truth & Transparency</h3>
+                        <p>Business intelligence dashboards that reveal patterns, expose corruption, and empower decision-makers.</p>
+                    </div>
+                    <div class="impact-card">
+                        <div class="icon">🗳️</div>
+                        <h3>Democracy Tech</h3>
+                        <p>Civic engagement tools that strengthen communities, increase participation, and restore trust in governance.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dual Contribution Section -->
+            <section class="contribution-section">
+                <div class="section-header">
+                    <h2>Two Ways to Build the Future</h2>
+                    <p>Your support + your vision = unstoppable change</p>
+                </div>
+
+                <div class="dual-columns">
+                    <!-- Donation Column -->
+                    <div class="column-card">
+                        <h2><span class="icon">💎</span> Fund the Mission</h2>
+                        <p>Every dollar keeps servers running, tools improving, and access free for millions.</p>
+
+                        <div class="donation-type-toggle">
+                            <button class="active" data-type="one-time">One-Time</button>
+                            <button data-type="monthly">Monthly</button>
+                        </div>
+
+                        <div class="donation-amounts">
+                            <button class="donation-amount" data-amount="10">$10</button>
+                            <button class="donation-amount recommended" data-amount="25">$25</button>
+                            <button class="donation-amount" data-amount="50">$50</button>
+                            <button class="donation-amount" data-amount="100">$100</button>
+                        </div>
+
+                        <div class="custom-amount">
+                            <input type="number" id="customAmount" placeholder="Or enter custom amount..." min="5" step="5">
+                        </div>
+
+                        <!-- Payment Method Selection -->
+                        <div class="payment-method-selector">
+                            <div class="payment-tabs">
+                                <button class="payment-tab active" id="stripe-tab" data-method="stripe">
+                                    <span class="payment-tab-icon">💳</span>
+                                    <span>Card</span>
+                                </button>
+                                <button class="payment-tab" id="paypal-tab" data-method="paypal">
+                                    <span class="payment-tab-icon">🅿️</span>
+                                    <span>PayPal</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Payment Containers -->
+                        <div class="payment-container">
+                            <!-- Stripe Payment -->
+                            <div class="payment-option active" id="stripe-payment">
+                                <div id="payment-element" class="payment-element"></div>
+                                <button class="btn-primary" id="donateBtn">
+                                    <span id="donateBtnText">Continue with Card</span>
+                                </button>
+                            </div>
+
+                            <!-- PayPal Payment -->
+                            <div class="payment-option" id="paypal-payment">
+                                <div class="paypal-simple-form">
+                                    <div class="paypal-amount-input">
+                                        <label for="paypalAmount">Enter Amount:</label>
+                                        <div class="amount-input-group">
+                                            <span class="currency-symbol">$</span>
+                                            <input type="number" id="paypalAmount" min="5" step="1" value="25" placeholder="25">
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-paypal" id="paypalOpenBtn">
+                                        <span class="paypal-logo">🅿️</span>
+                                        <span>Open PayPal to Donate</span>
+                                    </button>
+                                    <div class="paypal-link-preview" aria-live="polite">
+                                        <span class="paypal-link-label">PayPal link</span>
+                                        <a id="paypalLink" href="#" target="_blank" rel="noopener">Configure PayPal.me to enable</a>
+                                    </div>
+                                    <p class="paypal-note">You’ll confirm the amount inside PayPal before paying.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="note">Secure payment processing. Tax-deductible receipt provided.</p>
+                    </div>
+
+                    <!-- Vision Column -->
+                    <div class="column-card">
+                        <h2><span class="icon">✨</span> Share Your Vision</h2>
+                        <p>Your ideas shape our roadmap. Tell us what you want to see, what problems you're solving, or how you'd use these tools.</p>
+
+                        <form class="vision-form" id="visionForm" action="https://formspree.io/f/xjgebazl" method="POST">
+                            <div class="form-group">
+                                <label for="visionName">Your Name (optional)</label>
+                                <input type="text" id="visionName" name="name" placeholder="Anonymous Contributor">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="visionEmail">Email (for updates)</label>
+                                <input type="email" id="visionEmail" name="email" placeholder="you@example.com" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="visionMessage">Your Vision for This Ecosystem</label>
+                                <textarea id="visionMessage" name="message" placeholder="What would you build? What problems need solving? What excites you about democratizing AI, preserving cultures, or strengthening democracy?" required></textarea>
+                                <span class="form-hint">Be as bold as you want. We read every submission.</span>
+                            </div>
+
+                            <button type="submit" class="btn-primary btn-secondary">
+                                Share My Vision →
+                            </button>
+                        </form>
+
+                        <p class="note">We'll never spam you. Unsubscribe anytime.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trust Indicators -->
+            <section class="trust-section">
+                <h3 style="color: var(--text-secondary); font-weight: 600; margin-bottom: 0.5rem;">Trusted By</h3>
+                <div class="trust-icons">
+                    <div class="trust-badge">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Secure Payments</span>
+                    </div>
+                    <div class="trust-badge">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        <span>256-bit Encryption</span>
+                    </div>
+                    <div class="trust-badge">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Tax Deductible</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contributor Wall (Visions) -->
+            <section class="contributor-wall">
+                <h2>🌟 Voices from the Movement</h2>
+                <p>Contributors who shared their vision for a better world</p>
+
+                <div class="vision-showcase">
+                    <div class="vision-card">
+                        <p class="quote">"AI shouldn't be locked behind paywalls. What you're building gives my students in rural Kenya access to world-class training."</p>
+                        <p class="author">— Sarah K., Educator</p>
+                    </div>
+                    <div class="vision-card">
+                        <p class="quote">"My grandmother's language is disappearing. CultureSherpa is our last chance to preserve it for my kids."</p>
+                        <p class="author">— Mateo R., Language Advocate</p>
+                    </div>
+                    <div class="vision-card">
+                        <p class="quote">"These dashboards exposed fraud in our local government. Transparency tools like this save democracies."</p>
+                        <p class="author">— Anonymous Whistleblower</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Good Flippin Design Ecosystem. Built with urgency, purpose, and hope.<br>
+                <a href="mailto:getsome@goodflippinvibes.com">Contact Us</a> | <a href="index.html#privacy">Privacy</a> | <a href="index.html#terms">Terms</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-content">
+            <div class="success-icon">
+                <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Central burst -->
+                    <circle cx="100" cy="100" r="30" fill="url(#successGradient)" opacity="0.9" />
+                    <!-- Radiating energy beams -->
+                    <path d="M100 100 L100 20" stroke="url(#beamGradient1)" stroke-width="4" stroke-linecap="round" opacity="0.8">
+                        <animate attributeName="opacity" values="0.8;1;0.8" dur="1.5s" repeatCount="indefinite" />
+                    </path>
+                    <path d="M100 100 L170 40" stroke="url(#beamGradient2)" stroke-width="3" stroke-linecap="round" opacity="0.7">
+                        <animate attributeName="opacity" values="0.7;1;0.7" dur="1.8s" repeatCount="indefinite" />
+                    </path>
+                    <path d="M100 100 L180 100" stroke="url(#beamGradient3)" stroke-width="4" stroke-linecap="round" opacity="0.8">
+                        <animate attributeName="opacity" values="0.8;1;0.8" dur="1.6s" repeatCount="indefinite" />
+                    </path>
+                    <path d="M100 100 L170 160" stroke="url(#beamGradient1)" stroke-width="3" stroke-linecap="round" opacity="0.7">
+                        <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite" />
+                    </path>
+                    <path d="M100 100 L100 180" stroke="url(#beamGradient2)" stroke-width="4" stroke-linecap="round" opacity="0.8">
+                        <animate attributeName="opacity" values="0.8;1;0.8" dur="1.7s" repeatCount="indefinite" />
+                    </path>
+                    <path d="M100 100 L30 160" stroke="url(#beamGradient3)" stroke-width="3" stroke-linecap="round" opacity="0.7">
+                        <animate attributeName="opacity" values="0.7;1;0.7" dur="1.9s" repeatCount="indefinite" />
+                    </path>
+                    <path d="M100 100 L20 100" stroke="url(#beamGradient1)" stroke-width="4" stroke-linecap="round" opacity="0.8">
+                        <animate attributeName="opacity" values="0.8;1;0.8" dur="1.4s" repeatCount="indefinite" />
+                    </path>
+                    <path d="M100 100 L30 40" stroke="url(#beamGradient2)" stroke-width="3" stroke-linecap="round" opacity="0.7">
+                        <animate attributeName="opacity" values="0.7;1;0.7" dur="2.1s" repeatCount="indefinite" />
+                    </path>
+                    <!-- Orbiting particles -->
+                    <circle cx="100" cy="50" r="4" fill="#10b981" opacity="0.9">
+                        <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="4s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="150" cy="80" r="3" fill="#8b5cf6" opacity="0.8">
+                        <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="5s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="140" cy="140" r="4" fill="#fbbf24" opacity="0.9">
+                        <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="3.5s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="60" cy="120" r="3" fill="#10b981" opacity="0.8">
+                        <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="4.5s" repeatCount="indefinite" />
+                    </circle>
+                    <!-- Gradient definitions -->
+                    <defs>
+                        <radialGradient id="successGradient" cx="50%" cy="50%">
+                            <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:0.9" />
+                            <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0.7" />
+                        </radialGradient>
+                        <linearGradient id="beamGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0" />
+                        </linearGradient>
+                        <linearGradient id="beamGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#10b981;stop-opacity:0" />
+                        </linearGradient>
+                        <linearGradient id="beamGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:0" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <h2>Welcome to the Movement!</h2>
+            <p>Your contribution just powered free AI education for thousands. Your vision shapes our roadmap. Together, we're building the future.</p>
+            <button class="btn-primary" onclick="location.href='index.html'">Return Home</button>
+        </div>
+    </div>
+
+    <script>
+        // Payment system initialization
+        const stripe = Stripe('pk_live_51So70wBL2ppdbQKqOR38V1sZW6oFrVYkKmsxYxHTIOQ7yXYU1oT2qQtXHdKo9eBx2vxvotcYt5L6ZQXoXfYrx5Wg00X1VibSRz');
+        let elements;
+        let selectedAmount = 25;
+        let donationType = 'one-time';
+        let selectedPaymentMethod = 'stripe';
+
+        // Thin PayPal (no SDK): uses PayPal.Me link building
+        // Set this to your PayPal.Me handle (the part after https://www.paypal.com/paypalme/)
+        // Example: 'BrettWeaver'
+        const PAYPAL_ME_HANDLE = 'goodlippindesign';
+
+        function getPayPalMeUrl(amount) {
+            const numericAmount = Number(amount);
+            if (!PAYPAL_ME_HANDLE) return null;
+            if (!Number.isFinite(numericAmount) || numericAmount < 5) return null;
+            const safeAmount = Math.round(numericAmount);
+            return `https://www.paypal.com/paypalme/${encodeURIComponent(PAYPAL_ME_HANDLE)}/${safeAmount}?currencyCode=USD`;
+        }
+
+        function updatePayPalQuickDonateUI() {
+            const paypalAmountEl = document.getElementById('paypalAmount');
+            const paypalLinkEl = document.getElementById('paypalLink');
+            const paypalOpenBtn = document.getElementById('paypalOpenBtn');
+            if (!paypalAmountEl || !paypalLinkEl || !paypalOpenBtn) return;
+
+            const url = getPayPalMeUrl(paypalAmountEl.value);
+
+            if (!PAYPAL_ME_HANDLE) {
+                paypalLinkEl.textContent = 'Add your PayPal.me handle in donate.html to enable';
+                paypalLinkEl.href = '#';
+                paypalOpenBtn.disabled = true;
+                paypalOpenBtn.style.opacity = '0.6';
+                paypalOpenBtn.style.cursor = 'not-allowed';
+                return;
+            }
+
+            if (!url) {
+                paypalLinkEl.textContent = 'Enter an amount of at least $5';
+                paypalLinkEl.href = '#';
+                paypalOpenBtn.disabled = true;
+                paypalOpenBtn.style.opacity = '0.6';
+                paypalOpenBtn.style.cursor = 'not-allowed';
+                return;
+            }
+
+            paypalLinkEl.textContent = url;
+            paypalLinkEl.href = url;
+            paypalOpenBtn.disabled = false;
+            paypalOpenBtn.style.opacity = '1';
+            paypalOpenBtn.style.cursor = 'pointer';
+        }
+
+        // Initialize thin PayPal UI on load
+        document.addEventListener('DOMContentLoaded', function () {
+            updatePayPalQuickDonateUI();
+
+            const paypalOpenBtn = document.getElementById('paypalOpenBtn');
+            if (paypalOpenBtn) {
+                paypalOpenBtn.addEventListener('click', function () {
+                    const url = getPayPalMeUrl(selectedAmount);
+                    if (!url) {
+                        updatePayPalQuickDonateUI();
+                        return;
+                    }
+
+                    if (window.gtag) {
+                        gtag('event', 'paypal_link_opened', {
+                            event_category: 'donation',
+                            event_label: `paypalme_${donationType}`,
+                            value: selectedAmount
+                        });
+                    }
+
+                    window.open(url, '_blank', 'noopener');
+                });
+            }
+        });
+
+        // Payment method switching
+        document.querySelectorAll('.payment-tab').forEach(tab => {
+            tab.addEventListener('click', function () {
+                // Update active tab
+                document.querySelectorAll('.payment-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // Update selected payment method
+                selectedPaymentMethod = this.dataset.method;
+
+                // Show/hide payment options
+                document.querySelectorAll('.payment-option').forEach(option => {
+                    option.classList.remove('active');
+                });
+                document.getElementById(`${selectedPaymentMethod}-payment`).classList.add('active');
+
+                // Track payment method selection
+                if (window.gtag) {
+                    gtag('event', 'payment_method_selected', {
+                        event_category: 'donation',
+                        event_label: selectedPaymentMethod,
+                        value: 0
+                    });
+                }
+
+                // Initialize PayPal if selected and not already initialized
+                if (selectedPaymentMethod === 'paypal') {
+                    updatePayPalQuickDonateUI();
+                }
+            });
+        });
+
+        // Success message function
+        function showSuccessMessage(paymentMethod, transactionId) {
+            // Create success overlay
+            const successOverlay = document.createElement('div');
+            successOverlay.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0; left: 0; right: 0; bottom: 0;
+                    background: rgba(0,0,0,0.9);
+                    display: flex; align-items: center; justify-content: center;
+                    z-index: 10000;
+                    animation: fadeIn 0.3s ease;
+                ">
+                    <div style="
+                        background: var(--bg-card);
+                        padding: 3rem;
+                        border-radius: 16px;
+                        text-align: center;
+                        max-width: 500px;
+                        border: 1px solid var(--border);
+                        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+                    ">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+                        <h2 style="color: var(--text); margin-bottom: 1rem;">Thank You!</h2>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                            Your $${selectedAmount} ${donationType} donation via ${paymentMethod} was successful!
+                        </p>
+                        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 2rem;">
+                            Transaction ID: ${transactionId}
+                        </p>
+                        <button onclick="location.href='index.html'" style="
+                            background: var(--gradient-primary);
+                            color: #fff;
+                            border: none;
+                            padding: 0.75rem 2rem;
+                            border-radius: 8px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            font-size: 1rem;
+                        ">Return Home</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(successOverlay);
+        }
+
+        // Donation type toggle
+        document.querySelectorAll('.donation-type-toggle button').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.donation-type-toggle button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                donationType = this.dataset.type;
+            });
+        });
+
+        // Donation amount selection
+        document.querySelectorAll('.donation-amount').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.donation-amount').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedAmount = parseInt(this.dataset.amount);
+                document.getElementById('customAmount').value = '';
+
+                // Sync with PayPal amount fields
+                document.getElementById('paypalAmount').value = selectedAmount;
+                updatePayPalQuickDonateUI();
+
+                // Track amount selection
+                if (window.gtag) {
+                    gtag('event', 'donation_amount_selected', {
+                        event_category: 'donation',
+                        event_label: `$${selectedAmount}`,
+                        value: selectedAmount
+                    });
+                }
+            });
+        });
+
+        // Custom amount
+        document.getElementById('customAmount').addEventListener('input', function () {
+            if (this.value) {
+                document.querySelectorAll('.donation-amount').forEach(b => b.classList.remove('active'));
+                selectedAmount = parseInt(this.value) || 0;
+
+                // Sync with PayPal amount fields
+                document.getElementById('paypalAmount').value = selectedAmount;
+                updatePayPalQuickDonateUI();
+
+                // Track custom amount on blur (when user finishes typing)
+                if (selectedAmount >= 5 && window.gtag) {
+                    gtag('event', 'donation_custom_amount', {
+                        event_category: 'donation',
+                        event_label: `Custom $${selectedAmount}`,
+                        value: selectedAmount
+                    });
+                }
+            }
+        });
+
+        // PayPal amount sync (when user changes PayPal input directly)
+        document.getElementById('paypalAmount').addEventListener('input', function () {
+            const amount = parseInt(this.value) || 0;
+            selectedAmount = amount;
+            updatePayPalQuickDonateUI();
+
+            // Clear preset selections
+            document.querySelectorAll('.donation-amount').forEach(b => b.classList.remove('active'));
+            document.getElementById('customAmount').value = '';
+        });
+
+        // Donate button (Stripe)
+        document.getElementById('donateBtn').addEventListener('click', async function () {
+            if (selectedAmount < 5) {
+                alert('Minimum donation is $5. Every bit helps!');
+
+                // Track insufficient amount attempt
+                if (window.gtag) {
+                    gtag('event', 'donation_insufficient_amount', {
+                        event_category: 'donation',
+                        event_label: `Attempted $${selectedAmount}`,
+                        value: selectedAmount
+                    });
+                }
+                return;
+            }
+
+            // Track checkout initiation
+            if (window.gtag) {
+                gtag('event', 'begin_checkout', {
+                    event_category: 'ecommerce',
+                    event_label: `stripe_${donationType}`,
+                    value: selectedAmount,
+                    currency: 'USD',
+                    items: [{
+                        item_name: `${donationType} donation via Stripe`,
+                        item_category: 'donation',
+                        price: selectedAmount,
+                        quantity: 1
+                    }]
+                });
+            }
+
+            // CRITICAL: Real Stripe Checkout integration via Cloudflare Function
+            this.disabled = true;
+            this.textContent = 'Creating checkout...';
+
+            try {
+                // Call Cloudflare Function to create Stripe Checkout Session
+                const response = await fetch('/create-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        amount: selectedAmount,
+                        type: donationType
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to create checkout session');
+                }
+
+                // Redirect to Stripe Checkout
+                console.log(`Redirecting to Stripe Checkout: $${selectedAmount} (${donationType})`);
+                window.location.href = data.url;
+
+            } catch (error) {
+                console.error('Checkout error:', error);
+                alert(`Error: ${error.message}\n\nPlease try again or contact getsome@goodflippindesign.com`);
+                this.disabled = false;
+                this.textContent = 'Continue with Card';
+            }
+
+            // Note: Success tracking happens on return from Stripe (via success_url parameter)
+        });
+
+        // Vision form submission (Formspree handles this)
+        document.getElementById('visionForm').addEventListener('submit', function (e) {
+            // Track vision form submission
+            if (window.gtag) {
+                gtag('event', 'generate_lead', {
+                    event_category: 'engagement',
+                    event_label: 'Vision Form Submission',
+                    value: 0
+                });
+            }
+
+            // Formspree will handle the submission
+            // Show a quick success message
+            setTimeout(() => {
+                alert('🌟 Thank you for sharing your vision! We read every submission and will be in touch.');
+                this.reset();
+
+                // Track form completion
+                if (window.gtag) {
+                    gtag('event', 'form_submit_success', {
+                        event_category: 'engagement',
+                        event_label: 'Vision Form',
+                        value: 1
+                    });
+                }
+            }, 500);
+        });
+    </script>
+
+    <!-- GFD Ecosystem Navigation JavaScript -->
+    <script src="shared/ecosystem-nav.js"></script>
+</body>
+
+</html>
