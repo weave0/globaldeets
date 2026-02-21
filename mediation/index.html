@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Jamie Rigling - Qualified Family Law Mediator & Neutral. MN Rule 114 certified. Expert mediation services for child custody, divorce, parenting time, and post-dissolution matters.">
+    <meta name="keywords" content="family law mediation, divorce mediator, child custody mediator, Minnesota ADR, Rule 114 neutral, family law facilitator, Maple Grove mediator">
+    <title>Jamie Rigling - Family Law Mediation & ADR Services | Minnesota</title>
+
+    <!-- SEO Meta Tags -->
+    <link rel="canonical" href="https://mediation.globaldeets.com/">
+    <meta name="author" content="Jamie Rigling">
+    <meta name="geo.region" content="US-MN">
+    <meta name="geo.placename" content="Maple Grove">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mediation.globaldeets.com/">
+    <meta property="og:title" content="Jamie Rigling - Family Law Mediation & ADR Services">
+    <meta property="og:description" content="Minnesota Rule 114 certified mediator specializing in family law, child custody, divorce, and parenting matters. Serving the Twin Cities area.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:url" content="https://mediation.globaldeets.com/">
+    <meta property="twitter:title" content="Jamie Rigling - Family Law Mediation & ADR Services">
+    <meta property="twitter:description" content="Minnesota Rule 114 certified mediator specializing in family law, child custody, divorce, and parenting matters.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Cache bust: 2026-02-20-20:58 -->
+
+    <style>
+        /* ============================================
+           CSS Variables & Reset
+           ============================================ */
+        :root {
+            --bg: #0d0d0d;
+            --bg-elevated: #1a1a1a;
+            --text: #f5f5f5;
+            --text-muted: #8a8a8a;
+            --accent: #d4a574;
+            --accent-hover: #e6b886;
+            --border: rgba(255, 255, 255, 0.06);
+            --success: #4caf50;
+            --error: #ef5350;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 4rem;
+            --spacing-xl: 6rem;
+            --max-width: 1200px;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        /* ============================================
+           Skip Link (Accessibility)
+           ============================================ */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 8px 16px;
+            text-decoration: none;
+            font-weight: 600;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .skip-link:focus {
+            transform: translateY(40px);
+        }
+
+        /* ============================================
+           Navigation
+           ============================================ */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(13, 13, 13, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-brand:hover {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* ============================================
+           Hero Section
+           ============================================ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg) var(--spacing-md);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 1;
+        }
+
+        .hero-eyebrow {
+            color: var(--accent);
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: var(--spacing-md);
+            background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.125rem, 2vw, 1.5rem);
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.5;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           Section Shared Styles
+           ============================================ */
+        section {
+            padding: var(--spacing-xl) var(--spacing-md);
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .section-label {
+            color: var(--accent);
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            line-height: 1.2;
+        }
+
+        .section-description {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           Services Grid
+           ============================================ */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+        }
+
+        .service-card {
+            background: var(--bg);
+            padding: var(--spacing-md);
+            transition: background-color 0.3s ease;
+        }
+
+        .service-card:hover {
+            background: var(--bg-elevated);
+        }
+
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-sm);
+            font-size: 1.5rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           Expertise Tags
+           ============================================ */
+        .expertise-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: var(--spacing-md);
+        }
+
+        .tag {
+            padding: 0.5rem 1rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            transition: border-color 0.3s ease, color 0.3s ease;
+        }
+
+        .tag:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ============================================
+           Credentials Section
+           ============================================ */
+        .credentials {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            padding: var(--spacing-lg);
+            border-radius: 8px;
+            margin-top: var(--spacing-lg);
+        }
+
+        .credentials h3 {
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-md);
+            color: var(--accent);
+        }
+
+        .credentials ul {
+            list-style: none;
+            display: grid;
+            gap: var(--spacing-sm);
+        }
+
+        .credentials li {
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-muted);
+        }
+
+        .credentials li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* ============================================
+           Booking Section
+           ============================================ */
+        .booking-container {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .calendly-inline-widget {
+            min-width: 320px;
+            height: 700px;
+        }
+
+        /* ============================================
+           Contact Section
+           ============================================ */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .contact-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            padding: var(--spacing-md);
+            border-radius: 8px;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+
+        .contact-card:hover {
+            border-color: var(--accent);
+        }
+
+        .contact-icon {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .contact-card h3 {
+            font-size: 1.125rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .contact-card a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-card a:hover {
+            color: var(--accent-hover);
+        }
+
+        /* ============================================
+           Footer
+           ============================================ */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: var(--spacing-md);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--accent-hover);
+        }
+
+        /* ============================================
+           Responsive Design
+           ============================================ */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-container {
+                padding: 1rem;
+            }
+
+            section {
+                padding: var(--spacing-md) var(--spacing-sm);
+            }
+
+            .hero {
+                padding: var(--spacing-md) var(--spacing-sm);
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============================================
+           Utility Classes
+           ============================================ */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-lg {
+            margin-top: var(--spacing-lg);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Skip Link for Keyboard Navigation -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <a href="#home" class="nav-brand">Jamie Rigling</a>
+            <ul class="nav-links">
+                <li><a href="#services">Services</a></li>
+                <li><a href="#expertise">Expertise</a></li>
+                <li><a href="#booking">Book Appointment</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <p class="hero-eyebrow">MN Rule 114 Qualified Neutral</p>
+                <h1 class="hero-title">Jamie Rigling</h1>
+                <p class="hero-subtitle">
+                    Family Law Mediator & Alternative Dispute Resolution Specialist<br>
+                    Helping families navigate custody, divorce, and parenting matters with compassion and expertise
+                </p>
+                <div class="hero-cta">
+                    <a href="#booking" class="btn btn-primary">Schedule Consultation</a>
+                    <a href="#services" class="btn btn-secondary">Learn More</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services">
+            <p class="section-label">What I Offer</p>
+            <h2 class="section-title">ADR Services</h2>
+            <p class="section-description">
+                Qualified under Minnesota Rule 114, I provide comprehensive family law mediation and facilitation services tailored to your unique situation.
+            </p>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">⚖️</div>
+                    <h3>Mediation</h3>
+                    <p>Neutral facilitation to help parties reach mutually acceptable agreements in family law matters.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">🤝</div>
+                    <h3>Med-Arb</h3>
+                    <p>Combined mediation and arbitration process, starting with mediation and transitioning to arbitration if needed.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">📋</div>
+                    <h3>Arb-Med</h3>
+                    <p>Arbitration followed by mediation, providing structure and flexibility in the resolution process.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">💬</div>
+                    <h3>Facilitative/Hybrid</h3>
+                    <p>Customized approach combining facilitative and evaluative techniques based on your needs.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expertise Section -->
+        <section id="expertise">
+            <p class="section-label">Areas of Focus</p>
+            <h2 class="section-title">Expertise</h2>
+            <p class="section-description">
+                Specialized experience in family law matters, helping clients navigate complex emotional and legal terrain.
+            </p>
+
+            <div class="expertise-tags">
+                <span class="tag">Child Custody</span>
+                <span class="tag">Child Support</span>
+                <span class="tag">Dissolution/Divorce</span>
+                <span class="tag">Parenting Time</span>
+                <span class="tag">Child Visitation</span>
+                <span class="tag">Post-Dissolution Matters</span>
+            </div>
+
+            <div class="credentials">
+                <h3>Credentials & Qualifications</h3>
+                <ul>
+                    <li>Minnesota Rule 114 Qualified Neutral</li>
+                    <li>Listed on Minnesota Judicial Branch ADR Roster</li>
+                    <li>Specialized training in Family Law mediation</li>
+                    <li>Experience with facilitative and hybrid approaches</li>
+                    <li>Located in Maple Grove, MN - serving the greater Twin Cities area</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Booking Section -->
+        <section id="booking">
+            <p class="section-label">Get Started</p>
+            <h2 class="section-title">Schedule a Consultation</h2>
+            <p class="section-description">
+                Book a consultation to discuss your family law matter and explore how mediation can help you reach resolution.
+            </p>
+
+            <div class="booking-container">
+                <!-- Calendly inline widget begin -->
+                <div class="calendly-inline-widget" data-url="https://calendly.com/your-calendly-username?hide_gdpr_banner=1" style="min-width:320px;height:700px;"></div>
+                <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+                <!-- Calendly inline widget end -->
+
+                <p class="text-center mt-lg" style="color: var(--text-muted);">
+                    <small>Don't have time right now? <a href="#contact" style="color: var(--accent);">Contact me directly</a> to schedule.</small>
+                </p>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <p class="section-label">Get In Touch</p>
+            <h2 class="section-title">Contact Information</h2>
+            <p class="section-description">
+                Reach out via phone, email, or use the booking system above to schedule your consultation.
+            </p>
+
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">📞</div>
+                    <h3>Phone</h3>
+                    <a href="tel:+15073837088">(507) 383-7088</a>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">✉️</div>
+                    <h3>Email</h3>
+                    <a href="mailto:jamielarsen76@gmail.com">jamielarsen76@gmail.com</a>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">📍</div>
+                    <h3>Location</h3>
+                    <p style="color: var(--text-muted);">Maple Grove, MN 55369</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Jamie Rigling. All rights reserved.</p>
+        <p style="margin-top: 0.5rem;">Minnesota Rule 114 Qualified Neutral | Licensed Family Law Mediator</p>
+        <p style="margin-top: 1rem; font-size: 0.75rem;">
+            Hosted by <a href="https://globaldeets.com" target="_blank" rel="noopener">GlobalDeets</a> | 
+            Built by <a href="https://goodflippindesign.com" target="_blank" rel="noopener">Good Flippin Design</a>
+        </p>
+    </footer>
+
+    <!-- JavaScript for UX Enhancements -->
+    <script>
+        (function () {
+            'use strict';
+
+            // Smooth scroll for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Navbar hide/show on scroll
+            let lastScroll = 0;
+            const nav = document.querySelector('.nav');
+
+            window.addEventListener('scroll', function () {
+                const currentScroll = window.pageYOffset;
+
+                if (currentScroll <= 0) {
+                    nav.style.transform = 'translateY(0)';
+                    return;
+                }
+
+                if (currentScroll > lastScroll && currentScroll > 100) {
+                    // Scrolling down
+                    nav.style.transform = 'translateY(-100%)';
+                } else {
+                    // Scrolling up
+                    nav.style.transform = 'translateY(0)';
+                }
+
+                lastScroll = currentScroll;
+            });
+
+            // Add current section highlight to nav
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-links a');
+
+            window.addEventListener('scroll', function () {
+                let current = '';
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= (sectionTop - 200)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.style.color = 'var(--text-muted)';
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.style.color = 'var(--accent)';
+                    }
+                });
+            });
+
+            // Log successful page load
+            console.log('Jamie Rigling Mediation website loaded successfully');
+            console.log('Contact: jamielarsen76@gmail.com | (507) 383-7088');
+        })();
+    </script>
+</body>
+
+</html>
