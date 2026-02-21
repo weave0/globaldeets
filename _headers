@@ -1,0 +1,16 @@
+# Cloudflare Access - Password Protection for GlobalDeets
+# Note: This requires configuring Cloudflare Access in the dashboard
+# For password "Moose", you'll need to set this up at:
+# https://dash.cloudflare.com → Zero Trust → Access → Applications
+
+/* 
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# Mediation subdomain - no password protection
+/mediation/*
+  X-Frame-Options: SAMEORIGIN
+  X-Robots-Tag: index, follow
