@@ -1,16 +1,14 @@
-# Cloudflare Access - Password Protection for GlobalDeets
-# Note: This requires configuring Cloudflare Access in the dashboard
-# For password "Moose", you'll need to set this up at:
-# https://dash.cloudflare.com → Zero Trust → Access → Applications
+# Security headers for GlobalDeets
 
-/* 
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://*.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
-  X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
 
-# Mediation subdomain - no password protection
+# Mediation subdomain pages can be embedded in same-origin admin surfaces
 /mediation/*
   X-Frame-Options: SAMEORIGIN
   X-Robots-Tag: index, follow
