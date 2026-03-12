@@ -94,32 +94,38 @@ Two domains are registered for this project. The primary is on Cloudflare; the s
 
 ---
 
-## 6. Deployment — What Still Needs to Happen
+## 6. Deployment — Current Status and Remaining Steps
 
-The site is built but not yet deployed. DNS is not pointed. Follow these steps in order.
+### What's been done (March 12, 2026)
 
-### Step 1 — Push assets to GitHub
+Three commits pushed to `weave0/globaldeets` main branch:
 
-The `/mediation/` folder in `weave0/globaldeets` has the old 24KB version. Current build on disk is 48KB. Commit needed:
+1. **`791e536`** — Full site rebuild (index.html 48KB + JR Logo.jpg + HANDOFF.md)
+2. **`af38f8f`** — CSP fix for `/mediation/*` allowing Calendly embed + Google Fonts
+3. **`b6a4ec9`** — Middleware fix: `context.env.ASSETS.fetch()` instead of external `fetch()` to serve mediation subdomain content from Pages static assets
 
-- `mediation/index.html` (updated)
-- `mediation/JR Logo.jpg` (binary asset)
+### Current 404 Issue
 
-### Step 2 — Create a Cloudflare Pages project
+`mediation.globaldeets.com` DNS resolves correctly (Cloudflare proxy IPs `172.67.180.251`, `104.21.96.130`) but returns **HTTP 404**. The middleware fix above may resolve it after the next Cloudflare Pages deployment completes.
 
-In the Cloudflare dashboard (weave0 account):
+**Diagnosis checklist for GFD:**
 
-1. **Pages → Create a project → Connect to Git → weave0/globaldeets**
-2. Build settings — Framework preset: **None**, Build command: *(leave blank)*, Output directory: `mediation`
-3. Deploy. Cloudflare issues a `*.pages.dev` preview URL immediately.
+1. In Cloudflare Pages dashboard → `globaldeets` project → check **Deployments** tab. Is the latest deployment from commit `b6a4ec9`? If not, trigger a manual deployment.
+2. If deploy is current but still 404: open **Functions** tab → verify `functions/_middleware.js` is listed as a function.
+3. Test `globaldeets.com/mediation/index.html` directly (after authenticating with site password) to confirm the static file exists in the deployment.
+4. If the Asset fetch pattern doesn't work in this Pages version, revert middleware to `return await context.next()` after injecting a rewrite via `context.request` — see Cloudflare Pages Functions v2 docs.
 
-### Step 3 — Attach the custom domain
+### Next steps — minnesotapeace.com
+
+Once `mediation.globaldeets.com` is serving correctly as a staging URL:
+
+### Attach the custom domain
 
 In the Pages project → **Custom domains → Add domain → `minnesotapeace.com`**
 
 Cloudflare will auto-configure DNS since the domain is registered in the same Cloudflare account.
 
-### Step 4 — Set the 301 redirect for old domain
+### Set the 301 redirect for old domain
 
 In Cloudflare → **Rules → Redirect Rules**, add a bulk redirect:
 
@@ -182,10 +188,12 @@ Type:   301 Permanent
 
 | Priority | Item | Notes |
 | --- | --- | --- |
-| 🔴 High | Deploy to Cloudflare Pages | Blocking everything else |
-| 🔴 High | Point `minnesotapeace.com` DNS | After Pages project is created |
-| 🔴 High | Enable auto-renew on `minnesotapeace.com` | Expires March 2027 |
-| 🟡 Med | Push updated `index.html` + logo to GitHub | `/mediation/` folder, main branch |
+| 🔴 High | Resolve `mediation.globaldeets.com` 404 | See Section 6 diagnosis checklist — middleware + deploy verification |
+| 🔴 High | Point `minnesotapeace.com` to Pages project | Custom domain in Cloudflare Pages dashboard |
+| 🔴 High | Enable auto-renew on `minnesotapeace.com` | Expires March 2027 — Cloudflare Domain Registration settings |
+| ✅ Done | Push updated `index.html` + logo to GitHub | Commits `791e536`, `af38f8f`, `b6a4ec9` on March 12, 2026 |
+| ✅ Done | CSP rules for Calendly + Google Fonts | `/mediation/*` override in `_headers` |
+| ✅ Done | Middleware fix for subdomain routing | `ASSETS.fetch()` in `functions/_middleware.js` |
 | 🟡 Med | Set 301 redirect `mnfamilymediation.com` → primary | Cloudflare Redirect Rules |
 | 🟡 Med | Replace phone when Google Voice approved | Update `#contact` section and `tel:` href |
 | 🟡 Med | Replace Gmail with professional email | Free via Cloudflare Email Routing |
