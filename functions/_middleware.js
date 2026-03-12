@@ -150,8 +150,8 @@ async function routeSubdomain(context) {
       url.pathname = "/mediation" + url.pathname;
     }
 
-    // Fetch the rewritten URL
-    return await fetch(new Request(url, request));
+    // Serve from static assets (not external fetch, which loops through Cloudflare)
+    return await context.env.ASSETS.fetch(new Request(url, request));
   }
 
   return await context.next();
