@@ -11,6 +11,19 @@
 
         gtag('config', 'G-WM6Q66W9W0');
     </script>
+    <!-- Error monitoring -->
+    <script>
+        window.onerror = function(msg, src, line, col, err) {
+            if (typeof gtag === 'function') {
+                gtag('event', 'js_error', { event_category: 'JavaScript', event_label: (src||'') + ':' + line, description: msg });
+            }
+        };
+        window.addEventListener('unhandledrejection', function(e) {
+            if (typeof gtag === 'function') {
+                gtag('event', 'js_error', { event_category: 'Promise', event_label: 'unhandledrejection', description: String(e.reason) });
+            }
+        });
+    </script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

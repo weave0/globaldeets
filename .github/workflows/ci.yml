@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files exist
+        run: |
+          echo "Checking required files..."
+          test -f index.html     || (echo "MISSING: index.html" && exit 1)
+          test -f _headers       || (echo "MISSING: _headers" && exit 1)
+          echo "All required files present."
+
+      - name: Verify GA4 tag present
+        run: |
+          echo "Checking for GA4..."
+          grep -q "G-WM6Q66W9W0" index.html || (echo "MISSING: GA4 tag" && exit 1)
+          echo "GA4 tag confirmed."
+
+      - name: Verify HSTS header present
+        run: |
+          echo "Checking for HSTS..."
+          grep -q "Strict-Transport-Security" _headers || (echo "MISSING: HSTS in _headers" && exit 1)
+          echo "HSTS confirmed."
+
+      - name: Verify error monitoring present
+        run: |
+          echo "Checking for onerror..."
+          grep -q "window.onerror" index.html || (echo "MISSING: window.onerror" && exit 1)
+          echo "Error monitoring confirmed."
