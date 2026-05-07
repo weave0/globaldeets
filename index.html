@@ -1,519 +1,916 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WM6Q66W9W0"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
 
-        gtag('config', 'G-WM6Q66W9W0');
+      gtag('config', 'G-WM6Q66W9W0');
     </script>
     <!-- Error monitoring -->
     <script>
-        window.onerror = function(msg, src, line, col, err) {
-            if (typeof gtag === 'function') {
-                gtag('event', 'js_error', { event_category: 'JavaScript', event_label: (src||'') + ':' + line, description: msg });
-            }
-        };
-        window.addEventListener('unhandledrejection', function(e) {
-            if (typeof gtag === 'function') {
-                gtag('event', 'js_error', { event_category: 'Promise', event_label: 'unhandledrejection', description: String(e.reason) });
-            }
-        });
+      window.onerror = function (msg, src, line, col, err) {
+        if (typeof gtag === 'function') {
+          gtag('event', 'js_error', {
+            event_category: 'JavaScript',
+            event_label: (src || '') + ':' + line,
+            description: msg,
+          });
+        }
+      };
+      window.addEventListener('unhandledrejection', function (e) {
+        if (typeof gtag === 'function') {
+          gtag('event', 'js_error', {
+            event_category: 'Promise',
+            event_label: 'unhandledrejection',
+            description: String(e.reason),
+          });
+        }
+      });
     </script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="GlobalDeets - Business Intelligence Ecosystem. Strategic insights across healthcare, consulting, and enterprise sectors through live data platforms. Free access to proprietary analytics.">
-    <meta name="keywords" content="business intelligence, healthcare analytics, consulting insights, data platforms, strategic research, market intelligence, DuckDB, ethical AI, globaldeets">
-    <meta name="author" content="GlobalDeets - Good Flippin Design">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="GlobalDeets - Business Intelligence & Data Platform Showcase. Strategic insights across healthcare, consulting, and enterprise sectors through live data platforms."
+    />
+    <meta
+      name="keywords"
+      content="business intelligence, healthcare analytics, consulting insights, data platforms, strategic research, market intelligence, DuckDB, ethical AI, globaldeets"
+    />
+    <meta name="author" content="GlobalDeets - Good Flippin Design" />
 
     <!-- Open Graph / Social Media -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.globaldeets.com/">
-    <meta property="og:title" content="GlobalDeets - Business Intelligence Ecosystem">
-    <meta property="og:description" content="Strategic insights across healthcare, consulting, and enterprise. Live data platforms with 433K+ records analyzed. Free access to proprietary business intelligence.">
-    <meta property="og:image" content="https://www.globaldeets.com/assets/og-image.png">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.globaldeets.com/" />
+    <meta property="og:title" content="GlobalDeets - Data Platform Showcase" />
+    <meta
+      property="og:description"
+      content="Strategic insights across healthcare, consulting, and enterprise. Live data platforms with 433K+ records analyzed."
+    />
+    <meta property="og:image" content="https://www.globaldeets.com/assets/og-image.png" />
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="GlobalDeets - Business Intelligence Ecosystem">
-    <meta name="twitter:description" content="Strategic insights across healthcare, consulting, and enterprise sectors. 433K+ records • $110B tracked • Live data platforms">
-    <meta name="twitter:image" content="https://www.globaldeets.com/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GlobalDeets - Data Platform Showcase" />
+    <meta
+      name="twitter:description"
+      content="Strategic insights across healthcare, consulting, and enterprise sectors. 433K+ records • Live data platforms"
+    />
+    <meta name="twitter:image" content="https://www.globaldeets.com/assets/og-image.png" />
 
     <!-- PWA Support -->
-    <meta name="theme-color" content="#2563eb">
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="assets/icon-192.png">
+    <meta name="theme-color" content="#2563eb" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="assets/icon-192.png" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="assets/favicon.png">
-    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
 
-    <title>GlobalDeets - Business Intelligence Ecosystem | Strategic Insights & Live Data Platforms</title>
+    <title>GlobalDeets - Data Platform Showcase | Strategic Insights & Live Analytics</title>
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- Animation Library -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="bi-ecosystem.css">
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="bi-ecosystem.css" />
 
     <!-- GFD Ecosystem Navigation -->
-    <link rel="stylesheet" href="shared/ecosystem-nav.css">
+    <link rel="stylesheet" href="shared/ecosystem-nav.css" />
 
     <!-- Password Gate -->
     <script src="auth.js"></script>
 
     <!-- JSON-LD Structured Data for Google -->
     <script type="application/ld+json">
-    {
+      {
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "GlobalDeets",
-        "alternateName": "GlobalDeets Business Intelligence Ecosystem",
+        "alternateName": "GlobalDeets Data Platform Showcase",
         "url": "https://globaldeets.com",
-        "description": "Business intelligence research ecosystem providing strategic insights across healthcare, consulting, and enterprise sectors through live data platforms. Built with ethical AI and DuckDB analytics.",
+        "description": "Business intelligence platforms providing strategic insights across healthcare, consulting, and enterprise sectors through live data platforms. Built with ethical AI and DuckDB analytics.",
         "publisher": {
-            "@type": "Organization",
-            "name": "Good Flippin Design",
-            "url": "https://goodflippindesign.com"
+          "@type": "Organization",
+          "name": "Good Flippin Design",
+          "url": "https://goodflippindesign.com"
         },
         "creator": {
-            "@type": "Person",
-            "name": "Brett Weaver",
-            "url": "https://goodflippindesign.com"
+          "@type": "Person",
+          "name": "Brett Weaver",
+          "url": "https://goodflippindesign.com"
         },
         "inLanguage": "en-US",
         "potentialAction": {
-            "@type": "SearchAction",
-            "target": {
-                "@type": "EntryPoint",
-                "urlTemplate": "https://globaldeets.com/categories.html?search={search_term_string}"
-            },
-            "query-input": "required name=search_term_string"
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://globaldeets.com/categories.html?search={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
         }
-    }
+      }
     </script>
 
     <!-- Schema: CreativeWork Portfolio -->
     <script type="application/ld+json">
-    {
+      {
         "@context": "https://schema.org",
         "@type": "ResearchProject",
-        "name": "GlobalDeets Business Intelligence Ecosystem",
-        "description": "Live business intelligence platforms providing strategic insights across healthcare, consulting, and enterprise sectors. Features 433K+ analyzed records, $110B revenue tracking, and ethical AI-powered analytics.",
+        "name": "GlobalDeets Data Platform Showcase",
+        "description": "Live business intelligence platforms providing strategic insights across healthcare, consulting, and enterprise sectors. Features 433K+ analyzed records and ethical AI-powered analytics.",
         "url": "https://globaldeets.com",
         "creator": {
-            "@type": "Person",
-            "name": "Brett Weaver",
-            "jobTitle": "Full-Stack Developer & AI Integration Specialist",
-            "url": "https://goodflippindesign.com",
-            "sameAs": "https://github.com/weave0"
+          "@type": "Person",
+          "name": "Brett Weaver",
+          "jobTitle": "Full-Stack Developer & AI Integration Specialist",
+          "url": "https://goodflippindesign.com",
+          "sameAs": "https://github.com/weave0"
         },
         "hasPart": [
-            {
-                "@type": "CreativeWork",
-                "name": "AI Aimate",
-                "description": "AI education platform with RAG-powered search",
-                "url": "https://aiaimate.com"
-            },
-            {
-                "@type": "CreativeWork",
-                "name": "CultureSherpa",
-                "description": "Interactive cultural atlas with 470+ mapped cultures",
-                "url": "https://culturesherpa.org"
-            },
-            {
-                "@type": "CreativeWork",
-                "name": "Good Flippin Vibes",
-                "description": "Community wellness platform",
-                "url": "https://goodflippinvibes.com"
-            }
+          {
+            "@type": "CreativeWork",
+            "name": "AI Aimate",
+            "description": "AI education platform with RAG-powered search",
+            "url": "https://aiaimate.com"
+          },
+          {
+            "@type": "CreativeWork",
+            "name": "CultureSherpa",
+            "description": "Interactive cultural atlas with 470+ mapped cultures",
+            "url": "https://culturesherpa.org"
+          },
+          {
+            "@type": "CreativeWork",
+            "name": "Good Flippin Vibes",
+            "description": "Community wellness platform",
+            "url": "https://goodflippinvibes.com"
+          }
         ]
-    }
+      }
     </script>
 
     <!-- Schema: BreadcrumbList -->
     <script type="application/ld+json">
-    {
+      {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
-            {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://globaldeets.com"
-            },
-            {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Categories",
-                "item": "https://globaldeets.com/categories.html"
-            },
-            {
-                "@type": "ListItem",
-                "position": 3,
-                "name": "Timeline",
-                "item": "https://globaldeets.com/timeline.html"
-            },
-            {
-                "@type": "ListItem",
-                "position": 4,
-                "name": "Analytics",
-                "item": "https://globaldeets.com/analytics.html"
-            }
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://globaldeets.com"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Categories",
+            "item": "https://globaldeets.com/categories.html"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Timeline",
+            "item": "https://globaldeets.com/timeline.html"
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "Analytics",
+            "item": "https://globaldeets.com/analytics.html"
+          }
         ]
-    }
+      }
     </script>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- GFD Ecosystem Navigation -->
     <nav class="gfd-ecosystem-nav" aria-label="Ecosystem navigation">
-        <div class="ecosystem-nav-container">
-            <div class="ecosystem-brand">
-                <img src="assets/logo-vector.png" alt="Good Flippin Design Logo" class="ecosystem-logo" />
-                <span class="ecosystem-title">GFD Ecosystem</span>
-            </div>
-            <button class="ecosystem-toggle" aria-label="Open ecosystem menu" aria-expanded="false" aria-controls="ecosystem-dropdown">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
+      <div class="ecosystem-nav-container">
+        <div class="ecosystem-brand">
+          <img src="assets/logo-vector.png" alt="Good Flippin Design Logo" class="ecosystem-logo" />
+          <span class="ecosystem-title">GFD Ecosystem</span>
+        </div>
+        <button
+          class="ecosystem-toggle"
+          aria-label="Open ecosystem menu"
+          aria-expanded="false"
+          aria-controls="ecosystem-dropdown"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="ecosystem-dropdown" id="ecosystem-dropdown" role="menu" aria-hidden="true">
+        <div class="dropdown-content">
+          <div class="nav-section">
+            <h3 class="nav-section-title">Production Platforms</h3>
+            <a
+              href="https://goodflippindesign.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="nav-icon" aria-hidden="true">
+                <img
+                  src="assets/logo-nav.png"
+                  alt="GFD"
+                  width="24"
+                  height="24"
+                  class="ecosystem-logo-nav"
+                />
+              </span>
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Good Flippin Design</strong>
+                <small class="nav-link-subtitle">Strategic Web Development</small>
+              </div>
+            </a>
+            <a
+              href="https://aiaimate.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="nav-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M12 1v6m0 6v6M1 12h6m6 0h6" />
+                  <path
+                    d="M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M19.78 4.22l-4.24 4.24m-5.08 5.08l-4.24 4.24"
+                  />
                 </svg>
-            </button>
+              </span>
+              <div class="nav-link-content">
+                <strong class="nav-link-title">AI Aimate</strong>
+                <small class="nav-link-subtitle">AI Education Platform</small>
+              </div>
+            </a>
+            <a
+              href="https://culturesherpa.org"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="nav-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path
+                    d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                  />
+                </svg>
+              </span>
+              <div class="nav-link-content">
+                <strong class="nav-link-title">CultureSherpa</strong>
+                <small class="nav-link-subtitle">Interactive Cultural Atlas</small>
+              </div>
+            </a>
+            <a
+              href="https://goodflippinvibes.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                  <path
+                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                  />
+                </svg>
+              </span>
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Good Flippin Vibes</strong>
+                <small class="nav-link-subtitle">Holistic Wellness Platform</small>
+              </div>
+            </a>
+          </div>
+          <div class="nav-section">
+            <h3 class="nav-section-title">Research & Intelligence</h3>
+            <a
+              href="https://citizenapproved.org"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="nav-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </span>
+              <div class="nav-link-content">
+                <strong class="nav-link-title">CitizenApproved</strong>
+                <small class="nav-link-subtitle">U.S. Citizenship Pathways</small>
+              </div>
+            </a>
+          </div>
         </div>
-        <div class="ecosystem-dropdown" id="ecosystem-dropdown" role="menu" aria-hidden="true">
-            <div class="dropdown-content">
-                <div class="nav-section">
-                    <h3 class="nav-section-title">Production Platforms</h3>
-                    <a href="https://goodflippindesign.com" class="nav-link" role="menuitem" target="_blank" rel="noopener">
-                        <span class="nav-icon" aria-hidden="true">
-                            <img src="assets/logo-nav.png" alt="GFD" width="24" height="24" class="ecosystem-logo-nav" />
-                        </span>
-                        <div class="nav-link-content">
-                            <strong class="nav-link-title">Good Flippin Design</strong>
-                            <small class="nav-link-subtitle">Strategic Web Development</small>
-                        </div>
-                    </a>
-                    <a href="https://aiaimate.com" class="nav-link" role="menuitem" target="_blank" rel="noopener">
-                        <span class="nav-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="3" />
-                                <path d="M12 1v6m0 6v6M1 12h6m6 0h6" />
-                                <path d="M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M19.78 4.22l-4.24 4.24m-5.08 5.08l-4.24 4.24" />
-                            </svg>
-                        </span>
-                        <div class="nav-link-content">
-                            <strong class="nav-link-title">AI Aimate</strong>
-                            <small class="nav-link-subtitle">AI Education Platform</small>
-                        </div>
-                    </a>
-                    <a href="https://culturesherpa.org" class="nav-link" role="menuitem" target="_blank" rel="noopener">
-                        <span class="nav-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                            </svg>
-                        </span>
-                        <div class="nav-link-content">
-                            <strong class="nav-link-title">CultureSherpa</strong>
-                            <small class="nav-link-subtitle">Interactive Cultural Atlas</small>
-                        </div>
-                    </a>
-                    <a href="https://goodflippinvibes.com" class="nav-link" role="menuitem" target="_blank" rel="noopener">
-                        <span class="nav-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                            </svg>
-                        </span>
-                        <div class="nav-link-content">
-                            <strong class="nav-link-title">Good Flippin Vibes</strong>
-                            <small class="nav-link-subtitle">Holistic Wellness Platform</small>
-                        </div>
-                    </a>
-                </div>
-                <div class="nav-section">
-                    <h3 class="nav-section-title">Research & Intelligence</h3>
-                    <a href="https://citizenapproved.org" class="nav-link" role="menuitem" target="_blank" rel="noopener">
-                        <span class="nav-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                            </svg>
-                        </span>
-                        <div class="nav-link-content">
-                            <strong class="nav-link-title">CitizenApproved</strong>
-                            <small class="nav-link-subtitle">U.S. Citizenship Pathways</small>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
+      </div>
     </nav>
 
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <!-- Glass Header -->
     <header>
-        <div class="container">
-            <div class="header">
-                <div class="logo">
-                    <h1>GlobalDeets</h1>
-                    <p class="tagline">Business Intelligence Ecosystem • Strategic Insights • Live Data Platforms</p>
-                </div>
-                <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
-                    <a href="index.html" class="nav-icon-btn active" title="Home" aria-current="page">
-                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
-                            <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="3" opacity="0.3" />
-                            <circle cx="50" cy="50" r="20" fill="currentColor" opacity="0.6" />
-                            <circle cx="50" cy="50" r="8" fill="currentColor" />
-                        </svg>
-                    </a>
-                    <a href="industries.html" class="nav-icon-btn" title="Industries">
-                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
-                            <rect x="15" y="15" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.3" />
-                            <rect x="55" y="15" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.3" />
-                            <rect x="15" y="55" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.3" />
-                            <rect x="55" y="55" width="30" height="30" rx="8" stroke="currentColor" stroke-width="3" fill="currentColor" opacity="0.6" />
-                        </svg>
-                    </a>
-                    <a href="methodology.html" class="nav-icon-btn" title="Methodology">
-                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
-                            <line x1="50" y1="15" x2="50" y2="85" stroke="currentColor" stroke-width="3" opacity="0.4" />
-                            <circle cx="50" cy="25" r="8" fill="currentColor" opacity="0.8" />
-                            <circle cx="50" cy="50" r="10" fill="currentColor" />
-                            <circle cx="50" cy="75" r="6" fill="currentColor" opacity="0.6" />
-                        </svg>
-                    </a>
-                    <a href="insights.html" class="nav-icon-btn" title="Insights">
-                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
-                            <rect x="15" y="60" width="15" height="25" rx="4" fill="currentColor" opacity="0.4" />
-                            <rect x="35" y="40" width="15" height="45" rx="4" fill="currentColor" opacity="0.6" />
-                            <rect x="55" y="25" width="15" height="60" rx="4" fill="currentColor" opacity="0.8" />
-                            <rect x="75" y="35" width="15" height="50" rx="4" fill="currentColor" />
-                        </svg>
-                    </a>
-                    <a href="contact.html" class="nav-icon-btn" title="Contact">
-                        <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
-                            <rect x="20" y="25" width="60" height="50" rx="8" stroke="currentColor" stroke-width="4" fill="none" opacity="0.4" />
-                            <path d="M20 35 L50 55 L80 35" stroke="currentColor" stroke-width="4" fill="none" opacity="0.8" />
-                        </svg>
-                    </a>
-                </nav>
-            </div>
+      <div class="container">
+        <div class="header">
+          <div class="logo">
+            <h1>GlobalDeets</h1>
+            <p class="tagline">Data Platform Showcase • Strategic Insights • Live Analytics</p>
+          </div>
+          <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
+            <a href="index.html" class="nav-icon-btn active" title="Home" aria-current="page">
+              <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="35"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  opacity="0.3"
+                />
+                <circle cx="50" cy="50" r="20" fill="currentColor" opacity="0.6" />
+                <circle cx="50" cy="50" r="8" fill="currentColor" />
+              </svg>
+            </a>
+            <a href="categories.html" class="nav-icon-btn" title="Categories">
+              <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                <rect
+                  x="15"
+                  y="15"
+                  width="30"
+                  height="30"
+                  rx="8"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  fill="currentColor"
+                  opacity="0.3"
+                />
+                <rect
+                  x="55"
+                  y="15"
+                  width="30"
+                  height="30"
+                  rx="8"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  fill="currentColor"
+                  opacity="0.3"
+                />
+                <rect
+                  x="15"
+                  y="55"
+                  width="30"
+                  height="30"
+                  rx="8"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  fill="currentColor"
+                  opacity="0.3"
+                />
+                <rect
+                  x="55"
+                  y="55"
+                  width="30"
+                  height="30"
+                  rx="8"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  fill="currentColor"
+                  opacity="0.6"
+                />
+              </svg>
+            </a>
+            <a href="analytics.html" class="nav-icon-btn" title="Analytics">
+              <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                <line
+                  x1="50"
+                  y1="15"
+                  x2="50"
+                  y2="85"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  opacity="0.4"
+                />
+                <circle cx="50" cy="25" r="8" fill="currentColor" opacity="0.8" />
+                <circle cx="50" cy="50" r="10" fill="currentColor" />
+                <circle cx="50" cy="75" r="6" fill="currentColor" opacity="0.6" />
+              </svg>
+            </a>
+            <a href="timeline.html" class="nav-icon-btn" title="Timeline">
+              <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                <rect
+                  x="15"
+                  y="60"
+                  width="15"
+                  height="25"
+                  rx="4"
+                  fill="currentColor"
+                  opacity="0.4"
+                />
+                <rect
+                  x="35"
+                  y="40"
+                  width="15"
+                  height="45"
+                  rx="4"
+                  fill="currentColor"
+                  opacity="0.6"
+                />
+                <rect
+                  x="55"
+                  y="25"
+                  width="15"
+                  height="60"
+                  rx="4"
+                  fill="currentColor"
+                  opacity="0.8"
+                />
+                <rect x="75" y="35" width="15" height="50" rx="4" fill="currentColor" />
+              </svg>
+            </a>
+            <a href="worldmap.html" class="nav-icon-btn" title="World Map - Live Webcams">
+              <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="35"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  opacity="0.4"
+                />
+                <path
+                  d="M15 50 Q15 20, 50 20 Q85 20, 85 50"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  opacity="0.6"
+                  fill="none"
+                />
+                <path
+                  d="M15 50 Q15 80, 50 80 Q85 80, 85 50"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  opacity="0.6"
+                  fill="none"
+                />
+                <ellipse
+                  cx="50"
+                  cy="50"
+                  rx="10"
+                  ry="35"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  opacity="0.7"
+                  fill="none"
+                />
+                <line
+                  x1="15"
+                  y1="50"
+                  x2="85"
+                  y2="50"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  opacity="0.8"
+                />
+                <circle cx="50" cy="50" r="4" fill="currentColor" />
+              </svg>
+            </a>
+            <a href="contact.html" class="nav-icon-btn" title="Contact">
+              <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+                <rect
+                  x="20"
+                  y="25"
+                  width="60"
+                  height="50"
+                  rx="8"
+                  stroke="currentColor"
+                  stroke-width="4"
+                  fill="none"
+                  opacity="0.4"
+                />
+                <path
+                  d="M20 35 L50 55 L80 35"
+                  stroke="currentColor"
+                  stroke-width="4"
+                  fill="none"
+                  opacity="0.8"
+                />
+              </svg>
+            </a>
+          </nav>
         </div>
+      </div>
     </header>
 
     <div class="container">
-        <!-- Hero Section with BI Focus -->
-        <section class="hero-section scroll-reveal">
-            <div class="hero-content">
-                <h2 class="hero-title">Strategic Intelligence. Live Data. Free Access.</h2>
-                <p class="hero-subtitle">Proprietary business intelligence platforms across healthcare, consulting, and enterprise sectors. Built with ethical AI, DuckDB analytics, and public data sources.</p>
+      <!-- Hero Section with BI Focus -->
+      <section class="hero-section scroll-reveal">
+        <div class="hero-content">
+          <h2 class="hero-title">Strategic Intelligence. Live Data. Real Platforms.</h2>
+          <p class="hero-subtitle">
+            Business intelligence platforms built across healthcare, consulting, and enterprise
+            sectors. Powered by ethical AI, DuckDB analytics, and public data sources.
+          </p>
 
-                <!-- Data Stats Ticker with Count-Up Animation -->
-                <div class="stats-grid">
-                    <div class="stat-card stat-card--purple">
-                        <div class="stat-value stat-value--purple" data-count="433000">433K+</div>
-                        <div class="stat-label">Records Analyzed</div>
-                    </div>
-                    <div class="stat-card stat-card--indigo">
-                        <div class="stat-value stat-value--indigo" data-count="110000000000">$110B+</div>
-                        <div class="stat-label">Revenue Tracked</div>
-                    </div>
-                    <div class="stat-card stat-card--blue">
-                        <div class="stat-value stat-value--blue" data-count="615000000">$615M+</div>
-                        <div class="stat-label">Pipeline Insights</div>
-                    </div>
-                    <div class="stat-card stat-card--purple">
-                        <div class="stat-value stat-value--lavender" data-count="5">5</div>
-                        <div class="stat-label">Active Platforms</div>
-                    </div>
-                </div>
+          <!-- Data Stats Ticker with Count-Up Animation -->
+          <div class="stats-grid">
+            <div class="stat-card stat-card--purple">
+              <div class="stat-value stat-value--purple" data-count="433000">433K+</div>
+              <div class="stat-label">Records Analyzed</div>
             </div>
+            <div class="stat-card stat-card--indigo">
+              <div class="stat-value stat-value--indigo" data-count="12">12</div>
+              <div class="stat-label">Live Platforms</div>
+            </div>
+            <div class="stat-card stat-card--blue">
+              <div class="stat-value stat-value--blue" data-count="7">7</div>
+              <div class="stat-label">Industry Sectors</div>
+            </div>
+            <div class="stat-card stat-card--purple">
+              <div class="stat-value stat-value--lavender" data-count="5">5</div>
+              <div class="stat-label">Active Platforms</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BI Platform Showcase -->
+      <main
+        class="main-content"
+        id="main-content"
+        role="main"
+        aria-label="Business Intelligence Platforms"
+      >
+        <!-- Featured Platform Spotlight -->
+        <section
+          class="featured-platform scroll-reveal scroll-reveal--delay-1"
+          data-platform-id="healthcare-intelligence"
+        >
+          <div class="platform-grid">
+            <div class="platform-preview">
+              <div class="live-badge">
+                <span class="live-indicator"></span>
+                Live Data
+              </div>
+              <img
+                src="assets/screenshots/kp-strategic-dashboard.png"
+                alt="Healthcare Strategic Intelligence Dashboard Preview"
+                class="platform-screenshot"
+                onerror="
+                  this.style.display = 'none';
+                  this.nextElementSibling.classList.add('visible');
+                "
+              />
+              <div class="screenshot-fallback">Dashboard Preview</div>
+            </div>
+            <div class="platform-info">
+              <div class="platform-category-badge">🏥 Healthcare Intelligence</div>
+              <h3 class="platform-title">National Healthcare Strategic Intelligence</h3>
+              <p class="platform-description">
+                433,127 IRS 990 records analyzed • Revenue and facility tracking • Multi-state
+                healthcare network mapping
+              </p>
+
+              <div class="insight-preview">
+                <div class="insight-label">Latest Insight:</div>
+                <p class="insight-text">
+                  Built entirely from public data sources (IRS 990, NPPES, ProPublica), this
+                  platform demonstrates large-scale healthcare analytics with 92% inpatient capacity
+                  utilization modeling and operational benchmarks.
+                </p>
+              </div>
+
+              <div class="platform-actions">
+                <a
+                  href="#"
+                  class="btn-launch btn-launch--disabled"
+                  title="Platform available on request"
+                >
+                  Platform Preview
+                </a>
+                <button class="btn-sample" data-platform-modal="healthcare-intelligence">
+                  View Sample Insights
+                </button>
+              </div>
+
+              <div class="platform-meta">
+                <span class="meta-badge">🔍 DuckDB Analytics</span>
+                <span class="meta-badge">🤖 Ethical AI</span>
+                <span class="meta-badge">📊 IRS 990 Public Data</span>
+                <span class="meta-badge">⚡ Real-time Queries</span>
+              </div>
+            </div>
+          </div>
         </section>
 
-        <!-- BI Platform Showcase -->
-        <main class="main-content" id="main-content" role="main" aria-label="Business Intelligence Platforms">
+        <!-- Industry Segmentation -->
+        <section class="industries-section scroll-reveal scroll-reveal--delay-2">
+          <h2 class="section-title">Strategic Intelligence By Industry</h2>
+          <p class="section-subtitle">
+            Explore live business intelligence platforms across healthcare, consulting, and
+            enterprise sectors
+          </p>
 
-            <!-- Featured Platform Spotlight -->
-            <section class="featured-platform scroll-reveal scroll-reveal--delay-1" data-platform-id="kaiser-permanente">
-                <div class="platform-grid">
-                    <div class="platform-preview">
-                        <div class="live-badge">
-                            <span class="live-indicator"></span>
-                            Live Data
-                        </div>
-                        <img src="assets/screenshots/kp-strategic-dashboard.png" alt="Healthcare Strategic Intelligence Dashboard Preview" class="platform-screenshot" onerror="this.style.display='none'; this.nextElementSibling.classList.add('visible');" />
-                        <div class="screenshot-fallback">Dashboard Preview</div>
-                    </div>
-                    <div class="platform-info">
-                        <div class="platform-category-badge">🏥 Healthcare Intelligence</div>
-                        <h3 class="platform-title">Kaiser Permanente Strategic Intelligence</h3>
-                        <p class="platform-description">433,127 IRS 990 records analyzed • $110B revenue tracked • 700+ facilities mapped across 8 states</p>
+          <div class="industry-grid">
+            <!-- Healthcare Intelligence -->
+            <article
+              class="industry-card industry-card--healthcare scroll-reveal scroll-reveal--delay-3"
+            >
+              <div class="industry-icon">🏥</div>
+              <h3 class="industry-title industry-title--healthcare">Healthcare Intelligence</h3>
+              <ul class="industry-features">
+                <li class="industry-feature">
+                  <span class="feature-check feature-check--healthcare">✓</span> 433K+ provider
+                  records
+                </li>
+                <li class="industry-feature">
+                  <span class="feature-check feature-check--healthcare">✓</span> Multi-state revenue
+                  analysis
+                </li>
+                <li class="industry-feature">
+                  <span class="feature-check feature-check--healthcare">✓</span> Facility capacity
+                  modeling
+                </li>
+                <li class="industry-feature">
+                  <span class="feature-check feature-check--healthcare">✓</span> Geographic
+                  expansion tracking
+                </li>
+              </ul>
+              <a href="#healthcare-platforms" class="industry-link industry-link--healthcare"
+                >Explore Healthcare Platforms →</a
+              >
+            </article>
 
-                        <div class="insight-preview">
-                            <div class="insight-label">Latest Insight:</div>
-                            <p class="insight-text">Kaiser Permanente leads integrated healthcare with 12.8M members across 39 hospitals and 622 medical offices. 92% inpatient capacity utilization indicates operational efficiency surpassing industry benchmarks.</p>
-                        </div>
+            <!-- Consulting Insights -->
+            <article
+              class="industry-card industry-card--consulting scroll-reveal scroll-reveal--delay-3"
+            >
+              <div class="industry-icon">💼</div>
+              <h3 class="industry-title industry-title--consulting">Consulting Insights</h3>
+              <ul class="industry-features">
+                <li class="industry-feature">
+                  <span class="feature-check feature-check--consulting">✓</span> Pipeline tracking
+                </li>
+                <li class="industry-feature">
+                  <span class="feature-check feature-check--consulting">✓</span> Competitive
+                  intelligence
+                </li>
+                <li class="industry-feature">
+                  <span class="feature-check feature-check--consulting">✓</span> Market positioning
+                  analysis
+                </li>
+                <li class="industry-feature">
+                  <span class="feature-check feature-check--consulting">✓</span> Strategic playbook
+                  development
+                </li>
+              </ul>
+              <a href="#consulting-platforms" class="industry-link industry-link--consulting"
+                >Explore Consulting Platforms →</a
+              >
+            </article>
 
-                        <div class="platform-actions">
-                            <a href="https://kp-strategic-globalization.netlify.app" target="_blank" rel="noopener" class="btn-launch">
-                                Launch Platform →
-                            </a>
-                            <button class="btn-sample" data-platform-modal="kaiser-permanente">
-                                View Sample Insights
-                            </button>
-                        </div>
+            <!-- Manufacturing & Enterprise -->
+            <article
+              class="industry-card industry-card--manufacturing scroll-reveal scroll-reveal--delay-3"
+            >
+              <div class="industry-icon">🏭</div>
+              <h3 class="industry-title industry-title--manufacturing">
+                Manufacturing Intelligence
+              </h3>
+              <ul class="industry-features">
+                <li class="industry-feature">
+                  <span class="feature-check feature-check--manufacturing">✓</span> Supply chain
+                  mapping
+                </li>
+                <li class="industry-feature">
+                  <span class="feature-check feature-check--manufacturing">✓</span> Vendor ecosystem
+                  analysis
+                </li>
+                <li class="industry-feature">
+                  <span class="feature-check feature-check--manufacturing">✓</span> Sustainability
+                  metrics
+                </li>
+                <li class="industry-feature">
+                  <span class="feature-check feature-check--manufacturing">✓</span> Operational
+                  capacity tracking
+                </li>
+              </ul>
+              <a href="#manufacturing-platforms" class="industry-link industry-link--manufacturing"
+                >Explore Manufacturing Platforms →</a
+              >
+            </article>
+          </div>
+        </section>
 
-                        <div class="platform-meta">
-                            <span class="meta-badge">🔍 DuckDB Analytics</span>
-                            <span class="meta-badge">🤖 Ethical AI</span>
-                            <span class="meta-badge">📊 IRS 990 Public Data</span>
-                            <span class="meta-badge">⚡ Real-time Queries</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <!-- Methodology Section -->
+        <section class="methodology-section scroll-reveal scroll-reveal--delay-4">
+          <h2 class="section-title">Our Approach</h2>
+          <p class="section-subtitle">
+            Transparent methodology, ethical AI, and commitment to open access
+          </p>
 
-            <!-- Industry Segmentation -->
-            <section class="industries-section scroll-reveal scroll-reveal--delay-2">
-                <h2 class="section-title">Strategic Intelligence By Industry</h2>
-                <p class="section-subtitle">Explore live business intelligence platforms across healthcare, consulting, and enterprise sectors</p>
-
-                <div class="industry-grid">
-
-                    <!-- Healthcare Intelligence -->
-                    <article class="industry-card industry-card--healthcare scroll-reveal scroll-reveal--delay-3">
-                        <div class="industry-icon">🏥</div>
-                        <h3 class="industry-title industry-title--healthcare">Healthcare Intelligence</h3>
-                        <ul class="industry-features">
-                            <li class="industry-feature"><span class="feature-check feature-check--healthcare">✓</span> 433K+ provider records</li>
-                            <li class="industry-feature"><span class="feature-check feature-check--healthcare">✓</span> $110B revenue analysis</li>
-                            <li class="industry-feature"><span class="feature-check feature-check--healthcare">✓</span> Facility capacity modeling</li>
-                            <li class="industry-feature"><span class="feature-check feature-check--healthcare">✓</span> Geographic expansion tracking</li>
-                        </ul>
-                        <a href="#healthcare-platforms" class="industry-link industry-link--healthcare">Explore Healthcare Platforms →</a>
-                    </article>
-
-                    <!-- Consulting Insights -->
-                    <article class="industry-card industry-card--consulting scroll-reveal scroll-reveal--delay-3">
-                        <div class="industry-icon">💼</div>
-                        <h3 class="industry-title industry-title--consulting">Consulting Insights</h3>
-                        <ul class="industry-features">
-                            <li class="industry-feature"><span class="feature-check feature-check--consulting">✓</span> $615M+ pipeline tracking</li>
-                            <li class="industry-feature"><span class="feature-check feature-check--consulting">✓</span> Competitive intelligence</li>
-                            <li class="industry-feature"><span class="feature-check feature-check--consulting">✓</span> Market positioning analysis</li>
-                            <li class="industry-feature"><span class="feature-check feature-check--consulting">✓</span> Strategic playbook development</li>
-                        </ul>
-                        <a href="#consulting-platforms" class="industry-link industry-link--consulting">Explore Consulting Platforms →</a>
-                    </article>
-
-                    <!-- Manufacturing & Enterprise -->
-                    <article class="industry-card industry-card--manufacturing scroll-reveal scroll-reveal--delay-3">
-                        <div class="industry-icon">🏭</div>
-                        <h3 class="industry-title industry-title--manufacturing">Manufacturing Intelligence</h3>
-                        <ul class="industry-features">
-                            <li class="industry-feature"><span class="feature-check feature-check--manufacturing">✓</span> Supply chain mapping</li>
-                            <li class="industry-feature"><span class="feature-check feature-check--manufacturing">✓</span> Vendor ecosystem analysis</li>
-                            <li class="industry-feature"><span class="feature-check feature-check--manufacturing">✓</span> Sustainability metrics</li>
-                            <li class="industry-feature"><span class="feature-check feature-check--manufacturing">✓</span> Operational capacity tracking</li>
-                        </ul>
-                        <a href="#manufacturing-platforms" class="industry-link industry-link--manufacturing">Explore Manufacturing Platforms →</a>
-                    </article>
-
-                </div>
-            </section>
-
-            <!-- Methodology Section -->
-            <section class="methodology-section scroll-reveal scroll-reveal--delay-4">
-                <h2 class="section-title">Our Approach</h2>
-                <p class="section-subtitle">Transparent methodology, ethical AI, and commitment to open access</p>
-
-                <div class="methodology-grid">
-
-                    <div class="method-item">
-                        <div class="method-icon">📊</div>
-                        <h4 class="method-title">Public Data Sources</h4>
-                        <p class="method-description">IRS 990 filings, SEC records, government databases, and publicly available datasets</p>
-                    </div>
-
-                    <div class="method-item">
-                        <div class="method-icon">🤖</div>
-                        <h4 class="method-title">Ethical AI</h4>
-                        <p class="method-description">Anthropic Claude, OpenAI GPT-4 with privacy guardrails and transparent usage policies</p>
-                    </div>
-
-                    <div class="method-item">
-                        <div class="method-icon">⚡</div>
-                        <h4 class="method-title">DuckDB Analytics</h4>
-                        <p class="method-description">Sub-second queries on 500K+ records, in-browser analytics with Parquet compression</p>
-                    </div>
-
-                    <div class="method-item">
-                        <div class="method-icon">🔓</div>
-                        <h4 class="method-title">Free & Open</h4>
-                        <p class="method-description">No paywalls, no registration required—just intelligence for strategic decision-makers</p>
-                    </div>
-
-                </div>
-            </section>
-
-        </main>
-
-        <!-- Premium Footer -->
-        <footer class="footer" role="contentinfo">
-            <p>© 2026 GlobalDeets · Business Intelligence Research Ecosystem</p>
-            <div class="footer-links" aria-label="Footer navigation">
-                <a href="methodology.html" aria-label="View our methodology">Methodology</a>
-                <a href="insights.html" aria-label="Read insights blog">Insights</a>
-                <a href="contact.html" aria-label="Contact us">Contact</a>
-                <a href="https://goodflippindesign.com/contact" target="_blank" rel="noopener" aria-label="Need custom intelligence platform?" class="footer-cta-link">Need Custom BI? →</a>
+          <div class="methodology-grid">
+            <div class="method-item">
+              <div class="method-icon">📊</div>
+              <h4 class="method-title">Public Data Sources</h4>
+              <p class="method-description">
+                IRS 990 filings, SEC records, government databases, and publicly available datasets
+              </p>
             </div>
-        </footer>
+
+            <div class="method-item">
+              <div class="method-icon">🤖</div>
+              <h4 class="method-title">Ethical AI</h4>
+              <p class="method-description">
+                Anthropic Claude, OpenAI GPT-4 with privacy guardrails and transparent usage
+                policies
+              </p>
+            </div>
+
+            <div class="method-item">
+              <div class="method-icon">⚡</div>
+              <h4 class="method-title">DuckDB Analytics</h4>
+              <p class="method-description">
+                Sub-second queries on 500K+ records, in-browser analytics with Parquet compression
+              </p>
+            </div>
+
+            <div class="method-item">
+              <div class="method-icon">🔓</div>
+              <h4 class="method-title">Transparent Sourcing</h4>
+              <p class="method-description">
+                All platforms built on publicly available data with transparent methodology and
+                ethical practices
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Premium Footer -->
+      <footer class="footer" role="contentinfo">
+        <p>© 2026 GlobalDeets · Data Platform Showcase</p>
+        <div class="footer-links" aria-label="Footer navigation">
+          <a href="categories.html" aria-label="Browse categories">Categories</a>
+          <a href="timeline.html" aria-label="View project timeline">Timeline</a>
+          <a href="contact.html" aria-label="Contact us">Contact</a>
+          <a
+            href="https://goodflippindesign.com"
+            target="_blank"
+            rel="noopener"
+            aria-label="Visit Good Flippin Design"
+            class="footer-cta-link"
+            >Built by GFD →</a
+          >
+        </div>
+      </footer>
     </div>
 
     <!-- Loading Indicator -->
     <div id="loadingIndicator" class="loading-indicator">
-        <div class="spinner"></div>
+      <div class="spinner"></div>
     </div>
 
     <!-- Ecosystem Footer Attribution -->
     <footer class="ecosystem-footer">
-        <div class="ecosystem-footer-container">
-            <div class="ecosystem-footer-section">
-                <p class="ecosystem-tagline">Part of the GFD Ecosystem</p>
-                <div class="ecosystem-links">
-                    <a href="https://goodflippindesign.com" target="_blank" rel="noopener" class="ecosystem-link">🎨 Good Flippin Design</a>
-                    <a href="https://aiaimate.com" target="_blank" rel="noopener" class="ecosystem-link">🧠 AI Aimate</a>
-                    <a href="https://culturesherpa.org" target="_blank" rel="noopener" class="ecosystem-link">🌍 CultureSherpa</a>
-                    <a href="https://goodflippinvibes.com" target="_blank" rel="noopener" class="ecosystem-link">✨ Good Flippin Vibes</a>
-                </div>
-            </div>
-            <div class="ecosystem-footer-details">
-                <p class="ecosystem-description">These intelligence platforms are built by <a href="https://goodflippindesign.com" target="_blank" rel="noopener" class="ecosystem-gfd-link">Good Flippin Design</a> — Web development consultancy specializing in data platforms, business intelligence, and AI integration.</p>
-                <p><a href="https://goodflippindesign.com/contact" target="_blank" rel="noopener" class="ecosystem-cta-button">Need a Custom Intelligence Platform? →</a></p>
-                <p><a href="https://goodflippindesign.com/donate.html" target="_blank" rel="noopener" class="ecosystem-donate-link">❤️ Support the GFD Ecosystem</a></p>
-                <p class="ecosystem-copyright">© 2026 GFV LLC • Strategic Web Development & Business Intelligence</p>
-            </div>
+      <div class="ecosystem-footer-container">
+        <div class="ecosystem-footer-section">
+          <p class="ecosystem-tagline">Part of the GFD Ecosystem</p>
+          <div class="ecosystem-links">
+            <a
+              href="https://goodflippindesign.com"
+              target="_blank"
+              rel="noopener"
+              class="ecosystem-link"
+              >🎨 Good Flippin Design</a
+            >
+            <a href="https://aiaimate.com" target="_blank" rel="noopener" class="ecosystem-link"
+              >🧠 AI Aimate</a
+            >
+            <a
+              href="https://culturesherpa.org"
+              target="_blank"
+              rel="noopener"
+              class="ecosystem-link"
+              >🌍 CultureSherpa</a
+            >
+            <a
+              href="https://goodflippinvibes.com"
+              target="_blank"
+              rel="noopener"
+              class="ecosystem-link"
+              >✨ Good Flippin Vibes</a
+            >
+          </div>
         </div>
+        <div class="ecosystem-footer-details">
+          <p class="ecosystem-description">
+            These platforms are built by
+            <a
+              href="https://goodflippindesign.com"
+              target="_blank"
+              rel="noopener"
+              class="ecosystem-gfd-link"
+              >Good Flippin Design</a
+            >
+            — Web development consultancy specializing in data platforms, business intelligence, and
+            AI integration.
+          </p>
+          <p>
+            <a
+              href="https://goodflippindesign.com"
+              target="_blank"
+              rel="noopener"
+              class="ecosystem-cta-button"
+              >Visit Good Flippin Design →</a
+            >
+          </p>
+          <p>
+            <a
+              href="https://goodflippindesign.com/donate.html"
+              target="_blank"
+              rel="noopener"
+              class="ecosystem-donate-link"
+              >❤️ Support the GFD Ecosystem</a
+            >
+          </p>
+          <p class="ecosystem-copyright">
+            © 2026 GFV LLC • Strategic Web Development & Business Intelligence
+          </p>
+        </div>
+      </div>
     </footer>
 
     <!-- Scroll to Top Button -->
     <button id="scrollToTop" class="scroll-to-top" aria-label="Scroll to top">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="19" x2="12" y2="5" />
-            <polyline points="5 12 12 5 19 12" />
-        </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="12" y1="19" x2="12" y2="5" />
+        <polyline points="5 12 12 5 19 12" />
+      </svg>
     </button>
 
     <!-- Toast Notification -->
@@ -521,25 +918,32 @@
 
     <!-- PWA Install Banner -->
     <div id="installBanner" class="install-banner hidden">
-        <div class="install-content">
-            <strong>📲 Install GlobalDeets</strong>
-            <p>Get quick access from your home screen</p>
-        </div>
-        <div class="install-actions">
-            <button id="installPWA" class="view-details">Install</button>
-            <button id="dismissInstall" class="view-details install-dismiss">Later</button>
-        </div>
+      <div class="install-content">
+        <strong>📲 Install GlobalDeets</strong>
+        <p>Get quick access from your home screen</p>
+      </div>
+      <div class="install-actions">
+        <button id="installPWA" class="view-details">Install</button>
+        <button id="dismissInstall" class="view-details install-dismiss">Later</button>
+      </div>
     </div>
 
     <!-- Project Detail Modal -->
-    <div id="projectModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalHeading" aria-describedby="modalBody">
-        <div class="modal-content" tabindex="-1">
-            <button class="close" type="button" aria-label="Close dialog">&times;</button>
-            <h2 id="modalHeading" class="visually-hidden">Project Details</h2>
-            <div id="modalBody">
-                <!-- Modal content will be dynamically inserted -->
-            </div>
+    <div
+      id="projectModal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modalHeading"
+      aria-describedby="modalBody"
+    >
+      <div class="modal-content" tabindex="-1">
+        <button class="close" type="button" aria-label="Close dialog">&times;</button>
+        <h2 id="modalHeading" class="visually-hidden">Project Details</h2>
+        <div id="modalBody">
+          <!-- Modal content will be dynamically inserted -->
         </div>
+      </div>
     </div>
 
     <script src="projects-data.js"></script>
@@ -551,13 +955,14 @@
     <script src="ux-animations.js"></script>
     <script src="platform-modal.js"></script>
     <script>
-        // Service worker registration (progressive enhancement)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js').catch(err => console.warn('SW registration failed', err));
-            });
-        }
+      // Service worker registration (progressive enhancement)
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('service-worker.js')
+            .catch(err => console.warn('SW registration failed', err));
+        });
+      }
     </script>
-</body>
-
+  </body>
 </html>

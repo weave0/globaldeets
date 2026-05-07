@@ -10,86 +10,94 @@ const loadingIndicator = document.getElementById('loadingIndicator');
 
 // Debounce helper
 function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func(...args), wait);
-    };
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
 }
 
 // Show/hide loading
-function showLoading() { loadingIndicator.classList.add('active'); }
-function hideLoading() { loadingIndicator.classList.remove('active'); }
+function showLoading() {
+  loadingIndicator.classList.add('active');
+}
+function hideLoading() {
+  loadingIndicator.classList.remove('active');
+}
 
 // Check performance
 function checkPerformance() {
-    if (projects.length > 50) {
-        showLoading();
-        setTimeout(hideLoading, 300);
-    }
+  if (projects.length > 50) {
+    showLoading();
+    setTimeout(hideLoading, 300);
+  }
 }
 
 // Export projects
 function exportProjectsList() {
-    const filtered = projects; // Could use window.filteredProjects if modules expose it
-    const blob = new Blob([JSON.stringify(filtered, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `globaldeets-projects-${new Date().toISOString().split('T')[0]}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-    if (window.showToast) window.showToast('Projects exported successfully!', 'success');
+  const filtered = projects; // Could use window.filteredProjects if modules expose it
+  const blob = new Blob([JSON.stringify(filtered, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `globaldeets-projects-${new Date().toISOString().split('T')[0]}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+  if (window.showToast) window.showToast('Projects exported successfully!', 'success');
 }
 
 // Attach listeners
 function attachEventListeners() {
-    if (searchInput && window.filterProjects) {
-        searchInput.addEventListener('input', debounce(window.filterProjects, 300));
-    }
-    if (filterCategory && window.filterProjects) {
-        filterCategory.addEventListener('change', window.filterProjects);
-    }
-    if (filterStatus && window.filterProjects) {
-        filterStatus.addEventListener('change', window.filterProjects);
-    }
-    if (addProjectBtn) {
-        addProjectBtn.addEventListener('click', e => {
-            e.preventDefault();
-            if (window.showToast) window.showToast('To add a new project, edit the projects-data.js file and add a new entry to the projects array.', 'info');
-        });
-    }
-    if (exportBtn) {
-        exportBtn.addEventListener('click', e => {
-            e.preventDefault();
-            exportProjectsList();
-        });
-    }
+  if (searchInput && window.filterProjects) {
+    searchInput.addEventListener('input', debounce(window.filterProjects, 300));
+  }
+  if (filterCategory && window.filterProjects) {
+    filterCategory.addEventListener('change', window.filterProjects);
+  }
+  if (filterStatus && window.filterProjects) {
+    filterStatus.addEventListener('change', window.filterProjects);
+  }
+  if (addProjectBtn) {
+    addProjectBtn.addEventListener('click', e => {
+      e.preventDefault();
+      if (window.showToast)
+        window.showToast(
+          'To add a new project, edit the projects-data.js file and add a new entry to the projects array.',
+          'info'
+        );
+    });
+  }
+  if (exportBtn) {
+    exportBtn.addEventListener('click', e => {
+      e.preventDefault();
+      exportProjectsList();
+    });
+  }
 }
 
 // Header scroll effect
 let lastScroll = 0;
 window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    const header = document.querySelector('header');
-    if (header) {
-        if (currentScroll > 100) header.classList.add('scrolled');
-        else header.classList.remove('scrolled');
-    }
-    lastScroll = currentScroll;
+  const currentScroll = window.pageYOffset;
+  const header = document.querySelector('header');
+  if (header) {
+    if (currentScroll > 100) header.classList.add('scrolled');
+    else header.classList.remove('scrolled');
+  }
+  lastScroll = currentScroll;
 });
 
 // Initialize
 function init() {
-    if (window.renderProjects) window.renderProjects(projects);
-    if (window.updateStats) window.updateStats(projects);
-    attachEventListeners();
-    checkPerformance();
-    // UI effects module will auto-init when available
+  if (window.renderProjects) window.renderProjects(projects);
+  if (window.updateStats) window.updateStats(projects);
+  attachEventListeners();
+  checkPerformance();
+  // UI effects module will auto-init when available
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', init);
 } else {
-    init();
+  init();
 }

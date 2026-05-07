@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WM6Q66W9W0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-WM6Q66W9W0');
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="GlobalDeets World Map - Explore the world through live webcam feeds. Interactive 3D globe with geolocated livestreams from every corner of Earth."
+    />
+    <meta
+      name="keywords"
+      content="world map, live webcams, global livestreams, 3D globe, earth viewer, webcam locations"
+    />
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.globaldeets.com/worldmap.html" />
+    <meta property="og:title" content="GlobalDeets World Map - Live Global Webcams" />
+    <meta
+      property="og:description"
+      content="Explore Earth through thousands of live webcam feeds. Interactive 3D globe with geolocated livestreams."
+    />
+    <meta property="og:image" content="https://www.globaldeets.com/assets/og-image.png" />
+
+    <!-- PWA Support -->
+    <meta name="theme-color" content="#2563eb" />
+    <link rel="manifest" href="manifest.json" />
+
+    <title>GlobalDeets World Map - Live Global Webcams</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Cesium for 3D Globe -->
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Cesium.js"></script>
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="worldmap.css" />
+    <link rel="stylesheet" href="shared/ecosystem-nav.css" />
+  </head>
+  <body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- GFD Ecosystem Navigation -->
+    <nav class="ecosystem-nav" role="navigation" aria-label="Ecosystem navigation">
+      <div class="ecosystem-nav-container">
+        <button class="ecosystem-toggle" aria-label="Toggle ecosystem menu" aria-expanded="false">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path
+              d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+            />
+          </svg>
+          <span class="ecosystem-label">GFD Ecosystem</span>
+        </button>
+        <div class="ecosystem-dropdown" role="menu"></div>
+      </div>
+    </nav>
+
+    <!-- Main Navigation -->
+    <header class="world-header">
+      <nav class="world-nav">
+        <a href="index.html" class="nav-home">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          Home
+        </a>
+        <h1 class="world-title">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path
+              d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+            />
+          </svg>
+          World Map - Live Webcams
+        </h1>
+        <div class="nav-controls">
+          <button
+            id="view-toggle"
+            class="control-btn"
+            title="Toggle 2D/3D view"
+            aria-label="Toggle between 2D and 3D view"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polygon points="12 2 2 7 12 12 22 7 12 2" />
+              <polyline points="2 17 12 22 22 17" />
+              <polyline points="2 12 12 17 22 12" />
+            </svg>
+            <span id="view-mode-text">3D</span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="world-main">
+      <!-- Control Panel -->
+      <aside class="control-panel">
+        <div class="panel-header">
+          <h2>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            Explore Webcams
+          </h2>
+          <button id="panel-toggle" class="panel-toggle-btn" aria-label="Toggle control panel">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M11 4h10M4 4h3M11 12h10M4 12h3M11 20h10M4 20h3" />
+              <circle cx="7" cy="4" r="3" />
+              <circle cx="7" cy="12" r="3" />
+              <circle cx="7" cy="20" r="3" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="panel-content">
+          <!-- Search -->
+          <div class="search-box">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            <input
+              type="text"
+              id="location-search"
+              placeholder="Search location or webcam..."
+              aria-label="Search for location or webcam"
+            />
+          </div>
+
+          <!-- Filters -->
+          <div class="filter-section">
+            <h3>Filter by Region</h3>
+            <select id="region-filter" aria-label="Filter by region">
+              <option value="all">All Regions</option>
+              <option value="africa">Africa</option>
+              <option value="asia">Asia</option>
+              <option value="europe">Europe</option>
+              <option value="north-america">North America</option>
+              <option value="south-america">South America</option>
+              <option value="oceania">Oceania</option>
+              <option value="antarctica">Antarctica</option>
+            </select>
+          </div>
+
+          <div class="filter-section">
+            <h3>Category</h3>
+            <select id="category-filter" aria-label="Filter by category">
+              <option value="all">All Categories</option>
+              <option value="city">Cities</option>
+              <option value="nature">Nature</option>
+              <option value="beach">Beaches</option>
+              <option value="mountain">Mountains</option>
+              <option value="landmark">Landmarks</option>
+              <option value="wildlife">Wildlife</option>
+              <option value="traffic">Traffic</option>
+              <option value="weather">Weather</option>
+            </select>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-section">
+            <div class="stat-card">
+              <div class="stat-value" id="total-cams">0</div>
+              <div class="stat-label">Total Webcams</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="live-cams">0</div>
+              <div class="stat-label">Live Now</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="countries-count">0</div>
+              <div class="stat-label">Countries</div>
+            </div>
+          </div>
+
+          <!-- Featured Locations -->
+          <div class="featured-section">
+            <h3>Featured Locations</h3>
+            <div id="featured-list" class="featured-list"></div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Map Container -->
+      <div class="map-container">
+        <!-- 3D Globe View -->
+        <div
+          id="cesium-container"
+          class="globe-view active"
+          role="application"
+          aria-label="Interactive 3D globe"
+        ></div>
+
+        <!-- 2D Map View (fallback) -->
+        <div
+          id="map-2d"
+          class="map-2d-view"
+          role="application"
+          aria-label="Interactive 2D map"
+        ></div>
+
+        <!-- Loading State -->
+        <div id="loading-overlay" class="loading-overlay">
+          <div class="loading-spinner">
+            <svg
+              width="64"
+              height="64"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path
+                d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+              />
+            </svg>
+          </div>
+          <p>Loading world map...</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Webcam Modal -->
+    <div
+      id="webcam-modal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      hidden
+    >
+      <div class="modal-overlay" aria-hidden="true"></div>
+      <div class="modal-content">
+        <header class="modal-header">
+          <h2 id="modal-title" class="modal-title"></h2>
+          <button class="modal-close" aria-label="Close modal">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </header>
+        <div class="modal-body">
+          <div class="webcam-player" id="webcam-player">
+            <!-- Video/iframe will be injected here -->
+          </div>
+          <div class="webcam-info">
+            <div class="info-row">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span id="modal-location"></span>
+            </div>
+            <div class="info-row">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <span id="modal-category"></span>
+            </div>
+            <div class="info-row">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <span id="modal-timezone"></span>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <a
+              id="modal-external-link"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-primary"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+              Open in New Tab
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="shared/ecosystem-nav.js"></script>
+    <script src="worldmap-data.js"></script>
+    <script src="worldmap.js"></script>
+  </body>
+</html>

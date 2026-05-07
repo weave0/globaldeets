@@ -28,20 +28,18 @@ const CORE_ASSETS = [
   'assets/icon-384.svg',
   'assets/icon-512.svg',
   'assets/screenshot-wide.svg',
-  'assets/screenshot-mobile.svg'
+  'assets/screenshot-mobile.svg',
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_ASSETS))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_ASSETS)));
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-    ))
+    caches
+      .keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
   );
 });
 
@@ -49,19 +47,22 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const { request } = event;
   if (request.method !== 'GET') return;
-  const isNav = request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html');
+  const isNav =
+    request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html');
   event.respondWith(
-    fetch(request).then(resp => {
-      // Stale-while-revalidate style caching for GET
-      const copy = resp.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
-      return resp;
-    }).catch(() => {
-      return caches.match(request).then(cached => {
-        if (cached) return cached;
-        if (isNav) return caches.match('offline.html');
-        return caches.match('index.html');
-      });
-    })
+    fetch(request)
+      .then(resp => {
+        // Stale-while-revalidate style caching for GET
+        const copy = resp.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+        return resp;
+      })
+      .catch(() => {
+        return caches.match(request).then(cached => {
+          if (cached) return cached;
+          if (isNav) return caches.match('offline.html');
+          return caches.match('index.html');
+        });
+      })
   );
 });

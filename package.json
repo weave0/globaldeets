@@ -1,31 +1,34 @@
 {
   "name": "globaldeets-landing",
   "version": "1.0.0",
-  "description": "GlobalDeets project hub and landing page",
+  "description": "GlobalDeets - Business intelligence and data platform showcase",
   "main": "index.html",
   "scripts": {
-    "dev": "npx live-server --port=5500 --open=index.html",
-    "format": "npx prettier --write \"**/*.{html,css,js,json}\"",
-    "lint": "npx eslint \"**/*.js\"",
-    "lint:fix": "npx eslint \"**/*.js\" --fix",
-    "build": "npm run format && npm run lint:fix",
+    "dev": "vite --port 5500 --open",
+    "format": "prettier --write \"**/*.{html,css,js,json}\"",
+    "lint": "eslint \"**/*.js\"",
+    "lint:fix": "eslint \"**/*.js\" --fix",
+    "build": "npm run format",
     "deploy": "echo 'Ready to deploy to www.globaldeets.com'",
     "start": "npm run dev",
     "generate-icons": "node generate-icons.js"
   },
   "keywords": [
-    "landing-page",
-    "portfolio",
-    "project-hub"
+    "business-intelligence",
+    "data-platforms",
+    "analytics"
   ],
   "author": "GlobalDeets",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^8.57.1",
-    "live-server": "^1.2.2",
-    "prettier": "^3.6.2"
+    "eslint": "^10.3.0",
+    "prettier": "^3.8.3",
+    "vite": "^8.0.11"
   },
   "optionalDependencies": {
-    "sharp": "^0.33.0"
+    "sharp": "^0.34.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }

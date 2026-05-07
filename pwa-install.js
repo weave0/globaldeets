@@ -2,18 +2,18 @@
 // Enhances user experience by prompting to install the app
 // Tracks install events and provides UI feedback
 
-(function() {
+(function () {
   let deferredPrompt;
   const installButton = document.getElementById('installPWA');
   const installBanner = document.getElementById('installBanner');
-  
+
   // Listen for beforeinstallprompt event
-  window.addEventListener('beforeinstallprompt', (e) => {
+  window.addEventListener('beforeinstallprompt', e => {
     // Prevent Chrome 67 and earlier from automatically showing the prompt
     e.preventDefault();
     // Stash the event so it can be triggered later
     deferredPrompt = e;
-    
+
     // Show install button/banner if elements exist
     if (installButton) {
       installButton.style.display = 'block';
@@ -23,7 +23,7 @@
       installBanner.classList.remove('hidden');
       installBanner.style.display = 'flex';
     }
-    
+
     console.log('⬇️ PWA install prompt available');
   });
 
@@ -34,14 +34,14 @@
         console.log('❌ Install prompt not available');
         return;
       }
-      
+
       // Show the install prompt
       deferredPrompt.prompt();
-      
+
       // Wait for the user to respond to the prompt
       const { outcome } = await deferredPrompt.userChoice;
       console.log(`👤 User response: ${outcome}`);
-      
+
       if (outcome === 'accepted') {
         if (window.showToast) {
           window.showToast('Installing GlobalDeets...', 'success');
@@ -51,10 +51,10 @@
           window.showToast('Install cancelled', 'info');
         }
       }
-      
+
       // Clear the deferredPrompt
       deferredPrompt = null;
-      
+
       // Hide install UI
       if (installButton) installButton.style.display = 'none';
       if (installBanner) installBanner.classList.add('hidden');
@@ -83,16 +83,16 @@
   }
 
   // Listen for app installed event
-  window.addEventListener('appinstalled', (evt) => {
+  window.addEventListener('appinstalled', evt => {
     console.log('✅ PWA installed successfully');
     if (window.showToast) {
       window.showToast('GlobalDeets installed! Launch from home screen.', 'success');
     }
-    
+
     // Hide install UI
     if (installButton) installButton.style.display = 'none';
     if (installBanner) installBanner.classList.add('hidden');
-    
+
     // Track installation (optional analytics)
     if (window.gtag) {
       gtag('event', 'pwa_install', {
@@ -104,9 +104,11 @@
 
   // Detect if running as installed PWA
   function isStandalone() {
-    return (window.matchMedia('(display-mode: standalone)').matches) || 
-           (window.navigator.standalone) || 
-           document.referrer.includes('android-app://');
+    return (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone ||
+      document.referrer.includes('android-app://')
+    );
   }
 
   if (isStandalone()) {
@@ -114,12 +116,11 @@
     // Hide install prompts when already installed
     if (installButton) installButton.style.display = 'none';
     if (installBanner) installBanner.classList.add('hidden');
-    
+
     // Add standalone class for potential styling
     document.body.classList.add('pwa-standalone');
   }
 
   // Expose utility for checking install status
   window.isPWAInstalled = isStandalone;
-
 })();

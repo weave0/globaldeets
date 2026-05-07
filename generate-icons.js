@@ -3,7 +3,7 @@
  * PNG Icon Generator for GlobalDeets PWA
  * Generates PNG icons from SVG base at all required sizes
  * Requires: node-canvas and node-rsvg for SVG→PNG conversion
- * 
+ *
  * Usage: node generate-icons.js
  */
 
@@ -14,7 +14,7 @@ const path = require('path');
 let sharp;
 try {
   sharp = require('sharp');
-} catch(e) {
+} catch (e) {
   console.warn('⚠️  sharp not found. Install with: npm install sharp');
   console.warn('   Falling back to manual conversion instructions.');
 }
@@ -59,11 +59,15 @@ async function generateIcons() {
     console.log('  4. Save as: icon-72.png, icon-96.png, etc.\n');
     console.log('Option 3 - Use Inkscape CLI:');
     sizes.forEach(size => {
-      console.log(`  inkscape -w ${size} -h ${size} assets/icon-base.svg -o assets/icon-${size}.png`);
+      console.log(
+        `  inkscape -w ${size} -h ${size} assets/icon-base.svg -o assets/icon-${size}.png`
+      );
     });
     console.log('\nOption 4 - Use ImageMagick:');
     sizes.forEach(size => {
-      console.log(`  convert -background none -size ${size}x${size} assets/icon-base.svg assets/icon-${size}.png`);
+      console.log(
+        `  convert -background none -size ${size}x${size} assets/icon-base.svg assets/icon-${size}.png`
+      );
     });
   }
 }
@@ -72,17 +76,23 @@ async function generateIcons() {
 function showScreenshotInstructions() {
   console.log('\n📸 Screenshot conversion:\n');
   console.log('For wide screenshot (1280×720):');
-  console.log('  sharp: sharp(assets/screenshot-wide.svg).resize(1280,720).toFile(assets/screenshot-wide.png)');
+  console.log(
+    '  sharp: sharp(assets/screenshot-wide.svg).resize(1280,720).toFile(assets/screenshot-wide.png)'
+  );
   console.log('  Or browser: Open assets/screenshot-wide.svg, resize to 1280×720, screenshot\n');
   console.log('For mobile screenshot (750×1334):');
-  console.log('  sharp: sharp(assets/screenshot-mobile.svg).resize(750,1334).toFile(assets/screenshot-mobile.png)');
+  console.log(
+    '  sharp: sharp(assets/screenshot-mobile.svg).resize(750,1334).toFile(assets/screenshot-mobile.png)'
+  );
   console.log('  Or browser: Open assets/screenshot-mobile.svg, resize to 750×1334, screenshot\n');
 }
 
 // Run
-generateIcons().then(() => {
-  showScreenshotInstructions();
-}).catch(err => {
-  console.error('❌ Generation failed:', err);
-  process.exit(1);
-});
+generateIcons()
+  .then(() => {
+    showScreenshotInstructions();
+  })
+  .catch(err => {
+    console.error('❌ Generation failed:', err);
+    process.exit(1);
+  });
