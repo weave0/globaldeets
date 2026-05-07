@@ -1,9 +1,6 @@
 // Cloudflare Pages Functions Middleware
 // Handles password protection, subdomain routing, and security headers
 
-// Password for main globaldeets site
-const SITE_PASSWORD = 'Moose';
-
 const BASE_SECURITY_HEADERS = {
   'Content-Security-Policy':
     "default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https: blob:; connect-src 'self' https:; font-src 'self' data: https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
@@ -159,20 +156,6 @@ async function routeSubdomain(context) {
 }
 
 export async function onRequest(context) {
-  const hostname = new URL(context.request.url).hostname;
-  const xFramePolicy = hostname.startsWith('mediation.') ? 'SAMEORIGIN' : 'DENY';
-
-  // Check password first (unless mediation subdomain)
-  const passwordResponse = await checkPassword(context.request);
-  if (passwordResponse) {
-    return applySecurityHeaders(passwordResponse, {
-      'X-Frame-Options': xFramePolicy,
-    });
-  }
-
-  // Route subdomain
-  const routedResponse = await routeSubdomain(context);
-  return applySecurityHeaders(routedResponse, {
-    'X-Frame-Options': xFramePolicy,
-  });
+  const response = await context.next();
+  return applySecurityHeaders(response);
 }

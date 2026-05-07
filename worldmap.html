@@ -47,12 +47,8 @@
       rel="stylesheet"
     />
 
-    <!-- Cesium for 3D Globe -->
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Cesium.js"></script>
-    <link
-      href="https://cesium.com/downloads/cesiumjs/releases/1.119/Build/Cesium/Widgets/widgets.css"
-      rel="stylesheet"
-    />
+    <!-- Globe.gl for 3D Globe -->
+    <script src="https://cdn.jsdelivr.net/npm/globe.gl@2/dist/globe.gl.min.js"></script>
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css" />
@@ -260,7 +256,7 @@
       <div class="map-container">
         <!-- 3D Globe View -->
         <div
-          id="cesium-container"
+          id="globe-container"
           class="globe-view active"
           role="application"
           aria-label="Interactive 3D globe"

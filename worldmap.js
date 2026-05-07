@@ -7,16 +7,15 @@
 const webcamManager = new WebcamManager(WEBCAM_DATA);
 
 // Global state
-let viewer = null;
+let world = null;
 let is3DMode = true;
 let selectedCam = null;
-let camEntities = [];
 
 /**
  * Initialize the application
  */
 function init() {
-  initCesiumGlobe();
+  initGlobe();
   initEventListeners();
   updateStats();
   renderFeaturedCams();
@@ -24,63 +23,48 @@ function init() {
 }
 
 /**
- * Initialize Cesium 3D Globe
+ * Initialize Globe.gl 3D Globe
  */
-function initCesiumGlobe() {
+function initGlobe() {
   try {
-    console.log('Initializing Cesium globe...');
+    world = Globe({ animateIn: true })(document.getElementById('globe-container'))
+      .globeImageUrl(null)
+      .backgroundColor('#000000')
+      .showAtmosphere(true)
+      .atmosphereColor('#2255ff')
+      .atmosphereAltitude(0.25)
+      .showGraticules(true);
 
-    viewer = new Cesium.Viewer('cesium-container', {
-      baseLayerPicker: false,
-      geocoder: false,
-      homeButton: true,
-      sceneModePicker: false,
-      navigationHelpButton: false,
-      animation: false,
-      timeline: false,
-      fullscreenButton: true,
-      vrButton: false,
-      infoBox: true,
-      selectionIndicator: true,
-      shadows: false,
-      shouldAnimate: true,
-      imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-        url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer',
-      }),
-    });
-
-    console.log('Cesium viewer created successfully');
-
-    // Enable lighting for realistic shadows
-    viewer.scene.globe.enableLighting = true;
-    viewer.scene.globe.showGroundAtmosphere = true;
-
-    // Reduce fog
-    viewer.scene.fog.enabled = false;
-
-    // Set initial camera position
-    viewer.camera.setView({
-      destination: Cesium.Cartesian3.fromDegrees(0, 30, 20000000),
-      orientation: {
-        heading: 0.0,
-        pitch: -Cesium.Math.PI_OVER_TWO,
-        roll: 0.0,
-      },
-    });
+    // Country hex polygons — dark navy with neon cyan on hover
+    fetch(
+      'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson'
+    )
+      .then(r => r.json())
+      .then(countries => {
+        world
+          .hexPolygonsData(countries.features)
+          .hexPolygonResolution(3)
+          .hexPolygonMargin(0.3)
+          .hexPolygonColor(() => 'rgba(26,39,68,0.7)')
+          .hexPolygonAltitude(0.005)
+          .onHexPolygonHover(hovered => {
+            world.hexPolygonColor(feat =>
+              feat === hovered ? 'rgba(0,245,255,0.6)' : 'rgba(26,39,68,0.7)'
+            );
+          });
+      });
 
     // Add webcam markers
     addWebcamMarkers();
 
-    // Handle marker clicks
-    viewer.selectedEntityChanged.addEventListener(selectedEntity => {
-      if (selectedEntity && selectedEntity.properties && selectedEntity.properties.webcamId) {
-        const camId = selectedEntity.properties.webcamId.getValue();
-        openWebcamModal(camId);
-      }
+    // Auto-rotate; pause when user drags
+    world.controls().autoRotate = true;
+    world.controls().autoRotateSpeed = 0.3;
+    world.controls().addEventListener('start', () => {
+      world.controls().autoRotate = false;
     });
   } catch (error) {
-    console.error('Error initializing Cesium:', error);
-    alert('Cesium Error: ' + error.message);
+    console.error('Globe.gl error:', error);
     showError('Failed to load 3D globe. Please try refreshing the page.');
   }
 }
@@ -89,48 +73,30 @@ function initCesiumGlobe() {
  * Add webcam markers to the globe
  */
 function addWebcamMarkers() {
-  if (!viewer) return;
+  if (!world) return;
 
-  // Clear existing entities
-  camEntities.forEach(entity => viewer.entities.remove(entity));
-  camEntities = [];
+  const camColors = {
+    city: '#06b6d4',
+    nature: '#84cc16',
+    beach: '#22d3ee',
+    mountain: '#a855f7',
+    landmark: '#c026d3',
+    wildlife: '#84cc16',
+    traffic: '#f97316',
+    weather: '#8b5cf6',
+  };
 
   const webcams = webcamManager.getFiltered();
 
-  webcams.forEach(cam => {
-    const entity = viewer.entities.add({
-      name: cam.name,
-      position: Cesium.Cartesian3.fromDegrees(cam.coordinates[1], cam.coordinates[0], 0),
-      billboard: {
-        image: createCameraIcon(cam.category),
-        show: true,
-        pixelOffset: new Cesium.Cartesian2(0, -15),
-        scale: 0.5,
-        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-      },
-      label: {
-        text: cam.name,
-        font: '14px Inter, sans-serif',
-        fillColor: Cesium.Color.WHITE,
-        outlineColor: Cesium.Color.BLACK,
-        outlineWidth: 2,
-        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-        pixelOffset: new Cesium.Cartesian2(0, 20),
-        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 10000000),
-        scaleByDistance: new Cesium.NearFarScalar(1000000, 1.0, 10000000, 0.3),
-      },
-      description: createWebcamDescription(cam),
-      properties: {
-        webcamId: cam.id,
-        location: cam.location,
-        category: cam.category,
-        isLive: cam.isLive,
-      },
-    });
-
-    camEntities.push(entity);
-  });
+  world
+    .pointsData(webcams)
+    .pointLat(d => d.coordinates[0])
+    .pointLng(d => d.coordinates[1])
+    .pointAltitude(0.02)
+    .pointRadius(0.4)
+    .pointColor(d => camColors[d.category] || '#06b6d4')
+    .pointsMerge(false)
+    .onPointClick(point => openWebcamModal(point.id));
 }
 
 /**
@@ -263,7 +229,7 @@ function handleFilters() {
 function toggleView() {
   is3DMode = !is3DMode;
   const viewModeText = document.getElementById('view-mode-text');
-  const cesiumContainer = document.getElementById('cesium-container');
+  const cesiumContainer = document.getElementById('globe-container');
   const map2d = document.getElementById('map-2d');
 
   if (is3DMode) {
@@ -425,16 +391,13 @@ function renderFeaturedCams() {
  */
 function flyToLocation(camId) {
   const cam = webcamManager.getById(camId);
-  if (!cam || !viewer) return;
+  if (!cam || !world) return;
 
-  viewer.camera.flyTo({
-    destination: Cesium.Cartesian3.fromDegrees(cam.coordinates[1], cam.coordinates[0], 5000000),
-    duration: 2,
-    complete: () => {
-      // Open modal after flight
-      setTimeout(() => openWebcamModal(camId), 500);
-    },
-  });
+  world.pointOfView(
+    { lat: cam.coordinates[0], lng: cam.coordinates[1], altitude: 0.5 },
+    1500
+  );
+  setTimeout(() => openWebcamModal(camId), 1800);
 }
 
 /**
