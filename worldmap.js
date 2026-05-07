@@ -393,10 +393,7 @@ function flyToLocation(camId) {
   const cam = webcamManager.getById(camId);
   if (!cam || !world) return;
 
-  world.pointOfView(
-    { lat: cam.coordinates[0], lng: cam.coordinates[1], altitude: 0.5 },
-    1500
-  );
+  world.pointOfView({ lat: cam.coordinates[0], lng: cam.coordinates[1], altitude: 0.5 }, 1500);
   setTimeout(() => openWebcamModal(camId), 1800);
 }
 

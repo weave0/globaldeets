@@ -21,7 +21,11 @@ const SOURCES = [
   { name: 'France 24', url: 'https://www.france24.com/en/rss', region: 'europe' },
   { name: 'NHK', url: 'https://www3.nhk.or.jp/rss/news/cat0.xml', region: 'asia' },
   { name: 'NPR', url: 'https://feeds.npr.org/1004/rss.xml', region: 'americas' },
-  { name: 'ABC Australia', url: 'https://www.abc.net.au/news/feed/51120/rss.xml', region: 'pacific' },
+  {
+    name: 'ABC Australia',
+    url: 'https://www.abc.net.au/news/feed/51120/rss.xml',
+    region: 'pacific',
+  },
 ];
 
 const CACHE_KEY = 'news_feed_v1';
@@ -46,7 +50,10 @@ export async function onRequestGet({ env, request }) {
   // Sanitize and validate query params
   const rawRegion = url.searchParams.get('region') || 'global';
   const region = VALID_REGIONS.has(rawRegion) ? rawRegion : 'global';
-  const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '30', 10) || 30, 1), 100);
+  const limit = Math.min(
+    Math.max(parseInt(url.searchParams.get('limit') || '30', 10) || 30, 1),
+    100
+  );
   const offset = Math.max(parseInt(url.searchParams.get('offset') || '0', 10) || 0, 0);
 
   // Check KV cache first
@@ -54,10 +61,9 @@ export async function onRequestGet({ env, request }) {
   if (cached) {
     const filtered = filterByRegion(cached, region);
     const page = filtered.slice(offset, offset + limit);
-    return new Response(
-      JSON.stringify({ items: page, cached: true, total: filtered.length }),
-      { headers: CORS_HEADERS }
-    );
+    return new Response(JSON.stringify({ items: page, cached: true, total: filtered.length }), {
+      headers: CORS_HEADERS,
+    });
   }
 
   // Cache miss — fetch all sources in parallel
@@ -72,10 +78,9 @@ export async function onRequestGet({ env, request }) {
 
   const filtered = filterByRegion(items, region);
   const page = filtered.slice(offset, offset + limit);
-  return new Response(
-    JSON.stringify({ items: page, cached: false, total: filtered.length }),
-    { headers: CORS_HEADERS }
-  );
+  return new Response(JSON.stringify({ items: page, cached: false, total: filtered.length }), {
+    headers: CORS_HEADERS,
+  });
 }
 
 async function fetchAllSources() {
