@@ -143,7 +143,9 @@
   border-radius: 6px;
   cursor: pointer;
   text-decoration: none;
-  transition: box-shadow 0.2s, transform 0.15s;
+  transition:
+    box-shadow 0.2s,
+    transform 0.15s;
   box-shadow: var(--glow-cyan);
 }
 
@@ -162,7 +164,9 @@
   border-radius: 6px;
   cursor: pointer;
   text-decoration: none;
-  transition: border-color 0.2s, background 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
 
 .btn-globe-secondary:hover {
@@ -182,7 +186,9 @@
   padding: 1.25rem;
   z-index: 100;
   display: none;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), var(--glow-cyan);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.6),
+    var(--glow-cyan);
 }
 
 #news-pin-overlay.visible {
@@ -242,8 +248,14 @@
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* =============================================
@@ -414,7 +426,9 @@
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  transition: border-color 0.2s, transform 0.18s;
+  transition:
+    border-color 0.2s,
+    transform 0.18s;
 }
 
 .news-card:hover {
@@ -496,7 +510,12 @@
 
 /* Skeleton loaders */
 .news-skeleton {
-  background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-elevated) 50%, var(--bg-surface) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 25%,
+    var(--bg-elevated) 50%,
+    var(--bg-surface) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
   border-radius: 12px;
@@ -504,11 +523,16 @@
 }
 
 @keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
-.news-error, .news-empty {
+.news-error,
+.news-empty {
   grid-column: 1 / -1;
   text-align: center;
   padding: 3rem;

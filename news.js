@@ -54,9 +54,7 @@
       currentOffset = 0;
       allItems = [];
 
-      tabBar
-        .querySelectorAll('.region-tab')
-        .forEach(b => b.classList.toggle('active', b === btn));
+      tabBar.querySelectorAll('.region-tab').forEach(b => b.classList.toggle('active', b === btn));
 
       loadNews(true);
     });
@@ -173,10 +171,7 @@
   // Utils
   // -------------------------------------------------------------------------
   function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
   function escapeAttr(str) {
