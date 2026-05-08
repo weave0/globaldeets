@@ -72,6 +72,65 @@
   background: #000;
 }
 
+/* ── Neon landscape cinematic band ─────────────────────────────────────────── */
+.neon-landscape-band {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  background: url('assets/neon-landscape-web.jpg') center / cover no-repeat;
+  overflow: hidden;
+}
+
+.neon-landscape-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom,
+      #000 0%,
+      rgba(0, 0, 0, 0.25) 30%,
+      rgba(0, 0, 0, 0.25) 70%,
+      #000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neon-landscape-tagline {
+  display: flex;
+  gap: 2.5rem;
+  align-items: baseline;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2rem, 6vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.nlb-word {
+  animation: nlbPulse 3s ease-in-out infinite;
+}
+
+.nlb-word:nth-child(2) { animation-delay: 0.4s; }
+.nlb-word:nth-child(3) { animation-delay: 0.8s; }
+
+.nlb-cyan   { color: #00f5ff; text-shadow: 0 0 18px #00f5ff, 0 0 40px rgba(0,245,255,.5); }
+.nlb-purple { color: #a855f7; text-shadow: 0 0 18px #a855f7, 0 0 40px rgba(168,85,247,.5); }
+.nlb-orange { color: #ff6b35; text-shadow: 0 0 18px #ff6b35, 0 0 40px rgba(255,107,53,.5); }
+
+@keyframes nlbPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.75; }
+}
+
+@media (max-width: 480px) {
+  .neon-landscape-band { height: 200px; }
+  .neon-landscape-tagline { gap: 1.2rem; }
+}
+/* ────────────────────────────────────────────────────────────────────────────── */
+
 #globe-hero-container {
   position: absolute;
   inset: 0;
@@ -776,7 +835,8 @@ header.scrolled::before {
   align-items: center;
 }
 
-.logo h1 {
+.logo h1,
+.site-logo-text {
   font-size: 2.2rem;
   font-weight: 800;
   background: linear-gradient(
@@ -825,6 +885,28 @@ header.scrolled::before {
   opacity: 0.8;
 }
 
+/* Site logo mark (GD globe image) */
+.site-logo-link {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-decoration: none;
+}
+
+.site-logo-mark {
+  height: 96px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 0 24px rgba(0, 245, 255, 0.45));
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.site-logo-link:hover .site-logo-mark {
+  filter: drop-shadow(0 0 36px rgba(0, 245, 255, 0.7));
+  transform: scale(1.04);
+}
+
 /* Navigation Icon Buttons */
 .nav-icon-btn {
   display: inline-flex;
@@ -852,7 +934,8 @@ header.scrolled::before {
   border-radius: 16px;
 }
 
-.nav-icon-btn svg {
+.nav-icon-btn svg,
+.nav-icon-btn img {
   position: relative;
   z-index: 1;
   transition: all 0.4s ease;
@@ -869,7 +952,8 @@ header.scrolled::before {
   opacity: 0.1;
 }
 
-.nav-icon-btn:hover svg {
+.nav-icon-btn:hover svg,
+.nav-icon-btn:hover img {
   filter: drop-shadow(0 0 16px currentColor);
   transform: scale(1.1);
 }
@@ -885,7 +969,8 @@ header.scrolled::before {
   opacity: 0;
 }
 
-.nav-icon-btn.active svg {
+.nav-icon-btn.active svg,
+.nav-icon-btn.active img {
   filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.6));
 }
 
