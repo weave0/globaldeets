@@ -79,7 +79,9 @@ async function buildLogoGlobe() {
     .extract({ left: 0, top: 0, width: IMG_SIZE, height: cropH })
     .png()
     .toFile(destHeader);
-  console.log('✓ assets/logo-mark.png (GD globe mark, 1254×1020, no padding — full globe, no text)');
+  console.log(
+    '✓ assets/logo-mark.png (GD globe mark, 1254×1020, no padding — full globe, no text)'
+  );
 }
 
 // ── STEP 2: PWA icon sizes ──────────────────────────────────────────────────────
@@ -115,18 +117,21 @@ async function buildBannerAndLandscape() {
 
 // ── STEP 4: Icon sheet extraction ──────────────────────────────────────────────
 // Sheet: 1402×1122, 5 columns × 9 rows (rows 1–8 standard, row 9 is taller/2-panel)
-// MEASURED row starts: row 0=0, row 1=118, rows 2-7 each add 110px + 8px initial offset
-// i.e. ROW_Y[n] = n===0 ? 0 : 8 + n*110
+// MEASURED row starts via dark-band detection (max brightness < 8 across full width)
+// Dark gaps between rows: ~y=120-158, ~y=246-283, ~y=371-409, ~y=496-534,
+//   ~y=619-653, ~y=738-773, ~y=859-896, ~y=981-1015
 
 const SHEET_W = 1402;
 const SHEET_H = 1122;
 
 const COL_W = Math.floor(SHEET_W / 5); // 280
-// Row start positions (pixel-measured: row0=118px tall, rows1-7=110px tall)
-const ROW_Y = [0, 118, 228, 338, 448, 558, 668, 778];
-const ROW_H = [118, 110, 110, 110, 110, 110, 110, 110];
-const BTM_Y = 888;  // gap starts here after row 7 (measured)
-const BTM_H = SHEET_H - BTM_Y; // 234
+// Row start positions (pixel-measured from dark-band scan)
+// Row 0: starts at 0, content ends ~y=100 (before "06. FILE" label at ~y=125)
+// Rows 1-7: start after dark gap, content ends just before next section label
+const ROW_Y = [0, 159, 284, 410, 535, 654, 774, 897];
+const ROW_H = [100, 82, 77, 75, 79, 79, 80, 78];
+const BTM_Y = 1016; // measured from dark-band scan
+const BTM_H = 91; // BTM section ends ~y=1107
 
 // Category definitions: [id, slug, label, gridRow(0-based), gridCol(0-based)]
 // Row 9 special: sections 41 & 42 split left/right
@@ -195,13 +200,15 @@ const BTM_CATEGORIES = [
 ];
 
 // Within each category block, icons are arranged in a sub-grid:
-//   Label row: ~22px from block top
-//   Icon area: y=22 to end of block, split into 2 rows
+//   Row 0: label ~22px at TOP, then 2 icon rows each ~39px
+//   Rows 1-7: label appears at bottom of PREVIOUS section (gap region), so icons start at y=0
 //   Icon columns: 5 per row (col width = COL_W / 5)
-const ICON_LABEL_H = 30; // px: label area before icons start (measured: icons at offset +30-33)
+const ICON_LABEL_H_ROW0 = 22; // row 0 only: label at top before icons
+const ICON_LABEL_H_OTHER = 0; // rows 1-7: no label at top
 const ICON_COLS = 5; // icons per row within each category
 const ICON_COL_W = Math.floor(COL_W / ICON_COLS); // ~56px
-const ICON_ROW_H = 40; // each icon sub-row height (measured: row0 at +30, row1 at +70)
+const ICON_ROW_H_ROW0 = 39; // row 0: (100-22)/2 = 39px per icon row
+const ICON_ROW_H_OTHER = 40; // rows 1-7: ~87/2 ≈ 40px per icon row
 
 // Named individual icons to extract from each section
 // Format: [outputName, sectionSlug, iconRow(0-1), iconCol(0-4)]
@@ -212,8 +219,8 @@ const SITE_ICONS = [
   ['nav-settings', 'general', 0, 2],
   ['nav-info', 'general', 0, 3],
   ['nav-help', 'general', 0, 4],
-  ['nav-calendar', 'time-date', 0, 0],
-  ['nav-clock', 'time-date', 0, 1],
+  ['nav-calendar', 'time-date', 1, 0],
+  ['nav-clock', 'time-date', 0, 0],
   ['nav-grid', 'interface', 0, 0],
   ['nav-list', 'interface', 0, 1],
   ['nav-window', 'interface', 0, 2],
@@ -221,8 +228,8 @@ const SITE_ICONS = [
   ['nav-phone', 'communication', 0, 1],
   ['nav-chat', 'communication', 0, 2],
   ['nav-map-pin', 'location-maps', 0, 0],
-  ['nav-globe', 'location-maps', 0, 1],
-  ['nav-compass', 'location-maps', 0, 2],
+  ['nav-globe', 'location-maps', 0, 3],
+  ['nav-compass', 'location-maps', 0, 4],
   ['nav-chart-bar', 'analytics-data', 0, 0],
   ['nav-chart-line', 'analytics-data', 0, 1],
   ['nav-chart-pie', 'analytics-data', 0, 2],
@@ -269,10 +276,10 @@ const SITE_ICONS = [
   ['brand-nvidia', 'brands-tech', 1, 2],
   // ── Travel ──
   ['travel-plane', 'travel-transport', 0, 0],
-  ['travel-globe', 'travel-transport', 0, 1],
-  ['travel-car', 'travel-transport', 0, 2],
-  ['travel-ship', 'travel-transport', 0, 3],
-  ['travel-train', 'travel-transport', 0, 4],
+  ['travel-train', 'travel-transport', 0, 1],
+  ['travel-bus', 'travel-transport', 0, 2],
+  ['travel-car', 'travel-transport', 0, 3],
+  ['travel-globe', 'location-maps', 0, 3],
 ];
 
 function getCategoryRegion(gridRow, gridCol) {
@@ -284,12 +291,14 @@ function getCategoryRegion(gridRow, gridCol) {
   };
 }
 
-function getIconRegion(catRegion, iconRow, iconCol) {
+function getIconRegion(catRegion, iconRow, iconCol, gridRow) {
+  const labelH = gridRow === 0 ? ICON_LABEL_H_ROW0 : ICON_LABEL_H_OTHER;
+  const rowH = gridRow === 0 ? ICON_ROW_H_ROW0 : ICON_ROW_H_OTHER;
   return {
     left: catRegion.left + iconCol * ICON_COL_W,
-    top: catRegion.top + ICON_LABEL_H + iconRow * ICON_ROW_H,
+    top: catRegion.top + labelH + iconRow * rowH,
     width: ICON_COL_W,
-    height: ICON_ROW_H,
+    height: rowH,
   };
 }
 
@@ -313,19 +322,19 @@ async function buildIconSheet() {
 
   // Extract individual site-critical icons
   console.log('\n── Individual site icons ──');
-  // Build lookup: slug → category entry
+  // Build lookup: slug → {region, gridRow}
   const catMap = {};
   for (const [id, slug, label, gridRow, gridCol] of CATEGORIES) {
-    catMap[slug] = getCategoryRegion(gridRow, gridCol);
+    catMap[slug] = { region: getCategoryRegion(gridRow, gridCol), gridRow };
   }
 
   for (const [name, sectionSlug, iconRow, iconCol] of SITE_ICONS) {
-    const catRegion = catMap[sectionSlug];
-    if (!catRegion) {
+    const cat = catMap[sectionSlug];
+    if (!cat) {
       console.warn(`⚠ unknown section: ${sectionSlug}`);
       continue;
     }
-    const region = getIconRegion(catRegion, iconRow, iconCol);
+    const region = getIconRegion(cat.region, iconRow, iconCol, cat.gridRow);
     // Clamp to sheet bounds
     if (region.left + region.width > SHEET_W || region.top + region.height > SHEET_H) {
       console.warn(`⚠ out-of-bounds: ${name} (${JSON.stringify(region)})`);
