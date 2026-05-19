@@ -8,7 +8,6 @@
       name="description"
       content="Strategic globalization intelligence platform: language gaps, market readiness, ROI."
     />
-    <meta name="theme-color" content="#2563eb" />
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="assets/icon-192.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -117,7 +116,7 @@
 
           <div class="form-box">
             <div class="form-group">
-              <label>Client Industry</label>
+              <label for="industry">Client Industry</label>
               <select id="industry" class="form-control">
                 <option value="">Select industry...</option>
                 <option value="healthcare">Healthcare</option>
@@ -131,14 +130,14 @@
             </div>
 
             <div class="form-group">
-              <label>Target Expansion Market</label>
+              <label for="expansion-market">Target Expansion Market</label>
               <select id="expansion-market" class="form-control">
                 <option value="">Select market...</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label>Projected Annual Revenue ($M)</label>
+              <label for="revenue">Projected Annual Revenue ($M)</label>
               <input type="number" id="revenue" class="form-control" value="10" min="1" max="500" />
             </div>
 
@@ -179,7 +178,7 @@
 
           <div class="form-box">
             <div class="form-group">
-              <label>Select Market</label>
+              <label for="market-select">Select Market</label>
               <select id="market-select" class="form-control">
                 <option value="">Choose market...</option>
               </select>
@@ -233,13 +232,13 @@
           <div class="form-box">
             <div class="form-row">
               <div class="form-group">
-                <label>Target Market</label>
+                <label for="roi-market">Target Market</label>
                 <select id="roi-market" class="form-control">
                   <option value="">Select market...</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>Expansion Type</label>
+                <label for="expansion-type">Expansion Type</label>
                 <select id="expansion-type" class="form-control">
                   <option value="new">New Market Entry</option>
                   <option value="expansion">Market Expansion</option>
@@ -250,7 +249,7 @@
 
             <div class="form-row">
               <div class="form-group">
-                <label>Projected Annual Revenue ($M)</label>
+                <label for="roi-revenue">Projected Annual Revenue ($M)</label>
                 <input
                   type="number"
                   id="roi-revenue"
@@ -261,7 +260,7 @@
                 />
               </div>
               <div class="form-group">
-                <label>Monthly Document Volume</label>
+                <label for="doc-volume">Monthly Document Volume</label>
                 <input
                   type="number"
                   id="doc-volume"
@@ -338,11 +337,8 @@
             <p><strong>Global Insurance Brokerage</strong><br />example.com</p>
           </div>
         </div>
-        <div
-          class="footer-bottom"
-          style="display: flex; flex-direction: column; gap: 0.75rem; align-items: center"
-        >
-          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center">
+        <div class="footer-bottom analytics-footer-container">
+          <div class="footer-links">
             <button id="themeToggle" type="button" class="view-details" aria-label="Toggle theme">
               Theme
             </button>
@@ -360,7 +356,6 @@
       id="scrollToTop"
       class="scroll-to-top"
       aria-label="Scroll to top"
-      style="display: flex; align-items: center; justify-content: center"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
