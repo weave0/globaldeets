@@ -97,7 +97,7 @@
 
         if (loadBtn) {
           loadBtn.disabled = false;
-          loadBtn.style.display = items.length < PAGE_SIZE ? 'none' : 'block';
+          loadBtn.classList.toggle('js-hidden', items.length < PAGE_SIZE);
         }
       })
       .catch(err => {

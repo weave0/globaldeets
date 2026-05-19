@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WM6Q66W9W0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-WM6Q66W9W0');
+    </script>
+    <!-- Error monitoring -->
+    <script>
+      window.onerror = function (msg, src, line) {
+        if (typeof gtag === 'function') {
+          gtag('event', 'js_error', {
+            event_category: 'JavaScript',
+            event_label: (src || '') + ':' + line,
+            description: msg,
+          });
+        }
+      };
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="About GlobalDeets — a living window into our planet, built by Good Flippin Design. Five spheres, one vision: informed, connected, and conscious humans."
+    />
+    <meta name="author" content="GlobalDeets - Good Flippin Design" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://globaldeets.com/about" />
+    <meta property="og:title" content="About GlobalDeets" />
+    <meta
+      property="og:description"
+      content="Five spheres, one planet. Built by Good Flippin Design to be a living window into Earth."
+    />
+    <meta property="og:image" content="https://globaldeets.com/assets/og-image.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="About GlobalDeets" />
+    <meta
+      name="twitter:description"
+      content="A living window into our planet. Zero barriers, infinite knowledge."
+    />
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+
+    <title>About — GlobalDeets</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="shared/ecosystem-nav.css" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://globaldeets.com/about" />
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "AboutPage",
+        "name": "About GlobalDeets",
+        "description": "GlobalDeets is a living window into our planet — built by Good Flippin Design. Five ecosystem spheres, one mission: informed, connected, and conscious humans.",
+        "url": "https://globaldeets.com/about",
+        "isPartOf": { "@type": "WebSite", "url": "https://globaldeets.com" },
+        "creator": {
+          "@type": "Organization",
+          "name": "Good Flippin Design",
+          "url": "https://goodflippindesign.com"
+        }
+      }
+    </script>
+
+    <style>
+      /* ---------- About page layout ---------- */
+      .about-hero {
+        text-align: center;
+        padding: 6rem 1.5rem 3rem;
+        max-width: 720px;
+        margin: 0 auto;
+      }
+
+      .about-hero-eyebrow {
+        display: block;
+        font-size: 0.76rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--neon-cyan, #00f5ff);
+        opacity: 0.7;
+        margin-bottom: 0.75rem;
+      }
+
+      .about-hero-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(2rem, 6vw, 3.2rem);
+        font-weight: 700;
+        margin: 0 0 1rem;
+        color: var(--text-primary, #f0f4ff);
+        line-height: 1.1;
+      }
+
+      .about-hero-title span {
+        background: linear-gradient(135deg, var(--neon-cyan, #00f5ff), var(--neon-purple, #a855f7));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .about-hero-lead {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 1.7;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      /* ---------- Content sections ---------- */
+      .about-section {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 0 1.5rem 3.5rem;
+      }
+
+      .about-section-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--neon-cyan, #00f5ff);
+        margin: 0 0 0.75rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-size: 0.82rem;
+      }
+
+      .about-body {
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 0.98rem;
+        line-height: 1.75;
+      }
+
+      .about-body p {
+        margin: 0 0 1.1rem;
+      }
+      .about-body p:last-child {
+        margin-bottom: 0;
+      }
+      .about-body strong {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+      }
+      .about-body a {
+        color: var(--neon-cyan, #00f5ff);
+        text-decoration: none;
+      }
+      .about-body a:hover {
+        text-decoration: underline;
+      }
+
+      /* ---------- Principles grid ---------- */
+      .about-principles {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 1.5rem 4rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+      }
+
+      .about-principle-card {
+        background: rgba(13, 17, 23, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+      }
+
+      .about-principle-card:hover {
+        border-color: rgba(0, 245, 255, 0.25);
+        transform: translateY(-2px);
+      }
+
+      .about-principle-icon {
+        width: 36px;
+        height: 36px;
+        margin-bottom: 0.75rem;
+        mix-blend-mode: screen;
+      }
+
+      .about-principle-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--text-primary, #f0f4ff);
+        margin: 0 0 0.4rem;
+      }
+
+      .about-principle-desc {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.45);
+        line-height: 1.55;
+        margin: 0;
+      }
+
+      /* ---------- Sphere links ---------- */
+      .about-spheres {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 0 1.5rem 4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .about-sphere-link {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 1.25rem;
+        background: rgba(13, 17, 23, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        text-decoration: none;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+      }
+
+      .about-sphere-link:hover {
+        transform: translateX(4px);
+      }
+
+      .about-sphere-link[data-color='orange']:hover {
+        border-color: rgba(255, 107, 53, 0.4);
+      }
+      .about-sphere-link[data-color='green']:hover {
+        border-color: rgba(57, 255, 20, 0.4);
+      }
+      .about-sphere-link[data-color='pink']:hover {
+        border-color: rgba(255, 0, 144, 0.4);
+      }
+      .about-sphere-link[data-color='purple']:hover {
+        border-color: rgba(168, 85, 247, 0.4);
+      }
+      .about-sphere-link[data-color='cyan']:hover {
+        border-color: rgba(0, 245, 255, 0.4);
+      }
+
+      .about-sphere-icon {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        mix-blend-mode: screen;
+      }
+
+      .about-sphere-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .about-sphere-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-primary, #f0f4ff);
+        margin: 0 0 0.2rem;
+      }
+
+      .about-sphere-tagline {
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.4);
+        margin: 0;
+      }
+
+      .about-sphere-arrow {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.25);
+        transition:
+          color 0.2s,
+          transform 0.2s;
+        flex-shrink: 0;
+      }
+
+      .about-sphere-link:hover .about-sphere-arrow {
+        color: rgba(255, 255, 255, 0.7);
+        transform: translateX(3px);
+      }
+
+      /* ---------- Built by section ---------- */
+      .about-builder {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 0 1.5rem 5rem;
+      }
+
+      .about-builder-card {
+        background: rgba(13, 17, 23, 0.8);
+        border: 1px solid rgba(0, 245, 255, 0.12);
+        border-radius: 16px;
+        padding: 2rem;
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+      }
+
+      .about-builder-logo {
+        width: 64px;
+        height: 64px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        background: rgba(0, 245, 255, 0.04);
+        border: 1px solid rgba(0, 245, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .about-builder-logo img {
+        width: 44px;
+        height: 44px;
+      }
+
+      .about-builder-content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .about-builder-name {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary, #f0f4ff);
+        margin: 0 0 0.4rem;
+      }
+
+      .about-builder-text {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.5);
+        line-height: 1.65;
+        margin: 0 0 1rem;
+      }
+
+      .about-builder-link {
+        display: inline-block;
+        background: rgba(0, 245, 255, 0.08);
+        border: 1px solid rgba(0, 245, 255, 0.25);
+        border-radius: 8px;
+        color: #00f5ff;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.4rem 0.9rem;
+        text-decoration: none;
+        transition: background 0.2s;
+      }
+
+      .about-builder-link:hover {
+        background: rgba(0, 245, 255, 0.15);
+      }
+
+      /* ---------- Footer ---------- */
+      .about-page-footer {
+        text-align: center;
+        padding: 3rem 1rem 4rem;
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 0.78rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .about-page-footer a {
+        color: var(--neon-cyan, #00f5ff);
+        text-decoration: none;
+      }
+      .about-footer-back {
+        display: block;
+        margin-top: 0.5rem;
+        color: rgba(255, 255, 255, 0.4);
+        text-decoration: none;
+      }
+      .about-footer-back:hover {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .about-section--tight {
+        padding-bottom: 1.5rem;
+      }
+      .about-body--spaced {
+        margin-bottom: 1.5rem;
+      }
+      .about-builder-heading {
+        padding-bottom: 1.5rem;
+        max-width: 760px;
+        margin: 0 auto;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      @media (max-width: 600px) {
+        .about-builder-card {
+          flex-direction: column;
+        }
+        .about-principles {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- GFD Ecosystem Navigation -->
+    <nav class="gfd-ecosystem-nav" aria-label="Ecosystem navigation">
+      <div class="ecosystem-nav-container">
+        <div class="ecosystem-brand">
+          <img src="assets/logo-mark.png" alt="Good Flippin Design Logo" class="ecosystem-logo" />
+          <span class="ecosystem-title">GFD Ecosystem</span>
+        </div>
+        <button
+          class="ecosystem-toggle"
+          aria-label="Open ecosystem menu"
+          aria-expanded="false"
+          aria-controls="ecosystem-dropdown"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="ecosystem-dropdown" id="ecosystem-dropdown" role="menu" aria-hidden="true">
+        <div class="dropdown-content">
+          <div class="nav-section">
+            <h3 class="nav-section-title">GFD Ecosystem</h3>
+            <a
+              href="https://goodflippindesign.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Good Flippin Design</strong>
+                <small class="nav-link-subtitle">Strategic Web Development</small>
+              </div>
+            </a>
+            <a
+              href="https://aiaimate.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">AI Animate</strong>
+                <small class="nav-link-subtitle">AI-Human Creativity</small>
+              </div>
+            </a>
+            <a
+              href="https://culturesherpa.org"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Culture Sherpa</strong>
+                <small class="nav-link-subtitle">Earth's Living Culture</small>
+              </div>
+            </a>
+            <a
+              href="https://goodflippinvibes.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Good Flippin Vibes</strong>
+                <small class="nav-link-subtitle">Things to Feel Good About</small>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header">
+          <div class="logo">
+            <a href="index.html" class="logo-link" aria-label="GlobalDeets home">
+              <img
+                src="assets/logo-mark.png"
+                alt=""
+                role="presentation"
+                class="site-logo-mark"
+                width="220"
+                height="140"
+              />
+              <span class="site-logo-text">GlobalDeets</span>
+            </a>
+            <p class="tagline">About the mission</p>
+          </div>
+          <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
+            <a href="index.html" class="nav-icon-btn" title="Home">
+              <img
+                src="assets/icons/site/nav-home.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="globe.html" class="nav-icon-btn" title="Globe — Live Earth">
+              <img
+                src="assets/icons/site/nav-globe.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="news.html" class="nav-icon-btn" title="World News">
+              <img
+                src="assets/icons/site/nav-news.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="spheres.html" class="nav-icon-btn" title="Ecosystem Spheres">
+              <img
+                src="assets/icons/site/nav-compass.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="knowledge.html" class="nav-icon-btn" title="Knowledge Sources">
+              <img
+                src="assets/icons/site/nav-list.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="worldmap.html" class="nav-icon-btn" title="Live Webcams">
+              <img
+                src="assets/icons/site/nav-map-pin.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a
+              href="about.html"
+              class="nav-icon-btn active"
+              title="About GlobalDeets"
+              aria-current="page"
+            >
+              <img
+                src="assets/icons/site/nav-info.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <!-- Hero -->
+      <div class="about-hero">
+        <span class="about-hero-eyebrow">Our Story &amp; Mission</span>
+        <h1 class="about-hero-title">A Living Window into <span>Our Planet</span></h1>
+        <p class="about-hero-lead">
+          GlobalDeets exists because the world's most important data is already public — it just
+          isn't accessible. We connect curious humans to authoritative primary sources, live news,
+          and a global ecosystem of knowledge.
+        </p>
+      </div>
+
+      <!-- Mission section -->
+      <section class="about-section" aria-label="Mission">
+        <h2 class="about-section-title">The Mission</h2>
+        <div class="about-body">
+          <p>
+            <strong>GlobalDeets is not another news aggregator.</strong> It's a planetary interface
+            — a place where every data point connects to its primary source, every headline links to
+            a real human story, and every map pin anchors you in real geography.
+          </p>
+          <p>
+            We believe an informed planet is a better planet. We believe curiosity is a public good.
+            And we believe the barrier between a human and the world's knowledge should be exactly
+            zero — no paywalls, no logins, no dark patterns.
+          </p>
+          <p>
+            Everything here is built in the open: open source data, primary sources, public
+            archives, and free APIs. If we use someone's data, we link back to the original. Always.
+          </p>
+        </div>
+      </section>
+
+      <!-- Core principles -->
+      <section aria-label="Core principles">
+        <div class="about-section about-section--tight">
+          <h2 class="about-section-title">Core Principles</h2>
+        </div>
+        <div class="about-principles">
+          <div class="about-principle-card">
+            <img
+              src="assets/icons/site/nav-globe.png"
+              alt=""
+              aria-hidden="true"
+              class="about-principle-icon"
+            />
+            <h3 class="about-principle-title">Primary Sources Only</h3>
+            <p class="about-principle-desc">
+              Every data point traces back to its original institution — UN, NASA, WHO, or
+              equivalent. No laundering through aggregators.
+            </p>
+          </div>
+          <div class="about-principle-card">
+            <img
+              src="assets/icons/site/nav-shield.png"
+              alt=""
+              aria-hidden="true"
+              class="about-principle-icon"
+            />
+            <h3 class="about-principle-title">Zero Barriers</h3>
+            <p class="about-principle-desc">
+              No accounts. No paywalls. No cookies popups beyond what's required by law. Information
+              is a right, not a product.
+            </p>
+          </div>
+          <div class="about-principle-card">
+            <img
+              src="assets/icons/site/nav-compass.png"
+              alt=""
+              aria-hidden="true"
+              class="about-principle-icon"
+            />
+            <h3 class="about-principle-title">Human-Scale Design</h3>
+            <p class="about-principle-desc">
+              Built for real humans on real devices. Accessibility-first, performance-first,
+              clarity-first. No dark patterns. No outrage loops.
+            </p>
+          </div>
+          <div class="about-principle-card">
+            <img
+              src="assets/icons/site/nav-check.png"
+              alt=""
+              aria-hidden="true"
+              class="about-principle-icon"
+            />
+            <h3 class="about-principle-title">Radical Transparency</h3>
+            <p class="about-principle-desc">
+              Open-source frontend. Public build pipeline. If we make a mistake, we document it.
+              CHANGELOG.md and all.
+            </p>
+          </div>
+          <div class="about-principle-card">
+            <img
+              src="assets/icons/site/nav-map-pin.png"
+              alt=""
+              aria-hidden="true"
+              class="about-principle-icon"
+            />
+            <h3 class="about-principle-title">Geography is Context</h3>
+            <p class="about-principle-desc">
+              Every story has a location. Every statistic has a geography. The globe is the default
+              view because place matters.
+            </p>
+          </div>
+          <div class="about-principle-card">
+            <img
+              src="assets/icons/site/nav-users.png"
+              alt=""
+              aria-hidden="true"
+              class="about-principle-icon"
+            />
+            <h3 class="about-principle-title">Everything Is Connected</h3>
+            <p class="about-principle-desc">
+              News, culture, climate, health, rights — they're not separate tabs. They're facets of
+              one world. We build with that in mind.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- The Ecosystem Spheres -->
+      <section class="about-section" aria-label="Ecosystem spheres">
+        <h2 class="about-section-title">The Five Spheres</h2>
+        <div class="about-body about-body--spaced">
+          <p>
+            GlobalDeets is the flagship sphere of the GFD Ecosystem — five interconnected platforms
+            built by
+            <a href="https://goodflippindesign.com" target="_blank" rel="noopener"
+              >Good Flippin Design</a
+            >
+            to serve different dimensions of global awareness.
+          </p>
+        </div>
+      </section>
+      <div class="about-spheres">
+        <a
+          href="https://globaldeets.com"
+          class="about-sphere-link"
+          data-color="orange"
+          target="_blank"
+          rel="noopener"
+          aria-label="GlobalDeets — The flagship planetary data interface"
+        >
+          <img
+            src="assets/icons/site/nav-globe.png"
+            alt=""
+            aria-hidden="true"
+            class="about-sphere-icon"
+          />
+          <div class="about-sphere-info">
+            <p class="about-sphere-name">GlobalDeets</p>
+            <p class="about-sphere-tagline">
+              The planetary data interface — live news, globe, knowledge sources
+            </p>
+          </div>
+          <span class="about-sphere-arrow" aria-hidden="true">›</span>
+        </a>
+        <a
+          href="https://goodflippinvibes.com"
+          class="about-sphere-link"
+          data-color="green"
+          target="_blank"
+          rel="noopener"
+          aria-label="Good Flippin Vibes — Things to feel good about"
+        >
+          <img
+            src="assets/icons/site/nav-users.png"
+            alt=""
+            aria-hidden="true"
+            class="about-sphere-icon"
+          />
+          <div class="about-sphere-info">
+            <p class="about-sphere-name">Good Flippin Vibes</p>
+            <p class="about-sphere-tagline">
+              Things to feel good about — positive global progress, curated
+            </p>
+          </div>
+          <span class="about-sphere-arrow" aria-hidden="true">›</span>
+        </a>
+        <a
+          href="https://culturesherpa.org"
+          class="about-sphere-link"
+          data-color="pink"
+          target="_blank"
+          rel="noopener"
+          aria-label="Culture Sherpa — Earth's living culture"
+        >
+          <img
+            src="assets/icons/site/nav-compass.png"
+            alt=""
+            aria-hidden="true"
+            class="about-sphere-icon"
+          />
+          <div class="about-sphere-info">
+            <p class="about-sphere-name">Culture Sherpa</p>
+            <p class="about-sphere-tagline">
+              Earth's living culture — music, food, language, tradition
+            </p>
+          </div>
+          <span class="about-sphere-arrow" aria-hidden="true">›</span>
+        </a>
+        <a
+          href="https://aiaimate.com"
+          class="about-sphere-link"
+          data-color="purple"
+          target="_blank"
+          rel="noopener"
+          aria-label="AI Animate — Responsible AI creativity"
+        >
+          <img
+            src="assets/icons/site/nav-shield.png"
+            alt=""
+            aria-hidden="true"
+            class="about-sphere-icon"
+          />
+          <div class="about-sphere-info">
+            <p class="about-sphere-name">AI Animate</p>
+            <p class="about-sphere-tagline">
+              AI-human creativity — responsible tools and transparent process
+            </p>
+          </div>
+          <span class="about-sphere-arrow" aria-hidden="true">›</span>
+        </a>
+        <a
+          href="https://citizenapproved.org"
+          class="about-sphere-link"
+          data-color="cyan"
+          target="_blank"
+          rel="noopener"
+          aria-label="Citizen Approved — Civic accountability"
+        >
+          <img
+            src="assets/icons/site/nav-check.png"
+            alt=""
+            aria-hidden="true"
+            class="about-sphere-icon"
+          />
+          <div class="about-sphere-info">
+            <p class="about-sphere-name">Citizen Approved</p>
+            <p class="about-sphere-tagline">
+              Civic accountability — legislation, transparency, civic tools
+            </p>
+          </div>
+          <span class="about-sphere-arrow" aria-hidden="true">›</span>
+        </a>
+      </div>
+
+      <!-- Built by -->
+      <section class="about-builder" aria-label="Built by">
+        <div class="about-section about-builder-heading">
+          <h2 class="about-section-title">Built by</h2>
+        </div>
+        <div class="about-builder-card">
+          <div class="about-builder-logo" aria-hidden="true">
+            <img src="assets/logo-mark.png" alt="" width="44" height="44" />
+          </div>
+          <div class="about-builder-content">
+            <p class="about-builder-name">Good Flippin Design</p>
+            <p class="about-builder-text">
+              GFD is a strategic web development studio founded by Brett Weaver. We build for the
+              long arc — platforms designed around real human needs, primary sources, and the belief
+              that the world deserves better interfaces. The entire GFD Ecosystem is designed,
+              developed, and maintained by our small (but extremely caffeinated) team.
+            </p>
+            <a
+              href="https://goodflippindesign.com"
+              class="about-builder-link"
+              target="_blank"
+              rel="noopener"
+              >Visit Good Flippin Design &rarr;</a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="about-page-footer">
+      <p>
+        GlobalDeets &mdash; Built with purpose. Powered by
+        <a href="https://goodflippindesign.com" target="_blank" rel="noopener"
+          >Good Flippin Design</a
+        >.
+      </p>
+      <a href="index.html" class="about-footer-back">← Back to GlobalDeets</a>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="shared/ecosystem-nav.js"></script>
+    <script src="sw-register.js"></script>
+  </body>
+</html>

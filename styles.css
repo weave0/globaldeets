@@ -718,6 +718,16 @@ body {
   height: 1px;
   overflow: hidden;
 }
+.js-hidden {
+  display: none;
+}
+.analytics-footer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  text-align: center;
+}
 .skip-link:focus {
   position: static;
   width: auto;
@@ -2465,5 +2475,304 @@ header.scrolled .site-logo-mark {
 @media (prefers-reduced-motion: reduce) {
   .section {
     transition: none !important;
+  }
+}
+
+/* =============================================
+   Ecosystem Spheres Section
+   ============================================= */
+
+.spheres-section {
+  padding: 5rem 0 4rem;
+  background: linear-gradient(180deg, #000 0%, rgba(5, 9, 17, 0.95) 50%, #000 100%);
+}
+
+.spheres-heading {
+  text-align: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700;
+  color: var(--text-primary, #f0f4ff);
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+
+.spheres-heading-label {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--neon-cyan, #00f5ff);
+  opacity: 0.75;
+  margin-bottom: 0.4rem;
+}
+
+.spheres-subhead {
+  text-align: center;
+  color: var(--text-muted, #64748b);
+  font-size: 1rem;
+  margin: 0 0 3rem;
+}
+
+.spheres-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.sphere-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  background: rgba(13, 17, 23, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  text-decoration: none;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.sphere-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+}
+
+.sphere-card[data-color='green']::before {
+  background: radial-gradient(ellipse at 50% 0%, rgba(57, 255, 20, 0.06) 0%, transparent 70%);
+}
+.sphere-card[data-color='pink']::before {
+  background: radial-gradient(ellipse at 50% 0%, rgba(255, 0, 144, 0.06) 0%, transparent 70%);
+}
+.sphere-card[data-color='purple']::before {
+  background: radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.06) 0%, transparent 70%);
+}
+.sphere-card[data-color='cyan']::before {
+  background: radial-gradient(ellipse at 50% 0%, rgba(0, 245, 255, 0.06) 0%, transparent 70%);
+}
+
+.sphere-card:hover {
+  transform: translateY(-5px);
+}
+.sphere-card:hover::before {
+  opacity: 1;
+}
+
+.sphere-card[data-color='green']:hover {
+  border-color: var(--neon-green, #39ff14);
+  box-shadow: 0 0 30px rgba(57, 255, 20, 0.18);
+}
+.sphere-card[data-color='pink']:hover {
+  border-color: var(--neon-pink, #ff0090);
+  box-shadow: 0 0 30px rgba(255, 0, 144, 0.18);
+}
+.sphere-card[data-color='purple']:hover {
+  border-color: var(--neon-purple, #a855f7);
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.18);
+}
+.sphere-card[data-color='cyan']:hover {
+  border-color: var(--neon-cyan, #00f5ff);
+  box-shadow: 0 0 30px rgba(0, 245, 255, 0.18);
+}
+
+.sphere-orb {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-bottom: 1.25rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sphere-card[data-color='green'] .sphere-orb {
+  box-shadow: 0 0 24px rgba(57, 255, 20, 0.2);
+}
+.sphere-card[data-color='pink'] .sphere-orb {
+  box-shadow: 0 0 24px rgba(255, 0, 144, 0.2);
+}
+.sphere-card[data-color='purple'] .sphere-orb {
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.2);
+}
+.sphere-card[data-color='cyan'] .sphere-orb {
+  box-shadow: 0 0 24px rgba(0, 245, 255, 0.2);
+}
+
+.sphere-orb-icon {
+  width: 32px;
+  height: 32px;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 8px rgba(0, 245, 255, 0.4));
+}
+
+.sphere-card[data-color='green'] .sphere-orb-icon {
+  filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.5));
+}
+.sphere-card[data-color='pink'] .sphere-orb-icon {
+  filter: drop-shadow(0 0 8px rgba(255, 0, 144, 0.5));
+}
+.sphere-card[data-color='purple'] .sphere-orb-icon {
+  filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.5));
+}
+.sphere-card[data-color='cyan'] .sphere-orb-icon {
+  filter: drop-shadow(0 0 8px rgba(0, 245, 255, 0.5));
+}
+
+.sphere-info h3 {
+  color: var(--text-primary, #f0f4ff);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.sphere-tagline {
+  color: var(--text-muted, #64748b);
+  font-size: 0.875rem;
+  margin: 0 0 0.75rem;
+  line-height: 1.5;
+}
+
+.sphere-domain {
+  font-size: 0.72rem;
+  color: var(--neon-cyan, #00f5ff);
+  opacity: 0.65;
+  letter-spacing: 0.04em;
+}
+
+.spheres-explore-link {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.spheres-all-link {
+  color: var(--neon-cyan, #00f5ff);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.spheres-all-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* Full-screen globe page */
+.globe-page body,
+body.globe-page {
+  overflow: hidden;
+}
+
+.globe-full-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.globe-full-ui {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.globe-full-ui > * {
+  pointer-events: auto;
+}
+
+.globe-controls-panel {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(5, 9, 17, 0.82);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50px;
+  padding: 0.5rem 1rem;
+  pointer-events: auto;
+}
+
+.globe-filter-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.78rem;
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+
+.globe-filter-btn:hover,
+.globe-filter-btn.active {
+  background: rgba(0, 245, 255, 0.12);
+  border-color: var(--neon-cyan, #00f5ff);
+  color: var(--neon-cyan, #00f5ff);
+}
+
+.globe-news-count {
+  position: fixed;
+  top: 5.5rem;
+  right: 1.5rem;
+  z-index: 20;
+  background: rgba(5, 9, 17, 0.82);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 107, 53, 0.3);
+  border-radius: 8px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.78rem;
+  color: #ff6b35;
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  .spheres-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .sphere-card {
+    padding: 1.25rem 1rem;
+  }
+  .sphere-orb {
+    width: 48px;
+    height: 48px;
+  }
+  .sphere-orb-icon {
+    width: 24px;
+    height: 24px;
+  }
+  .globe-controls-panel {
+    padding: 0.4rem 0.6rem;
+    gap: 0.3rem;
+  }
+  .globe-filter-btn {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
   }
 }

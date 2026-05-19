@@ -130,7 +130,7 @@
   // ============================================
 
   function initParallax() {
-    const heroSection = document.querySelector('.hero-section');
+    const heroSection = document.querySelector('.globe-hero-section, .hero-section');
     if (!heroSection) return;
 
     let ticking = false;
@@ -161,7 +161,7 @@
     // Apply parallax transform via custom property
     const style = document.createElement('style');
     style.textContent = `
-            .hero-section::before {
+            .globe-hero-section::before, .hero-section::before {
                 transform: translateY(var(--parallax-offset, 0)) rotate(0deg);
             }
         `;

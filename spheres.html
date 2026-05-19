@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WM6Q66W9W0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-WM6Q66W9W0');
+    </script>
+    <!-- Error monitoring -->
+    <script>
+      window.onerror = function (msg, src, line) {
+        if (typeof gtag === 'function') {
+          gtag('event', 'js_error', {
+            event_category: 'JavaScript',
+            event_label: (src || '') + ':' + line,
+            description: msg,
+          });
+        }
+      };
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="GlobalDeets Ecosystem Spheres — five interconnected platforms exploring the world from every angle. Good Vibes, Culture Sherpa, AI Animate, Citizen Approved, and GlobalDeets."
+    />
+    <meta name="author" content="GlobalDeets - Good Flippin Design" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://globaldeets.com/spheres" />
+    <meta property="og:title" content="GlobalDeets — Ecosystem Spheres" />
+    <meta
+      property="og:description"
+      content="Five interconnected platforms exploring the world from every angle."
+    />
+    <meta property="og:image" content="https://globaldeets.com/assets/og-image.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GlobalDeets — Ecosystem Spheres" />
+    <meta name="twitter:description" content="Five interconnected platforms. One planet." />
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+
+    <title>Ecosystem Spheres — GlobalDeets</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="shared/ecosystem-nav.css" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://globaldeets.com/spheres" />
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "GlobalDeets Ecosystem Spheres",
+        "description": "Five interconnected platforms from Good Flippin Design, each exploring the world through a different lens.",
+        "url": "https://globaldeets.com/spheres",
+        "isPartOf": { "@type": "WebSite", "url": "https://globaldeets.com" }
+      }
+    </script>
+
+    <style>
+      .spheres-hero {
+        text-align: center;
+        padding: 6rem 1rem 2rem;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      .spheres-hero-label {
+        display: block;
+        font-size: 0.76rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--neon-cyan, #00f5ff);
+        opacity: 0.75;
+        margin-bottom: 1rem;
+      }
+
+      .spheres-hero-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(2rem, 6vw, 3.2rem);
+        font-weight: 700;
+        color: var(--text-primary, #f0f4ff);
+        line-height: 1.15;
+        margin: 0 0 1rem;
+      }
+
+      .spheres-hero-title span {
+        background: linear-gradient(135deg, #00f5ff 0%, #a855f7 50%, #ff0090 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .spheres-hero-desc {
+        color: var(--text-muted, #64748b);
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin: 0 0 3rem;
+      }
+
+      .spheres-full-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 1.5rem 5rem;
+      }
+
+      .sphere-card-full {
+        display: flex;
+        flex-direction: column;
+        padding: 2.25rem 2rem;
+        background: rgba(13, 17, 23, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 20px;
+        text-decoration: none;
+        transition:
+          transform 0.3s ease,
+          border-color 0.3s ease,
+          box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sphere-card-full::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition: opacity 0.35s ease;
+        border-radius: inherit;
+      }
+
+      .sphere-card-full:hover {
+        transform: translateY(-6px);
+      }
+      .sphere-card-full:hover::before {
+        opacity: 1;
+      }
+
+      .sphere-card-full[data-color='green']::before {
+        background: radial-gradient(ellipse at 50% 0%, rgba(57, 255, 20, 0.07) 0%, transparent 65%);
+      }
+      .sphere-card-full[data-color='pink']::before {
+        background: radial-gradient(ellipse at 50% 0%, rgba(255, 0, 144, 0.07) 0%, transparent 65%);
+      }
+      .sphere-card-full[data-color='purple']::before {
+        background: radial-gradient(
+          ellipse at 50% 0%,
+          rgba(168, 85, 247, 0.07) 0%,
+          transparent 65%
+        );
+      }
+      .sphere-card-full[data-color='cyan']::before {
+        background: radial-gradient(ellipse at 50% 0%, rgba(0, 245, 255, 0.07) 0%, transparent 65%);
+      }
+      .sphere-card-full[data-color='orange']::before {
+        background: radial-gradient(
+          ellipse at 50% 0%,
+          rgba(255, 107, 53, 0.07) 0%,
+          transparent 65%
+        );
+      }
+
+      .sphere-card-full[data-color='green']:hover {
+        border-color: #39ff14;
+        box-shadow: 0 0 40px rgba(57, 255, 20, 0.15);
+      }
+      .sphere-card-full[data-color='pink']:hover {
+        border-color: #ff0090;
+        box-shadow: 0 0 40px rgba(255, 0, 144, 0.15);
+      }
+      .sphere-card-full[data-color='purple']:hover {
+        border-color: #a855f7;
+        box-shadow: 0 0 40px rgba(168, 85, 247, 0.15);
+      }
+      .sphere-card-full[data-color='cyan']:hover {
+        border-color: #00f5ff;
+        box-shadow: 0 0 40px rgba(0, 245, 255, 0.15);
+      }
+      .sphere-card-full[data-color='orange']:hover {
+        border-color: #ff6b35;
+        box-shadow: 0 0 40px rgba(255, 107, 53, 0.15);
+      }
+
+      .sphere-card-orb {
+        width: 72px;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-bottom: 1.5rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        position: relative;
+        z-index: 1;
+      }
+
+      .sphere-card-orb img {
+        width: 36px;
+        height: 36px;
+        mix-blend-mode: screen;
+      }
+
+      .sphere-card-full[data-color='green'] .sphere-card-orb {
+        box-shadow: 0 0 28px rgba(57, 255, 20, 0.2);
+      }
+      .sphere-card-full[data-color='pink'] .sphere-card-orb {
+        box-shadow: 0 0 28px rgba(255, 0, 144, 0.2);
+      }
+      .sphere-card-full[data-color='purple'] .sphere-card-orb {
+        box-shadow: 0 0 28px rgba(168, 85, 247, 0.2);
+      }
+      .sphere-card-full[data-color='cyan'] .sphere-card-orb {
+        box-shadow: 0 0 28px rgba(0, 245, 255, 0.2);
+      }
+      .sphere-card-full[data-color='orange'] .sphere-card-orb {
+        box-shadow: 0 0 28px rgba(255, 107, 53, 0.2);
+      }
+
+      .sphere-card-orb img {
+        filter: drop-shadow(0 0 10px rgba(0, 245, 255, 0.4));
+      }
+      .sphere-card-full[data-color='green'] .sphere-card-orb img {
+        filter: drop-shadow(0 0 10px rgba(57, 255, 20, 0.5));
+      }
+      .sphere-card-full[data-color='pink'] .sphere-card-orb img {
+        filter: drop-shadow(0 0 10px rgba(255, 0, 144, 0.5));
+      }
+      .sphere-card-full[data-color='purple'] .sphere-card-orb img {
+        filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));
+      }
+      .sphere-card-full[data-color='orange'] .sphere-card-orb img {
+        filter: drop-shadow(0 0 10px rgba(255, 107, 53, 0.5));
+      }
+
+      .sphere-card-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary, #f0f4ff);
+        margin: 0 0 0.5rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .sphere-card-tagline {
+        color: var(--text-muted, #64748b);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin: 0 0 1rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .sphere-card-desc {
+        color: rgba(148, 163, 184, 0.8);
+        font-size: 0.82rem;
+        line-height: 1.6;
+        margin: 0 0 1.5rem;
+        flex: 1;
+        position: relative;
+        z-index: 1;
+      }
+
+      .sphere-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: auto;
+        position: relative;
+        z-index: 1;
+      }
+
+      .sphere-card-domain {
+        font-size: 0.72rem;
+        opacity: 0.6;
+        letter-spacing: 0.04em;
+      }
+
+      .sphere-card-full[data-color='green'] .sphere-card-domain {
+        color: #39ff14;
+      }
+      .sphere-card-full[data-color='pink'] .sphere-card-domain {
+        color: #ff0090;
+      }
+      .sphere-card-full[data-color='purple'] .sphere-card-domain {
+        color: #a855f7;
+      }
+      .sphere-card-full[data-color='cyan'] .sphere-card-domain {
+        color: #00f5ff;
+      }
+      .sphere-card-full[data-color='orange'] .sphere-card-domain {
+        color: #ff6b35;
+      }
+
+      .sphere-card-arrow {
+        font-size: 1rem;
+        opacity: 0.4;
+        transition:
+          opacity 0.2s,
+          transform 0.2s;
+        color: var(--text-muted, #64748b);
+      }
+
+      .sphere-card-full:hover .sphere-card-arrow {
+        opacity: 1;
+        transform: translateX(4px);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- GFD Ecosystem Navigation -->
+    <nav class="gfd-ecosystem-nav" aria-label="Ecosystem navigation">
+      <div class="ecosystem-nav-container">
+        <div class="ecosystem-brand">
+          <img src="assets/logo-mark.png" alt="Good Flippin Design Logo" class="ecosystem-logo" />
+          <span class="ecosystem-title">GFD Ecosystem</span>
+        </div>
+        <button
+          class="ecosystem-toggle"
+          aria-label="Open ecosystem menu"
+          aria-expanded="false"
+          aria-controls="ecosystem-dropdown"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="ecosystem-dropdown" id="ecosystem-dropdown" role="menu" aria-hidden="true">
+        <div class="dropdown-content">
+          <div class="nav-section">
+            <h3 class="nav-section-title">GFD Ecosystem</h3>
+            <a
+              href="https://goodflippindesign.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Good Flippin Design</strong>
+                <small class="nav-link-subtitle">Strategic Web Development</small>
+              </div>
+            </a>
+            <a
+              href="https://aiaimate.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">AI Animate</strong>
+                <small class="nav-link-subtitle">AI-Human Creativity</small>
+              </div>
+            </a>
+            <a
+              href="https://culturesherpa.org"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Culture Sherpa</strong>
+                <small class="nav-link-subtitle">Earth's Living Culture</small>
+              </div>
+            </a>
+            <a
+              href="https://goodflippinvibes.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Good Flippin Vibes</strong>
+                <small class="nav-link-subtitle">Things to Feel Good About</small>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header">
+          <div class="logo">
+            <a href="index.html" class="logo-link" aria-label="GlobalDeets home">
+              <img
+                src="assets/logo-mark.png"
+                alt=""
+                role="presentation"
+                class="site-logo-mark"
+                width="220"
+                height="140"
+              />
+              <span class="site-logo-text">GlobalDeets</span>
+            </a>
+            <p class="tagline">Ecosystem Spheres</p>
+          </div>
+          <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
+            <a href="index.html" class="nav-icon-btn" title="Home">
+              <img
+                src="assets/icons/site/nav-home.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="globe.html" class="nav-icon-btn" title="Globe — Live Earth">
+              <img
+                src="assets/icons/site/nav-globe.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="news.html" class="nav-icon-btn" title="World News">
+              <img
+                src="assets/icons/site/nav-news.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a
+              href="spheres.html"
+              class="nav-icon-btn active"
+              title="Ecosystem Spheres"
+              aria-current="page"
+            >
+              <img
+                src="assets/icons/site/nav-compass.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="knowledge.html" class="nav-icon-btn" title="Knowledge Sources">
+              <img
+                src="assets/icons/site/nav-list.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="worldmap.html" class="nav-icon-btn" title="Live Webcams">
+              <img
+                src="assets/icons/site/nav-map-pin.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="about.html" class="nav-icon-btn" title="About GlobalDeets">
+              <img
+                src="assets/icons/site/nav-info.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <!-- Hero -->
+      <div class="spheres-hero">
+        <span class="spheres-hero-label">Good Flippin Design</span>
+        <h1 class="spheres-hero-title">Five Spheres.<br /><span>One Planet.</span></h1>
+        <p class="spheres-hero-desc">
+          Every platform in the GFD ecosystem is a different lens on the same world — culture,
+          community, intelligence, creativity, and citizenship. Explore them all.
+        </p>
+      </div>
+
+      <!-- Sphere Cards -->
+      <div class="spheres-full-grid" role="list">
+        <a
+          href="https://globaldeets.com"
+          class="sphere-card-full"
+          data-color="orange"
+          role="listitem"
+          aria-label="GlobalDeets — Earth's Information Nerve Center"
+        >
+          <div class="sphere-card-orb" aria-hidden="true">
+            <img src="assets/icons/site/nav-globe.png" alt="" />
+          </div>
+          <h2 class="sphere-card-title">GlobalDeets</h2>
+          <p class="sphere-card-tagline">Earth's information nerve center</p>
+          <p class="sphere-card-desc">
+            Live world news geo-pinned on a 3D globe. Primary sources only — Reuters, BBC, AP, Al
+            Jazeera, DW, NHK, and more. No editorial opinion. Just signal.
+          </p>
+          <div class="sphere-card-footer">
+            <span class="sphere-card-domain">globaldeets.com</span>
+            <span class="sphere-card-arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+
+        <a
+          href="https://goodflippinvibes.com"
+          target="_blank"
+          rel="noopener"
+          class="sphere-card-full"
+          data-color="green"
+          role="listitem"
+          aria-label="Good Vibes — Things to feel good about everywhere"
+        >
+          <div class="sphere-card-orb" aria-hidden="true">
+            <img src="assets/icons/site/nav-users.png" alt="" />
+          </div>
+          <h2 class="sphere-card-title">Good Vibes</h2>
+          <p class="sphere-card-tagline">Things to feel good about everywhere</p>
+          <p class="sphere-card-desc">
+            A counterweight to doom-scrolling. Curated stories of human achievement, kindness,
+            breakthroughs, and joy from every corner of the planet.
+          </p>
+          <div class="sphere-card-footer">
+            <span class="sphere-card-domain">goodflippinvibes.com</span>
+            <span class="sphere-card-arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+
+        <a
+          href="https://culturesherpa.org"
+          target="_blank"
+          rel="noopener"
+          class="sphere-card-full"
+          data-color="pink"
+          role="listitem"
+          aria-label="Culture Sherpa — Earth's vibrant living culture"
+        >
+          <div class="sphere-card-orb" aria-hidden="true">
+            <img src="assets/icons/site/nav-compass.png" alt="" />
+          </div>
+          <h2 class="sphere-card-title">Culture Sherpa</h2>
+          <p class="sphere-card-tagline">Earth's vibrant living culture</p>
+          <p class="sphere-card-desc">
+            An interactive cultural atlas mapping over 470 cultures worldwide — traditions,
+            language, music, food, and ways of life. Explore what makes us beautifully different.
+          </p>
+          <div class="sphere-card-footer">
+            <span class="sphere-card-domain">culturesherpa.org</span>
+            <span class="sphere-card-arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+
+        <a
+          href="https://aiaimate.com"
+          target="_blank"
+          rel="noopener"
+          class="sphere-card-full"
+          data-color="purple"
+          role="listitem"
+          aria-label="AI Animate — The future of AI-human creativity"
+        >
+          <div class="sphere-card-orb" aria-hidden="true">
+            <img src="assets/icons/site/nav-shield.png" alt="" />
+          </div>
+          <h2 class="sphere-card-title">AI Animate</h2>
+          <p class="sphere-card-tagline">The future of AI-human creativity</p>
+          <p class="sphere-card-desc">
+            An AI education platform with RAG-powered search and hands-on learning tools. Helping
+            humans understand, direct, and partner with artificial intelligence.
+          </p>
+          <div class="sphere-card-footer">
+            <span class="sphere-card-domain">aiaimate.com</span>
+            <span class="sphere-card-arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+
+        <a
+          href="https://citizenapproved.org"
+          target="_blank"
+          rel="noopener"
+          class="sphere-card-full"
+          data-color="cyan"
+          role="listitem"
+          aria-label="Citizen Approved — What every citizen deserves to know"
+        >
+          <div class="sphere-card-orb" aria-hidden="true">
+            <img src="assets/icons/site/nav-check.png" alt="" />
+          </div>
+          <h2 class="sphere-card-title">Citizen Approved</h2>
+          <p class="sphere-card-tagline">What every citizen deserves to know</p>
+          <p class="sphere-card-desc">
+            Civic intelligence for an informed citizenry. Primary source governance data, rights
+            information, and civic participation tools — organized, searchable, free.
+          </p>
+          <div class="sphere-card-footer">
+            <span class="sphere-card-domain">citizenapproved.org</span>
+            <span class="sphere-card-arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer spheres-page-footer">
+      <p>
+        Built by
+        <a
+          href="https://goodflippindesign.com"
+          target="_blank"
+          rel="noopener"
+          class="footer-highlight"
+          >Good Flippin Design</a
+        >
+        &mdash; Everything is connected.
+      </p>
+      <p class="footer-back">
+        <a href="index.html" class="footer-back-link">← Back to GlobalDeets</a>
+      </p>
+    </footer>
+
+    <style>
+      .spheres-page-footer {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 0.78rem;
+      }
+      .spheres-page-footer .footer-highlight {
+        color: var(--neon-cyan, #00f5ff);
+        text-decoration: none;
+      }
+      .spheres-page-footer .footer-back {
+        margin-top: 0.5rem;
+      }
+      .spheres-page-footer .footer-back-link {
+        color: rgba(255, 255, 255, 0.4);
+        text-decoration: none;
+      }
+      .spheres-page-footer .footer-back-link:hover {
+        color: rgba(255, 255, 255, 0.7);
+      }
+    </style>
+
+    <!-- Scripts -->
+    <script src="shared/ecosystem-nav.js"></script>
+    <script src="sw-register.js"></script>
+  </body>
+</html>

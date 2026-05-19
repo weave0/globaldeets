@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WM6Q66W9W0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-WM6Q66W9W0');
+    </script>
+    <!-- Error monitoring -->
+    <script>
+      window.onerror = function (msg, src, line) {
+        if (typeof gtag === 'function') {
+          gtag('event', 'js_error', {
+            event_category: 'JavaScript',
+            event_label: (src || '') + ':' + line,
+            description: msg,
+          });
+        }
+      };
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="GlobalDeets Knowledge Sources — curated directory of the world's most authoritative primary sources across governance, science, environment, culture, economy, health, education, and human rights."
+    />
+    <meta name="author" content="GlobalDeets - Good Flippin Design" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://globaldeets.com/knowledge" />
+    <meta property="og:title" content="GlobalDeets — Knowledge Source Directory" />
+    <meta
+      property="og:description"
+      content="Curated authoritative primary sources across 8 categories of human knowledge."
+    />
+    <meta property="og:image" content="https://globaldeets.com/assets/og-image.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GlobalDeets — Knowledge Sources" />
+    <meta
+      name="twitter:description"
+      content="Authoritative primary sources. Zero paywalls. All categories."
+    />
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+
+    <title>Knowledge Sources — GlobalDeets</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="shared/ecosystem-nav.css" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://globaldeets.com/knowledge" />
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "GlobalDeets Knowledge Source Directory",
+        "description": "A curated directory of the world's most authoritative primary sources across governance, science, environment, culture, economy, health, education, and human rights.",
+        "url": "https://globaldeets.com/knowledge",
+        "isPartOf": { "@type": "WebSite", "url": "https://globaldeets.com" }
+      }
+    </script>
+
+    <style>
+      .knowledge-hero {
+        text-align: center;
+        padding: 6rem 1rem 2.5rem;
+        max-width: 680px;
+        margin: 0 auto;
+      }
+
+      .knowledge-hero-label {
+        display: block;
+        font-size: 0.76rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--neon-cyan, #00f5ff);
+        opacity: 0.7;
+        margin-bottom: 0.75rem;
+      }
+
+      .knowledge-hero-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(1.8rem, 5vw, 2.8rem);
+        font-weight: 700;
+        color: var(--text-primary, #f0f4ff);
+        margin: 0 0 0.75rem;
+        line-height: 1.15;
+      }
+
+      .knowledge-hero-desc {
+        color: var(--text-muted, #64748b);
+        font-size: 1rem;
+        line-height: 1.6;
+        margin: 0 0 2rem;
+      }
+
+      /* Category filter pills */
+      .knowledge-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+        padding: 0 1rem 2.5rem;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .knowledge-filter-pill {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 0.78rem;
+        padding: 0.35rem 0.9rem;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+
+      .knowledge-filter-pill:hover,
+      .knowledge-filter-pill.active {
+        background: rgba(0, 245, 255, 0.1);
+        border-color: #00f5ff;
+        color: #00f5ff;
+      }
+
+      /* Knowledge grid */
+      .knowledge-grid {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 1.5rem 5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+      }
+
+      .knowledge-category {
+        opacity: 1;
+        transition: opacity 0.25s;
+      }
+
+      .knowledge-category.hidden {
+        display: none;
+      }
+
+      .knowledge-category-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .knowledge-category-orb {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .knowledge-category-orb img {
+        width: 18px;
+        height: 18px;
+        mix-blend-mode: screen;
+      }
+
+      .knowledge-category-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary, #f0f4ff);
+        margin: 0;
+      }
+
+      .knowledge-category-count {
+        font-size: 0.72rem;
+        opacity: 0.45;
+        color: var(--text-muted, #64748b);
+        margin-left: auto;
+        white-space: nowrap;
+      }
+
+      .knowledge-sources-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 12px;
+      }
+
+      .knowledge-source-card {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem 1.25rem;
+        background: rgba(13, 17, 23, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        text-decoration: none;
+        transition:
+          border-color 0.2s ease,
+          background 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .knowledge-source-card:hover {
+        background: rgba(13, 17, 23, 0.95);
+        transform: translateY(-2px);
+      }
+
+      .knowledge-source-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary, #f0f4ff);
+        margin-bottom: 0.3rem;
+        transition: color 0.2s;
+      }
+
+      .knowledge-source-desc {
+        font-size: 0.78rem;
+        color: var(--text-muted, #64748b);
+        line-height: 1.5;
+        flex: 1;
+      }
+
+      .knowledge-source-url {
+        font-size: 0.68rem;
+        margin-top: 0.6rem;
+        opacity: 0.45;
+        letter-spacing: 0.02em;
+        transition: opacity 0.2s;
+      }
+
+      .knowledge-source-card:hover .knowledge-source-url {
+        opacity: 0.8;
+      }
+
+      /* Color theming per category */
+      .knowledge-category[data-color='#00f5ff'] .knowledge-category-title {
+        color: #00f5ff;
+      }
+      .knowledge-category[data-color='#a855f7'] .knowledge-category-title {
+        color: #a855f7;
+      }
+      .knowledge-category[data-color='#39ff14'] .knowledge-category-title {
+        color: #39ff14;
+      }
+      .knowledge-category[data-color='#ff0090'] .knowledge-category-title {
+        color: #ff0090;
+      }
+      .knowledge-category[data-color='#ff6b35'] .knowledge-category-title {
+        color: #ff6b35;
+      }
+
+      .knowledge-category[data-color='#00f5ff'] .knowledge-source-card:hover {
+        border-color: rgba(0, 245, 255, 0.3);
+      }
+      .knowledge-category[data-color='#a855f7'] .knowledge-source-card:hover {
+        border-color: rgba(168, 85, 247, 0.3);
+      }
+      .knowledge-category[data-color='#39ff14'] .knowledge-source-card:hover {
+        border-color: rgba(57, 255, 20, 0.3);
+      }
+      .knowledge-category[data-color='#ff0090'] .knowledge-source-card:hover {
+        border-color: rgba(255, 0, 144, 0.3);
+      }
+      .knowledge-category[data-color='#ff6b35'] .knowledge-source-card:hover {
+        border-color: rgba(255, 107, 53, 0.3);
+      }
+
+      .knowledge-category[data-color='#00f5ff']
+        .knowledge-source-card:hover
+        .knowledge-source-name {
+        color: #00f5ff;
+      }
+      .knowledge-category[data-color='#a855f7']
+        .knowledge-source-card:hover
+        .knowledge-source-name {
+        color: #a855f7;
+      }
+      .knowledge-category[data-color='#39ff14']
+        .knowledge-source-card:hover
+        .knowledge-source-name {
+        color: #39ff14;
+      }
+      .knowledge-category[data-color='#ff0090']
+        .knowledge-source-card:hover
+        .knowledge-source-name {
+        color: #ff0090;
+      }
+      .knowledge-category[data-color='#ff6b35']
+        .knowledge-source-card:hover
+        .knowledge-source-name {
+        color: #ff6b35;
+      }
+
+      .knowledge-category[data-color='#00f5ff'] .knowledge-source-url {
+        color: #00f5ff;
+      }
+      .knowledge-category[data-color='#a855f7'] .knowledge-source-url {
+        color: #a855f7;
+      }
+      .knowledge-category[data-color='#39ff14'] .knowledge-source-url {
+        color: #39ff14;
+      }
+      .knowledge-category[data-color='#ff0090'] .knowledge-source-url {
+        color: #ff0090;
+      }
+      .knowledge-category[data-color='#ff6b35'] .knowledge-source-url {
+        color: #ff6b35;
+      }
+
+      .knowledge-category[data-color='#00f5ff'] .knowledge-category-orb {
+        box-shadow: 0 0 16px rgba(0, 245, 255, 0.15);
+      }
+      .knowledge-category[data-color='#a855f7'] .knowledge-category-orb {
+        box-shadow: 0 0 16px rgba(168, 85, 247, 0.15);
+      }
+      .knowledge-category[data-color='#39ff14'] .knowledge-category-orb {
+        box-shadow: 0 0 16px rgba(57, 255, 20, 0.15);
+      }
+      .knowledge-category[data-color='#ff0090'] .knowledge-category-orb {
+        box-shadow: 0 0 16px rgba(255, 0, 144, 0.15);
+      }
+      .knowledge-category[data-color='#ff6b35'] .knowledge-category-orb {
+        box-shadow: 0 0 16px rgba(255, 107, 53, 0.15);
+      }
+
+      .knowledge-footer {
+        text-align: center;
+        padding: 3rem 1rem 4rem;
+        color: rgba(255, 255, 255, 0.3);
+        font-size: 0.78rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .knowledge-footer a {
+        color: var(--neon-cyan, #00f5ff);
+        text-decoration: none;
+      }
+      .knowledge-footer .footer-back-link {
+        color: rgba(255, 255, 255, 0.4);
+        margin-top: 0.5rem;
+        display: block;
+      }
+      .knowledge-footer .footer-back-link:hover {
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .knowledge-loading-msg {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.3);
+        padding: 3rem 0;
+      }
+
+      @media (max-width: 600px) {
+        .knowledge-sources-list {
+          grid-template-columns: 1fr;
+        }
+        .knowledge-filters {
+          gap: 0.35rem;
+        }
+        .knowledge-filter-pill {
+          font-size: 0.72rem;
+          padding: 0.3rem 0.7rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- GFD Ecosystem Navigation -->
+    <nav class="gfd-ecosystem-nav" aria-label="Ecosystem navigation">
+      <div class="ecosystem-nav-container">
+        <div class="ecosystem-brand">
+          <img src="assets/logo-mark.png" alt="Good Flippin Design Logo" class="ecosystem-logo" />
+          <span class="ecosystem-title">GFD Ecosystem</span>
+        </div>
+        <button
+          class="ecosystem-toggle"
+          aria-label="Open ecosystem menu"
+          aria-expanded="false"
+          aria-controls="ecosystem-dropdown"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="ecosystem-dropdown" id="ecosystem-dropdown" role="menu" aria-hidden="true">
+        <div class="dropdown-content">
+          <div class="nav-section">
+            <h3 class="nav-section-title">GFD Ecosystem</h3>
+            <a
+              href="https://goodflippindesign.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Good Flippin Design</strong>
+                <small class="nav-link-subtitle">Strategic Web Development</small>
+              </div>
+            </a>
+            <a
+              href="https://aiaimate.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">AI Animate</strong>
+                <small class="nav-link-subtitle">AI-Human Creativity</small>
+              </div>
+            </a>
+            <a
+              href="https://culturesherpa.org"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Culture Sherpa</strong>
+                <small class="nav-link-subtitle">Earth's Living Culture</small>
+              </div>
+            </a>
+            <a
+              href="https://goodflippinvibes.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Good Flippin Vibes</strong>
+                <small class="nav-link-subtitle">Things to Feel Good About</small>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header">
+          <div class="logo">
+            <a href="index.html" class="logo-link" aria-label="GlobalDeets home">
+              <img
+                src="assets/logo-mark.png"
+                alt=""
+                role="presentation"
+                class="site-logo-mark"
+                width="220"
+                height="140"
+              />
+              <span class="site-logo-text">GlobalDeets</span>
+            </a>
+            <p class="tagline">Knowledge Sources</p>
+          </div>
+          <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
+            <a href="index.html" class="nav-icon-btn" title="Home">
+              <img
+                src="assets/icons/site/nav-home.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="globe.html" class="nav-icon-btn" title="Globe — Live Earth">
+              <img
+                src="assets/icons/site/nav-globe.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="news.html" class="nav-icon-btn" title="World News">
+              <img
+                src="assets/icons/site/nav-news.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="spheres.html" class="nav-icon-btn" title="Ecosystem Spheres">
+              <img
+                src="assets/icons/site/nav-compass.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a
+              href="knowledge.html"
+              class="nav-icon-btn active"
+              title="Knowledge Sources"
+              aria-current="page"
+            >
+              <img
+                src="assets/icons/site/nav-list.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="worldmap.html" class="nav-icon-btn" title="Live Webcams">
+              <img
+                src="assets/icons/site/nav-map-pin.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="about.html" class="nav-icon-btn" title="About GlobalDeets">
+              <img
+                src="assets/icons/site/nav-info.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <!-- Hero -->
+      <div class="knowledge-hero">
+        <span class="knowledge-hero-label">Zero Paywalls · Primary Sources Only</span>
+        <h1 class="knowledge-hero-title">The World's Knowledge, Organized</h1>
+        <p class="knowledge-hero-desc">
+          A curated directory of the most authoritative primary sources on Earth — from the UN and
+          NASA to Amnesty International and FRED. No aggregators, no clickbait. Just the original
+          data.
+        </p>
+      </div>
+
+      <!-- Category filter pills -->
+      <div
+        class="knowledge-filters"
+        role="group"
+        aria-label="Filter by knowledge category"
+        id="knowledge-filter-bar"
+      >
+        <button class="knowledge-filter-pill active" data-filter="all">All Categories</button>
+        <button class="knowledge-filter-pill" data-filter="governance">Governance</button>
+        <button class="knowledge-filter-pill" data-filter="science">Science</button>
+        <button class="knowledge-filter-pill" data-filter="environment">Environment</button>
+        <button class="knowledge-filter-pill" data-filter="culture">Culture</button>
+        <button class="knowledge-filter-pill" data-filter="economy">Economy</button>
+        <button class="knowledge-filter-pill" data-filter="health">Health</button>
+        <button class="knowledge-filter-pill" data-filter="education">Education</button>
+        <button class="knowledge-filter-pill" data-filter="rights">Human Rights</button>
+      </div>
+
+      <!-- Knowledge grid (populated by JS) -->
+      <div
+        class="knowledge-grid"
+        id="knowledge-grid"
+        aria-live="polite"
+        aria-label="Knowledge source categories"
+      >
+        <p id="knowledge-loading" class="knowledge-loading-msg">Loading knowledge sources…</p>
+      </div>
+    </main>
+
+    <footer class="knowledge-footer">
+      <p>
+        All sources are public, primary, and as free as possible. No affiliate links. No tracking.
+        Just knowledge.
+      </p>
+      <p>
+        Built by
+        <a href="https://goodflippindesign.com" target="_blank" rel="noopener"
+          >Good Flippin Design</a
+        >
+      </p>
+      <a href="index.html" class="footer-back-link">← Back to GlobalDeets</a>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="shared/ecosystem-nav.js"></script>
+    <script>
+      (function () {
+        var DATA_URL = 'data/knowledge-sources.json';
+        var grid = document.getElementById('knowledge-grid');
+        var loading = document.getElementById('knowledge-loading');
+        var filterBar = document.getElementById('knowledge-filter-bar');
+        var allCategories = [];
+
+        function getDomain(url) {
+          try {
+            return new URL(url).hostname.replace(/^www\./, '');
+          } catch (e) {
+            return url;
+          }
+        }
+
+        function renderCategories(filter) {
+          grid.innerHTML = '';
+          var shown = 0;
+          allCategories.forEach(function (cat) {
+            if (filter !== 'all' && cat.id !== filter) return;
+            shown++;
+
+            var section = document.createElement('section');
+            section.className = 'knowledge-category';
+            section.setAttribute('data-color', cat.color);
+            section.setAttribute('aria-label', cat.label);
+
+            var header = document.createElement('div');
+            header.className = 'knowledge-category-header';
+
+            var orb = document.createElement('div');
+            orb.className = 'knowledge-category-orb';
+            orb.setAttribute('aria-hidden', 'true');
+            var orbImg = document.createElement('img');
+            orbImg.src = 'assets/icons/site/' + cat.icon;
+            orbImg.alt = '';
+            orbImg.width = 18;
+            orbImg.height = 18;
+            orb.appendChild(orbImg);
+
+            var titleEl = document.createElement('h2');
+            titleEl.className = 'knowledge-category-title';
+            titleEl.textContent = cat.label;
+
+            var countEl = document.createElement('span');
+            countEl.className = 'knowledge-category-count';
+            countEl.textContent = cat.sources.length + ' sources';
+
+            header.appendChild(orb);
+            header.appendChild(titleEl);
+            header.appendChild(countEl);
+            section.appendChild(header);
+
+            if (cat.desc) {
+              var descEl = document.createElement('p');
+              descEl.style.cssText =
+                'color:#64748b;font-size:0.82rem;margin:0 0 1rem;line-height:1.5';
+              descEl.textContent = cat.desc;
+              section.appendChild(descEl);
+            }
+
+            var sourceList = document.createElement('div');
+            sourceList.className = 'knowledge-sources-list';
+
+            cat.sources.forEach(function (src) {
+              var card = document.createElement('a');
+              card.className = 'knowledge-source-card';
+              card.href = src.url;
+              card.target = '_blank';
+              card.rel = 'noopener noreferrer';
+              card.setAttribute('aria-label', src.name + ' — ' + src.desc);
+
+              var nameEl = document.createElement('div');
+              nameEl.className = 'knowledge-source-name';
+              nameEl.textContent = src.name;
+
+              var descEl = document.createElement('div');
+              descEl.className = 'knowledge-source-desc';
+              descEl.textContent = src.desc;
+
+              var urlEl = document.createElement('div');
+              urlEl.className = 'knowledge-source-url';
+              urlEl.textContent = getDomain(src.url);
+
+              card.appendChild(nameEl);
+              card.appendChild(descEl);
+              card.appendChild(urlEl);
+              sourceList.appendChild(card);
+            });
+
+            section.appendChild(sourceList);
+            grid.appendChild(section);
+          });
+
+          if (shown === 0) {
+            grid.innerHTML =
+              '<p style="text-align:center;color:rgba(255,255,255,0.3);padding:3rem 0">No sources in this category yet.</p>';
+          }
+        }
+
+        // Filter pills
+        filterBar.addEventListener('click', function (e) {
+          var btn = e.target.closest('.knowledge-filter-pill');
+          if (!btn) return;
+          filterBar.querySelectorAll('.knowledge-filter-pill').forEach(function (b) {
+            b.classList.remove('active');
+          });
+          btn.classList.add('active');
+          renderCategories(btn.dataset.filter);
+        });
+
+        // Load data
+        fetch(DATA_URL)
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (data) {
+            allCategories = data;
+            if (loading) loading.remove();
+            renderCategories('all');
+          })
+          .catch(function () {
+            if (loading)
+              loading.textContent = 'Could not load knowledge sources. Please try again later.';
+          });
+      })();
+    </script>
+    <script src="sw-register.js"></script>
+  </body>
+</html>

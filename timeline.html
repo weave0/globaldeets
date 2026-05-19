@@ -223,133 +223,63 @@
             <h1>GlobalDeets</h1>
             <p class="tagline">Data Platform Showcase • Strategic Insights • Live Analytics</p>
           </div>
-          <nav
-            role="navigation"
-            aria-label="Primary navigation"
-            style="
-              display: flex;
-              gap: 1.5rem;
-              margin-top: 1.5rem;
-              flex-wrap: wrap;
-              justify-content: center;
-              align-items: center;
-            "
-          >
-            <a href="index.html" class="nav-icon-btn" title="Home">
-              <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="35"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  opacity="0.3"
-                />
-                <circle cx="50" cy="50" r="20" fill="currentColor" opacity="0.6" />
-                <circle cx="50" cy="50" r="8" fill="currentColor" />
-              </svg>
-            </a>
-            <a href="categories.html" class="nav-icon-btn" title="Categories">
-              <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
-                <rect
-                  x="15"
-                  y="15"
-                  width="30"
-                  height="30"
-                  rx="8"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  fill="currentColor"
-                  opacity="0.3"
-                />
-                <rect
-                  x="55"
-                  y="15"
-                  width="30"
-                  height="30"
-                  rx="8"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  fill="currentColor"
-                  opacity="0.3"
-                />
-                <rect
-                  x="15"
-                  y="55"
-                  width="30"
-                  height="30"
-                  rx="8"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  fill="currentColor"
-                  opacity="0.3"
-                />
-                <rect
-                  x="55"
-                  y="55"
-                  width="30"
-                  height="30"
-                  rx="8"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  fill="currentColor"
-                  opacity="0.6"
-                />
-              </svg>
-            </a>
-            <a
-              href="timeline.html"
-              class="nav-icon-btn active"
-              title="Timeline"
-              aria-current="page"
-            >
-              <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
-                <line
-                  x1="50"
-                  y1="15"
-                  x2="50"
-                  y2="85"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  opacity="0.4"
-                />
-                <circle cx="50" cy="25" r="8" fill="currentColor" opacity="0.8" />
-                <circle cx="50" cy="50" r="10" fill="currentColor" />
-                <circle cx="50" cy="75" r="6" fill="currentColor" opacity="0.6" />
-              </svg>
-            </a>
-            <a href="analytics.html" class="nav-icon-btn" title="Analytics">
-              <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
-                <rect
-                  x="15"
-                  y="60"
-                  width="15"
-                  height="25"
-                  rx="4"
-                  fill="currentColor"
-                  opacity="0.4"
-                />
-                <rect
-                  x="35"
-                  y="40"
-                  width="15"
-                  height="45"
-                  rx="4"
-                  fill="currentColor"
-                  opacity="0.6"
-                />
-                <rect
-                  x="55"
-                  y="25"
-                  width="15"
-                  height="60"
-                  rx="4"
-                  fill="currentColor"
-                  opacity="0.8"
-                />
-                <rect x="75" y="35" width="15" height="50" rx="4" fill="currentColor" />
-              </svg>
-            </a>
+          <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
+            <a href="index.html" class="nav-icon-btn" title="Home"
+              ><img
+                src="assets/icons/site/nav-home.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+            /></a>
+            <a href="globe.html" class="nav-icon-btn" title="Globe — Live Earth"
+              ><img
+                src="assets/icons/site/nav-globe.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+            /></a>
+            <a href="news.html" class="nav-icon-btn" title="World News"
+              ><img
+                src="assets/icons/site/nav-news.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+            /></a>
+            <a href="spheres.html" class="nav-icon-btn" title="Ecosystem Spheres"
+              ><img
+                src="assets/icons/site/nav-compass.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+            /></a>
+            <a href="knowledge.html" class="nav-icon-btn" title="Knowledge Sources"
+              ><img
+                src="assets/icons/site/nav-list.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+            /></a>
+            <a href="worldmap.html" class="nav-icon-btn" title="Live Webcams"
+              ><img
+                src="assets/icons/site/nav-map-pin.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+            /></a>
+            <a href="about.html" class="nav-icon-btn" title="About GlobalDeets"
+              ><img
+                src="assets/icons/site/nav-info.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+            /></a>
           </nav>
         </div>
       </div>
@@ -369,21 +299,9 @@
       </div>
 
       <footer class="footer">
-        <div
-          class="container"
-          style="
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            align-items: center;
-            text-align: center;
-          "
-        >
+        <div class="container analytics-footer-container">
           <p>© 2026 GlobalDeets · Data Platform Showcase</p>
-          <div
-            class="footer-links"
-            style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center"
-          >
+          <div class="footer-links">
             <button id="themeToggle" type="button" aria-label="Toggle theme" class="view-details">
               Theme
             </button>

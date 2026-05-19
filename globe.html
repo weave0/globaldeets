@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WM6Q66W9W0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-WM6Q66W9W0');
+    </script>
+    <!-- Error monitoring -->
+    <script>
+      window.onerror = function (msg, src, line) {
+        if (typeof gtag === 'function') {
+          gtag('event', 'js_error', {
+            event_category: 'JavaScript',
+            event_label: (src || '') + ':' + line,
+            description: msg,
+          });
+        }
+      };
+      window.addEventListener('unhandledrejection', function (e) {
+        if (typeof gtag === 'function') {
+          gtag('event', 'js_error', {
+            event_category: 'Promise',
+            event_label: 'unhandledrejection',
+            description: String(e.reason),
+          });
+        }
+      });
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="GlobalDeets Live Earth Globe — world news geo-pinned on an interactive 3D globe. Watch live headlines appear around Earth in real time."
+    />
+    <meta
+      name="keywords"
+      content="interactive globe, world map, live news globe, 3D earth, global news visualization, globaldeets"
+    />
+    <meta name="author" content="GlobalDeets - Good Flippin Design" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://globaldeets.com/globe" />
+    <meta property="og:title" content="GlobalDeets — Live Earth Globe" />
+    <meta
+      property="og:description"
+      content="World news geo-pinned on a dark neon 3D globe. No opinion. Just signal."
+    />
+    <meta property="og:image" content="https://globaldeets.com/assets/og-image.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GlobalDeets — Live Earth Globe" />
+    <meta name="twitter:description" content="World news geo-pinned on a dark neon 3D globe." />
+
+    <!-- PWA -->
+    <meta name="theme-color" content="#000000" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+
+    <title>Live Earth Globe — GlobalDeets</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="shared/ecosystem-nav.css" />
+
+    <!-- Globe.gl -->
+    <script src="https://cdn.jsdelivr.net/npm/globe.gl@2/dist/globe.gl.min.js"></script>
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://globaldeets.com/globe" />
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "GlobalDeets Live Earth Globe",
+        "description": "An interactive 3D globe showing live world news geo-pinned by location. Primary sources only.",
+        "url": "https://globaldeets.com/globe",
+        "isPartOf": { "@type": "WebSite", "url": "https://globaldeets.com" }
+      }
+    </script>
+
+    <style>
+      /* Globe page overrides */
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+      }
+      body {
+        background: #000;
+      }
+
+      /* Full-screen globe */
+      #globe-hero-container {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        width: 100vw !important;
+        height: 100vh !important;
+      }
+      #globe-hero-container canvas {
+        display: block;
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      /* Transparent header overlay */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 30;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.72) 0%, transparent 100%) !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        border-bottom: none !important;
+        padding: 0.75rem 0 !important;
+        transition: none !important;
+      }
+
+      header .site-logo-text {
+        font-size: 1.1rem;
+      }
+      header .tagline {
+        font-size: 0.7rem;
+      }
+      header .site-logo-mark {
+        height: 40px !important;
+      }
+
+      /* GFD ecosystem nav stays on top */
+      .gfd-ecosystem-nav {
+        z-index: 40;
+      }
+
+      /* Globe page-specific badge */
+      .globe-page-badge {
+        position: fixed;
+        top: 5.5rem;
+        right: 1.5rem;
+        z-index: 30;
+        background: rgba(5, 9, 17, 0.82);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 107, 53, 0.35);
+        border-radius: 8px;
+        padding: 0.4rem 0.9rem;
+        font-size: 0.75rem;
+        color: #ff6b35;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        pointer-events: none;
+      }
+
+      .globe-page-badge .badge-live {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background: #ff6b35;
+        border-radius: 50%;
+        margin-right: 5px;
+        vertical-align: middle;
+        animation: badgePulse 1.4s ease-in-out infinite;
+      }
+
+      @keyframes badgePulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.4;
+          transform: scale(0.75);
+        }
+      }
+
+      /* Region filter bar */
+      .globe-filter-bar {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 30;
+        display: flex;
+        gap: 0.4rem;
+        background: rgba(5, 9, 17, 0.84);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 50px;
+        padding: 0.45rem 0.85rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: calc(100vw - 2rem);
+      }
+
+      .globe-filter-btn {
+        background: none;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 0.75rem;
+        padding: 0.3rem 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        white-space: nowrap;
+        line-height: 1.5;
+      }
+
+      .globe-filter-btn:hover,
+      .globe-filter-btn.active {
+        background: rgba(0, 245, 255, 0.1);
+        border-color: #00f5ff;
+        color: #00f5ff;
+      }
+
+      /* News ticker bar at bottom */
+      .news-ticker-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 25;
+        height: 2rem;
+      }
+
+      /* News pin overlay */
+      #news-pin-overlay {
+        position: fixed;
+        top: 50%;
+        right: 2rem;
+        transform: translateY(-50%) translateX(140%);
+        z-index: 50;
+        width: 320px;
+        max-width: calc(100vw - 2rem);
+        background: rgba(8, 12, 24, 0.94);
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 245, 255, 0.18);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow:
+          0 16px 48px rgba(0, 0, 0, 0.6),
+          0 0 40px rgba(0, 245, 255, 0.06);
+      }
+
+      #news-pin-overlay.visible {
+        transform: translateY(-50%) translateX(0);
+      }
+
+      #news-overlay-close {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 1.3rem;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0.25rem;
+        transition: color 0.2s;
+      }
+
+      #news-overlay-close:hover {
+        color: #fff;
+      }
+
+      #news-overlay-source {
+        font-size: 0.72rem;
+        color: #ff6b35;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      #news-overlay-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #f0f4ff;
+        line-height: 1.4;
+        margin-bottom: 0.75rem;
+      }
+
+      #news-overlay-summary {
+        font-size: 0.82rem;
+        color: #94a3b8;
+        line-height: 1.5;
+        margin: 0 0 1rem;
+      }
+
+      #news-overlay-link {
+        display: inline-block;
+        font-size: 0.8rem;
+        color: #00f5ff;
+        text-decoration: none;
+        border: 1px solid rgba(0, 245, 255, 0.25);
+        border-radius: 6px;
+        padding: 0.3rem 0.75rem;
+        transition: all 0.2s;
+      }
+
+      #news-overlay-link:hover {
+        background: rgba(0, 245, 255, 0.1);
+        border-color: #00f5ff;
+      }
+
+      /* Accessibility: SR-only news list */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      @media (max-width: 600px) {
+        #news-pin-overlay {
+          top: auto;
+          right: auto;
+          bottom: 5.5rem;
+          left: 1rem;
+          right: 1rem;
+          width: auto;
+          transform: translateY(120%);
+          transition: transform 0.35s ease;
+        }
+        #news-pin-overlay.visible {
+          transform: translateY(0);
+        }
+        .globe-filter-bar {
+          bottom: 4.5rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- GFD Ecosystem Navigation -->
+    <nav class="gfd-ecosystem-nav" aria-label="Ecosystem navigation">
+      <div class="ecosystem-nav-container">
+        <div class="ecosystem-brand">
+          <img src="assets/logo-mark.png" alt="Good Flippin Design Logo" class="ecosystem-logo" />
+          <span class="ecosystem-title">GFD Ecosystem</span>
+        </div>
+        <button
+          class="ecosystem-toggle"
+          aria-label="Open ecosystem menu"
+          aria-expanded="false"
+          aria-controls="ecosystem-dropdown"
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="ecosystem-dropdown" id="ecosystem-dropdown" role="menu" aria-hidden="true">
+        <div class="dropdown-content">
+          <div class="nav-section">
+            <h3 class="nav-section-title">GFD Ecosystem</h3>
+            <a
+              href="https://goodflippindesign.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Good Flippin Design</strong>
+                <small class="nav-link-subtitle">Strategic Web Development</small>
+              </div>
+            </a>
+            <a
+              href="https://aiaimate.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">AI Animate</strong>
+                <small class="nav-link-subtitle">AI-Human Creativity</small>
+              </div>
+            </a>
+            <a
+              href="https://culturesherpa.org"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Culture Sherpa</strong>
+                <small class="nav-link-subtitle">Earth's Living Culture</small>
+              </div>
+            </a>
+            <a
+              href="https://goodflippinvibes.com"
+              class="nav-link"
+              role="menuitem"
+              target="_blank"
+              rel="noopener"
+            >
+              <div class="nav-link-content">
+                <strong class="nav-link-title">Good Flippin Vibes</strong>
+                <small class="nav-link-subtitle">Things to Feel Good About</small>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <a href="#news-feed-accessible" class="skip-link">Skip globe, go to news feed</a>
+
+    <!-- Transparent header overlay -->
+    <header>
+      <div class="container">
+        <div class="header">
+          <div class="logo">
+            <a href="index.html" class="logo-link" aria-label="GlobalDeets home">
+              <img
+                src="assets/logo-mark.png"
+                alt=""
+                role="presentation"
+                class="site-logo-mark"
+                width="220"
+                height="140"
+              />
+              <span class="site-logo-text">GlobalDeets</span>
+            </a>
+            <p class="tagline">Live Earth</p>
+          </div>
+          <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
+            <a href="index.html" class="nav-icon-btn" title="Home">
+              <img
+                src="assets/icons/site/nav-home.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a
+              href="globe.html"
+              class="nav-icon-btn active"
+              title="Globe — Live Earth"
+              aria-current="page"
+            >
+              <img
+                src="assets/icons/site/nav-globe.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="news.html" class="nav-icon-btn" title="World News">
+              <img
+                src="assets/icons/site/nav-news.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="spheres.html" class="nav-icon-btn" title="Ecosystem Spheres">
+              <img
+                src="assets/icons/site/nav-compass.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="knowledge.html" class="nav-icon-btn" title="Knowledge Sources">
+              <img
+                src="assets/icons/site/nav-list.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="worldmap.html" class="nav-icon-btn" title="Live Webcams">
+              <img
+                src="assets/icons/site/nav-map-pin.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+            <a href="about.html" class="nav-icon-btn" title="About GlobalDeets">
+              <img
+                src="assets/icons/site/nav-info.png"
+                alt=""
+                aria-hidden="true"
+                width="32"
+                height="32"
+              />
+            </a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Full-screen Globe -->
+    <div
+      id="globe-hero-container"
+      role="img"
+      aria-label="Interactive 3D globe showing global news locations. Use the news feed below for a text-accessible version."
+    ></div>
+
+    <!-- Live news count badge -->
+    <div
+      class="globe-page-badge"
+      id="globe-news-badge"
+      aria-live="polite"
+      aria-label="Live news count"
+    >
+      <span class="badge-live" aria-hidden="true"></span>
+      <span id="globe-news-count-text">Loading…</span>
+    </div>
+
+    <!-- News pin overlay (populated by globe-hero.js on pin click) -->
+    <div id="news-pin-overlay" role="dialog" aria-modal="true" aria-label="News story detail">
+      <button id="news-overlay-close" aria-label="Close story">&times;</button>
+      <div id="news-overlay-source"></div>
+      <div id="news-overlay-title"></div>
+      <p id="news-overlay-summary"></p>
+      <a id="news-overlay-link" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+
+    <!-- Region filter buttons -->
+    <div class="globe-filter-bar" role="group" aria-label="Filter news by region">
+      <button class="globe-filter-btn active" data-region="global">All Regions</button>
+      <button class="globe-filter-btn" data-region="americas">Americas</button>
+      <button class="globe-filter-btn" data-region="europe">Europe</button>
+      <button class="globe-filter-btn" data-region="middle-east">Middle East</button>
+      <button class="globe-filter-btn" data-region="asia">Asia</button>
+      <button class="globe-filter-btn" data-region="pacific">Pacific</button>
+    </div>
+
+    <!-- News ticker (bottom) -->
+    <div class="news-ticker-bar" aria-label="News ticker">
+      <span class="ticker-label">LIVE</span>
+      <div class="ticker-viewport"><div id="ticker-track"></div></div>
+    </div>
+
+    <!-- Accessible news feed (screen readers) -->
+    <section class="sr-only" aria-live="polite" id="news-feed-accessible">
+      <h2>News Feed</h2>
+      <p>Loading live news feed…</p>
+    </section>
+
+    <!-- Scripts -->
+    <script src="shared/ecosystem-nav.js"></script>
+    <script src="globe-hero.js"></script>
+    <script>
+      // Region filter wiring
+      (function () {
+        const buttons = document.querySelectorAll('.globe-filter-btn');
+        const badge = document.getElementById('globe-news-count-text');
+        let currentRegion = 'global';
+
+        buttons.forEach(btn => {
+          btn.addEventListener('click', function () {
+            buttons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentRegion = this.dataset.region;
+            // Re-fetch with region filter
+            if (typeof window._globeHeroFilterRegion === 'function') {
+              window._globeHeroFilterRegion(currentRegion);
+            }
+          });
+        });
+
+        // Update badge when news loads
+        document.addEventListener('globeNewsLoaded', function (e) {
+          if (badge && e.detail) {
+            badge.textContent = e.detail.count + ' live stories';
+          }
+        });
+      })();
+    </script>
+
+    <!-- SW registration -->
+    <script src="sw-register.js"></script>
+  </body>
+</html>
