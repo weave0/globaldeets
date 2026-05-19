@@ -921,30 +921,82 @@ header.scrolled::before {
 }
 
 /* Site logo mark (GD globe image) */
-.site-logo-link {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
+.site-logo-link,
+.logo-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 1rem;
+  min-width: 112px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(14, 24, 42, 0.45) 0%, rgba(0, 0, 0, 0.98) 68%),
+    #000;
+  border: 1px solid rgba(95, 238, 255, 0.18);
+  border-radius: 24px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 0 30px rgba(0, 245, 255, 0.14),
+    0 0 60px rgba(139, 92, 246, 0.12);
   text-decoration: none;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.site-logo-link::before,
+.logo-link::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 16% 28%, rgba(0, 245, 255, 0.7) 0 1px, transparent 2px),
+    radial-gradient(circle at 28% 76%, rgba(0, 245, 255, 0.55) 0 1.5px, transparent 3px),
+    radial-gradient(circle at 78% 18%, rgba(139, 92, 246, 0.75) 0 1.4px, transparent 3px),
+    radial-gradient(circle at 88% 62%, rgba(0, 245, 255, 0.5) 0 1.2px, transparent 3px),
+    radial-gradient(circle at 64% 82%, rgba(139, 92, 246, 0.55) 0 1px, transparent 2px);
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.site-logo-link::after,
+.logo-link::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 26px;
+  box-shadow:
+    0 0 22px rgba(0, 245, 255, 0.18),
+    0 0 38px rgba(139, 92, 246, 0.12);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .site-logo-mark {
-  height: 96px;
+  position: relative;
+  z-index: 1;
+  height: 84px;
   width: auto;
   display: block;
-  filter: drop-shadow(0 0 24px rgba(0, 245, 255, 0.45));
+  filter:
+    drop-shadow(0 0 18px rgba(0, 245, 255, 0.38))
+    drop-shadow(0 0 34px rgba(139, 92, 246, 0.22));
   transition:
     height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.3s ease;
+    filter 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 header.scrolled .site-logo-mark {
-  height: 56px;
+  height: 54px;
 }
 
-.site-logo-link:hover .site-logo-mark {
-  filter: drop-shadow(0 0 36px rgba(0, 245, 255, 0.7));
+.site-logo-link:hover .site-logo-mark,
+.logo-link:hover .site-logo-mark {
+  filter:
+    drop-shadow(0 0 24px rgba(0, 245, 255, 0.55))
+    drop-shadow(0 0 44px rgba(139, 92, 246, 0.3));
 }
 
 /* Navigation Icon Buttons */
