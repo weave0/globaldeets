@@ -212,7 +212,10 @@
     init3DTilt();
     initRippleEffects();
     observeCards();
-    if (!particleInstance) particleInstance = new ParticleBackground();
+    // ParticleBackground disabled: Globe.gl is already a WebGL canvas renderer —
+    // running a second full-page canvas with 80 particles + O(n²) line connections
+    // on every frame causes jank and competes for GPU compositing budget.
+    // The CSS body::before radial gradient animation provides ambient depth instead.
     if (!parallaxInstance) parallaxInstance = new ParallaxController();
   }
 

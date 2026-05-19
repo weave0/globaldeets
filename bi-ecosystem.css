@@ -5,6 +5,171 @@
  */
 
 /* ============================================
+   DASHBOARD MOCK VISUALIZATION
+   ============================================ */
+
+.screenshot-fallback {
+  width: 100%;
+  aspect-ratio: 16/10;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: rgba(5, 10, 18, 0.95);
+}
+
+.dashboard-mock {
+  width: 100%;
+  height: 100%;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.dm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dm-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #10b981;
+}
+
+.dm-source {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.04em;
+}
+
+.dm-stats-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.dm-stat {
+  flex: 1;
+  background: rgba(16, 185, 129, 0.07);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 6px;
+  padding: 0.6rem 0.5rem;
+  text-align: center;
+}
+
+.dm-stat-value {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #10b981;
+  line-height: 1.1;
+}
+
+.dm-stat-label {
+  display: block;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 0.2rem;
+}
+
+.dm-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 72px;
+  padding-bottom: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dm-bar {
+  flex: 1;
+  background: linear-gradient(to top, #10b981, rgba(16, 185, 129, 0.25));
+  border-radius: 2px 2px 0 0;
+  animation: dmBarGrow 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: bottom;
+}
+
+.dm-bar:nth-child(1)  { height: 65%; animation-delay: 0.05s; }
+.dm-bar:nth-child(2)  { height: 80%; animation-delay: 0.10s; }
+.dm-bar:nth-child(3)  { height: 48%; animation-delay: 0.15s; }
+.dm-bar:nth-child(4)  { height: 91%; animation-delay: 0.20s; color: #00f5ff; background: linear-gradient(to top, #00f5ff, rgba(0, 245, 255, 0.2)); }
+.dm-bar:nth-child(5)  { height: 73%; animation-delay: 0.25s; }
+.dm-bar:nth-child(6)  { height: 58%; animation-delay: 0.30s; }
+.dm-bar:nth-child(7)  { height: 87%; animation-delay: 0.35s; }
+.dm-bar:nth-child(8)  { height: 76%; animation-delay: 0.40s; }
+.dm-bar:nth-child(9)  { height: 62%; animation-delay: 0.45s; }
+.dm-bar:nth-child(10) { height: 95%; animation-delay: 0.50s; color: #a855f7; background: linear-gradient(to top, #a855f7, rgba(168, 85, 247, 0.2)); }
+
+@keyframes dmBarGrow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+.dm-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.dm-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.dm-row-label {
+  font-size: 0.66rem;
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+  width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dm-row-track {
+  flex: 1;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.dm-row-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, rgba(16, 185, 129, 0.5));
+  border-radius: 3px;
+  animation: dmFillGrow 1s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.dm-row-fill.dm-fill-92 { width: 92%; animation-delay: 0.6s; }
+.dm-row-fill.dm-fill-78 { width: 78%; animation-delay: 0.7s; }
+.dm-row-fill.dm-fill-65 { width: 65%; animation-delay: 0.8s; }
+.dm-row-fill.dm-fill-71 { width: 71%; animation-delay: 0.9s; }
+
+@keyframes dmFillGrow {
+  from { transform: scaleX(0); transform-origin: left; }
+  to   { transform: scaleX(1); transform-origin: left; }
+}
+
+.dm-row-pct {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #10b981;
+  flex-shrink: 0;
+  width: 2.8em;
+  text-align: right;
+}
+
+/* ============================================
    ECOSYSTEM FOOTER
    ============================================ */
 

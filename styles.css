@@ -421,8 +421,8 @@
 }
 
 .ticker-headline {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.88);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -824,7 +824,14 @@ header {
   box-shadow:
     var(--shadow-md),
     0 0 60px rgba(59, 130, 246, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    background 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+header.scrolled {
+  padding: 0.75rem 0;
 }
 
 header::before {
@@ -846,12 +853,12 @@ header::before {
 }
 
 header.scrolled {
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(32px) saturate(200%);
+  background: rgba(10, 14, 26, 0.92);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
+  backdrop-filter: blur(32px) saturate(200%);
   box-shadow:
     var(--shadow-xl),
-    0 0 80px rgba(59, 130, 246, 0.2);
+    0 0 80px rgba(59, 130, 246, 0.15);
 }
 
 header.scrolled::before {
@@ -889,19 +896,9 @@ header.scrolled::before {
   0%,
   100% {
     background-position: 0% 50%;
-    filter: hue-rotate(0deg);
-  }
-  25% {
-    background-position: 50% 50%;
-    filter: hue-rotate(15deg);
   }
   50% {
     background-position: 100% 50%;
-    filter: hue-rotate(30deg);
-  }
-  75% {
-    background-position: 50% 50%;
-    filter: hue-rotate(15deg);
   }
 }
 
@@ -929,8 +926,13 @@ header.scrolled::before {
   display: block;
   filter: drop-shadow(0 0 24px rgba(0, 245, 255, 0.45));
   transition:
+    height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     filter 0.3s ease,
     transform 0.3s ease;
+}
+
+header.scrolled .site-logo-mark {
+  height: 56px;
 }
 
 .site-logo-link:hover .site-logo-mark {
