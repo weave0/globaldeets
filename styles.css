@@ -767,7 +767,7 @@ body::before {
     radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.04) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
-  animation: pulse 15s ease-in-out infinite;
+  opacity: 0.8;
 }
 
 @keyframes pulse {
@@ -794,8 +794,7 @@ body::after {
     radial-gradient(1px 1px at 50% 50%, rgba(255, 255, 255, 0.08), transparent),
     radial-gradient(1px 1px at 80% 10%, rgba(255, 255, 255, 0.06), transparent);
   background-size: 200% 200%;
-  background-position: 0% 0%;
-  animation: drift 60s ease-in-out infinite;
+  background-position: 35% 20%;
   pointer-events: none;
   z-index: 0;
 }
@@ -937,8 +936,7 @@ header.scrolled::before {
   filter: drop-shadow(0 0 24px rgba(0, 245, 255, 0.45));
   transition:
     height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.3s ease,
-    transform 0.3s ease;
+    filter 0.3s ease;
 }
 
 header.scrolled .site-logo-mark {
@@ -947,7 +945,6 @@ header.scrolled .site-logo-mark {
 
 .site-logo-link:hover .site-logo-mark {
   filter: drop-shadow(0 0 36px rgba(0, 245, 255, 0.7));
-  transform: scale(1.04);
 }
 
 /* Navigation Icon Buttons */
@@ -963,7 +960,11 @@ header.scrolled .site-logo-mark {
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   color: var(--text-secondary);
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
   position: relative;
   overflow: hidden;
 }
@@ -988,13 +989,12 @@ header.scrolled .site-logo-mark {
 .nav-icon-btn img {
   position: relative;
   z-index: 1;
-  transition: all 0.4s ease;
+  transition: filter 0.2s ease;
   filter: drop-shadow(0 0 8px rgba(0, 245, 255, 0.55)) brightness(1.05);
 }
 
 .nav-icon-btn:hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.22);
   border-color: var(--primary);
 }
 
@@ -1009,7 +1009,6 @@ header.scrolled .site-logo-mark {
 
 .nav-icon-btn:hover img {
   filter: drop-shadow(0 0 16px rgba(0, 245, 255, 0.8)) brightness(1.15);
-  transform: scale(1.1);
 }
 
 .nav-icon-btn.active {
@@ -1029,7 +1028,7 @@ header.scrolled .site-logo-mark {
 }
 
 .nav-icon-btn:active {
-  transform: translateY(-2px) scale(0.98);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.18);
 }
 
 /* =============================================
