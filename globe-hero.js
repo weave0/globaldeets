@@ -12,11 +12,21 @@
     'BBC World': [51.5, -0.12],
     Guardian: [51.5, -0.12],
     'Al Jazeera': [25.28, 51.52],
+    'Anadolu Agency': [39.93, 32.86],
     DW: [52.52, 13.4],
     'France 24': [48.86, 2.35],
+    'Kyiv Independent': [50.45, 30.52],
+    Ukrinform: [50.45, 30.52],
     NHK: [35.68, 139.69],
+    Yonhap: [37.57, 126.98],
+    'The Hindu': [13.08, 80.27],
+    CNA: [1.35, 103.82],
+    Dawn: [24.86, 67.01],
     NPR: [38.89, -77.03],
+    Mercopress: [-34.9, -56.19],
     'ABC Australia': [-33.87, 151.21],
+    'Premium Times': [9.08, 7.5],
+    'The East African': [-1.29, 36.82],
   };
 
   function jitter(val, range) {
@@ -34,6 +44,7 @@
       asia: [30, 105],
       'middle-east': [26, 44],
       pacific: [-25, 140],
+      africa: [0, 20],
     };
     const fb = regionFallback[item.region] || [0, 0];
     return { lat: jitter(fb[0], 20), lng: jitter(fb[1], 25) };
@@ -127,10 +138,14 @@
       .pointsData(items)
       .pointLat('lat')
       .pointLng('lng')
-      .pointAltitude(0.04)
-      .pointRadius(0.25)
+      .pointAltitude(0.05)
+      .pointRadius(0.45)
       .pointColor(() => '#ff6b35')
       .pointsMerge(false)
+      .onPointHover(point => {
+        const canvas = world.renderer().domElement;
+        canvas.style.cursor = point ? 'pointer' : 'default';
+      })
       .onPointClick(point => openNewsOverlay(point));
 
     // Rings — pulsing ripples around each pin
@@ -140,9 +155,9 @@
       .ringLng('lng')
       .ringAltitude(0.002)
       .ringColor(() => t => `rgba(255,107,53,${1 - t})`)
-      .ringMaxRadius(3)
-      .ringPropagationSpeed(1)
-      .ringRepeatPeriod(1500);
+      .ringMaxRadius(4)
+      .ringPropagationSpeed(1.2)
+      .ringRepeatPeriod(1200);
   }
 
   // -------------------------------------------------------------------------
