@@ -15,21 +15,21 @@ const JSON_OUT = process.argv.includes('--json');
 
 // ── Routes to probe ──────────────────────────────────────────────────────────
 const ROUTES = [
-  { path: '/',               label: 'Home',              expect: 200, type: 'text/html' },
-  { path: '/news.html',      label: 'News',              expect: 200, type: 'text/html' },
-  { path: '/globe.html',     label: 'Globe',             expect: 200, type: 'text/html' },
-  { path: '/about.html',     label: 'About',             expect: 200, type: 'text/html' },
-  { path: '/spheres.html',   label: 'Spheres',           expect: 200, type: 'text/html' },
-  { path: '/knowledge.html', label: 'Knowledge',         expect: 200, type: 'text/html' },
-  { path: '/worldmap.html',  label: 'World Map',         expect: 200, type: 'text/html' },
-  { path: '/timeline.html',  label: 'Timeline',          expect: 200, type: 'text/html' },
-  { path: '/categories.html',label: 'Categories',        expect: 200, type: 'text/html' },
-  { path: '/contact.html',   label: 'Contact',           expect: 200, type: 'text/html' },
-  { path: '/donate.html',    label: 'Donate',            expect: 200, type: 'text/html' },
-  { path: '/manifest.json',  label: 'PWA Manifest',      expect: 200, type: 'application/json' },
-  { path: '/sitemap.xml',    label: 'Sitemap',           expect: 200, type: 'application/xml' },
-  { path: '/robots.txt',     label: 'Robots.txt',        expect: 200, type: 'text/plain' },
-  { path: '/offline.html',   label: 'Offline fallback',  expect: 200, type: 'text/html' },
+  { path: '/', label: 'Home', expect: 200, type: 'text/html' },
+  { path: '/news.html', label: 'News', expect: 200, type: 'text/html' },
+  { path: '/globe.html', label: 'Globe', expect: 200, type: 'text/html' },
+  { path: '/about.html', label: 'About', expect: 200, type: 'text/html' },
+  { path: '/spheres.html', label: 'Spheres', expect: 200, type: 'text/html' },
+  { path: '/knowledge.html', label: 'Knowledge', expect: 200, type: 'text/html' },
+  { path: '/worldmap.html', label: 'World Map', expect: 200, type: 'text/html' },
+  { path: '/timeline.html', label: 'Timeline', expect: 200, type: 'text/html' },
+  { path: '/categories.html', label: 'Categories', expect: 200, type: 'text/html' },
+  { path: '/contact.html', label: 'Contact', expect: 200, type: 'text/html' },
+  { path: '/donate.html', label: 'Donate', expect: 200, type: 'text/html' },
+  { path: '/manifest.json', label: 'PWA Manifest', expect: 200, type: 'application/json' },
+  { path: '/sitemap.xml', label: 'Sitemap', expect: 200, type: 'application/xml' },
+  { path: '/robots.txt', label: 'Robots.txt', expect: 200, type: 'text/plain' },
+  { path: '/offline.html', label: 'Offline fallback', expect: 200, type: 'text/html' },
   // API
   {
     path: '/api/news?region=global&limit=5',
@@ -66,16 +66,20 @@ const REQUIRED_HEADERS = [
 // ── Colours (skip when not a TTY) ────────────────────────────────────────────
 const isTTY = process.stdout.isTTY;
 const C = {
-  green:  s => isTTY ? `\x1b[32m${s}\x1b[0m` : s,
-  red:    s => isTTY ? `\x1b[31m${s}\x1b[0m` : s,
-  yellow: s => isTTY ? `\x1b[33m${s}\x1b[0m` : s,
-  bold:   s => isTTY ? `\x1b[1m${s}\x1b[0m`  : s,
-  dim:    s => isTTY ? `\x1b[2m${s}\x1b[0m`  : s,
+  green: s => (isTTY ? `\x1b[32m${s}\x1b[0m` : s),
+  red: s => (isTTY ? `\x1b[31m${s}\x1b[0m` : s),
+  yellow: s => (isTTY ? `\x1b[33m${s}\x1b[0m` : s),
+  bold: s => (isTTY ? `\x1b[1m${s}\x1b[0m` : s),
+  dim: s => (isTTY ? `\x1b[2m${s}\x1b[0m` : s),
 };
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
-function pass(label) { return { label, ok: true }; }
-function fail(label, reason) { return { label, ok: false, reason }; }
+function pass(label) {
+  return { label, ok: true };
+}
+function fail(label, reason) {
+  return { label, ok: false, reason };
+}
 
 async function probeRoute(route) {
   const url = `${BASE}${route.path}`;
@@ -88,9 +92,9 @@ async function probeRoute(route) {
       headers: { 'User-Agent': 'GlobalDeets-HealthCheck/1.0' },
       signal: AbortSignal.timeout(12_000),
     });
-    status  = res.status;
+    status = res.status;
     headers = res.headers;
-    body    = await res.text();
+    body = await res.text();
   } catch (err) {
     return [fail(`${route.label} — fetch`, err.message)];
   }
@@ -122,8 +126,12 @@ async function probeRoute(route) {
       if (route.apiChecks.minItems > 0) {
         const count = Array.isArray(json.items) ? json.items.length : 0;
         count >= route.apiChecks.minItems
-          ? results.push(pass(`${route.label} — items ≥ ${route.apiChecks.minItems} (got ${count})`))
-          : results.push(fail(`${route.label} — items`, `got ${count}, need ≥ ${route.apiChecks.minItems}`));
+          ? results.push(
+              pass(`${route.label} — items ≥ ${route.apiChecks.minItems} (got ${count})`)
+            )
+          : results.push(
+              fail(`${route.label} — items`, `got ${count}, need ≥ ${route.apiChecks.minItems}`)
+            );
       }
     } catch (e) {
       results.push(fail(`${route.label} — JSON parse`, e.message));
@@ -147,9 +155,7 @@ async function probeHeaders() {
   }
 
   return REQUIRED_HEADERS.map(h =>
-    headers.has(h)
-      ? pass(`Security header: ${h}`)
-      : fail(`Security header: ${h}`, 'missing')
+    headers.has(h) ? pass(`Security header: ${h}`) : fail(`Security header: ${h}`, 'missing')
   );
 }
 
@@ -175,8 +181,8 @@ async function probeHeaders() {
   if (!JSON_OUT) {
     const WIDTH = 60;
     for (const r of all) {
-      const icon   = r.ok ? C.green('✓') : C.red('✗');
-      const label  = r.ok ? C.green(r.label) : C.red(r.label);
+      const icon = r.ok ? C.green('✓') : C.red('✗');
+      const label = r.ok ? C.green(r.label) : C.red(r.label);
       const reason = r.ok ? '' : C.dim(` → ${r.reason}`);
       console.log(`  ${icon}  ${label}${reason}`);
     }
@@ -185,9 +191,10 @@ async function probeHeaders() {
     console.log('\n' + '─'.repeat(WIDTH));
     console.log(
       `  ${C.bold('Results:')}  ` +
-      C.green(`${passed.length} passed`) + `  ` +
-      (failed.length ? C.red(`${failed.length} failed`) : C.dim('0 failed')) +
-      C.dim(`  (${elapsed}s)`)
+        C.green(`${passed.length} passed`) +
+        `  ` +
+        (failed.length ? C.red(`${failed.length} failed`) : C.dim('0 failed')) +
+        C.dim(`  (${elapsed}s)`)
     );
 
     if (failed.length) {
@@ -197,8 +204,8 @@ async function probeHeaders() {
     }
   } else {
     const report = {
-      ts:     new Date().toISOString(),
-      base:   BASE,
+      ts: new Date().toISOString(),
+      base: BASE,
       passed: passed.length,
       failed: failed.length,
       checks: all.map(r => ({ ok: r.ok, label: r.label, reason: r.reason || null })),

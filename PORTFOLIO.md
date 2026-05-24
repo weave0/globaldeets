@@ -7,6 +7,7 @@ A comprehensive landing page showcasing all GlobalDeets projects across creative
 This portfolio currently features **10 active projects**:
 
 ### Business Intelligence
+
 - **Consulting Insights Portal** - BD Intelligence Portal with $615M+ pipeline analysis
 - **Neurology Practice Analytics** - Healthcare globalization with ROI modeling
 - **National Health System Intelligence** - 433K+ records, $110B revenue tracking
@@ -16,10 +17,12 @@ This portfolio currently features **10 active projects**:
 - **Medical Compliance Portal** - Healthcare compliance & equity standards
 
 ### Creative Projects
+
 - **Fantasy Penpal** - Interactive storytelling for ages 5-13+
 - **Steve B Tribute** - Artistic tribute with data visualizations
 
 ### Experimental
+
 - **AI Animate** - RAG-powered AI knowledge base with neural visualizations
 
 ## 📂 Project Structure
@@ -43,6 +46,7 @@ globaldeets/
 ## 🚀 Features
 
 ### Multi-View Landing Page
+
 - **Grid View** - Card-based project showcase with hover effects
 - **List View** - Detailed table view with sortable columns
 - **Search** - Real-time debounced search (300ms)
@@ -50,11 +54,13 @@ globaldeets/
 - **Theme Toggle** - Dark/light mode with localStorage persistence
 
 ### Additional Pages
+
 - **Categories Page** - Projects grouped by Business/Creative/Experimental
 - **Timeline Page** - Chronological view with update history
 - **Analytics Page** - Portfolio statistics, charts, and tag cloud
 
 ### Advanced UX
+
 - ✅ Keyboard shortcuts (Ctrl+K search, Ctrl+T theme, Escape close)
 - ✅ Toast notifications for user feedback
 - ✅ Modal system for project details
@@ -67,6 +73,7 @@ globaldeets/
 ## 🛠️ Development
 
 ### Quick Start
+
 ```bash
 # Install dependencies
 npm install
@@ -89,6 +96,7 @@ npm run build
 ```
 
 ### Tech Stack
+
 - **HTML5** - Semantic markup with accessibility features
 - **CSS3** - Grid, Flexbox, CSS Variables for theming
 - **Vanilla JavaScript** - No framework dependencies
@@ -110,7 +118,9 @@ npm run build
 ## 🎨 Design System
 
 ### Color Palette
+
 **Dark Theme (Default)**
+
 - Background: `#1a1a2e`
 - Card Background: `#16213e`
 - Primary: `#0f3460`
@@ -119,6 +129,7 @@ npm run build
 - Text Secondary: `#aaa`
 
 **Light Theme**
+
 - Background: `#f8f9fa`
 - Card Background: `#ffffff`
 - Primary: `#0f3460`
@@ -127,6 +138,7 @@ npm run build
 - Text Secondary: `#636e72`
 
 ### Typography
+
 - **Font Family:** Inter (Google Fonts)
 - **Base Size:** 16px
 - **Headings:** 600-700 weight
@@ -161,21 +173,26 @@ The landing page will automatically update on refresh.
 ## 🌐 Deployment
 
 ### Option 1: Static Hosting (Recommended)
+
 Upload all files to:
+
 - Netlify
 - Vercel
 - GitHub Pages
 - AWS S3 + CloudFront
 
 ### Option 2: Traditional Hosting
+
 Upload to your web server's public directory.
 
 ### Domain Setup
+
 Point `www.globaldeets.com` to your hosting provider. All subdomains already exist and are cataloged.
 
 ## 📄 Documentation
 
 Comprehensive guides available:
+
 - `GETTING_STARTED.md` - Interactive walkthrough
 - `DEVELOPMENT.md` - Developer deep dive
 - `STYLE_GUIDE.md` - Design system documentation
@@ -197,6 +214,7 @@ All projects are proprietary to GlobalDeets. This portfolio showcases work acros
 ## 🤝 Contributing
 
 To add a new project:
+
 1. Launch the project on a globaldeets.com subdomain
 2. Add entry to `projects-data.js`
 3. Commit and deploy
