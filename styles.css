@@ -504,6 +504,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.25rem;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
 }
 
 .news-card {
@@ -540,6 +542,25 @@
   background: rgba(0, 245, 255, 0.08);
   padding: 0.2rem 0.55rem;
   border-radius: 4px;
+}
+
+.news-mt-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  cursor: help;
+}
+
+.news-mt-badge--failed {
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .news-time {
@@ -930,8 +951,7 @@ header.scrolled::before {
   padding: 0.9rem 1rem;
   min-width: 112px;
   background:
-    radial-gradient(circle at 50% 50%, rgba(14, 24, 42, 0.45) 0%, rgba(0, 0, 0, 0.98) 68%),
-    #000;
+    radial-gradient(circle at 50% 50%, rgba(14, 24, 42, 0.45) 0%, rgba(0, 0, 0, 0.98) 68%), #000;
   border: 1px solid rgba(95, 238, 255, 0.18);
   border-radius: 24px;
   box-shadow:
@@ -979,8 +999,7 @@ header.scrolled::before {
   height: 84px;
   width: auto;
   display: block;
-  filter:
-    drop-shadow(0 0 18px rgba(0, 245, 255, 0.38))
+  filter: drop-shadow(0 0 18px rgba(0, 245, 255, 0.38))
     drop-shadow(0 0 34px rgba(139, 92, 246, 0.22));
   transition:
     height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -994,8 +1013,7 @@ header.scrolled .site-logo-mark {
 
 .site-logo-link:hover .site-logo-mark,
 .logo-link:hover .site-logo-mark {
-  filter:
-    drop-shadow(0 0 24px rgba(0, 245, 255, 0.55))
+  filter: drop-shadow(0 0 24px rgba(0, 245, 255, 0.55))
     drop-shadow(0 0 44px rgba(139, 92, 246, 0.3));
 }
 

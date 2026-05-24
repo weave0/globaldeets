@@ -13,9 +13,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" /></noscript>
     <link rel="stylesheet" href="styles.css" />
     <!-- Global skip-link styles loaded via styles.css -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -347,16 +350,12 @@
             <a href="timeline.html" class="view-details" aria-label="Timeline">Timeline</a>
             <a href="analytics.html" class="view-details" aria-label="Analytics">Analytics</a>
           </div>
-          <p>© 2025 Strategic Globalization Intelligence Platform</p>
+          <p>© 2026 Strategic Globalization Intelligence Platform</p>
         </div>
       </div>
     </footer>
 
-    <button
-      id="scrollToTop"
-      class="scroll-to-top"
-      aria-label="Scroll to top"
-    >
+    <button id="scrollToTop" class="scroll-to-top" aria-label="Scroll to top">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"

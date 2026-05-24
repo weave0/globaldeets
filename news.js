@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  const REGIONS = ['global', 'americas', 'europe', 'asia', 'middle-east', 'pacific'];
+  const REGIONS = ['global', 'americas', 'europe', 'asia', 'middle-east', 'pacific', 'africa'];
 
   const REGION_LABELS = {
     global: 'All Regions',
@@ -14,6 +14,7 @@
     asia: 'Asia',
     'middle-east': 'Middle East',
     pacific: 'Pacific',
+    africa: 'Africa',
   };
 
   let currentRegion = 'global';
@@ -138,9 +139,16 @@
       const pubTime = formatTime(item.published);
       const dateAttr = item.published ? ` datetime="${escapeAttr(item.published)}"` : '';
 
+      const mtBadge = item.translated
+        ? `<span class="news-mt-badge" title="Machine translated from ${escapeAttr(item.originalLang || 'original language')} · Cloudflare AI (m2m100)">MT</span>`
+        : item.originalLang && item.originalLang !== 'en' && !item.translated
+          ? `<span class="news-mt-badge news-mt-badge--failed" title="Originally in ${escapeAttr(item.originalLang)}; translation unavailable">⚠ ${escapeAttr(item.originalLang?.toUpperCase())}</span>`
+          : '';
+
       card.innerHTML = `
         <div class="news-card-header">
           <span class="news-source-badge">${escapeHtml(item.source || '')}</span>
+          ${mtBadge}
           <time class="news-time"${dateAttr}>${pubTime}</time>
         </div>
         <h2 class="news-headline">

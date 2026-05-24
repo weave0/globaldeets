@@ -203,7 +203,7 @@ const projects = [
     ],
   },
   {
-    name: 'AI Aimate',
+    name: 'AI Animate',
     url: 'https://aiaimate.com/',
     description:
       'Journey from backend to frontend of artificial intelligence. RAG-powered knowledge base with transparent uncertainty margins, visual metaphors, and interactive neural network visualizations. Decoding AI science with intentional data sourcing and artistic simplification.',

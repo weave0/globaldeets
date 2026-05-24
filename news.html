@@ -37,7 +37,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="GlobalDeets World News — Live headlines from Reuters, BBC, AP, Al Jazeera, and more. Filter by region. Zero opinion — original sources only."
+      content="GlobalDeets World News — Live headlines from 19 credible sources across every region. Filter by region. Zero opinion — original sources only."
     />
     <meta
       name="keywords"
@@ -51,7 +51,7 @@
     <meta property="og:title" content="GlobalDeets — World News Feed" />
     <meta
       property="og:description"
-      content="Live world headlines from 10 credible sources. No opinion, no paywalls. Just signal."
+      content="Live world headlines from 19 credible sources. No opinion, no paywalls. Just signal."
     />
     <meta property="og:image" content="https://globaldeets.com/assets/og-image.png" />
 
@@ -71,9 +71,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
-      rel="stylesheet"
+      as="style"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
     />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+    /></noscript>
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css" />
@@ -90,7 +100,7 @@
         "@context": "https://schema.org",
         "@type": "WebPage",
         "name": "GlobalDeets World News Feed",
-        "description": "Live world headlines from 10 credible primary sources. No editorial opinion — links go directly to original articles.",
+        "description": "Live world headlines from 19 credible primary sources across every region. No editorial opinion — links go directly to original articles.",
         "url": "https://globaldeets.com/news",
         "isPartOf": { "@type": "WebSite", "url": "https://globaldeets.com" }
       }
@@ -152,7 +162,7 @@
               rel="noopener"
             >
               <div class="nav-link-content">
-                <strong class="nav-link-title">AI Aimate</strong>
+                <strong class="nav-link-title">AI Animate</strong>
                 <small class="nav-link-subtitle">AI Education Platform</small>
               </div>
             </a>
@@ -263,7 +273,7 @@
         <div class="news-page-header">
           <h2 class="news-page-title"><span>World</span> News Feed</h2>
           <p class="news-page-subtitle">
-            Live headlines from 10 credible primary sources &mdash; no opinion, no paywalls. Links
+            Live headlines from 19 credible primary sources &mdash; no opinion, no paywalls. Links
             go directly to the original articles.
           </p>
         </div>
@@ -277,8 +287,9 @@
         <div class="news-status-bar">
           <span id="news-status" aria-live="polite">Loading…</span>
           <span class="news-sources-note">
-            Sources: Reuters · AP · BBC · Guardian · Al Jazeera · DW · France 24 · NHK · NPR · ABC
-            Australia
+            Sources: BBC · AP · Guardian · Al Jazeera · DW · France 24 · Kyiv Independent ·
+            Ukrinform · NHK · Yonhap · The Hindu · CNA · Dawn · NPR · Mercopress · ABC Australia ·
+            Premium Times · The East African · Anadolu Agency
           </span>
         </div>
 

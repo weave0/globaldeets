@@ -11,6 +11,12 @@ NODE_ENV = "production"
 binding = "NEWS_CACHE"
 id = "0fa8e8e6bf1b4a7b9c1bfe51c27f52c3"
 
+# Workers AI — used for machine translation of non-English RSS feeds (NHK, etc.)
+# Model: @cf/meta/m2m100-1.2b (free within Workers AI included quota)
+# Enable in Cloudflare dashboard: Pages project → Settings → Workers AI
+[ai]
+binding = "AI"
+
 # Note: Security headers are configured in _headers file
 # Cloudflare Pages automatically applies headers from _headers file
 # See _headers in project root for CSP, X-Frame-Options, etc.

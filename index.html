@@ -79,9 +79,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
-      rel="stylesheet"
+      as="style"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
     />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+    /></noscript>
 
     <!-- Animation Library -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" />
@@ -142,7 +152,7 @@
         "hasPart": [
           {
             "@type": "CreativeWork",
-            "name": "AI Aimate",
+            "name": "AI Animate",
             "description": "AI education platform with RAG-powered search",
             "url": "https://aiaimate.com"
           },
@@ -277,7 +287,7 @@
                 </svg>
               </span>
               <div class="nav-link-content">
-                <strong class="nav-link-title">AI Aimate</strong>
+                <strong class="nav-link-title">AI Animate</strong>
                 <small class="nav-link-subtitle">AI Education Platform</small>
               </div>
             </a>
@@ -953,7 +963,7 @@
                 class="eco-icon"
                 aria-hidden="true"
               />
-              AI Aimate</a
+              AI Animate</a
             >
             <a
               href="https://culturesherpa.org"
@@ -1072,16 +1082,16 @@
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/globe.gl@2/dist/globe.gl.min.js"></script>
-    <script src="globe-hero.js"></script>
-    <script src="projects-data.js"></script>
-    <script src="projects-render.js"></script>
-    <script src="ui-effects.js"></script>
-    <script src="interactions.js"></script>
-    <script src="app.js"></script>
-    <script src="shared/ecosystem-nav.js"></script>
-    <script src="ux-animations.js"></script>
-    <script src="platform-modal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/globe.gl@2/dist/globe.gl.min.js" defer></script>
+    <script src="globe-hero.js" defer></script>
+    <script src="projects-data.js" defer></script>
+    <script src="projects-render.js" defer></script>
+    <script src="ui-effects.js" defer></script>
+    <script src="interactions.js" defer></script>
+    <script src="app.js" defer></script>
+    <script src="shared/ecosystem-nav.js" defer></script>
+    <script src="ux-animations.js" defer></script>
+    <script src="platform-modal.js" defer></script>
     <script>
       // Service worker registration (progressive enhancement)
       if ('serviceWorker' in navigator) {
