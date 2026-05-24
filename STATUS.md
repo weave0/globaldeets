@@ -95,7 +95,7 @@ Globaldeets/
 
 ### Experimental Technology (2 Projects)
 
-10. **AI Aimate** - RAG-Powered AI Education Platform
+10. **AI Animate** - RAG-Powered AI Education Platform
 11. **CultureSherpa** - Equitable World Cultures Learning Model
 
 ### In Development (1 Project)

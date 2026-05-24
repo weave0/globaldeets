@@ -20,7 +20,7 @@ This portfolio currently features **10 active projects**:
 - **Steve B Tribute** - Artistic tribute with data visualizations
 
 ### Experimental
-- **AI Aimate** - RAG-powered AI knowledge base with neural visualizations
+- **AI Animate** - RAG-powered AI knowledge base with neural visualizations
 
 ## 📂 Project Structure
 
@@ -209,7 +209,7 @@ To add a new project:
 
 **Most Creative:** Fantasy Penpal - 30+ characters, age-based storytelling
 
-**Best Data Viz:** AI Aimate - Interactive neural networks, knowledge graphs
+**Best Data Viz:** AI Animate - Interactive neural networks, knowledge graphs
 
 ---
 
