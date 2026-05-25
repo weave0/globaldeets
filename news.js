@@ -20,17 +20,33 @@
   let currentRegion = 'global';
   let currentOffset = 0;
   const PAGE_SIZE = 24;
+  const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
+    ? 'https://globaldeets.com'
+    : '';
   let allItems = [];
   let loading = false;
+  let searchTerm = '';
 
   // -------------------------------------------------------------------------
   // Init
   // -------------------------------------------------------------------------
   function init() {
     renderTabs();
+    bindSearch();
     loadNews(true);
 
     document.getElementById('load-more-btn')?.addEventListener('click', () => loadNews(false));
+  }
+
+  function bindSearch() {
+    const input = document.getElementById('news-search');
+    if (!input) return;
+
+    input.addEventListener('input', () => {
+      searchTerm = input.value.trim().toLowerCase();
+      renderVisibleCards();
+      updateStatus();
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -54,6 +70,9 @@
       currentRegion = btn.dataset.region;
       currentOffset = 0;
       allItems = [];
+      searchTerm = '';
+      const searchInput = document.getElementById('news-search');
+      if (searchInput) searchInput.value = '';
 
       tabBar.querySelectorAll('.region-tab').forEach(b => b.classList.toggle('active', b === btn));
 
@@ -77,7 +96,7 @@
     }
     if (loadBtn) loadBtn.disabled = true;
 
-    const url = `/api/news?region=${encodeURIComponent(currentRegion)}&limit=${PAGE_SIZE}&offset=${currentOffset}`;
+    const url = `${API_BASE}/api/news?region=${encodeURIComponent(currentRegion)}&limit=${PAGE_SIZE}&offset=${currentOffset}`;
 
     fetch(url)
       .then(r => {
@@ -88,13 +107,11 @@
         const items = data.items || [];
         allItems = reset ? items : [...allItems, ...items];
         currentOffset += items.length;
+        window.__globalDeetsNewsTotal = data.total;
+        window.__globalDeetsNewsCached = data.cached;
 
-        renderCards(grid, items, reset);
-
-        if (status) {
-          const cachedNote = data.cached ? ' · cached' : '';
-          status.textContent = `${allItems.length} of ${data.total ?? '?'} stories${cachedNote}`;
-        }
+        renderVisibleCards();
+        updateStatus();
 
         if (loadBtn) {
           loadBtn.disabled = false;
@@ -173,6 +190,37 @@
     });
 
     grid.appendChild(fragment);
+  }
+
+  function renderVisibleCards() {
+    const grid = document.getElementById('news-grid');
+    if (!grid) return;
+
+    const visibleItems = getVisibleItems();
+    renderCards(grid, visibleItems, true);
+  }
+
+  function getVisibleItems() {
+    if (!searchTerm) return allItems;
+
+    return allItems.filter(item => {
+      const haystack = [item.headline, item.summary, item.source, item.region]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(searchTerm);
+    });
+  }
+
+  function updateStatus() {
+    const status = document.getElementById('news-status');
+    if (!status) return;
+
+    const total = window.__globalDeetsNewsTotal ?? '?';
+    const cachedNote = window.__globalDeetsNewsCached ? ' · cached' : '';
+    const visibleItems = getVisibleItems();
+    const searchNote = searchTerm ? ` · ${visibleItems.length} matching search` : '';
+    status.textContent = `${allItems.length} of ${total} stories${cachedNote}${searchNote}`;
   }
 
   // -------------------------------------------------------------------------

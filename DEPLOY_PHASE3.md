@@ -200,7 +200,7 @@ npx live-server --port=3000
 
 3. **Additional Platforms** (ecosystem expansion)
    - Add Eliassen modal data
-   - Add CultureSherpa modal data
+   - Add Culture Sherpa modal data
    - Expand platform showcase section
 
 ---

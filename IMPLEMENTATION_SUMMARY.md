@@ -270,9 +270,9 @@ z:\Globaldeets\
 6. National Health System Intelligence - 433K+ records, $110B analysis
 7. Community Health - 171 care sites, 221K patients
 8. Medical Compliance - Equity-forward portal
-9. AI Animate - RAG-powered AI education
+9. aiaimate - RAG-powered AI education
 10. Steve B Tribute - Filmography visualization
-11. CultureSherpa - World cultures platform
+11. Culture Sherpa - World cultures platform
 12. Global Insurance Intelligence Platform - $117T market intelligence
 
 ---

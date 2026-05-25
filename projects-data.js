@@ -203,7 +203,7 @@ const projects = [
     ],
   },
   {
-    name: 'AI Animate',
+    name: 'aiaimate',
     url: 'https://aiaimate.com/',
     description:
       'Journey from backend to frontend of artificial intelligence. RAG-powered knowledge base with transparent uncertainty margins, visual metaphors, and interactive neural network visualizations. Decoding AI science with intentional data sourcing and artistic simplification.',
@@ -251,7 +251,7 @@ const projects = [
     ],
   },
   {
-    name: 'CultureSherpa',
+    name: 'Culture Sherpa',
     url: 'https://www.culturesherpa.org',
     description:
       'An equitable model for viewing and learning about world cultures through academic, scientific, and artistic lenses. Provides balanced, accurate representation of global cultures with scholarly rigor and creative exploration.',

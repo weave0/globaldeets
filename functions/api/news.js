@@ -2,7 +2,7 @@
 // Cloudflare Pages Function — GET /api/news
 //
 // Params:
-//   ?region=global|middle-east|europe|asia|americas|pacific
+//   ?region=global|middle-east|europe|asia|americas|pacific|africa
 //   ?limit=30  (max 100)
 //   ?offset=0
 //
@@ -125,20 +125,38 @@ const VALID_REGIONS = new Set([
   'africa',
 ]);
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': 'https://globaldeets.com',
+const ALLOWED_ORIGINS = new Set([
+  'https://globaldeets.com',
+  'https://www.globaldeets.com',
+  'http://localhost:5500',
+  'http://127.0.0.1:5500',
+]);
+
+const BASE_HEADERS = {
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
   'Content-Type': 'application/json',
   'Cache-Control': 'public, max-age=900',
 };
 
-export async function onRequestOptions() {
-  return new Response(null, { status: 204, headers: CORS_HEADERS });
+function getCorsHeaders(request) {
+  const origin = request?.headers?.get('Origin');
+  const allowOrigin = ALLOWED_ORIGINS.has(origin) ? origin : 'https://globaldeets.com';
+
+  return {
+    ...BASE_HEADERS,
+    'Access-Control-Allow-Origin': allowOrigin,
+    Vary: 'Origin',
+  };
+}
+
+export async function onRequestOptions({ request }) {
+  return new Response(null, { status: 204, headers: getCorsHeaders(request) });
 }
 
 export async function onRequestGet({ env, request }) {
   const url = new URL(request.url);
+  const headers = getCorsHeaders(request);
 
   // Sanitize and validate query params
   const rawRegion = url.searchParams.get('region') || 'global';
@@ -155,7 +173,7 @@ export async function onRequestGet({ env, request }) {
     const filtered = filterByRegion(cached, region);
     const page = filtered.slice(offset, offset + limit);
     return new Response(JSON.stringify({ items: page, cached: true, total: filtered.length }), {
-      headers: CORS_HEADERS,
+      headers,
     });
   }
 
@@ -173,7 +191,7 @@ export async function onRequestGet({ env, request }) {
   const filtered = filterByRegion(items, region);
   const page = filtered.slice(offset, offset + limit);
   return new Response(JSON.stringify({ items: page, cached: false, total: filtered.length }), {
-    headers: CORS_HEADERS,
+    headers,
   });
 }
 

@@ -90,7 +90,7 @@ Keep the HEAD version (with error monitoring), remove the merge markers, continu
 │  Click a region → see the news. No opinion. Just signal.        │
 ├──────────┬──────────────────┬──────────────────┬───────────────┤
 │  📰       │   🌈              │   🎨              │  ✅           │
-│  WORLD   │  GOOD VIBES      │  CULTURE          │  CIVIC        │
+│  WORLD   │  GF VIBES        │  CULTURE          │  CIVIC        │
 │  NEWS    │  goodflippin     │  culturesherpa    │  citizen      │
 │          │  vibes.com       │  .org             │  approved.org │
 ├──────────┴──────────────────┴──────────────────┴───────────────┤
@@ -574,7 +574,7 @@ function filterByRegion(items, region) {
   // --- Ecosystem partner HTML markers ---
   const ECOSYSTEM_PINS = [
     {
-      name: '🌈 Good Vibes',
+      name: '🌈 Good Flippin Vibes',
       lat: 39.83,
       lng: -98.58,
       url: 'https://goodflippinvibes.com',
@@ -588,7 +588,7 @@ function filterByRegion(items, region) {
       color: '#ff0090',
     },
     {
-      name: '🤖 AI Animate',
+      name: '🤖 aiaimate',
       lat: 37.77,
       lng: -122.41,
       url: 'https://aiaimate.com',
@@ -729,7 +729,7 @@ Each partner site gets a "sphere card" — animated gradient orb + tagline + lin
   >
     <div class="sphere-orb">🌈</div>
     <div class="sphere-info">
-      <h3>Good Vibes</h3>
+      <h3>Good Flippin Vibes</h3>
       <p class="sphere-tagline">Things to feel good about everywhere</p>
       <span class="sphere-domain">goodflippinvibes.com</span>
     </div>
@@ -759,7 +759,7 @@ Each partner site gets a "sphere card" — animated gradient orb + tagline + lin
   >
     <div class="sphere-orb">🤖</div>
     <div class="sphere-info">
-      <h3>AI Animate</h3>
+      <h3>aiaimate</h3>
       <p class="sphere-tagline">The future of AI-human creativity</p>
       <span class="sphere-domain">aiaimate.com</span>
     </div>
@@ -1049,7 +1049,7 @@ Ideas:
 - **Story heat map**: hexBin layer where hexagons glow brighter with more news coverage
 - **Day/night overlay**: `Globe.gl` solar terminator example — shows current light/dark
 - **Trending topics**: keyword extraction from news → top-5 topics badge
-- **CultureSherpa widget**: embed a featured culture story from CultureSherpa in a globe popup
+- **Culture Sherpa widget**: embed a featured culture story from Culture Sherpa in a globe popup
 - **GoodFlippinVibes widget**: embed a "feel good story" from GFV in globe popup
 
 ---
