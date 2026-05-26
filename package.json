@@ -13,7 +13,8 @@
     "start": "npm run dev",
     "generate-icons": "node generate-icons.js",
     "health:prod": "node health-prod.js",
-    "health:prod:json": "node health-prod.js --json"
+    "health:prod:json": "node health-prod.js --json",
+    "test:smoke": "playwright test"
   },
   "keywords": [
     "world-news",
@@ -24,6 +25,7 @@
   "author": "GlobalDeets",
   "license": "MIT",
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "eslint": "^10.3.0",
     "prettier": "^3.8.3",
     "vite": "^8.0.11"
