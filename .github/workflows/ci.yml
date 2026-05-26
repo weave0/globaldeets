@@ -12,6 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Check required files exist
         run: |
           echo "Checking required files..."
@@ -36,3 +43,26 @@ jobs:
           echo "Checking for onerror..."
           grep -q "window.onerror" index.html || (echo "MISSING: window.onerror" && exit 1)
           echo "Error monitoring confirmed."
+
+      - name: JavaScript syntax check
+        run: |
+          node --check build-metadata.js
+          node --check health-prod.js
+          node --check tools/stage-deploy.js
+          node --check tools/deploy-pages.js
+          node --check functions/api/deploy.js
+          node --check functions/api/news/health.js
+          node --check playwright.config.js
+          node --check tests/smoke.spec.js
+
+      - name: Lint JavaScript
+        run: npm run lint
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
+      - name: Run smoke tests
+        run: npm run test:smoke
+
+      - name: Stage deploy artifact
+        run: npm run stage:deploy
