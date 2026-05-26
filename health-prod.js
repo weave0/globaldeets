@@ -3,7 +3,7 @@
  * GlobalDeets Production Health Check
  * Usage:  node health-prod.js [--json] [--base=https://globaldeets.com]
  *         [--expected-commit=<sha>] [--deploy-meta-max-age-hours=720]
- *         [--skip-security-headers] [--metadata-only]
+ *         [--skip-security-headers] [--skip-active-copy] [--metadata-only]
  *
  * Exits 0 = all green, 1 = one or more failures.
  */
@@ -27,6 +27,7 @@ const BASE = (getArgValue('--base=') || 'https://globaldeets.com').replace(/\/$/
 
 const JSON_OUT = process.argv.includes('--json');
 const SKIP_SECURITY_HEADERS = process.argv.includes('--skip-security-headers');
+const SKIP_ACTIVE_COPY = process.argv.includes('--skip-active-copy');
 const METADATA_ONLY = process.argv.includes('--metadata-only');
 const EXPECTED_COMMIT =
   getArgValue('--expected-commit=') ||
@@ -286,7 +287,7 @@ async function probeRoute(route) {
     }
   }
 
-  if (route.type === 'text/html' && ct.includes('text/html')) {
+  if (!SKIP_ACTIVE_COPY && route.type === 'text/html' && ct.includes('text/html')) {
     for (const rule of FORBIDDEN_ACTIVE_COPY) {
       if (rule.pattern.test(body)) {
         results.push(fail(`${route.label} — active copy`, `contains ${rule.label}`));

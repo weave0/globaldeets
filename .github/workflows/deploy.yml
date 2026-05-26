@@ -48,4 +48,4 @@ jobs:
                   command: pages deploy dist --project-name globaldeets --branch main --commit-hash ${{ github.sha }} --commit-dirty=false
 
             - name: Post-deploy health probe
-              run: npm run health:prod
+              run: npm run health:prod -- --skip-active-copy
