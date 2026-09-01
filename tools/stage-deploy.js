@@ -12,8 +12,21 @@ const ROOT_STATIC_FILES = new Set([
   'deploy-meta.json',
   'robots.txt',
   'sitemap.xml',
+  'ads.txt',
   '_headers',
+  '_redirects',
+  '_routes.json',
 ]);
+
+const REQUIRED_DEPLOY_FILES = [
+  'index.html',
+  '404.html',
+  'deploy-meta.json',
+  'ads.txt',
+  '_headers',
+  '_redirects',
+  '_routes.json',
+];
 
 const PUBLIC_DIRECTORIES = ['assets', 'data', 'functions', 'shared'];
 
@@ -95,6 +108,13 @@ function relativeParts(fullPath) {
 }
 
 function assertCleanArtifact() {
+  const missing = REQUIRED_DEPLOY_FILES.filter(name => !existsSync(join(OUT_DIR, name)));
+  if (missing.length > 0) {
+    console.error('Refusing to deploy artifact missing required Pages controls:');
+    for (const file of missing) console.error(`- ${file}`);
+    process.exit(1);
+  }
+
   const forbidden = walkFiles(OUT_DIR).filter(fullPath => {
     const parts = relativeParts(fullPath);
     const fileName = parts[parts.length - 1];
