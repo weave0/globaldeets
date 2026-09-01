@@ -1,7 +1,9 @@
 // Cloudflare Pages Function - GET /api/news/health
 
-const SOURCES_PATH = '/data/sources.json';
-const SOURCE_HEALTH_KEY = 'news_source_health_v1';
+import { SOURCES, SOURCE_HEALTH_KEY } from '../news.js';
+
+const SOURCE_HEALTH_TTL_SECONDS = 86_400;
+const SOURCE_TIMEOUT_MS = 5000;
 
 const ALLOWED_ORIGINS = new Set([
   'https://globaldeets.com',
@@ -34,60 +36,109 @@ export async function onRequestOptions({ request }) {
 
 export async function onRequestGet({ env, request }) {
   const headers = getCorsHeaders(request);
-  const snapshot = await env.NEWS_CACHE?.get(SOURCE_HEALTH_KEY, { type: 'json' });
+  const snapshot = await readSnapshot(env);
 
-  if (snapshot?.sourceHealth) {
-    return new Response(
-      JSON.stringify({
-        generatedAt: snapshot.generatedAt || null,
-        cacheAgeSeconds: getCacheAgeSeconds(snapshot.generatedAt),
-        sourceHealth: snapshot.sourceHealth,
-      }),
-      { headers }
-    );
+  if (snapshot?.sourceHealth?.length) {
+    return jsonResponse(snapshot.generatedAt, snapshot.sourceHealth, headers);
   }
 
-  const sources = await loadSources(request, env);
+  // Self-initialize health from the exact same canonical SOURCES list used by /api/news.
+  // This avoids a false 500 on a fresh deployment or empty KV namespace.
+  const sourceHealth = await Promise.all(SOURCES.map(probeSource));
+  const generatedAt = new Date().toISOString();
+
+  if (env.NEWS_CACHE) {
+    await env.NEWS_CACHE.put(
+      SOURCE_HEALTH_KEY,
+      JSON.stringify({ generatedAt, sourceHealth }),
+      { expirationTtl: SOURCE_HEALTH_TTL_SECONDS }
+    ).catch(() => {});
+  }
+
+  return jsonResponse(generatedAt, sourceHealth, headers);
+}
+
+async function readSnapshot(env) {
+  if (!env.NEWS_CACHE) return null;
+  try {
+    return await env.NEWS_CACHE.get(SOURCE_HEALTH_KEY, { type: 'json' });
+  } catch {
+    return null;
+  }
+}
+
+function jsonResponse(generatedAt, sourceHealth, headers) {
   return new Response(
     JSON.stringify({
-      generatedAt: null,
-      cacheAgeSeconds: null,
-      sourceHealth: sources.map(source => ({
-        sourceId: source.id,
-        name: source.name,
-        region: source.region,
-        countryCode: source.countryCode,
-        sourceType: source.sourceType,
-        lastFetchStartedAt: null,
-        lastFetchSucceededAt: null,
-        lastStatus: null,
-        lastError: 'No source health snapshot has been generated yet.',
-        storyCount: 0,
-        averageLatencyMs: null,
-        consecutiveFailures: 0,
-      })),
+      generatedAt: generatedAt || null,
+      cacheAgeSeconds: getCacheAgeSeconds(generatedAt),
+      healthySources: sourceHealth.filter(source => !source.lastError).length,
+      totalSources: sourceHealth.length,
+      sourceHealth,
     }),
     { headers }
   );
 }
 
-async function loadSources(request, env) {
-  const sourceUrl = new URL(SOURCES_PATH, request.url);
-  let response;
+async function probeSource(source) {
+  const startedAt = new Date().toISOString();
+  const startedMs = Date.now();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), SOURCE_TIMEOUT_MS);
 
-  if (env?.ASSETS?.fetch) {
-    response = await env.ASSETS.fetch(sourceUrl);
-  } else {
-    response = await fetch(sourceUrl.href);
+  try {
+    const response = await fetch(source.url, {
+      signal: controller.signal,
+      headers: { 'User-Agent': 'GlobalDeets/1.0 Health Probe (+https://globaldeets.com)' },
+    });
+
+    return makeHealth(source, {
+      startedAt,
+      succeededAt: response.ok ? new Date().toISOString() : null,
+      status: response.status,
+      error: response.ok ? null : `HTTP ${response.status}`,
+      latencyMs: Date.now() - startedMs,
+    });
+  } catch (error) {
+    const reason =
+      error?.name === 'AbortError'
+        ? `Timed out after ${SOURCE_TIMEOUT_MS}ms`
+        : error?.message || 'Source fetch failed';
+
+    return makeHealth(source, {
+      startedAt,
+      succeededAt: null,
+      status: null,
+      error: reason,
+      latencyMs: Date.now() - startedMs,
+    });
+  } finally {
+    clearTimeout(timer);
   }
+}
 
-  if (!response.ok) {
-    throw new Error(`Unable to load source registry: HTTP ${response.status}`);
-  }
+function makeHealth(source, observation) {
+  return {
+    sourceId: slugifySourceName(source.name),
+    name: source.name,
+    url: source.url,
+    region: source.region,
+    lang: source.lang,
+    lastFetchStartedAt: observation.startedAt,
+    lastFetchSucceededAt: observation.succeededAt,
+    lastStatus: observation.status,
+    lastError: observation.error,
+    storyCount: null,
+    averageLatencyMs: observation.latencyMs,
+    consecutiveFailures: observation.error ? 1 : 0,
+  };
+}
 
-  const registry = await response.json();
-  const sources = Array.isArray(registry.sources) ? registry.sources : [];
-  return sources.filter(source => source.active !== false);
+function slugifySourceName(name) {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 
 function getCacheAgeSeconds(generatedAt) {
