@@ -1,17 +1,7 @@
-/ /index.html 200
-/about /about.html 200
-/analytics /analytics.html 200
-/bb-content /bb-content.html 200
-/categories /categories.html 200
-/contact /contact.html 200
-/donate /donate.html 200
-/globe /globe.html 200
-/knowledge /knowledge.html 200
-/news /news.html 200
-/offline /offline.html 200
-/spheres /spheres.html 200
-/timeline /timeline.html 200
-/worldmap /worldmap.html 200
-/privacy /privacy.html 200
-/terms /terms.html 200
-/* /404.html 404
+# GlobalDeets relies on Cloudflare Pages native static HTML routing.
+# Pages serves /news from news.html, redirects /news.html to /news,
+# and serves the top-level 404.html for unknown routes with HTTP 404.
+#
+# Do not add a catch-all `/* /404.html 404` rule here: Pages _redirects
+# does not support non-redirect 404 rewrites, and redirect rules are applied
+# even when a matching static asset exists.
