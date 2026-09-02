@@ -41,16 +41,16 @@ const DEPLOY_META_MAX_AGE_HOURS = Number(
 // ── Routes to probe ──────────────────────────────────────────────────────────
 const ROUTES = [
   { path: '/', label: 'Home', expect: 200, type: 'text/html' },
-  { path: '/news.html', label: 'News', expect: 200, type: 'text/html' },
-  { path: '/globe.html', label: 'Globe', expect: 200, type: 'text/html' },
-  { path: '/about.html', label: 'About', expect: 200, type: 'text/html' },
-  { path: '/spheres.html', label: 'Spheres', expect: 200, type: 'text/html' },
-  { path: '/knowledge.html', label: 'Knowledge', expect: 200, type: 'text/html' },
-  { path: '/worldmap.html', label: 'World Map', expect: 200, type: 'text/html' },
-  { path: '/timeline.html', label: 'Timeline', expect: 200, type: 'text/html' },
-  { path: '/categories.html', label: 'Categories', expect: 200, type: 'text/html' },
-  { path: '/contact.html', label: 'Contact', expect: 200, type: 'text/html' },
-  { path: '/donate.html', label: 'Donate', expect: 200, type: 'text/html' },
+  { path: '/news', label: 'News', expect: 200, type: 'text/html' },
+  { path: '/globe', label: 'Globe', expect: 200, type: 'text/html' },
+  { path: '/about', label: 'About', expect: 200, type: 'text/html' },
+  { path: '/spheres', label: 'Spheres', expect: 200, type: 'text/html' },
+  { path: '/knowledge', label: 'Knowledge', expect: 200, type: 'text/html' },
+  { path: '/worldmap', label: 'World Map', expect: 200, type: 'text/html' },
+  { path: '/timeline', label: 'Timeline', expect: 200, type: 'text/html' },
+  { path: '/categories', label: 'Categories', expect: 200, type: 'text/html' },
+  { path: '/contact', label: 'Contact', expect: 200, type: 'text/html' },
+  { path: '/donate', label: 'Donate', expect: 200, type: 'text/html' },
   { path: '/manifest.json', label: 'PWA Manifest', expect: 200, type: 'application/json' },
   {
     path: '/deploy-meta.json',
@@ -68,7 +68,13 @@ const ROUTES = [
   },
   { path: '/sitemap.xml', label: 'Sitemap', expect: 200, type: 'application/xml' },
   { path: '/robots.txt', label: 'Robots.txt', expect: 200, type: 'text/plain' },
-  { path: '/offline.html', label: 'Offline fallback', expect: 200, type: 'text/html' },
+  { path: '/offline', label: 'Offline fallback', expect: 200, type: 'text/html' },
+  {
+    path: '/__globaldeets_health_missing__',
+    label: 'Native Pages 404',
+    expect: 404,
+    type: 'text/html',
+  },
   // API
   {
     path: '/api/news?region=global&limit=5',
