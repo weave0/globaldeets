@@ -47,5 +47,20 @@ jobs:
                   accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
                   command: pages deploy dist --project-name globaldeets --branch main --commit-hash ${{ github.sha }} --commit-dirty=false
 
-            - name: Post-deploy health probe
-              run: npm run health:prod -- --skip-active-copy
+            - name: Verify production deployment
+              env:
+                  EXPECTED_COMMIT: ${{ github.sha }}
+              run: |
+                  for attempt in 1 2 3 4 5 6; do
+                    if npm run health:prod -- --skip-active-copy --expected-commit="${EXPECTED_COMMIT}" --deploy-meta-max-age-hours=1; then
+                      exit 0
+                    fi
+
+                    if [ "${attempt}" -eq 6 ]; then
+                      echo "Production did not converge to a healthy state after all verification attempts."
+                      exit 1
+                    fi
+
+                    echo "Production verification attempt ${attempt} failed; retrying after propagation delay."
+                    sleep 10
+                  done

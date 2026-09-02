@@ -11,7 +11,7 @@
 //   binding = "NEWS_CACHE"
 //   id = "<your-kv-namespace-id>"
 
-const SOURCES = [
+export const SOURCES = [
   // ── Global ───────────────────────────────────────────────────────────────
   {
     name: 'BBC World',
@@ -114,7 +114,10 @@ const LANG_NAMES = {
 };
 
 const CACHE_KEY = 'news_feed_v1';
+export const SOURCE_HEALTH_KEY = 'news_source_health_v1';
 const CACHE_TTL_SECONDS = 900; // 15 minutes
+export const SOURCE_HEALTH_TTL_SECONDS = 86_400; // retain latest observation for 24 hours
+export const SOURCE_TIMEOUT_MS = 5000;
 const VALID_REGIONS = new Set([
   'global',
   'middle-east',
@@ -177,15 +180,23 @@ export async function onRequestGet({ env, request }) {
     });
   }
 
-  // Cache miss — fetch all sources in parallel, then translate non-English
-  const items = await fetchAllSources();
+  // Cache miss — fetch all sources in parallel, capture health, then translate non-English.
+  const { items, sourceHealth } = await fetchAllSources();
   await translateNonEnglish(items, env);
 
-  // Write to KV (best-effort — don't fail the request if KV is unavailable)
+  // Write feed + the exact source observations that produced it to KV. Both writes are
+  // best-effort so an unavailable KV namespace never takes down the public news endpoint.
   if (env.NEWS_CACHE) {
-    await env.NEWS_CACHE.put(CACHE_KEY, JSON.stringify(items), {
-      expirationTtl: CACHE_TTL_SECONDS,
-    }).catch(() => {});
+    await Promise.all([
+      env.NEWS_CACHE.put(CACHE_KEY, JSON.stringify(items), {
+        expirationTtl: CACHE_TTL_SECONDS,
+      }),
+      env.NEWS_CACHE.put(
+        SOURCE_HEALTH_KEY,
+        JSON.stringify({ generatedAt: new Date().toISOString(), sourceHealth }),
+        { expirationTtl: SOURCE_HEALTH_TTL_SECONDS }
+      ),
+    ]).catch(() => {});
   }
 
   const filtered = filterByRegion(items, region);
@@ -239,18 +250,15 @@ async function translateNonEnglish(items, env) {
 }
 
 async function fetchAllSources() {
-  const results = await Promise.allSettled(SOURCES.map(source => fetchAndParseRSS(source)));
+  // fetchAndParseRSS never throws; every source produces both stories and an observation.
+  const results = await Promise.all(SOURCES.map(source => fetchAndParseRSS(source)));
 
-  const items = [];
-  for (const result of results) {
-    if (result.status === 'fulfilled') {
-      items.push(...result.value);
-    }
-  }
+  const items = results.flatMap(result => result.items);
+  const sourceHealth = results.map(result => result.health);
 
   // Sort newest-first, deduplicate by id, cap at 300 for KV storage
   const seen = new Set();
-  return items
+  const normalizedItems = items
     .sort((a, b) => new Date(b.published) - new Date(a.published))
     .filter(item => {
       if (seen.has(item.id)) return false;
@@ -258,25 +266,94 @@ async function fetchAllSources() {
       return true;
     })
     .slice(0, 300);
+
+  return { items: normalizedItems, sourceHealth };
 }
 
-async function fetchAndParseRSS({ name, url, region, lang }) {
+async function fetchAndParseRSS(source) {
+  const { name, url, region, lang } = source;
+  const startedAt = new Date().toISOString();
+  const startedMs = Date.now();
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 5000);
+  const timer = setTimeout(() => controller.abort(), SOURCE_TIMEOUT_MS);
 
   try {
     const res = await fetch(url, {
       signal: controller.signal,
       headers: { 'User-Agent': 'GlobalDeets/1.0 RSS Reader (+https://globaldeets.com)' },
     });
-    if (!res.ok) return [];
+
+    if (!res.ok) {
+      return {
+        items: [],
+        health: makeSourceHealth(source, {
+          startedAt,
+          status: res.status,
+          error: `HTTP ${res.status}`,
+          storyCount: 0,
+          latencyMs: Date.now() - startedMs,
+        }),
+      };
+    }
+
     const text = await res.text();
+    const items = parseRSS(text, name, region, lang);
+    const error = items.length === 0 ? 'No stories parsed from source response.' : null;
+
+    return {
+      items,
+      health: makeSourceHealth(source, {
+        startedAt,
+        succeededAt: error ? null : new Date().toISOString(),
+        status: res.status,
+        error,
+        storyCount: items.length,
+        latencyMs: Date.now() - startedMs,
+      }),
+    };
+  } catch (error) {
+    const reason =
+      error?.name === 'AbortError'
+        ? `Timed out after ${SOURCE_TIMEOUT_MS}ms`
+        : error?.message || 'Source fetch failed';
+
+    return {
+      items: [],
+      health: makeSourceHealth(source, {
+        startedAt,
+        status: null,
+        error: reason,
+        storyCount: 0,
+        latencyMs: Date.now() - startedMs,
+      }),
+    };
+  } finally {
     clearTimeout(timer);
-    return parseRSS(text, name, region, lang);
-  } catch {
-    clearTimeout(timer);
-    return [];
   }
+}
+
+function makeSourceHealth(source, observation) {
+  return {
+    sourceId: slugifySourceName(source.name),
+    name: source.name,
+    url: source.url,
+    region: source.region,
+    lang: source.lang,
+    lastFetchStartedAt: observation.startedAt,
+    lastFetchSucceededAt: observation.succeededAt || null,
+    lastStatus: observation.status,
+    lastError: observation.error || null,
+    storyCount: observation.storyCount,
+    averageLatencyMs: observation.latencyMs,
+    consecutiveFailures: observation.error ? 1 : 0,
+  };
+}
+
+export function slugifySourceName(name) {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 
 function parseRSS(xml, sourceName, region, lang = 'en') {
