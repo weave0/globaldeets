@@ -64,14 +64,19 @@ export const SOURCES = [
     region: 'asia',
     lang: 'en',
   },
-  { name: 'CNA', url: 'https://www.channelnewsasia.com/rss/8395986', region: 'asia', lang: 'en' },
-  { name: 'Dawn', url: 'https://www.dawn.com/feeds/home', region: 'asia', lang: 'en' },
+  {
+    name: 'CNA',
+    url: 'https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=6311',
+    region: 'asia',
+    lang: 'en',
+  },
+  { name: 'Dawn', url: 'https://www.dawn.com/feeds/home/', region: 'asia', lang: 'en' },
 
   // ── Americas ─────────────────────────────────────────────────────────────
   { name: 'NPR', url: 'https://feeds.npr.org/1004/rss.xml', region: 'americas', lang: 'en' },
   {
     name: 'Mercopress',
-    url: 'https://en.mercopress.com/rss/latest-news',
+    url: 'https://en.mercopress.com/rss/',
     region: 'americas',
     lang: 'en',
   },
