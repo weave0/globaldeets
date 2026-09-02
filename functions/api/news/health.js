@@ -1,9 +1,12 @@
 // Cloudflare Pages Function - GET /api/news/health
 
-import { SOURCES, SOURCE_HEALTH_KEY } from '../news.js';
-
-const SOURCE_HEALTH_TTL_SECONDS = 86_400;
-const SOURCE_TIMEOUT_MS = 5000;
+import {
+  SOURCES,
+  SOURCE_HEALTH_KEY,
+  SOURCE_HEALTH_TTL_SECONDS,
+  SOURCE_TIMEOUT_MS,
+  slugifySourceName,
+} from '../news.js';
 
 const ALLOWED_ORIGINS = new Set([
   'https://globaldeets.com',
@@ -132,13 +135,6 @@ function makeHealth(source, observation) {
     averageLatencyMs: observation.latencyMs,
     consecutiveFailures: observation.error ? 1 : 0,
   };
-}
-
-function slugifySourceName(name) {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
 }
 
 function getCacheAgeSeconds(generatedAt) {
