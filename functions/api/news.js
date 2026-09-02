@@ -116,8 +116,8 @@ const LANG_NAMES = {
 const CACHE_KEY = 'news_feed_v1';
 export const SOURCE_HEALTH_KEY = 'news_source_health_v1';
 const CACHE_TTL_SECONDS = 900; // 15 minutes
-const SOURCE_HEALTH_TTL_SECONDS = 86_400; // retain latest observation for 24 hours
-const SOURCE_TIMEOUT_MS = 5000;
+export const SOURCE_HEALTH_TTL_SECONDS = 86_400; // retain latest observation for 24 hours
+export const SOURCE_TIMEOUT_MS = 5000;
 const VALID_REGIONS = new Set([
   'global',
   'middle-east',
@@ -349,7 +349,7 @@ function makeSourceHealth(source, observation) {
   };
 }
 
-function slugifySourceName(name) {
+export function slugifySourceName(name) {
   return name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
