@@ -2,25 +2,18 @@
 /**
  * GlobalDeets Production Health Check
  * Usage:  node health-prod.js [--json] [--base=https://globaldeets.com]
- *         [--expected-commit=<sha>] [--deploy-meta-max-age-hours=720]
+ *         [--expected-commit=<sha>] [--deploy-meta-max-age-hours=<hours>]
  *         [--skip-security-headers] [--skip-active-copy] [--metadata-only]
+ *
+ * Ordinary service health validates deployment metadata without requiring a recent deploy.
+ * Passing --expected-commit and/or --deploy-meta-max-age-hours enables strict release checks.
  *
  * Exits 0 = all green, 1 = one or more failures.
  */
 
-const { execFileSync } = require('child_process');
-
 function getArgValue(name) {
   const arg = process.argv.find(a => a.startsWith(name));
   return arg ? arg.slice(name.length) : null;
-}
-
-function git(args, fallback = null) {
-  try {
-    return execFileSync('git', args, { encoding: 'utf8' }).trim();
-  } catch {
-    return fallback;
-  }
 }
 
 const BASE = (getArgValue('--base=') || 'https://globaldeets.com').replace(/\/$/, '');
@@ -33,10 +26,11 @@ const EXPECTED_COMMIT =
   getArgValue('--expected-commit=') ||
   process.env.EXPECTED_COMMIT ||
   process.env.CF_PAGES_COMMIT_SHA ||
-  git(['rev-parse', 'HEAD']);
-const DEPLOY_META_MAX_AGE_HOURS = Number(
-  getArgValue('--deploy-meta-max-age-hours=') || process.env.DEPLOY_META_MAX_AGE_HOURS || 720
-);
+  null;
+const DEPLOY_META_MAX_AGE_RAW =
+  getArgValue('--deploy-meta-max-age-hours=') || process.env.DEPLOY_META_MAX_AGE_HOURS || null;
+const DEPLOY_META_MAX_AGE_HOURS =
+  DEPLOY_META_MAX_AGE_RAW === null ? null : Number(DEPLOY_META_MAX_AGE_RAW);
 
 // ── Routes to probe ──────────────────────────────────────────────────────────
 const ROUTES = [
@@ -201,19 +195,23 @@ function validateDeployMetadata(json, label) {
       results.push(fail(`${label} — generatedAt`, `invalid timestamp "${json.generatedAt}"`));
     } else {
       const ageHours = (Date.now() - generatedAtMs) / 3_600_000;
-      const maxAgeHours = Number.isFinite(DEPLOY_META_MAX_AGE_HOURS)
-        ? DEPLOY_META_MAX_AGE_HOURS
-        : 720;
 
       results.push(pass(`${label} — generatedAt parseable`));
 
       if (ageHours < -0.1) {
-        results.push(fail(`${label} — generatedAt freshness`, 'timestamp is in the future'));
-      } else if (ageHours <= maxAgeHours) {
+        results.push(fail(`${label} — generatedAt age`, 'timestamp is in the future'));
+      } else if (DEPLOY_META_MAX_AGE_HOURS === null) {
+        results.push(pass(`${label} — deployment age observed (${ageHours.toFixed(1)}h old)`));
+      } else if (!Number.isFinite(DEPLOY_META_MAX_AGE_HOURS) || DEPLOY_META_MAX_AGE_HOURS < 0) {
+        results.push(fail(`${label} — deployment freshness policy`, 'invalid max-age value'));
+      } else if (ageHours <= DEPLOY_META_MAX_AGE_HOURS) {
         results.push(pass(`${label} — generatedAt fresh (${ageHours.toFixed(1)}h old)`));
       } else {
         results.push(
-          fail(`${label} — generatedAt fresh`, `${ageHours.toFixed(1)}h old, max ${maxAgeHours}h`)
+          fail(
+            `${label} — generatedAt fresh`,
+            `${ageHours.toFixed(1)}h old, max ${DEPLOY_META_MAX_AGE_HOURS}h`
+          )
         );
       }
     }
