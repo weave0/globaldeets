@@ -1,21 +1,61 @@
 // functions/api/news.js
 // Cloudflare Pages Function — GET /api/news
+//
+// Params:
+//   ?region=global|middle-east|europe|asia|americas|pacific|africa
+//   ?limit=30  (max 100)
+//   ?offset=0
+//
+// Requires KV binding: NEWS_CACHE (add to wrangler.toml)
+//   [[kv_namespaces]]
+//   binding = "NEWS_CACHE"
+//   id = "<your-kv-namespace-id>"
 
 export const SOURCES = [
-  { name: 'BBC World', url: 'https://feeds.bbci.co.uk/news/world/rss.xml', region: 'global', lang: 'en' },
+  // ── Global ───────────────────────────────────────────────────────────────
+  {
+    name: 'BBC World',
+    url: 'https://feeds.bbci.co.uk/news/world/rss.xml',
+    region: 'global',
+    lang: 'en',
+  },
   { name: 'AP', url: 'https://rsshub.app/apnews/topics/world-news', region: 'global', lang: 'en' },
   { name: 'Guardian', url: 'https://www.theguardian.com/world/rss', region: 'global', lang: 'en' },
-  { name: 'Al Jazeera', url: 'https://www.aljazeera.com/xml/rss/all.xml', region: 'middle-east', lang: 'en' },
-  { name: 'Anadolu Agency', url: 'https://aa.com.tr/en/rss/default?cat=world', region: 'middle-east', lang: 'en' },
+  // Reuters deprecated public RSS in 2023 — skipped
+
+  // ── Middle East ───────────────────────────────────────────────────────────
+  {
+    name: 'Al Jazeera',
+    url: 'https://www.aljazeera.com/xml/rss/all.xml',
+    region: 'middle-east',
+    lang: 'en',
+  },
+  {
+    name: 'Anadolu Agency',
+    url: 'https://aa.com.tr/en/rss/default?cat=world',
+    region: 'middle-east',
+    lang: 'en',
+  },
+
+  // ── Europe ────────────────────────────────────────────────────────────────
   { name: 'DW', url: 'https://rss.dw.com/xml/rss-en-world', region: 'europe', lang: 'en' },
   { name: 'France 24', url: 'https://www.france24.com/en/rss', region: 'europe', lang: 'en' },
+  // Ukrainian sources — English-language editions
   {
     name: 'Kyiv Independent',
     url: 'https://kyivindependent.com/news-archive/rss/',
     region: 'europe',
     lang: 'en',
   },
-  { name: 'Ukrinform', url: 'https://www.ukrinform.net/rss/block-lastnews', region: 'europe', lang: 'en' },
+  {
+    name: 'Ukrinform',
+    url: 'https://www.ukrinform.net/rss/block-lastnews',
+    region: 'europe',
+    lang: 'en',
+  },
+
+  // ── Asia ──────────────────────────────────────────────────────────────────
+  // NHK Japanese-language feed — translated to English via MT on cache-miss
   { name: 'NHK', url: 'https://www3.nhk.or.jp/rss/news/cat0.xml', region: 'asia', lang: 'ja' },
   { name: 'Yonhap', url: 'https://en.yna.co.kr/RSS/news.xml', region: 'asia', lang: 'en' },
   {
@@ -31,18 +71,40 @@ export const SOURCES = [
     lang: 'en',
   },
   { name: 'Dawn', url: 'https://www.dawn.com/feeds/home/', region: 'asia', lang: 'en' },
+
+  // ── Americas ─────────────────────────────────────────────────────────────
   { name: 'NPR', url: 'https://feeds.npr.org/1004/rss.xml', region: 'americas', lang: 'en' },
-  { name: 'Mercopress', url: 'https://en.mercopress.com/rss/', region: 'americas', lang: 'en' },
+  {
+    name: 'Mercopress',
+    url: 'https://en.mercopress.com/rss/',
+    region: 'americas',
+    lang: 'en',
+  },
+
+  // ── Pacific ───────────────────────────────────────────────────────────────
   {
     name: 'ABC Australia',
     url: 'https://www.abc.net.au/news/feed/51120/rss.xml',
     region: 'pacific',
     lang: 'en',
   },
-  { name: 'Premium Times', url: 'https://www.premiumtimesng.com/feed/', region: 'africa', lang: 'en' },
-  { name: 'The East African', url: 'https://www.theeastafrican.co.ke/rss.xml', region: 'africa', lang: 'en' },
+
+  // ── Africa ───────────────────────────────────────────────────────────────
+  {
+    name: 'Premium Times',
+    url: 'https://www.premiumtimesng.com/feed/',
+    region: 'africa',
+    lang: 'en',
+  },
+  {
+    name: 'The East African',
+    url: 'https://www.theeastafrican.co.ke/rss.xml',
+    region: 'africa',
+    lang: 'en',
+  },
 ];
 
+// Map ISO 639-1 codes → language names expected by @cf/meta/m2m100-1.2b
 const LANG_NAMES = {
   ja: 'japanese',
   zh: 'chinese',
@@ -71,10 +133,9 @@ export function getSourceFingerprint(sources = SOURCES) {
 export const SOURCE_FINGERPRINT = getSourceFingerprint();
 export const CACHE_KEY = `news_feed_v2_${SOURCE_FINGERPRINT}`;
 export const SOURCE_HEALTH_KEY = `news_source_health_v2_${SOURCE_FINGERPRINT}`;
-const CACHE_TTL_SECONDS = 900;
-export const SOURCE_HEALTH_TTL_SECONDS = 86_400;
+const CACHE_TTL_SECONDS = 900; // 15 minutes
+export const SOURCE_HEALTH_TTL_SECONDS = 86_400; // retain latest observation for 24 hours
 export const SOURCE_TIMEOUT_MS = 5000;
-
 const VALID_REGIONS = new Set([
   'global',
   'middle-east',
@@ -101,11 +162,11 @@ const BASE_HEADERS = {
 
 function getCorsHeaders(request) {
   const origin = request?.headers?.get('Origin');
+  const allowOrigin = ALLOWED_ORIGINS.has(origin) ? origin : 'https://globaldeets.com';
+
   return {
     ...BASE_HEADERS,
-    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.has(origin)
-      ? origin
-      : 'https://globaldeets.com',
+    'Access-Control-Allow-Origin': allowOrigin,
     Vary: 'Origin',
   };
 }
@@ -117,6 +178,7 @@ export async function onRequestOptions({ request }) {
 export async function onRequestGet({ env, request }) {
   const url = new URL(request.url);
   const headers = getCorsHeaders(request);
+
   const rawRegion = url.searchParams.get('region') || 'global';
   const region = VALID_REGIONS.has(rawRegion) ? rawRegion : 'global';
   const limit = Math.min(
@@ -125,9 +187,21 @@ export async function onRequestGet({ env, request }) {
   );
   const offset = Math.max(parseInt(url.searchParams.get('offset') || '0', 10) || 0, 0);
 
+  // Source definitions are part of the cache key, so changing any source deterministically
+  // invalidates the old feed instead of waiting for TTL expiry.
   const cached = await env.NEWS_CACHE?.get(CACHE_KEY, { type: 'json' });
   if (cached) {
-    return makeFeedResponse(cached, region, offset, limit, true, headers);
+    const filtered = filterByRegion(cached, region);
+    const page = filtered.slice(offset, offset + limit);
+    return new Response(
+      JSON.stringify({
+        items: page,
+        cached: true,
+        total: filtered.length,
+        sourceFingerprint: SOURCE_FINGERPRINT,
+      }),
+      { headers }
+    );
   }
 
   const { items, sourceHealth } = await fetchAllSources();
@@ -150,15 +224,12 @@ export async function onRequestGet({ env, request }) {
     ]).catch(() => {});
   }
 
-  return makeFeedResponse(items, region, offset, limit, false, headers);
-}
-
-function makeFeedResponse(items, region, offset, limit, cached, headers) {
   const filtered = filterByRegion(items, region);
+  const page = filtered.slice(offset, offset + limit);
   return new Response(
     JSON.stringify({
-      items: filtered.slice(offset, offset + limit),
-      cached,
+      items: page,
+      cached: false,
       total: filtered.length,
       sourceFingerprint: SOURCE_FINGERPRINT,
     }),
@@ -168,13 +239,15 @@ function makeFeedResponse(items, region, offset, limit, cached, headers) {
 
 async function translateNonEnglish(items, env) {
   if (!env?.AI) return;
-  const toTranslate = items.filter(item => item.lang && item.lang !== 'en');
+
+  const toTranslate = items.filter(i => i.lang && i.lang !== 'en');
+  if (!toTranslate.length) return;
 
   await Promise.all(
     toTranslate.map(async item => {
       const sourceLang = LANG_NAMES[item.lang] || item.lang;
       try {
-        const [headlineResult, summaryResult] = await Promise.all([
+        const [headlineRes, summaryRes] = await Promise.all([
           env.AI.run('@cf/meta/m2m100-1.2b', {
             text: item.headline,
             source_lang: sourceLang,
@@ -188,8 +261,9 @@ async function translateNonEnglish(items, env) {
               })
             : Promise.resolve(null),
         ]);
-        item.headline = headlineResult?.translated_text || item.headline;
-        item.summary = summaryResult?.translated_text || item.summary;
+
+        item.headline = headlineRes?.translated_text || item.headline;
+        item.summary = summaryRes?.translated_text || item.summary;
         item.translated = true;
         item.originalLang = item.lang;
       } catch {
@@ -202,10 +276,12 @@ async function translateNonEnglish(items, env) {
 
 async function fetchAllSources() {
   const results = await Promise.all(SOURCES.map(source => fetchAndParseRSS(source)));
+
+  const items = results.flatMap(result => result.items);
   const sourceHealth = results.map(result => result.health);
+
   const seen = new Set();
-  const items = results
-    .flatMap(result => result.items)
+  const normalizedItems = items
     .sort((a, b) => new Date(b.published) - new Date(a.published))
     .filter(item => {
       if (seen.has(item.id)) return false;
@@ -213,62 +289,86 @@ async function fetchAllSources() {
       return true;
     })
     .slice(0, 300);
-  return { items, sourceHealth };
+
+  return { items: normalizedItems, sourceHealth };
 }
 
 async function fetchAndParseRSS(source) {
+  const { name, url, region, lang } = source;
   const startedAt = new Date().toISOString();
   const startedMs = Date.now();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), SOURCE_TIMEOUT_MS);
 
   try {
-    const response = await fetch(source.url, {
+    const res = await fetch(url, {
       signal: controller.signal,
       headers: { 'User-Agent': 'GlobalDeets/1.0 RSS Reader (+https://globaldeets.com)' },
     });
 
-    if (!response.ok) {
-      return resultFor(source, startedAt, startedMs, response.status, `HTTP ${response.status}`, []);
+    if (!res.ok) {
+      return {
+        items: [],
+        health: makeSourceHealth(source, {
+          startedAt,
+          status: res.status,
+          error: `HTTP ${res.status}`,
+          storyCount: 0,
+          latencyMs: Date.now() - startedMs,
+        }),
+      };
     }
 
-    const items = parseRSS(await response.text(), source.name, source.region, source.lang);
-    return resultFor(
-      source,
-      startedAt,
-      startedMs,
-      response.status,
-      items.length ? null : 'No stories parsed from source response.',
-      items
-    );
+    const text = await res.text();
+    const items = parseRSS(text, name, region, lang);
+    const error = items.length === 0 ? 'No stories parsed from source response.' : null;
+
+    return {
+      items,
+      health: makeSourceHealth(source, {
+        startedAt,
+        succeededAt: error ? null : new Date().toISOString(),
+        status: res.status,
+        error,
+        storyCount: items.length,
+        latencyMs: Date.now() - startedMs,
+      }),
+    };
   } catch (error) {
     const reason =
       error?.name === 'AbortError'
         ? `Timed out after ${SOURCE_TIMEOUT_MS}ms`
         : error?.message || 'Source fetch failed';
-    return resultFor(source, startedAt, startedMs, null, reason, []);
+
+    return {
+      items: [],
+      health: makeSourceHealth(source, {
+        startedAt,
+        status: null,
+        error: reason,
+        storyCount: 0,
+        latencyMs: Date.now() - startedMs,
+      }),
+    };
   } finally {
     clearTimeout(timer);
   }
 }
 
-function resultFor(source, startedAt, startedMs, status, error, items) {
+function makeSourceHealth(source, observation) {
   return {
-    items,
-    health: {
-      sourceId: slugifySourceName(source.name),
-      name: source.name,
-      url: source.url,
-      region: source.region,
-      lang: source.lang,
-      lastFetchStartedAt: startedAt,
-      lastFetchSucceededAt: error ? null : new Date().toISOString(),
-      lastStatus: status,
-      lastError: error,
-      storyCount: items.length,
-      averageLatencyMs: Date.now() - startedMs,
-      consecutiveFailures: error ? 1 : 0,
-    },
+    sourceId: slugifySourceName(source.name),
+    name: source.name,
+    url: source.url,
+    region: source.region,
+    lang: source.lang,
+    lastFetchStartedAt: observation.startedAt,
+    lastFetchSucceededAt: observation.succeededAt || null,
+    lastStatus: observation.status,
+    lastError: observation.error || null,
+    storyCount: observation.storyCount,
+    averageLatencyMs: observation.latencyMs,
+    consecutiveFailures: observation.error ? 1 : 0,
   };
 }
 
@@ -288,21 +388,24 @@ function parseRSS(xml, sourceName, region, lang = 'en') {
     const block = match[1];
     const title = extractTag(block, 'title');
     const link = extractTag(block, 'link');
-    const description = extractTag(block, 'description');
+    const desc = extractTag(block, 'description');
     const pubDate = extractTag(block, 'pubDate');
+
     if (!title || !link) continue;
     if (!link.startsWith('https://') && !link.startsWith('http://')) continue;
 
     let published = new Date().toISOString();
     if (pubDate) {
       const parsed = new Date(pubDate);
-      if (!Number.isNaN(parsed.getTime())) published = parsed.toISOString();
+      if (!isNaN(parsed.getTime())) {
+        published = parsed.toISOString();
+      }
     }
 
     items.push({
       id: `${sourceName}-${hashStr(title)}`,
       headline: cleanText(title),
-      summary: cleanText(description).slice(0, 280),
+      summary: cleanText(desc).slice(0, 280),
       source: sourceName,
       sourceUrl: link,
       published,
@@ -317,14 +420,16 @@ function parseRSS(xml, sourceName, region, lang = 'en') {
 }
 
 function extractTag(xml, tag) {
-  const cdata = new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`).exec(xml);
-  if (cdata) return cdata[1].trim();
-  const plain = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`).exec(xml);
-  return plain ? plain[1].trim() : '';
+  const cdataRe = new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`);
+  const plainRe = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`);
+  const cdataMatch = xml.match(cdataRe);
+  if (cdataMatch) return cdataMatch[1].trim();
+  const plainMatch = xml.match(plainRe);
+  return plainMatch ? plainMatch[1].trim() : '';
 }
 
-function cleanText(value) {
-  return value
+function cleanText(str) {
+  return str
     .replace(/<[^>]+>/g, '')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
@@ -336,10 +441,10 @@ function cleanText(value) {
     .trim();
 }
 
-function hashStr(value) {
+function hashStr(str) {
   let hash = 0;
-  for (let i = 0; i < value.length; i++) {
-    hash = (hash << 5) - hash + value.charCodeAt(i);
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
     hash |= 0;
   }
   return Math.abs(hash).toString(36);
