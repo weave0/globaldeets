@@ -2,6 +2,7 @@
 
 import {
   SOURCES,
+  SOURCE_FINGERPRINT,
   SOURCE_HEALTH_KEY,
   SOURCE_HEALTH_TTL_SECONDS,
   SOURCE_TIMEOUT_MS,
@@ -41,19 +42,23 @@ export async function onRequestGet({ env, request }) {
   const headers = getCorsHeaders(request);
   const snapshot = await readSnapshot(env);
 
-  if (snapshot?.sourceHealth?.length) {
+  if (
+    snapshot?.sourceFingerprint === SOURCE_FINGERPRINT &&
+    Array.isArray(snapshot.sourceHealth) &&
+    snapshot.sourceHealth.length === SOURCES.length
+  ) {
     return jsonResponse(snapshot.generatedAt, snapshot.sourceHealth, headers);
   }
 
-  // Self-initialize health from the exact same canonical SOURCES list used by /api/news.
-  // This avoids a false 500 on a fresh deployment or empty KV namespace.
+  // Self-initialize from the same canonical source list as /api/news. Source changes alter
+  // both the key and fingerprint, so stale observations cannot satisfy the deployed contract.
   const sourceHealth = await Promise.all(SOURCES.map(probeSource));
   const generatedAt = new Date().toISOString();
 
   if (env.NEWS_CACHE) {
     await env.NEWS_CACHE.put(
       SOURCE_HEALTH_KEY,
-      JSON.stringify({ generatedAt, sourceHealth }),
+      JSON.stringify({ generatedAt, sourceFingerprint: SOURCE_FINGERPRINT, sourceHealth }),
       { expirationTtl: SOURCE_HEALTH_TTL_SECONDS }
     ).catch(() => {});
   }
@@ -74,6 +79,7 @@ function jsonResponse(generatedAt, sourceHealth, headers) {
   return new Response(
     JSON.stringify({
       generatedAt: generatedAt || null,
+      sourceFingerprint: SOURCE_FINGERPRINT,
       cacheAgeSeconds: getCacheAgeSeconds(generatedAt),
       healthySources: sourceHealth.filter(source => !source.lastError).length,
       totalSources: sourceHealth.length,

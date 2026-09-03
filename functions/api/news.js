@@ -118,8 +118,21 @@ const LANG_NAMES = {
   hi: 'hindi',
 };
 
-const CACHE_KEY = 'news_feed_v1';
-export const SOURCE_HEALTH_KEY = 'news_source_health_v1';
+export function getSourceFingerprint(sources = SOURCES) {
+  const canonical = sources
+    .map(({ name, url, region, lang }) => [name, url, region, lang].join('\u001f'))
+    .join('\u001e');
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < canonical.length; i++) {
+    hash ^= canonical.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash.toString(16).padStart(8, '0');
+}
+
+export const SOURCE_FINGERPRINT = getSourceFingerprint();
+export const CACHE_KEY = `news_feed_v2_${SOURCE_FINGERPRINT}`;
+export const SOURCE_HEALTH_KEY = `news_source_health_v2_${SOURCE_FINGERPRINT}`;
 const CACHE_TTL_SECONDS = 900; // 15 minutes
 export const SOURCE_HEALTH_TTL_SECONDS = 86_400; // retain latest observation for 24 hours
 export const SOURCE_TIMEOUT_MS = 5000;
@@ -166,7 +179,6 @@ export async function onRequestGet({ env, request }) {
   const url = new URL(request.url);
   const headers = getCorsHeaders(request);
 
-  // Sanitize and validate query params
   const rawRegion = url.searchParams.get('region') || 'global';
   const region = VALID_REGIONS.has(rawRegion) ? rawRegion : 'global';
   const limit = Math.min(
@@ -175,22 +187,26 @@ export async function onRequestGet({ env, request }) {
   );
   const offset = Math.max(parseInt(url.searchParams.get('offset') || '0', 10) || 0, 0);
 
-  // Check KV cache first
+  // Source definitions are part of the cache key, so changing any source deterministically
+  // invalidates the old feed instead of waiting for TTL expiry.
   const cached = await env.NEWS_CACHE?.get(CACHE_KEY, { type: 'json' });
   if (cached) {
     const filtered = filterByRegion(cached, region);
     const page = filtered.slice(offset, offset + limit);
-    return new Response(JSON.stringify({ items: page, cached: true, total: filtered.length }), {
-      headers,
-    });
+    return new Response(
+      JSON.stringify({
+        items: page,
+        cached: true,
+        total: filtered.length,
+        sourceFingerprint: SOURCE_FINGERPRINT,
+      }),
+      { headers }
+    );
   }
 
-  // Cache miss — fetch all sources in parallel, capture health, then translate non-English.
   const { items, sourceHealth } = await fetchAllSources();
   await translateNonEnglish(items, env);
 
-  // Write feed + the exact source observations that produced it to KV. Both writes are
-  // best-effort so an unavailable KV namespace never takes down the public news endpoint.
   if (env.NEWS_CACHE) {
     await Promise.all([
       env.NEWS_CACHE.put(CACHE_KEY, JSON.stringify(items), {
@@ -198,7 +214,11 @@ export async function onRequestGet({ env, request }) {
       }),
       env.NEWS_CACHE.put(
         SOURCE_HEALTH_KEY,
-        JSON.stringify({ generatedAt: new Date().toISOString(), sourceHealth }),
+        JSON.stringify({
+          generatedAt: new Date().toISOString(),
+          sourceFingerprint: SOURCE_FINGERPRINT,
+          sourceHealth,
+        }),
         { expirationTtl: SOURCE_HEALTH_TTL_SECONDS }
       ),
     ]).catch(() => {});
@@ -206,18 +226,19 @@ export async function onRequestGet({ env, request }) {
 
   const filtered = filterByRegion(items, region);
   const page = filtered.slice(offset, offset + limit);
-  return new Response(JSON.stringify({ items: page, cached: false, total: filtered.length }), {
-    headers,
-  });
+  return new Response(
+    JSON.stringify({
+      items: page,
+      cached: false,
+      total: filtered.length,
+      sourceFingerprint: SOURCE_FINGERPRINT,
+    }),
+    { headers }
+  );
 }
 
-// ---------------------------------------------------------------------------
-// Machine translation — runs before KV write, only on cache-miss
-// Requires Cloudflare Workers AI binding: env.AI
-// Translates in parallel; leaves originals intact on any error
-// ---------------------------------------------------------------------------
 async function translateNonEnglish(items, env) {
-  if (!env?.AI) return; // AI binding not configured — skip silently
+  if (!env?.AI) return;
 
   const toTranslate = items.filter(i => i.lang && i.lang !== 'en');
   if (!toTranslate.length) return;
@@ -246,7 +267,6 @@ async function translateNonEnglish(items, env) {
         item.translated = true;
         item.originalLang = item.lang;
       } catch {
-        // Translation failed — serve original text, flag as untranslated
         item.translated = false;
         item.originalLang = item.lang;
       }
@@ -255,13 +275,11 @@ async function translateNonEnglish(items, env) {
 }
 
 async function fetchAllSources() {
-  // fetchAndParseRSS never throws; every source produces both stories and an observation.
   const results = await Promise.all(SOURCES.map(source => fetchAndParseRSS(source)));
 
   const items = results.flatMap(result => result.items);
   const sourceHealth = results.map(result => result.health);
 
-  // Sort newest-first, deduplicate by id, cap at 300 for KV storage
   const seen = new Set();
   const normalizedItems = items
     .sort((a, b) => new Date(b.published) - new Date(a.published))
@@ -374,8 +392,6 @@ function parseRSS(xml, sourceName, region, lang = 'en') {
     const pubDate = extractTag(block, 'pubDate');
 
     if (!title || !link) continue;
-
-    // Reject non-HTTP links (security: prevent javascript: / data: URIs)
     if (!link.startsWith('https://') && !link.startsWith('http://')) continue;
 
     let published = new Date().toISOString();
@@ -400,11 +416,10 @@ function parseRSS(xml, sourceName, region, lang = 'en') {
     });
   }
 
-  return items.slice(0, 20); // cap 20 items per source
+  return items.slice(0, 20);
 }
 
 function extractTag(xml, tag) {
-  // Try CDATA first, then plain text
   const cdataRe = new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`);
   const plainRe = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`);
   const cdataMatch = xml.match(cdataRe);
