@@ -1,15 +1,33 @@
 import assert from 'node:assert/strict';
+import { copyFileSync, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import test from 'node:test';
 
-import {
+// Cloudflare Pages Functions are ESM even though the repository's Node tooling is CommonJS.
+// Mirror only the Functions under test into an isolated ESM temp tree so contract testing does
+// not require a package.json inside the production Functions artifact.
+const fixtureRoot = mkdtempSync(join(tmpdir(), 'globaldeets-functions-'));
+const fixtureFunctions = join(fixtureRoot, 'functions');
+const fixtureNews = join(fixtureFunctions, 'api', 'news.js');
+const fixtureHealth = join(fixtureFunctions, 'api', 'news', 'health.js');
+mkdirSync(dirname(fixtureHealth), { recursive: true });
+writeFileSync(join(fixtureFunctions, 'package.json'), '{"type":"module"}\n');
+copyFileSync(fileURLToPath(new URL('../functions/api/news.js', import.meta.url)), fixtureNews);
+copyFileSync(fileURLToPath(new URL('../functions/api/news/health.js', import.meta.url)), fixtureHealth);
+
+const newsModule = await import(pathToFileURL(fixtureNews).href);
+const healthModule = await import(pathToFileURL(fixtureHealth).href);
+const {
   CACHE_KEY,
   SOURCES,
   SOURCE_FINGERPRINT,
   SOURCE_HEALTH_KEY,
   getSourceFingerprint,
-  onRequestGet as getNews,
-} from '../functions/api/news.js';
-import { onRequestGet as getNewsHealth } from '../functions/api/news/health.js';
+  onRequestGet: getNews,
+} = newsModule;
+const { onRequestGet: getNewsHealth } = healthModule;
 
 function makeKv(initial = new Map()) {
   const data = new Map(initial);
