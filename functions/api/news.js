@@ -43,7 +43,7 @@ export const SOURCES = [
   // Ukrainian sources — English-language editions
   {
     name: 'Kyiv Independent',
-    url: 'https://kyivindependent.com/feed/',
+    url: 'https://kyivindependent.com/news-archive/rss/',
     region: 'europe',
     lang: 'en',
   },
@@ -98,7 +98,7 @@ export const SOURCES = [
   },
   {
     name: 'The East African',
-    url: 'https://www.theeastafrican.co.ke/tea/feed',
+    url: 'https://www.theeastafrican.co.ke/rss.xml',
     region: 'africa',
     lang: 'en',
   },
