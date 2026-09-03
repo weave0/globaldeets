@@ -1,5 +1,10 @@
 import js from '@eslint/js';
 
+const strictUnused = {
+  argsIgnorePattern: '^_',
+  caughtErrorsIgnorePattern: '^_',
+};
+
 export default [
   {
     ignores: [
@@ -61,8 +66,79 @@ export default [
       },
     },
     rules: {
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
+      'no-unused-vars': ['error', strictUnused],
       'no-empty': ['error', { allowEmptyCatch: true }],
+    },
+  },
+  // Build tuple metadata is intentionally retained for readability even when a crop loop
+  // consumes only the slug/position fields.
+  {
+    files: ['build-assets.js'],
+    rules: {
+      'no-unused-vars': [
+        'error',
+        { ...strictUnused, destructuredArrayIgnorePattern: '^(?:id|label)$' },
+      ],
+    },
+  },
+  // These legacy browser surfaces still expose or retain named hooks/state for their page
+  // contracts. Keep the exceptions file-scoped and exact so any new unused symbol fails CI.
+  {
+    files: ['news.js'],
+    rules: {
+      'no-unused-vars': ['error', { ...strictUnused, varsIgnorePattern: '^status$' }],
+    },
+  },
+  {
+    files: ['projects-render.js'],
+    rules: {
+      'no-unused-vars': [
+        'error',
+        { ...strictUnused, argsIgnorePattern: '^(?:_|projectsToCount)$' },
+      ],
+    },
+  },
+  {
+    files: ['pwa-install.js'],
+    rules: {
+      'no-unused-vars': ['error', { ...strictUnused, argsIgnorePattern: '^(?:_|evt)$' }],
+    },
+  },
+  {
+    files: ['generate-icons.js', 'shared/ecosystem-nav.js'],
+    rules: {
+      'no-unused-vars': [
+        'error',
+        { ...strictUnused, caughtErrorsIgnorePattern: '^(?:_|e)$' },
+      ],
+    },
+  },
+  {
+    files: ['ui-effects.js'],
+    rules: {
+      'no-unused-vars': [
+        'error',
+        { ...strictUnused, varsIgnorePattern: '^(?:ParticleBackground|particleInstance)$' },
+      ],
+    },
+  },
+  {
+    files: ['ux-animations.js'],
+    rules: {
+      'no-unused-vars': ['error', { ...strictUnused, varsIgnorePattern: '^startValue$' }],
+    },
+  },
+  {
+    files: ['worldmap.js'],
+    rules: {
+      'no-unused-vars': [
+        'error',
+        {
+          ...strictUnused,
+          varsIgnorePattern:
+            '^(?:selectedCam|createCameraIcon|createWebcamDescription|query|flyToLocation)$',
+        },
+      ],
     },
   },
 ];
