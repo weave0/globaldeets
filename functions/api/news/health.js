@@ -23,6 +23,18 @@ const BASE_HEADERS = {
   'Cache-Control': 'public, max-age=60',
 };
 
+function logOperationalError(phase, error, details = {}) {
+  console.error(
+    JSON.stringify({
+      event: 'globaldeets.news.health.error',
+      phase,
+      sourceFingerprint: SOURCE_FINGERPRINT,
+      ...details,
+      error: error?.message || String(error || 'unknown error'),
+    })
+  );
+}
+
 function getCorsHeaders(request) {
   const origin = request?.headers?.get('Origin');
   const allowOrigin = ALLOWED_ORIGINS.has(origin) ? origin : 'https://globaldeets.com';
@@ -55,13 +67,7 @@ export async function onRequestGet({ env, request }) {
   const sourceHealth = await Promise.all(SOURCES.map(probeSource));
   const generatedAt = new Date().toISOString();
 
-  if (env.NEWS_CACHE) {
-    await env.NEWS_CACHE.put(
-      SOURCE_HEALTH_KEY,
-      JSON.stringify({ generatedAt, sourceFingerprint: SOURCE_FINGERPRINT, sourceHealth }),
-      { expirationTtl: SOURCE_HEALTH_TTL_SECONDS }
-    ).catch(() => {});
-  }
+  await writeSnapshot(env, generatedAt, sourceHealth);
 
   return jsonResponse(generatedAt, sourceHealth, headers);
 }
@@ -70,8 +76,22 @@ async function readSnapshot(env) {
   if (!env.NEWS_CACHE) return null;
   try {
     return await env.NEWS_CACHE.get(SOURCE_HEALTH_KEY, { type: 'json' });
-  } catch {
+  } catch (error) {
+    logOperationalError('kv_read_health', error, { cacheKey: SOURCE_HEALTH_KEY });
     return null;
+  }
+}
+
+async function writeSnapshot(env, generatedAt, sourceHealth) {
+  if (!env.NEWS_CACHE) return;
+  try {
+    await env.NEWS_CACHE.put(
+      SOURCE_HEALTH_KEY,
+      JSON.stringify({ generatedAt, sourceFingerprint: SOURCE_FINGERPRINT, sourceHealth }),
+      { expirationTtl: SOURCE_HEALTH_TTL_SECONDS }
+    );
+  } catch (error) {
+    logOperationalError('kv_write_health', error, { cacheKey: SOURCE_HEALTH_KEY });
   }
 }
 
