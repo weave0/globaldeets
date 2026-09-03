@@ -76,7 +76,6 @@ function attachEventListeners() {
 }
 
 // Header scroll effect
-let lastScroll = 0;
 window.addEventListener('scroll', () => {
   const currentScroll = window.pageYOffset;
   const header = document.querySelector('header');
@@ -84,7 +83,6 @@ window.addEventListener('scroll', () => {
     if (currentScroll > 100) header.classList.add('scrolled');
     else header.classList.remove('scrolled');
   }
-  lastScroll = currentScroll;
 });
 
 // Initialize
