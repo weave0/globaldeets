@@ -1,0 +1,151 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+
+import {
+  CACHE_KEY,
+  SOURCES,
+  SOURCE_FINGERPRINT,
+  SOURCE_HEALTH_KEY,
+  getSourceFingerprint,
+  onRequestGet as getNews,
+} from '../functions/api/news.js';
+import { onRequestGet as getNewsHealth } from '../functions/api/news/health.js';
+
+function makeKv(initial = new Map()) {
+  const data = new Map(initial);
+  const puts = [];
+  return {
+    data,
+    puts,
+    async get(key) {
+      return data.get(key) ?? null;
+    },
+    async put(key, value, options) {
+      puts.push({ key, value: JSON.parse(value), options });
+      data.set(key, JSON.parse(value));
+    },
+  };
+}
+
+function request(path = '/api/news') {
+  return new Request(`https://globaldeets.com${path}`, {
+    headers: { Origin: 'https://globaldeets.com' },
+  });
+}
+
+const story = {
+  id: 'cached-1',
+  headline: 'Cached headline',
+  summary: 'Cached summary',
+  source: 'BBC World',
+  sourceUrl: 'https://example.com/story',
+  published: '2026-09-02T00:00:00.000Z',
+  region: 'global',
+  lang: 'en',
+  translated: false,
+  originalLang: 'en',
+};
+
+test('source fingerprint is deterministic and changes when a source definition changes', () => {
+  assert.equal(getSourceFingerprint(SOURCES), SOURCE_FINGERPRINT);
+  assert.equal(getSourceFingerprint(SOURCES), getSourceFingerprint(SOURCES.map(source => ({ ...source }))));
+
+  const changed = SOURCES.map(source => ({ ...source }));
+  changed[0].url = `${changed[0].url}?changed=1`;
+  assert.notEqual(getSourceFingerprint(changed), SOURCE_FINGERPRINT);
+  assert.match(CACHE_KEY, new RegExp(`${SOURCE_FINGERPRINT}$`));
+  assert.match(SOURCE_HEALTH_KEY, new RegExp(`${SOURCE_FINGERPRINT}$`));
+});
+
+test('/api/news serves only the source-versioned cache and exposes its fingerprint', async () => {
+  const kv = makeKv(new Map([[CACHE_KEY, [story]]]));
+  const response = await getNews({ env: { NEWS_CACHE: kv }, request: request('/api/news?limit=5') });
+  const json = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(json.cached, true);
+  assert.equal(json.total, 1);
+  assert.deepEqual(json.items, [story]);
+  assert.equal(json.sourceFingerprint, SOURCE_FINGERPRINT);
+});
+
+test('/api/news cache miss writes feed and health under the current source fingerprint', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => {
+    globalThis.fetch = previousFetch;
+  });
+
+  globalThis.fetch = async url =>
+    new Response(
+      `<rss><channel><item><title>Story ${String(url)}</title><link>https://example.com/story</link><description>Summary</description><pubDate>Wed, 02 Sep 2026 00:00:00 GMT</pubDate></item></channel></rss>`,
+      { status: 200, headers: { 'content-type': 'application/rss+xml' } }
+    );
+
+  const kv = makeKv();
+  const response = await getNews({ env: { NEWS_CACHE: kv }, request: request('/api/news?limit=5') });
+  const json = await response.json();
+
+  assert.equal(json.cached, false);
+  assert.equal(json.sourceFingerprint, SOURCE_FINGERPRINT);
+  assert.ok(json.items.length > 0);
+  assert.deepEqual(
+    kv.puts.map(put => put.key).sort(),
+    [CACHE_KEY, SOURCE_HEALTH_KEY].sort()
+  );
+
+  const healthWrite = kv.puts.find(put => put.key === SOURCE_HEALTH_KEY);
+  assert.equal(healthWrite.value.sourceFingerprint, SOURCE_FINGERPRINT);
+  assert.equal(healthWrite.value.sourceHealth.length, SOURCES.length);
+});
+
+test('/api/news/health reuses only a snapshot matching source fingerprint and source count', async () => {
+  const snapshot = {
+    generatedAt: '2026-09-02T00:00:00.000Z',
+    sourceFingerprint: SOURCE_FINGERPRINT,
+    sourceHealth: SOURCES.map(source => ({
+      sourceId: source.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      name: source.name,
+      url: source.url,
+      region: source.region,
+      lang: source.lang,
+      lastError: null,
+    })),
+  };
+  const kv = makeKv(new Map([[SOURCE_HEALTH_KEY, snapshot]]));
+  const response = await getNewsHealth({
+    env: { NEWS_CACHE: kv },
+    request: request('/api/news/health'),
+  });
+  const json = await response.json();
+
+  assert.equal(json.sourceFingerprint, SOURCE_FINGERPRINT);
+  assert.equal(json.totalSources, SOURCES.length);
+  assert.equal(json.healthySources, SOURCES.length);
+  assert.equal(kv.puts.length, 0);
+});
+
+test('/api/news/health regenerates a fingerprint-mismatched snapshot', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => {
+    globalThis.fetch = previousFetch;
+  });
+  globalThis.fetch = async () => new Response('ok', { status: 200 });
+
+  const stale = {
+    generatedAt: '2026-09-01T00:30:00.000Z',
+    sourceFingerprint: 'stale000',
+    sourceHealth: SOURCES.map(source => ({ name: source.name, lastError: null })),
+  };
+  const kv = makeKv(new Map([[SOURCE_HEALTH_KEY, stale]]));
+  const response = await getNewsHealth({
+    env: { NEWS_CACHE: kv },
+    request: request('/api/news/health'),
+  });
+  const json = await response.json();
+
+  assert.equal(json.sourceFingerprint, SOURCE_FINGERPRINT);
+  assert.equal(json.totalSources, SOURCES.length);
+  assert.equal(kv.puts.length, 1);
+  assert.equal(kv.puts[0].key, SOURCE_HEALTH_KEY);
+  assert.equal(kv.puts[0].value.sourceFingerprint, SOURCE_FINGERPRINT);
+});
