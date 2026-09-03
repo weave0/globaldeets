@@ -51,6 +51,23 @@ function request(path = '/api/news') {
   });
 }
 
+function rssResponse(url = 'https://example.com/feed') {
+  return new Response(
+    `<rss><channel><item><title>Story ${String(url)}</title><link>https://example.com/story</link><description>Summary</description><pubDate>Wed, 02 Sep 2026 00:00:00 GMT</pubDate></item></channel></rss>`,
+    { status: 200, headers: { 'content-type': 'application/rss+xml' } }
+  );
+}
+
+function captureErrors(t) {
+  const original = console.error;
+  const entries = [];
+  console.error = value => entries.push(String(value));
+  t.after(() => {
+    console.error = original;
+  });
+  return entries;
+}
+
 const story = {
   id: 'cached-1',
   headline: 'Cached headline',
@@ -92,12 +109,7 @@ test('/api/news cache miss writes feed and health under the current source finge
   t.after(() => {
     globalThis.fetch = previousFetch;
   });
-
-  globalThis.fetch = async url =>
-    new Response(
-      `<rss><channel><item><title>Story ${String(url)}</title><link>https://example.com/story</link><description>Summary</description><pubDate>Wed, 02 Sep 2026 00:00:00 GMT</pubDate></item></channel></rss>`,
-      { status: 200, headers: { 'content-type': 'application/rss+xml' } }
-    );
+  globalThis.fetch = async url => rssResponse(url);
 
   const kv = makeKv();
   const response = await getNews({ env: { NEWS_CACHE: kv }, request: request('/api/news?limit=5') });
@@ -114,6 +126,49 @@ test('/api/news cache miss writes feed and health under the current source finge
   const healthWrite = kv.puts.find(put => put.key === SOURCE_HEALTH_KEY);
   assert.equal(healthWrite.value.sourceFingerprint, SOURCE_FINGERPRINT);
   assert.equal(healthWrite.value.sourceHealth.length, SOURCES.length);
+});
+
+test('/api/news degrades to live fetch when KV read fails and emits structured telemetry', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => {
+    globalThis.fetch = previousFetch;
+  });
+  globalThis.fetch = async url => rssResponse(url);
+  const errors = captureErrors(t);
+  const kv = makeKv();
+  kv.get = async () => {
+    throw new Error('simulated KV read failure');
+  };
+
+  const response = await getNews({ env: { NEWS_CACHE: kv }, request: request('/api/news?limit=5') });
+  const json = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(json.cached, false);
+  assert.ok(json.items.length > 0);
+  assert.ok(errors.some(entry => entry.includes('"phase":"kv_read_feed"')));
+  assert.ok(errors.some(entry => entry.includes(SOURCE_FINGERPRINT)));
+});
+
+test('/api/news remains available when KV writes fail and emits structured telemetry', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => {
+    globalThis.fetch = previousFetch;
+  });
+  globalThis.fetch = async url => rssResponse(url);
+  const errors = captureErrors(t);
+  const kv = makeKv();
+  kv.put = async () => {
+    throw new Error('simulated KV write failure');
+  };
+
+  const response = await getNews({ env: { NEWS_CACHE: kv }, request: request('/api/news?limit=5') });
+  const json = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(json.cached, false);
+  assert.ok(json.items.length > 0);
+  assert.ok(errors.some(entry => entry.includes('"phase":"kv_write_news"')));
 });
 
 test('/api/news/health reuses only a snapshot matching source fingerprint and source count', async () => {
@@ -166,4 +221,50 @@ test('/api/news/health regenerates a fingerprint-mismatched snapshot', async t =
   assert.equal(kv.puts.length, 1);
   assert.equal(kv.puts[0].key, SOURCE_HEALTH_KEY);
   assert.equal(kv.puts[0].value.sourceFingerprint, SOURCE_FINGERPRINT);
+});
+
+test('/api/news/health regenerates when KV read fails and emits structured telemetry', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => {
+    globalThis.fetch = previousFetch;
+  });
+  globalThis.fetch = async () => new Response('ok', { status: 200 });
+  const errors = captureErrors(t);
+  const kv = makeKv();
+  kv.get = async () => {
+    throw new Error('simulated health KV read failure');
+  };
+
+  const response = await getNewsHealth({
+    env: { NEWS_CACHE: kv },
+    request: request('/api/news/health'),
+  });
+  const json = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(json.totalSources, SOURCES.length);
+  assert.ok(errors.some(entry => entry.includes('"phase":"kv_read_health"')));
+});
+
+test('/api/news/health remains available when snapshot write fails', async t => {
+  const previousFetch = globalThis.fetch;
+  t.after(() => {
+    globalThis.fetch = previousFetch;
+  });
+  globalThis.fetch = async () => new Response('ok', { status: 200 });
+  const errors = captureErrors(t);
+  const kv = makeKv();
+  kv.put = async () => {
+    throw new Error('simulated health KV write failure');
+  };
+
+  const response = await getNewsHealth({
+    env: { NEWS_CACHE: kv },
+    request: request('/api/news/health'),
+  });
+  const json = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(json.totalSources, SOURCES.length);
+  assert.ok(errors.some(entry => entry.includes('"phase":"kv_write_health"')));
 });

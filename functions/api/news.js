@@ -160,6 +160,18 @@ const BASE_HEADERS = {
   'Cache-Control': 'public, max-age=900',
 };
 
+function logOperationalError(phase, error, details = {}) {
+  console.error(
+    JSON.stringify({
+      event: 'globaldeets.news.error',
+      phase,
+      sourceFingerprint: SOURCE_FINGERPRINT,
+      ...details,
+      error: error?.message || String(error || 'unknown error'),
+    })
+  );
+}
+
 function getCorsHeaders(request) {
   const origin = request?.headers?.get('Origin');
   const allowOrigin = ALLOWED_ORIGINS.has(origin) ? origin : 'https://globaldeets.com';
@@ -189,7 +201,7 @@ export async function onRequestGet({ env, request }) {
 
   // Source definitions are part of the cache key, so changing any source deterministically
   // invalidates the old feed instead of waiting for TTL expiry.
-  const cached = await env.NEWS_CACHE?.get(CACHE_KEY, { type: 'json' });
+  const cached = await readFeedCache(env);
   if (cached) {
     const filtered = filterByRegion(cached, region);
     const page = filtered.slice(offset, offset + limit);
@@ -206,8 +218,34 @@ export async function onRequestGet({ env, request }) {
 
   const { items, sourceHealth } = await fetchAllSources();
   await translateNonEnglish(items, env);
+  await writeCaches(env, items, sourceHealth);
 
-  if (env.NEWS_CACHE) {
+  const filtered = filterByRegion(items, region);
+  const page = filtered.slice(offset, offset + limit);
+  return new Response(
+    JSON.stringify({
+      items: page,
+      cached: false,
+      total: filtered.length,
+      sourceFingerprint: SOURCE_FINGERPRINT,
+    }),
+    { headers }
+  );
+}
+
+async function readFeedCache(env) {
+  if (!env.NEWS_CACHE) return null;
+  try {
+    return await env.NEWS_CACHE.get(CACHE_KEY, { type: 'json' });
+  } catch (error) {
+    logOperationalError('kv_read_feed', error, { cacheKey: CACHE_KEY });
+    return null;
+  }
+}
+
+async function writeCaches(env, items, sourceHealth) {
+  if (!env.NEWS_CACHE) return;
+  try {
     await Promise.all([
       env.NEWS_CACHE.put(CACHE_KEY, JSON.stringify(items), {
         expirationTtl: CACHE_TTL_SECONDS,
@@ -221,20 +259,13 @@ export async function onRequestGet({ env, request }) {
         }),
         { expirationTtl: SOURCE_HEALTH_TTL_SECONDS }
       ),
-    ]).catch(() => {});
+    ]);
+  } catch (error) {
+    logOperationalError('kv_write_news', error, {
+      feedCacheKey: CACHE_KEY,
+      healthCacheKey: SOURCE_HEALTH_KEY,
+    });
   }
-
-  const filtered = filterByRegion(items, region);
-  const page = filtered.slice(offset, offset + limit);
-  return new Response(
-    JSON.stringify({
-      items: page,
-      cached: false,
-      total: filtered.length,
-      sourceFingerprint: SOURCE_FINGERPRINT,
-    }),
-    { headers }
-  );
 }
 
 async function translateNonEnglish(items, env) {
@@ -266,9 +297,13 @@ async function translateNonEnglish(items, env) {
         item.summary = summaryRes?.translated_text || item.summary;
         item.translated = true;
         item.originalLang = item.lang;
-      } catch {
+      } catch (error) {
         item.translated = false;
         item.originalLang = item.lang;
+        logOperationalError('translation', error, {
+          source: item.source,
+          sourceLang,
+        });
       }
     })
   );
