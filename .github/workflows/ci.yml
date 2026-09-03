@@ -58,6 +58,9 @@ jobs:
       - name: Lint JavaScript
         run: npm run lint
 
+      - name: Run Function contract tests
+        run: npm run test:functions
+
       - name: Install Playwright Chromium
         run: npx playwright install chromium
 
