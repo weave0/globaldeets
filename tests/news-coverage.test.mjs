@@ -64,9 +64,21 @@ test('provenance registry maps exactly once to every canonical live source', () 
   assert.deepEqual(validation.invalidEntries, []);
   assert.ok(SOURCE_PROVENANCE.every(entry => entry.evidenceUrls.length > 0));
   assert.ok(SOURCE_PROVENANCE.every(entry => entry.organizationName));
+
+  const guardian = SOURCE_PROVENANCE.find(entry => entry.sourceId === 'guardian');
+  assert.equal(guardian.organizationName, 'Guardian News & Media');
+  assert.equal(guardian.ownershipOperator, 'The Scott Trust Limited');
+
+  const cna = SOURCE_PROVENANCE.find(entry => entry.sourceId === 'cna');
+  assert.equal(cna.organizationName, 'CNA');
+  assert.equal(cna.ownershipOperator, 'Mediacorp');
+
+  const dawn = SOURCE_PROVENANCE.find(entry => entry.sourceId === 'dawn');
+  assert.equal(dawn.organizationName, 'Dawn');
+  assert.equal(dawn.ownershipOperator, 'Pakistan Herald Publications Private Limited');
 });
 
-test('provenance validation rejects missing, orphaned, duplicate, and structurally invalid records', () => {
+test('provenance validation rejects missing, orphaned, duplicate, drifted, and invalid records', () => {
   const base = SOURCE_PROVENANCE.map(entry => ({ ...entry }));
   const missing = validateSourceProvenance(SOURCES, base.slice(1));
   assert.equal(missing.valid, false);
@@ -89,6 +101,20 @@ test('provenance validation rejects missing, orphaned, duplicate, and structural
   ]);
   assert.equal(invalid.valid, false);
   assert.ok(invalid.invalidEntries.includes('bbc-world'));
+
+  const nameDrift = validateSourceProvenance(SOURCES, [
+    { ...base[0], name: 'BBC World Renamed' },
+    ...base.slice(1),
+  ]);
+  assert.equal(nameDrift.valid, false);
+  assert.ok(nameDrift.invalidEntries.includes('bbc-world'));
+
+  const languageDrift = validateSourceProvenance(SOURCES, [
+    { ...base[0], sourceLanguages: ['fr'] },
+    ...base.slice(1),
+  ]);
+  assert.equal(languageDrift.valid, false);
+  assert.ok(languageDrift.invalidEntries.includes('bbc-world'));
 });
 
 test('coverage inventory is deterministic and enriched from reviewed provenance', () => {
@@ -104,6 +130,7 @@ test('coverage inventory is deterministic and enriched from reviewed provenance'
   assert.equal(first.totalLanguages, 2);
   assert.equal(first.provenance.valid, true);
   assert.equal(first.provenance.reviewedSources, 19);
+  assert.deepEqual(first.provenance.unknownOwnershipOperatorSourceIds, []);
   assert.equal(first.nonEnglishSources.length, 1);
   assert.ok(first.nonEnglishSources.includes('nhk'));
   assert.ok(first.sourceClasses.some(group => group.sourceClass === 'news-agency'));
@@ -125,7 +152,6 @@ test('coverage inventory surfaces current evidence, locality, redundancy, and la
   assert.ok(gapIds.has('source-language-diversity:europe'));
   assert.ok(gapIds.has('source-language-diversity:middle-east'));
   assert.ok(gapIds.has('source-language-diversity:pacific'));
-  assert.ok(inventory.provenance.unknownOwnershipOperatorSourceIds.includes('dawn'));
 });
 
 test('coverage gap logic responds to stronger regional, language, primary-source, and local diversity', () => {
@@ -145,7 +171,7 @@ test('coverage gap logic responds to stronger regional, language, primary-source
     primaryCountry: ['AA', 'BB', 'CC', 'DD'][index],
     locality: 'local',
     sourceLanguages: [source.lang],
-    ownershipOperator: null,
+    ownershipOperator: `${source.name} Organization`,
     evidenceUrls: [`https://${source.name.toLowerCase()}.example/about`],
     reviewedAt: '2026-09-03',
   }));
