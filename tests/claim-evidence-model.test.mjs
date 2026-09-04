@@ -66,13 +66,14 @@ test('claim identity is explicit and survives proposition edits without collapsi
   assert.notEqual(first.proposition, revised.proposition);
 });
 
-test('contradictory claims coexist and no relation chooses a silent winner', () => {
-  const yes = claim('source-a', 'claim-yes', 'The event occurred.', 'contradicted');
-  const no = claim('source-b', 'claim-no', 'The event did not occur.', 'corroborated');
+test('disputed and contradictory claims coexist and no relation chooses a silent winner', () => {
+  const yes = claim('source-a', 'claim-yes', 'The event occurred.', 'disputed');
+  const no = claim('source-b', 'claim-no', 'The event did not occur.', 'contradicted');
   const relation = model.createClaimRelation({ claimId: yes.id, relatedClaimId: no.id, relation: 'contradicts' });
   const result = model.validateClaimEvidenceGraph({ claims: [yes, no], claimRelations: [relation] });
   assert.equal(result.valid, true);
   assert.equal(new Set([yes.id, no.id]).size, 2);
+  assert.ok(model.CLAIM_STATES.includes('disputed'));
 });
 
 test('corroboration must come from a distinct origin source', () => {
@@ -99,7 +100,16 @@ test('primary evidence requires issuer, canonical reference, provenance, and ins
     claimIds: [assertion.id],
     provenanceRefs: ['https://www.un.org'],
   });
+  const movedReference = model.createEvidence({
+    evidenceKey: 'resolution:example:1',
+    issuerEntityId: issuer.id,
+    canonicalRef: 'https://www.un.org/example-resolution-new-location',
+    documentType: 'multilateral-publication',
+    claimIds: [assertion.id],
+    provenanceRefs: ['https://www.un.org'],
+  });
   const link = model.createEvidenceRelation({ claimId: assertion.id, evidenceId: document.id, relation: 'supports' });
+  assert.equal(document.id, movedReference.id);
   assert.equal(model.validateClaimEvidenceGraph({ entities: [issuer], claims: [assertion], evidence: [document], evidenceRelations: [link] }).valid, true);
   assert.throws(
     () => model.createEvidence({ evidenceKey: 'bad', issuerEntityId: issuer.id, canonicalRef: 'https://example.com/bad', documentType: 'official-record' }),
@@ -107,7 +117,7 @@ test('primary evidence requires issuer, canonical reference, provenance, and ins
   );
 });
 
-test('claim/evidence graph rejects orphan entities, places, events, issuers, claims, and evidence links', () => {
+test('claim/evidence graph rejects orphan entities, places, events, issuers, claims, superseded evidence, and evidence links', () => {
   const { place, person, issuer, event } = basicGraph();
   const good = model.createClaim({
     originSourceId: 'source-a',
@@ -140,6 +150,7 @@ test('claim/evidence graph rejects orphan entities, places, events, issuers, cla
     entityIds: ['entity:missing'],
     placeEntityIds: ['place:missing', person.id],
     claimIds: ['claim:missing'],
+    supersedesEvidenceIds: ['evidence:missing'],
     provenanceRefs: [EVIDENCE_URL],
   });
   const missingEvidenceLink = model.createEvidenceRelation({ claimId: good.id, evidenceId: 'evidence:missing', relation: 'supports' });
@@ -157,18 +168,45 @@ test('claim/evidence graph rejects orphan entities, places, events, issuers, cla
   assert.equal(result.nonPlaceClaimRefs.length, 1);
   assert.equal(result.orphanEvidenceIssuerRefs.length, 1);
   assert.equal(result.orphanEvidenceClaimRefs.length, 1);
+  assert.equal(result.orphanSupersededEvidenceRefs.length, 1);
   assert.equal(result.orphanEvidenceRelationEvidenceRefs.length, 1);
 });
 
-test('supersession preserves both historical claims instead of deleting the old record', () => {
+test('supersession preserves both historical claims and evidence records instead of deleting old state', () => {
+  const { issuer } = basicGraph();
   const oldClaim = claim('source-a', 'revision-1', 'Initial estimate', 'superseded');
   const newClaim = claim('source-a', 'revision-2', 'Updated estimate', 'single-source');
-  const relation = model.createClaimRelation({ claimId: newClaim.id, relatedClaimId: oldClaim.id, relation: 'supersedes' });
-  const result = model.validateClaimEvidenceGraph({ claims: [oldClaim, newClaim], claimRelations: [relation] });
+  const claimRelation = model.createClaimRelation({ claimId: newClaim.id, relatedClaimId: oldClaim.id, relation: 'supersedes' });
+  const oldEvidence = model.createEvidence({
+    evidenceKey: 'release:1',
+    issuerEntityId: issuer.id,
+    canonicalRef: 'https://example.com/release-1',
+    documentType: 'official-record',
+    claimIds: [oldClaim.id],
+    provenanceRefs: [EVIDENCE_URL],
+  });
+  const newEvidence = model.createEvidence({
+    evidenceKey: 'release:2',
+    issuerEntityId: issuer.id,
+    canonicalRef: 'https://example.com/release-2',
+    documentType: 'official-record',
+    claimIds: [newClaim.id],
+    supersedesEvidenceIds: [oldEvidence.id],
+    provenanceRefs: [EVIDENCE_URL],
+  });
+  const result = model.validateClaimEvidenceGraph({
+    entities: [issuer],
+    claims: [oldClaim, newClaim],
+    evidence: [oldEvidence, newEvidence],
+    claimRelations: [claimRelation],
+  });
   assert.equal(result.valid, true);
   assert.equal(result.duplicateClaimIds.length, 0);
+  assert.equal(result.duplicateEvidenceIds.length, 0);
   assert.equal(oldClaim.state, 'superseded');
   assert.notEqual(oldClaim.id, newClaim.id);
+  assert.notEqual(oldEvidence.id, newEvidence.id);
+  assert.deepEqual(newEvidence.supersedesEvidenceIds, [oldEvidence.id]);
 });
 
 test('reviewed institutional overlay reuses exact Knowledge catalog entries but authorizes no collection endpoints', () => {
@@ -186,6 +224,7 @@ test('/api/intelligence/evidence-schema exposes evidence-state rules without ena
   const json = await response.json();
   assert.equal(response.status, 200);
   assert.equal(json.modelVersion, model.CLAIM_EVIDENCE_MODEL_VERSION);
+  assert.ok(json.claimStates.includes('disputed'));
   assert.equal(json.rules.truthScore, false);
   assert.equal(json.rules.contradictoryClaimsMayCoexist, true);
   assert.equal(json.rules.independentCorroborationRequiresDistinctOriginSource, true);
