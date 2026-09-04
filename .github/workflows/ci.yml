@@ -50,6 +50,7 @@ jobs:
           node --check health-prod.js
           node --check tools/stage-deploy.js
           node --check tools/deploy-pages.js
+          node --check tools/verify-intelligence-prod.js
           node --check functions/api/deploy.js
           node --check functions/api/news/health.js
           node --check functions/api/news/coverage.js
