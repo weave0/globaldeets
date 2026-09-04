@@ -9,7 +9,7 @@ export const SOURCE_PROVENANCE = Object.freeze([
   record('bbc-world', 'BBC World', 'public-service-broadcaster', 'reporting', 'global', 'GB', 'global', 'British Broadcasting Corporation', ['https://www.bbc.com/aboutthebbc']),
   record('ap', 'AP', 'news-agency', 'wire-service', 'global', 'US', 'global', 'The Associated Press', ['https://www.ap.org/about/']),
   record('guardian', 'Guardian', 'newsroom', 'reporting', 'global', 'GB', 'global', 'Guardian News & Media; ultimate owner The Scott Trust Limited', ['https://www.theguardian.com/about']),
-  record('al-jazeera', 'Al Jazeera', 'international-news-network', 'reporting', 'global', 'QA', 'global', 'Al Jazeera Media Network; funded in part by the Qatari government', ['https://www.aljazeera.com/about-us']),
+  record('al-jazeera', 'Al Jazeera', 'international-news-network', 'reporting', 'global', 'QA', 'global', 'Al Jazeera Media Network', ['https://www.aljazeera.com/about-us']),
   record('anadolu-agency', 'Anadolu Agency', 'news-agency', 'wire-service', 'global', 'TR', 'global', 'Anadolu Agency', ['https://www.aa.com.tr/en/newsacademy/p/about-us']),
   record('dw', 'DW', 'public-service-broadcaster', 'reporting', 'global', 'DE', 'global', 'Deutsche Welle', ['https://www.dw.com/en/about-dw/s-30688']),
   record('france-24', 'France 24', 'public-international-broadcaster', 'reporting', 'global', 'FR', 'global', 'France Médias Monde', ['https://www.francemediasmonde.com/en/our-media/france-24/']),
@@ -57,6 +57,7 @@ function record(sourceId, name, sourceClass, evidenceRole, geographicScope, prim
   return Object.freeze({
     sourceId,
     name,
+    organizationName: ownershipOperator || name,
     sourceClass,
     evidenceRole,
     geographicScope,
@@ -74,6 +75,7 @@ function isValidEntry(entry) {
     entry &&
       entry.sourceId &&
       entry.name &&
+      entry.organizationName &&
       entry.sourceClass &&
       entry.evidenceRole &&
       entry.geographicScope &&
