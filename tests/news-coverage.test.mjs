@@ -9,6 +9,7 @@ const fixtureRoot = mkdtempSync(join(tmpdir(), 'globaldeets-coverage-'));
 const fixtureFunctions = join(fixtureRoot, 'functions');
 const fixtureNews = join(fixtureFunctions, 'api', 'news.js');
 const fixtureCoverageApi = join(fixtureFunctions, 'api', 'news', 'coverage.js');
+const fixtureSourcesApi = join(fixtureFunctions, 'api', 'news', 'sources.js');
 const fixtureCoverageLib = join(fixtureFunctions, 'lib', 'news-coverage.js');
 const fixtureProvenanceLib = join(fixtureFunctions, 'lib', 'news-source-provenance.js');
 
@@ -19,6 +20,10 @@ copyFileSync(fileURLToPath(new URL('../functions/api/news.js', import.meta.url))
 copyFileSync(
   fileURLToPath(new URL('../functions/api/news/coverage.js', import.meta.url)),
   fixtureCoverageApi
+);
+copyFileSync(
+  fileURLToPath(new URL('../functions/api/news/sources.js', import.meta.url)),
+  fixtureSourcesApi
 );
 copyFileSync(
   fileURLToPath(new URL('../functions/lib/news-coverage.js', import.meta.url)),
@@ -33,11 +38,13 @@ const newsModule = await import(pathToFileURL(fixtureNews).href);
 const provenanceModule = await import(pathToFileURL(fixtureProvenanceLib).href);
 const coverageModule = await import(pathToFileURL(fixtureCoverageLib).href);
 const coverageApiModule = await import(pathToFileURL(fixtureCoverageApi).href);
+const sourcesApiModule = await import(pathToFileURL(fixtureSourcesApi).href);
 
 const { SOURCES, SOURCE_FINGERPRINT } = newsModule;
 const { SOURCE_PROVENANCE, validateSourceProvenance } = provenanceModule;
 const { buildCoverageInventory } = coverageModule;
 const { onRequestGet: getCoverage } = coverageApiModule;
+const { onRequestGet: getSources } = sourcesApiModule;
 
 function request(path = '/api/news/coverage') {
   return new Request(`https://globaldeets.com${path}`, {
@@ -56,6 +63,7 @@ test('provenance registry maps exactly once to every canonical live source', () 
   assert.deepEqual(validation.orphanSourceIds, []);
   assert.deepEqual(validation.invalidEntries, []);
   assert.ok(SOURCE_PROVENANCE.every(entry => entry.evidenceUrls.length > 0));
+  assert.ok(SOURCE_PROVENANCE.every(entry => entry.organizationName));
 });
 
 test('provenance validation rejects missing, orphaned, duplicate, and structurally invalid records', () => {
@@ -130,6 +138,7 @@ test('coverage gap logic responds to stronger regional, language, primary-source
   const sampleProvenance = sample.map((source, index) => ({
     sourceId: source.name.toLowerCase(),
     name: source.name,
+    organizationName: `${source.name} Organization`,
     sourceClass: index === 0 ? 'institution' : 'newsroom',
     evidenceRole: index === 0 ? 'primary-source' : 'reporting',
     geographicScope: index === 0 ? 'subnational' : 'national',
@@ -164,4 +173,17 @@ test('/api/news/coverage exposes source fingerprint, provenance integrity, and a
   assert.ok(Array.isArray(json.sourceOriginCountries));
   assert.ok(json.gaps.some(gap => gap.id === 'evidence-role:primary-source-inputs'));
   assert.match(json.generatedAt, /^\d{4}-\d{2}-\d{2}T/);
+});
+
+test('/api/news/sources exposes the reviewed registry and its evidence links', async () => {
+  const response = await getSources({ request: request('/api/news/sources') });
+  const json = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(json.sourceFingerprint, SOURCE_FINGERPRINT);
+  assert.equal(json.validation.valid, true);
+  assert.equal(json.totalSources, SOURCES.length);
+  assert.equal(json.sources.length, 19);
+  assert.ok(json.sources.every(source => source.organizationName));
+  assert.ok(json.sources.every(source => source.evidenceUrls.every(url => url.startsWith('https://'))));
 });
