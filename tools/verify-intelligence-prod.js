@@ -30,10 +30,11 @@ function requireCondition(condition, message) {
 }
 
 (async () => {
-  const [coverage, sources, schema] = await Promise.all([
+  const [coverage, sources, schema, evidenceSchema] = await Promise.all([
     fetchJson('/api/news/coverage'),
     fetchJson('/api/news/sources'),
     fetchJson('/api/intelligence/schema'),
+    fetchJson('/api/intelligence/evidence-schema'),
   ]);
 
   requireCondition(typeof coverage.sourceFingerprint === 'string', 'coverage fingerprint missing');
@@ -59,7 +60,21 @@ function requireCondition(condition, message) {
   requireCondition(Number.isInteger(schema.placeSeed?.count) && schema.placeSeed.count > 0, 'place seed count missing');
   requireCondition(schema.placeSeed?.runtimeFetchRequired === false, 'production must not depend on live M49 fetching');
 
-  console.log(`Intelligence APIs certified: ${sources.totalSources} sources, ${coverage.gaps.length} coverage gaps, ${schema.placeSeed.count} reviewed place identities, model ${schema.modelVersion}`);
+  requireCondition(typeof evidenceSchema.modelVersion === 'string', 'claim/evidence model version missing');
+  requireCondition(Array.isArray(evidenceSchema.claimTypes) && evidenceSchema.claimTypes.includes('allegation'), 'claim type contract missing');
+  requireCondition(Array.isArray(evidenceSchema.claimStates) && evidenceSchema.claimStates.includes('contradicted'), 'claim state contract missing');
+  requireCondition(Array.isArray(evidenceSchema.evidenceDocumentTypes) && evidenceSchema.evidenceDocumentTypes.includes('court-filing'), 'evidence document contract missing');
+  requireCondition(evidenceSchema.rules?.truthScore === false, 'truth score must remain disabled');
+  requireCondition(evidenceSchema.rules?.contradictoryClaimsMayCoexist === true, 'contradictory claim coexistence contract changed');
+  requireCondition(evidenceSchema.rules?.independentCorroborationRequiresDistinctOriginSource === true, 'independent corroboration contract changed');
+  requireCondition(evidenceSchema.rules?.supersessionDeletesHistory === false, 'supersession must preserve history');
+  requireCondition(evidenceSchema.rules?.knowledgeCatalogIsIngestionAuthority === false, 'Knowledge catalog must not become ingestion authority');
+  requireCondition(evidenceSchema.rules?.machineReadableEndpointRequiresSeparateReview === true, 'endpoint review boundary changed');
+  requireCondition(evidenceSchema.rules?.bulkCollectionEnabled === false, 'bulk evidence collection must remain disabled in GD-015');
+  requireCondition(Number.isInteger(evidenceSchema.institutionalSources?.reviewedSources) && evidenceSchema.institutionalSources.reviewedSources > 0, 'reviewed institutional source count missing');
+  requireCondition(evidenceSchema.institutionalSources?.collectionEligibleSources === 0, 'GD-015 must not silently enable institutional collection');
+
+  console.log(`Intelligence APIs certified: ${sources.totalSources} sources, ${coverage.gaps.length} coverage gaps, ${schema.placeSeed.count} place identities, ${evidenceSchema.institutionalSources.reviewedSources} reviewed institutional candidates, models ${schema.modelVersion}/${evidenceSchema.modelVersion}`);
 })().catch(error => {
   console.error(`Intelligence API verification failed: ${error.message}`);
   process.exit(1);
