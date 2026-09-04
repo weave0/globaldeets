@@ -17,16 +17,11 @@ async function fetchJson(path) {
     },
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
-
-  if (response.status !== 200) {
-    throw new Error(`${path} returned HTTP ${response.status}`);
-  }
-
+  if (response.status !== 200) throw new Error(`${path} returned HTTP ${response.status}`);
   const contentType = response.headers.get('content-type') || '';
   if (!contentType.includes('application/json')) {
     throw new Error(`${path} returned unexpected content-type ${contentType}`);
   }
-
   return response.json();
 }
 
@@ -35,37 +30,36 @@ function requireCondition(condition, message) {
 }
 
 (async () => {
-  const [coverage, sources] = await Promise.all([
+  const [coverage, sources, schema] = await Promise.all([
     fetchJson('/api/news/coverage'),
     fetchJson('/api/news/sources'),
+    fetchJson('/api/intelligence/schema'),
   ]);
 
   requireCondition(typeof coverage.sourceFingerprint === 'string', 'coverage fingerprint missing');
   requireCondition(typeof sources.sourceFingerprint === 'string', 'sources fingerprint missing');
-  requireCondition(
-    coverage.sourceFingerprint === sources.sourceFingerprint,
-    'coverage and source provenance fingerprints disagree'
-  );
+  requireCondition(coverage.sourceFingerprint === sources.sourceFingerprint, 'coverage and source provenance fingerprints disagree');
   requireCondition(coverage.provenance?.valid === true, 'coverage provenance validation failed');
   requireCondition(sources.validation?.valid === true, 'source registry validation failed');
   requireCondition(Number.isInteger(coverage.totalSources), 'coverage totalSources missing');
   requireCondition(Number.isInteger(sources.totalSources), 'sources totalSources missing');
   requireCondition(Array.isArray(sources.sources), 'sources array missing');
   requireCondition(Array.isArray(coverage.gaps), 'coverage gaps array missing');
-  requireCondition(
-    coverage.totalSources === sources.totalSources && sources.totalSources === sources.sources.length,
-    'source counts disagree across intelligence APIs'
-  );
-  requireCondition(
-    sources.sources.every(source =>
-      Array.isArray(source.evidenceUrls) && source.evidenceUrls.length > 0
-    ),
-    'one or more source provenance records lack evidence URLs'
-  );
+  requireCondition(coverage.totalSources === sources.totalSources && sources.totalSources === sources.sources.length, 'source counts disagree across intelligence APIs');
+  requireCondition(sources.sources.every(source => Array.isArray(source.evidenceUrls) && source.evidenceUrls.length > 0), 'one or more source provenance records lack evidence URLs');
 
-  console.log(
-    `Intelligence APIs certified: ${sources.totalSources} sources, ${coverage.gaps.length} active coverage gaps, fingerprint ${coverage.sourceFingerprint}`
-  );
+  requireCondition(typeof schema.modelVersion === 'string', 'intelligence model version missing');
+  requireCondition(Array.isArray(schema.entityTypes) && schema.entityTypes.includes('place'), 'place entity type missing');
+  requireCondition(Array.isArray(schema.eventStatuses) && schema.eventStatuses.includes('disputed'), 'event status contract missing');
+  requireCondition(schema.identityRules?.automaticNameMerge === false, 'automatic name merge must remain disabled');
+  requireCondition(schema.identityRules?.ambiguousAliasResolution === 'ambiguous', 'ambiguous alias contract changed');
+  requireCondition(schema.identityRules?.aliasesRequireEvidence === true, 'alias evidence contract changed');
+  requireCondition(schema.identityRules?.placeIdentityStandard === 'UN M49', 'place identity standard changed');
+  requireCondition(schema.placeSeed?.complete === false, 'partial place seed must not claim completeness');
+  requireCondition(Number.isInteger(schema.placeSeed?.count) && schema.placeSeed.count > 0, 'place seed count missing');
+  requireCondition(schema.placeSeed?.runtimeFetchRequired === false, 'production must not depend on live M49 fetching');
+
+  console.log(`Intelligence APIs certified: ${sources.totalSources} sources, ${coverage.gaps.length} coverage gaps, ${schema.placeSeed.count} reviewed place identities, model ${schema.modelVersion}`);
 })().catch(error => {
   console.error(`Intelligence API verification failed: ${error.message}`);
   process.exit(1);
