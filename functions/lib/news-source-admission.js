@@ -150,11 +150,15 @@ export function getAdmissionFingerprint(admissions = SOURCE_ADMISSIONS, candidat
 }
 
 export function validateSourceAdmissions(sources = SOURCES, admissions = SOURCE_ADMISSIONS) {
+  const canonicalSourceIds = sources.map(source => slugifySourceName(source.name));
+  const canonicalEndpointUrls = sources.map(source => source.url);
   const sourceById = new Map(sources.map(source => [slugifySourceName(source.name), source]));
   const admissionById = new Map(admissions.map(entry => [entry.sourceId, entry]));
   const sourceIds = [...sourceById.keys()];
   const admissionIds = admissions.map(entry => entry.sourceId);
 
+  const duplicateCanonicalSourceIds = duplicates(canonicalSourceIds);
+  const duplicateCanonicalEndpointUrls = duplicates(canonicalEndpointUrls);
   const missingSourceIds = sourceIds.filter(id => !admissionById.has(id));
   const orphanSourceIds = admissionIds.filter(id => !sourceById.has(id));
   const duplicateIds = duplicates(admissionIds);
@@ -180,6 +184,8 @@ export function validateSourceAdmissions(sources = SOURCES, admissions = SOURCE_
   });
 
   const result = {
+    duplicateCanonicalSourceIds,
+    duplicateCanonicalEndpointUrls,
     missingSourceIds: unique(missingSourceIds),
     orphanSourceIds: unique(orphanSourceIds),
     duplicateIds,
@@ -199,8 +205,12 @@ export function isProductionAdmissible(entry) {
     entry &&
       entry.legacy === false &&
       entry.reviewState === 'reviewed' &&
+      typeof entry.reviewedAt === 'string' &&
+      entry.reviewedAt.trim() &&
       entry.allowedUseStatus === 'verified-public-use' &&
       ['first-party', 'authorized-third-party'].includes(entry.endpointAuthority) &&
+      entry.endpointEvidenceUrls.length > 0 &&
+      entry.usagePolicyUrls.length > 0 &&
       entry.healthVerificationStatus === 'verified' &&
       entry.itemLevelReviewRequired !== true &&
       entry.currentUse.every(use => entry.permittedUse.includes(use))
@@ -322,17 +332,24 @@ function candidate(definition) {
 }
 
 function validAdmission(entry) {
+  const reviewedAtValid =
+    entry?.reviewState === 'legacy-unreviewed'
+      ? entry.reviewedAt == null || (typeof entry.reviewedAt === 'string' && entry.reviewedAt.trim())
+      : typeof entry?.reviewedAt === 'string' && entry.reviewedAt.trim();
   return Boolean(
     entry &&
       typeof entry.sourceId === 'string' &&
+      entry.sourceId === slugifySourceName(entry.name) &&
       typeof entry.name === 'string' &&
-      typeof entry.endpointUrl === 'string' &&
+      /^https:\/\//.test(entry.endpointUrl) &&
       typeof entry.endpointType === 'string' &&
       AUTHORITY_SET.has(entry.endpointAuthority) &&
       Array.isArray(entry.endpointEvidenceUrls) &&
       entry.endpointEvidenceUrls.length > 0 &&
+      entry.endpointEvidenceUrls.every(url => /^https:\/\//.test(url)) &&
       typeof entry.authenticationRequirement === 'string' &&
       Array.isArray(entry.usagePolicyUrls) &&
+      entry.usagePolicyUrls.every(url => /^https:\/\//.test(url)) &&
       USE_STATUS_SET.has(entry.allowedUseStatus) &&
       Array.isArray(entry.currentUse) &&
       entry.currentUse.every(use => CURRENT_USE_SET.has(use)) &&
@@ -344,7 +361,9 @@ function validAdmission(entry) {
       typeof entry.itemLevelReviewRequired === 'boolean' &&
       typeof entry.itemLevelStrategy === 'string' &&
       REVIEW_STATE_SET.has(entry.reviewState) &&
+      reviewedAtValid &&
       typeof entry.reviewerNotes === 'string' &&
+      entry.reviewerNotes.trim() &&
       typeof entry.healthVerificationStatus === 'string' &&
       typeof entry.legacy === 'boolean'
   );
