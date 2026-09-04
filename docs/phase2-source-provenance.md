@@ -8,22 +8,28 @@ The live news pipeline previously knew only a source name, feed URL, coarse regi
 
 GD-013 adds a reviewed provenance registry beside the canonical ingestion contract. It does **not** change feed URLs, feed cache identity, source-health keys, parsing, translation, or ranking.
 
+## Routing region is not geographic scope
+
+The existing `SOURCES.region` field is a feed-routing bucket used by the current product. It must not be interpreted as the publisher's actual reporting footprint or organizational geography. For example, a publisher can be routed through a regional bucket while its reviewed provenance has a global geographic scope.
+
+The provenance fields `geographicScope`, `primaryCountry`, and `locality` exist specifically so future coverage analysis does not confuse routing behavior with source origin, reach, or localness.
+
 ## Registry contract
 
-Every live `SOURCES` entry must map to exactly one provenance record. CI rejects missing, orphaned, duplicate, or structurally invalid records.
+Every live `SOURCES` entry must map to exactly one provenance record. CI rejects missing, orphaned, duplicate, drifted, or structurally invalid records. A source name or feed-language change invalidates the associated provenance record until it is reviewed alongside the source change.
 
 Each record contains:
 
 - canonical source ID
 - display/source name
-- organization name
+- publisher/organization name
 - source class
 - evidence role
 - geographic scope
 - primary country when applicable
 - locality indicator
 - live feed language(s)
-- ownership/operator when verified, otherwise `null`
+- ownership/operator separately from publisher identity
 - one or more provenance/evidence URLs
 - review date
 
@@ -54,17 +60,20 @@ The live contract also contains **zero subnational/local sources**. National and
 
 These signals do not mean that an institutional source is automatically correct or that a local source is automatically superior. They mean GlobalDeets can now measure whether those evidence perspectives are present at all.
 
+GlobalDeets already has a separate Knowledge catalog containing many institutional and research resources. The zero-primary-input signal refers to the **live news/evidence ingestion contract**, not to the absence of institutional links elsewhere in the platform. GD-015 should review and reuse suitable Knowledge entries rather than build a duplicate institutional directory.
+
 ## Evidence review examples
 
 The registry uses publisher or operator material where practical. Examples reviewed for this tranche include:
 
-- Associated Press describing itself as an independent news cooperative.
+- Associated Press documenting its cooperative identity.
 - Guardian documenting Guardian News & Media and The Scott Trust ownership structure.
-- Al Jazeera identifying Al Jazeera Media Network and disclosing that it is funded in part by the Qatari government.
-- France Médias Monde identifying France 24 as its international news channel.
+- Al Jazeera identifying Al Jazeera Media Network.
+- France Medias Monde identifying France 24 as its international news channel.
 - Kyiv Independent documenting its newsroom history and Ukrainian origin.
 - Ukrinform identifying itself as Ukraine's national news agency.
 - CNA identifying Mediacorp and its Singapore base.
+- Dawn identifying Pakistan Herald Publications Private Limited as publisher of Dawn and Dawn.com.
 - NPR identifying itself as an independent nonprofit media organization.
 - Australian Broadcasting Corporation identifying itself as Australia's publicly owned public-service media organization.
 - Premium Times identifying Premium Times Services Limited as its publisher.
@@ -84,6 +93,10 @@ This tranche does not create:
 
 Those shortcuts would collapse different questions into a misleading single number. GlobalDeets should instead expose concrete provenance, corroboration, contradiction, and primary evidence separately.
 
+## Release contract
+
+After the normal exact-commit production health verifier confirms custom-domain convergence, deployment separately verifies the intelligence APIs. `/api/news/coverage` and `/api/news/sources` must agree on the source fingerprint and source count, both registries must validate, and every exposed source must retain evidence URLs before the release can certify.
+
 ## Next gate
 
-GD-014 should introduce canonical entities and events so incoming articles and future primary-source records can attach to durable people, organizations, places, and developing stories rather than remaining isolated feed items.
+GD-014 should introduce canonical entities and events so incoming articles and future primary-source records can attach to durable people, organizations, places, and developing stories rather than remaining isolated feed items. Place entities should also become the canonical geography foundation for the long-planned country library and globe context.
