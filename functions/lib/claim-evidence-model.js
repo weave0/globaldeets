@@ -1,5 +1,5 @@
 // Deterministic claim/evidence primitives. Evidence state is explicit; this module never computes a truth score.
-export const CLAIM_EVIDENCE_MODEL_VERSION = '2026-09-03.1';
+export const CLAIM_EVIDENCE_MODEL_VERSION = '2026-09-03.2';
 
 export const CLAIM_TYPES = Object.freeze([
   'fact-assertion',
@@ -15,6 +15,7 @@ export const CLAIM_STATES = Object.freeze([
   'single-source',
   'corroborated',
   'contradicted',
+  'disputed',
   'superseded',
   'withdrawn',
 ]);
@@ -79,9 +80,12 @@ export function createEvidence(definition) {
   oneOf(definition.documentType, EVIDENCE_DOCUMENT_TYPE_SET, 'evidence.documentType');
   const provenanceRefs = stringList(definition.provenanceRefs ?? []);
   if (!provenanceRefs.length) throw new TypeError('evidence.provenanceRefs must not be empty');
+  const id = makeStableEvidenceId(definition.issuerEntityId, definition.evidenceKey);
+  const supersedesEvidenceIds = stringList(definition.supersedesEvidenceIds ?? []);
+  if (supersedesEvidenceIds.includes(id)) throw new TypeError('evidence cannot supersede itself');
 
   return Object.freeze({
-    id: makeStableEvidenceId(definition.issuerEntityId, definition.evidenceKey),
+    id,
     evidenceKey: definition.evidenceKey,
     issuerEntityId: definition.issuerEntityId,
     canonicalRef: definition.canonicalRef,
@@ -93,6 +97,7 @@ export function createEvidence(definition) {
     entityIds: stringList(definition.entityIds ?? []),
     placeEntityIds: stringList(definition.placeEntityIds ?? []),
     claimIds: stringList(definition.claimIds ?? []),
+    supersedesEvidenceIds,
     provenanceRefs,
     retrievedAt: optionalText(definition.retrievedAt, 'evidence.retrievedAt'),
     reviewedAt: optionalText(definition.reviewedAt, 'evidence.reviewedAt'),
@@ -171,6 +176,7 @@ export function validateClaimEvidenceGraph({
     orphanEvidencePlaceRefs: [],
     nonPlaceEvidenceRefs: [],
     orphanEvidenceClaimRefs: [],
+    orphanSupersededEvidenceRefs: [],
     orphanClaimRelationRefs: [],
     orphanClaimRelationEvidenceRefs: [],
     nonIndependentCorroborationRefs: [],
@@ -198,6 +204,9 @@ export function validateClaimEvidenceGraph({
       else if (entity.type !== 'place') result.nonPlaceEvidenceRefs.push(`${item.id}:${id}`);
     }
     for (const id of item.claimIds || []) if (!claimById.has(id)) result.orphanEvidenceClaimRefs.push(`${item.id}:${id}`);
+    for (const id of item.supersedesEvidenceIds || []) {
+      if (!evidenceById.has(id)) result.orphanSupersededEvidenceRefs.push(`${item.id}:${id}`);
+    }
   }
 
   for (const relation of claimRelations) {
@@ -244,6 +253,7 @@ function validEvidence(item) {
       typeof item.issuerEntityId === 'string' &&
       typeof item.canonicalRef === 'string' &&
       EVIDENCE_DOCUMENT_TYPE_SET.has(item.documentType) &&
+      Array.isArray(item.supersedesEvidenceIds) &&
       Array.isArray(item.provenanceRefs) &&
       item.provenanceRefs.length > 0 &&
       item.id === makeStableEvidenceId(item.issuerEntityId, item.evidenceKey)
