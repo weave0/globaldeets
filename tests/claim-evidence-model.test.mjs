@@ -209,13 +209,15 @@ test('supersession preserves both historical claims and evidence records instead
   assert.deepEqual(newEvidence.supersedesEvidenceIds, [oldEvidence.id]);
 });
 
-test('reviewed institutional overlay reuses exact Knowledge catalog entries but authorizes no collection endpoints', () => {
+test('reviewed institutional overlay reuses exact Knowledge catalog entries but unreviewed candidates stay ineligible', () => {
   const validation = institutions.validateInstitutionalSourceRegistry(knowledgeCatalog);
   assert.equal(validation.valid, true);
   assert.equal(institutions.REVIEWED_INSTITUTIONAL_SOURCES.length, 10);
   assert.equal(institutions.REVIEWED_INSTITUTIONAL_SOURCES.every(item => item.collectionEligible === false), true);
   assert.equal(institutions.REVIEWED_INSTITUTIONAL_SOURCES.every(item => item.machineReadableEndpoints.length === 0), true);
   assert.ok(institutions.REVIEWED_INSTITUTIONAL_SOURCES.some(item => item.evidenceRole === 'issuing-primary'));
+  assert.ok(institutions.findReviewedInstitutionalSource('governance', 'United Nations', 'https://www.un.org'));
+  assert.equal(institutions.findReviewedInstitutionalSource('education', 'Wikipedia', 'https://www.wikipedia.org'), null);
   assert.equal(institutions.institutionalRegistrySummary().knowledgeCatalogIsIngestionAuthority, false);
 });
 
