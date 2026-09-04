@@ -49,16 +49,21 @@ jobs:
           node --check functions/api/news/health.js
           node --check functions/api/news/coverage.js
           node --check functions/api/news/sources.js
+          node --check functions/api/news/admission.js
           node --check functions/api/intelligence/schema.js
           node --check functions/api/intelligence/evidence-schema.js
           node --check functions/lib/news-coverage.js
           node --check functions/lib/news-source-provenance.js
+          node --check functions/lib/news-source-admission.js
           node --check functions/lib/intelligence-model.js
           node --check functions/lib/m49-place-seed.js
           node --check functions/lib/claim-evidence-model.js
           node --check functions/lib/institutional-evidence-sources.js
           node --check playwright.config.js
           node --check tests/smoke.spec.js
+          node --check tests/news-source-admission.test.mjs
+          node --check tests/news-source-admission-hardening.test.mjs
+          node --check tests/news-admission-api.test.mjs
           node --check tests/intelligence-model.test.mjs
           node --check tests/claim-evidence-model.test.mjs
 
