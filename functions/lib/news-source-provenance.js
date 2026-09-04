@@ -171,8 +171,8 @@ export const SOURCE_PROVENANCE = Object.freeze([
     geographicScope: 'national',
     primaryCountry: 'PK',
     locality: 'local',
-    ownershipOperator: null,
-    evidenceUrls: ['https://www.dawn.com/nayapakistan/about/'],
+    ownershipOperator: 'Pakistan Herald Publications Private Limited',
+    evidenceUrls: ['https://www.dawn.com/news/1753517'],
   }),
   record({
     sourceId: 'npr',
@@ -240,9 +240,7 @@ export const SOURCE_PROVENANCE = Object.freeze([
 ]);
 
 export function validateSourceProvenance(sources = SOURCES, provenance = SOURCE_PROVENANCE) {
-  const sourceById = new Map(
-    sources.map(source => [slugifySourceName(source.name), source])
-  );
+  const sourceById = new Map(sources.map(source => [slugifySourceName(source.name), source]));
   const sourceIds = [...sourceById.keys()];
   const provenanceIds = provenance.map(entry => entry.sourceId);
   const duplicateIds = provenanceIds.filter((id, index) => provenanceIds.indexOf(id) !== index);
