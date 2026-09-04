@@ -1,78 +1,51 @@
-// Deterministic intelligence primitives for GlobalDeets.
-// Identity is explicit. Similar names, headlines, or aliases never create an automatic merge.
-
+// Deterministic intelligence primitives. Identity is explicit; fuzzy similarity never merges records.
 export const INTELLIGENCE_MODEL_VERSION = '2026-09-03.1';
-
 export const ENTITY_TYPES = Object.freeze([
-  'person',
-  'organization',
-  'government-public-body',
-  'company',
-  'place',
-  'multilateral-body',
+  'person', 'organization', 'government-public-body', 'company', 'place', 'multilateral-body',
 ]);
-
-export const EVENT_STATUSES = Object.freeze([
-  'developing',
-  'confirmed',
-  'closed',
-  'disputed',
-]);
-
+export const EVENT_STATUSES = Object.freeze(['developing', 'confirmed', 'closed', 'disputed']);
 const ENTITY_TYPE_SET = new Set(ENTITY_TYPES);
 const EVENT_STATUS_SET = new Set(EVENT_STATUSES);
 
 export function createEntity(definition) {
-  requireObject(definition, 'entity definition');
-  requireNonEmptyString(definition.identityKey, 'entity.identityKey');
-  requireNonEmptyString(definition.displayName, 'entity.displayName');
-  requireOneOf(definition.type, ENTITY_TYPE_SET, 'entity.type');
-
-  const aliases = normalizeAliasRecords(definition.aliases || []);
-  const evidenceRefs = normalizeStringList(definition.evidenceRefs || []);
-  const attributes = clonePlainValue(definition.attributes ?? {});
-
+  object(definition, 'entity definition');
+  text(definition.identityKey, 'entity.identityKey');
+  text(definition.displayName, 'entity.displayName');
+  oneOf(definition.type, ENTITY_TYPE_SET, 'entity.type');
   return Object.freeze({
     id: makeStableEntityId(definition.type, definition.identityKey),
     identityKey: definition.identityKey,
     type: definition.type,
     displayName: definition.displayName,
-    aliases,
-    evidenceRefs,
+    aliases: aliasRecords(definition.aliases || []),
+    evidenceRefs: stringList(definition.evidenceRefs || []),
     countryEntityId: definition.countryEntityId || null,
-    standardIds: normalizeStandardIds(definition.standardIds || null),
-    attributes,
+    standardIds: standardIds(definition.standardIds || null),
+    attributes: clone(definition.attributes ?? {}),
     createdAt: definition.createdAt || null,
     reviewedAt: definition.reviewedAt || null,
   });
 }
 
 export function createM49PlaceEntity(definition) {
-  requireObject(definition, 'M49 place definition');
-  const m49 = normalizeM49(definition.m49);
-  const isoAlpha2 = normalizeIso(definition.isoAlpha2, 2, 'place.isoAlpha2');
-  const isoAlpha3 = normalizeIso(definition.isoAlpha3, 3, 'place.isoAlpha3');
-
+  object(definition, 'M49 place definition');
+  const m49 = m49Code(definition.m49);
+  const isoAlpha2 = isoCode(definition.isoAlpha2, 2, 'place.isoAlpha2');
+  const isoAlpha3 = isoCode(definition.isoAlpha3, 3, 'place.isoAlpha3');
   return createEntity({
     ...definition,
     identityKey: `m49:${m49}`,
     type: 'place',
-    standardIds: {
-      ...(definition.standardIds || {}),
-      m49,
-      isoAlpha2,
-      isoAlpha3,
-    },
+    standardIds: { ...(definition.standardIds || {}), m49, isoAlpha2, isoAlpha3 },
   });
 }
 
 export function createEvent(definition) {
-  requireObject(definition, 'event definition');
-  requireNonEmptyString(definition.eventKey, 'event.eventKey');
-  requireNonEmptyString(definition.title, 'event.title');
-  requireNonEmptyString(definition.eventType, 'event.eventType');
-  requireOneOf(definition.status, EVENT_STATUS_SET, 'event.status');
-
+  object(definition, 'event definition');
+  text(definition.eventKey, 'event.eventKey');
+  text(definition.title, 'event.title');
+  text(definition.eventType, 'event.eventType');
+  oneOf(definition.status, EVENT_STATUS_SET, 'event.status');
   return Object.freeze({
     id: makeStableEventId(definition.eventKey),
     eventKey: definition.eventKey,
@@ -82,33 +55,31 @@ export function createEvent(definition) {
     observedAt: definition.observedAt || null,
     startedAt: definition.startedAt || null,
     endedAt: definition.endedAt || null,
-    entityIds: normalizeStringList(definition.entityIds || []),
-    placeEntityIds: normalizeStringList(definition.placeEntityIds || []),
-    articleIds: normalizeStringList(definition.articleIds || []),
-    unknowns: normalizeStringList(definition.unknowns || []),
-    evidenceRefs: normalizeStringList(definition.evidenceRefs || []),
+    entityIds: stringList(definition.entityIds || []),
+    placeEntityIds: stringList(definition.placeEntityIds || []),
+    articleIds: stringList(definition.articleIds || []),
+    unknowns: stringList(definition.unknowns || []),
+    evidenceRefs: stringList(definition.evidenceRefs || []),
     createdAt: definition.createdAt || null,
     reviewedAt: definition.reviewedAt || null,
   });
 }
 
 export function makeStableEntityId(type, identityKey) {
-  requireOneOf(type, ENTITY_TYPE_SET, 'entity.type');
-  requireNonEmptyString(identityKey, 'entity.identityKey');
-  if (type === 'place' && /^m49:\d{3}$/.test(identityKey)) {
-    return `place:${identityKey}`;
-  }
+  oneOf(type, ENTITY_TYPE_SET, 'entity.type');
+  text(identityKey, 'entity.identityKey');
+  if (type === 'place' && /^m49:\d{3}$/.test(identityKey)) return `place:${identityKey}`;
   return `entity:${type}:${fnv1a(`${type}\u001f${identityKey}`)}`;
 }
 
 export function makeStableEventId(eventKey) {
-  requireNonEmptyString(eventKey, 'event.eventKey');
+  text(eventKey, 'event.eventKey');
   return `event:${fnv1a(eventKey)}`;
 }
 
 export function normalizeAlias(value) {
-  requireNonEmptyString(value, 'alias');
-  return value.normalize('NFKC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('und');
+  text(value, 'alias');
+  return value.normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
 export function buildAliasIndex(entities) {
@@ -122,104 +93,88 @@ export function buildAliasIndex(entities) {
 
 export function resolveEntityAlias(value, entities) {
   const normalized = normalizeAlias(value);
-  const index = buildAliasIndex(entities);
-  const matches = [...(index.get(normalized) || [])].sort();
-
-  if (matches.length === 0) return { status: 'no-match', normalized, entityIds: [] };
-  if (matches.length === 1) {
-    return { status: 'matched', normalized, entityId: matches[0], entityIds: matches };
-  }
+  const matches = [...(buildAliasIndex(entities).get(normalized) || [])].sort();
+  if (!matches.length) return { status: 'no-match', normalized, entityIds: [] };
+  if (matches.length === 1) return { status: 'matched', normalized, entityId: matches[0], entityIds: matches };
   return { status: 'ambiguous', normalized, entityIds: matches };
 }
 
 export function validateIntelligenceGraph({ entities = [], events = [] } = {}) {
-  const entityIds = entities.map(entity => entity.id);
-  const eventIds = events.map(event => event.id);
-  const duplicateEntityIds = duplicates(entityIds);
-  const duplicateEventIds = duplicates(eventIds);
   const entityById = new Map(entities.map(entity => [entity.id, entity]));
   const orphanEntityRefs = [];
   const orphanPlaceRefs = [];
   const nonPlaceRefs = [];
-
   for (const event of events) {
-    for (const entityId of event.entityIds || []) {
-      if (!entityById.has(entityId)) orphanEntityRefs.push(`${event.id}:${entityId}`);
-    }
-    for (const placeId of event.placeEntityIds || []) {
-      const entity = entityById.get(placeId);
-      if (!entity) orphanPlaceRefs.push(`${event.id}:${placeId}`);
-      else if (entity.type !== 'place') nonPlaceRefs.push(`${event.id}:${placeId}`);
+    for (const id of event.entityIds || []) if (!entityById.has(id)) orphanEntityRefs.push(`${event.id}:${id}`);
+    for (const id of event.placeEntityIds || []) {
+      const entity = entityById.get(id);
+      if (!entity) orphanPlaceRefs.push(`${event.id}:${id}`);
+      else if (entity.type !== 'place') nonPlaceRefs.push(`${event.id}:${id}`);
     }
   }
-
-  const invalidEntityIds = entities
-    .filter(entity => !isStructurallyValidEntity(entity))
-    .map(entity => entity.id || '(missing-id)');
-  const invalidEventIds = events
-    .filter(event => !isStructurallyValidEvent(event))
-    .map(event => event.id || '(missing-id)');
-
   const result = {
-    duplicateEntityIds,
-    duplicateEventIds,
-    orphanEntityRefs: [...new Set(orphanEntityRefs)].sort(),
-    orphanPlaceRefs: [...new Set(orphanPlaceRefs)].sort(),
-    nonPlaceRefs: [...new Set(nonPlaceRefs)].sort(),
-    invalidEntityIds: [...new Set(invalidEntityIds)].sort(),
-    invalidEventIds: [...new Set(invalidEventIds)].sort(),
+    duplicateEntityIds: duplicates(entities.map(entity => entity.id)),
+    duplicateEventIds: duplicates(events.map(event => event.id)),
+    orphanEntityRefs: unique(orphanEntityRefs),
+    orphanPlaceRefs: unique(orphanPlaceRefs),
+    nonPlaceRefs: unique(nonPlaceRefs),
+    invalidEntityIds: unique(entities.filter(entity => !validEntity(entity)).map(entity => entity.id || '(missing-id)')),
+    invalidEventIds: unique(events.filter(event => !validEvent(event)).map(event => event.id || '(missing-id)')),
   };
-
-  return {
-    valid: Object.values(result).every(values => values.length === 0),
-    ...result,
-  };
+  return { valid: Object.values(result).every(values => values.length === 0), ...result };
 }
 
-function normalizeAliasRecords(aliases) {
+function aliasRecords(aliases) {
   if (!Array.isArray(aliases)) throw new TypeError('entity.aliases must be an array');
   return aliases.map(alias => {
-    if (typeof alias === 'string') {
-      return Object.freeze({ value: alias, normalized: normalizeAlias(alias), evidenceRefs: [] });
-    }
-    requireObject(alias, 'entity alias');
-    requireNonEmptyString(alias.value, 'entity alias.value');
-    return Object.freeze({
-      value: alias.value,
-      normalized: normalizeAlias(alias.value),
-      evidenceRefs: normalizeStringList(alias.evidenceRefs || []),
-      sourceNative: alias.sourceNative === true,
-    });
+    object(alias, 'entity alias');
+    text(alias.value, 'entity alias.value');
+    const evidenceRefs = stringList(alias.evidenceRefs || []);
+    if (!evidenceRefs.length) throw new TypeError('entity alias.evidenceRefs must not be empty');
+    return Object.freeze({ value: alias.value, normalized: normalizeAlias(alias.value), evidenceRefs, sourceNative: alias.sourceNative === true });
   });
 }
 
-function normalizeStringList(values) {
+function stringList(values) {
   if (!Array.isArray(values)) throw new TypeError('expected an array');
-  return [...new Set(values.filter(value => typeof value === 'string' && value.trim()).map(value => value.trim()))].sort();
+  return unique(values.filter(value => typeof value === 'string' && value.trim()).map(value => value.trim()));
 }
 
-function normalizeStandardIds(value) {
+function standardIds(value) {
   if (value == null) return null;
-  requireObject(value, 'entity.standardIds');
-  const normalized = { ...value };
-  if (normalized.m49 != null) normalized.m49 = normalizeM49(normalized.m49);
-  if (normalized.isoAlpha2 != null) normalized.isoAlpha2 = normalizeIso(normalized.isoAlpha2, 2, 'standardIds.isoAlpha2');
-  if (normalized.isoAlpha3 != null) normalized.isoAlpha3 = normalizeIso(normalized.isoAlpha3, 3, 'standardIds.isoAlpha3');
-  return Object.freeze(normalized);
+  object(value, 'entity.standardIds');
+  const out = { ...value };
+  if (out.m49 != null) out.m49 = m49Code(out.m49);
+  if (out.isoAlpha2 != null) out.isoAlpha2 = isoCode(out.isoAlpha2, 2, 'standardIds.isoAlpha2');
+  if (out.isoAlpha3 != null) out.isoAlpha3 = isoCode(out.isoAlpha3, 3, 'standardIds.isoAlpha3');
+  return Object.freeze(out);
 }
 
-function normalizeM49(value) {
-  const m49 = String(value || '').padStart(3, '0');
-  if (!/^\d{3}$/.test(m49)) throw new TypeError('place.m49 must be a three-digit code');
-  return m49;
-}
-
-function normalizeIso(value, length, field) {
-  const normalized = String(value || '').trim().toUpperCase();
-  if (!new RegExp(`^[A-Z]{${length}}$`).test(normalized)) {
-    throw new TypeError(`${field} must be ${length} ASCII letters`);
-  }
+function m49Code(value) {
+  const raw = String(value ?? '').trim();
+  if (!/^\d{1,3}$/.test(raw)) throw new TypeError('place.m49 must be a one-to-three digit code');
+  const normalized = raw.padStart(3, '0');
+  if (normalized === '000') throw new TypeError('place.m49 000 is not a valid country/area identity code');
   return normalized;
+}
+
+function isoCode(value, length, field) {
+  const normalized = String(value ?? '').trim().toUpperCase();
+  if (!new RegExp(`^[A-Z]{${length}}$`).test(normalized)) throw new TypeError(`${field} must be ${length} ASCII letters`);
+  return normalized;
+}
+
+function validEntity(entity) {
+  return Boolean(entity && typeof entity.id === 'string' && ENTITY_TYPE_SET.has(entity.type) &&
+    typeof entity.identityKey === 'string' && typeof entity.displayName === 'string' &&
+    Array.isArray(entity.aliases) && entity.aliases.every(alias => Array.isArray(alias.evidenceRefs) && alias.evidenceRefs.length) &&
+    entity.id === makeStableEntityId(entity.type, entity.identityKey));
+}
+
+function validEvent(event) {
+  return Boolean(event && typeof event.id === 'string' && typeof event.eventKey === 'string' &&
+    typeof event.title === 'string' && typeof event.eventType === 'string' && EVENT_STATUS_SET.has(event.status) &&
+    event.id === makeStableEventId(event.eventKey));
 }
 
 function addAlias(index, value, entityId) {
@@ -227,66 +182,10 @@ function addAlias(index, value, entityId) {
   if (!index.has(normalized)) index.set(normalized, new Set());
   index.get(normalized).add(entityId);
 }
-
-function duplicates(values) {
-  const seen = new Set();
-  const repeated = new Set();
-  for (const value of values) {
-    if (seen.has(value)) repeated.add(value);
-    seen.add(value);
-  }
-  return [...repeated].sort();
-}
-
-function isStructurallyValidEntity(entity) {
-  return Boolean(
-    entity &&
-      typeof entity.id === 'string' &&
-      ENTITY_TYPE_SET.has(entity.type) &&
-      typeof entity.identityKey === 'string' &&
-      typeof entity.displayName === 'string' &&
-      entity.id === makeStableEntityId(entity.type, entity.identityKey)
-  );
-}
-
-function isStructurallyValidEvent(event) {
-  return Boolean(
-    event &&
-      typeof event.id === 'string' &&
-      typeof event.eventKey === 'string' &&
-      typeof event.title === 'string' &&
-      typeof event.eventType === 'string' &&
-      EVENT_STATUS_SET.has(event.status) &&
-      event.id === makeStableEventId(event.eventKey)
-  );
-}
-
-function fnv1a(value) {
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < value.length; i++) {
-    hash ^= value.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193) >>> 0;
-  }
-  return hash.toString(16).padStart(8, '0');
-}
-
-function requireObject(value, field) {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    throw new TypeError(`${field} must be an object`);
-  }
-}
-
-function requireNonEmptyString(value, field) {
-  if (typeof value !== 'string' || value.trim() === '') {
-    throw new TypeError(`${field} must be a non-empty string`);
-  }
-}
-
-function requireOneOf(value, allowed, field) {
-  if (!allowed.has(value)) throw new TypeError(`${field} is not supported`);
-}
-
-function clonePlainValue(value) {
-  if (value == null || typeof value !== 'object') return value;
-  return JSON.parse(JSON.stringify(value));
-}
+function duplicates(values) { const seen = new Set(); const repeated = new Set(); for (const value of values) { if (seen.has(value)) repeated.add(value); seen.add(value); } return [...repeated].sort(); }
+function unique(values) { return [...new Set(values)].sort(); }
+function fnv1a(value) { let hash = 0x811c9dc5; for (let i = 0; i < value.length; i++) { hash ^= value.charCodeAt(i); hash = Math.imul(hash, 0x01000193) >>> 0; } return hash.toString(16).padStart(8, '0'); }
+function object(value, field) { if (!value || typeof value !== 'object' || Array.isArray(value)) throw new TypeError(`${field} must be an object`); }
+function text(value, field) { if (typeof value !== 'string' || !value.trim()) throw new TypeError(`${field} must be a non-empty string`); }
+function oneOf(value, allowed, field) { if (!allowed.has(value)) throw new TypeError(`${field} is not supported`); }
+function clone(value) { if (value == null || typeof value !== 'object') return value; return JSON.parse(JSON.stringify(value)); }
