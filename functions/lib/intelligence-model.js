@@ -12,6 +12,13 @@ export function createEntity(definition) {
   text(definition.identityKey, 'entity.identityKey');
   text(definition.displayName, 'entity.displayName');
   oneOf(definition.type, ENTITY_TYPE_SET, 'entity.type');
+  const normalizedStandardIds = standardIds(definition.standardIds || null);
+  if (definition.type === 'place' && definition.identityKey.startsWith('m49:')) {
+    const keyM49 = m49Code(definition.identityKey.slice(4));
+    if (definition.identityKey !== `m49:${keyM49}` || normalizedStandardIds?.m49 !== keyM49) {
+      throw new TypeError('M49 place identity requires canonical identityKey and matching standardIds.m49');
+    }
+  }
   return Object.freeze({
     id: makeStableEntityId(definition.type, definition.identityKey),
     identityKey: definition.identityKey,
@@ -20,7 +27,7 @@ export function createEntity(definition) {
     aliases: aliasRecords(definition.aliases || []),
     evidenceRefs: stringList(definition.evidenceRefs || []),
     countryEntityId: definition.countryEntityId || null,
-    standardIds: standardIds(definition.standardIds || null),
+    standardIds: normalizedStandardIds,
     attributes: clone(definition.attributes ?? {}),
     createdAt: definition.createdAt || null,
     reviewedAt: definition.reviewedAt || null,
@@ -68,7 +75,11 @@ export function createEvent(definition) {
 export function makeStableEntityId(type, identityKey) {
   oneOf(type, ENTITY_TYPE_SET, 'entity.type');
   text(identityKey, 'entity.identityKey');
-  if (type === 'place' && /^m49:\d{3}$/.test(identityKey)) return `place:${identityKey}`;
+  if (type === 'place' && identityKey.startsWith('m49:')) {
+    const code = m49Code(identityKey.slice(4));
+    if (identityKey !== `m49:${code}`) throw new TypeError('M49 place identityKey must use a canonical three-digit code');
+    return `place:m49:${code}`;
+  }
   return `entity:${type}:${fnv1a(`${type}\u001f${identityKey}`)}`;
 }
 
