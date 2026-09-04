@@ -11,8 +11,8 @@ The governing boundary is:
 - reporting is a claim origin;
 - an issuing institution can produce primary evidence;
 - corroboration requires a genuinely distinct originating source;
-- contradiction is preserved rather than resolved by hidden weighting;
-- supersession appends history rather than deleting earlier records;
+- contradiction/dispute is preserved rather than resolved by hidden weighting;
+- claim and evidence supersession append history rather than deleting earlier records;
 - unknown/unreviewed evidence state remains explicit.
 
 ## Claim identity
@@ -34,6 +34,7 @@ Supported evidence states:
 - `single-source`
 - `corroborated`
 - `contradicted`
+- `disputed`
 - `superseded`
 - `withdrawn`
 
@@ -51,6 +52,9 @@ Evidence records require:
 - optional immutable reference
 - publication/effective/retrieval/review timestamps
 - links to relevant events, entities, places, and claims
+- optional `supersedesEvidenceIds` links to earlier evidence records
+
+The explicit evidence key and issuer—not the mutable URL—form the identity boundary. An evidence document can move to a new canonical URL without becoming a different record. A later document can supersede an earlier one while both remain addressable.
 
 Primary-document types include court filings, judgments, government/regulator releases, election records, sanctions notices, central-bank/statistical releases, multilateral publications, corporate filings, datasets, official records, and other reviewed primary material.
 
@@ -90,6 +94,8 @@ The overlay records:
 - classification evidence URL(s)
 - review date/status
 
+A catalog item has no evidence-source authority until that exact category/name/URL tuple appears in the reviewed overlay. Entries that remain only in Knowledge are still useful discovery resources, but are not admitted evidence sources.
+
 ## Directory identity is not collection authority
 
 Every initial GD-015 institutional source is `directory-only` and `collectionEligible: false`.
@@ -103,15 +109,17 @@ This also means the Knowledge catalog itself is **not** an ingestion authority.
 CI covers:
 
 - deterministic claim/evidence IDs
-- mutable proposition wording without identity drift
+- mutable proposition and evidence URL wording without identity drift
 - same proposition from different sources remaining distinct
-- contradictory claims coexisting
+- disputed/contradictory claims coexisting
 - same-source fake corroboration rejection
 - evidence provenance requirement
 - orphan claim/evidence/entity/place/event detection
+- orphan evidence-supersession detection
 - non-place geography references
-- supersession preserving historical records
+- claim and evidence supersession preserving historical records
 - exact reuse of existing Knowledge catalog entries
+- unreviewed Knowledge candidates remaining ineligible
 - zero collection-eligible institutional endpoints in this gate
 - public schema boundary and no-truth-score/no-bulk-collection invariants
 
