@@ -29,9 +29,8 @@ const AUTHORITY_SET = new Set(ENDPOINT_AUTHORITY_STATUSES);
 const REVIEW_STATE_SET = new Set(REVIEW_STATES);
 const CURRENT_USE_SET = new Set(CURRENT_USE_TYPES);
 
-// Frozen at the moment the admission gate was introduced. These IDs may remain live while their
-// usage review migrates from legacy-unreviewed to reviewed. Any source outside this set is new and
-// must be fully production-admissible before CI will accept it in SOURCES.
+// Frozen when the admission gate was introduced. Existing IDs may remain live while review debt
+// is migrated. Any ID outside this set is a new source and must satisfy production admission.
 export const LEGACY_SOURCE_IDS = Object.freeze([
   'abc-australia',
   'al-jazeera',
@@ -136,7 +135,10 @@ export function createSourceAdmission(definition) {
   return entry;
 }
 
-export function getAdmissionFingerprint(admissions = SOURCE_ADMISSIONS, candidates = SOURCE_RESEARCH_CANDIDATES) {
+export function getAdmissionFingerprint(
+  admissions = SOURCE_ADMISSIONS,
+  candidates = SOURCE_RESEARCH_CANDIDATES
+) {
   const canonical = [...admissions, ...candidates]
     .map(entry => JSON.stringify(entry))
     .sort()
@@ -150,24 +152,49 @@ export function getAdmissionFingerprint(admissions = SOURCE_ADMISSIONS, candidat
 }
 
 export function validateSourceAdmissions(sources = SOURCES, admissions = SOURCE_ADMISSIONS) {
-  const canonicalSourceIds = sources.map(source => slugifySourceName(source.name));
-  const canonicalEndpointUrls = sources.map(source => source.url);
-  const sourceById = new Map(sources.map(source => [slugifySourceName(source.name), source]));
-  const admissionById = new Map(admissions.map(entry => [entry.sourceId, entry]));
+  const canonicalSourceIds = sources.map(source => safeSourceId(source));
+  const canonicalEndpointUrls = sources.map(source => source?.url).filter(Boolean);
+  const validSources = sources.filter(
+    source => typeof source?.name === 'string' && typeof source?.url === 'string'
+  );
+  const sourceById = new Map(validSources.map(source => [slugifySourceName(source.name), source]));
+  const admissionById = new Map(
+    admissions
+      .filter(entry => typeof entry?.sourceId === 'string')
+      .map(entry => [entry.sourceId, entry])
+  );
   const sourceIds = [...sourceById.keys()];
-  const admissionIds = admissions.map(entry => entry.sourceId);
+  const admissionIds = admissions
+    .map(entry => entry?.sourceId)
+    .filter(id => typeof id === 'string');
 
-  const duplicateCanonicalSourceIds = duplicates(canonicalSourceIds);
+  const duplicateCanonicalSourceIds = duplicates(canonicalSourceIds.filter(Boolean));
   const duplicateCanonicalEndpointUrls = duplicates(canonicalEndpointUrls);
+  const invalidCanonicalSources = sources
+    .map((source, index) => ({ source, index }))
+    .filter(({ source }) => !safeSourceId(source) || typeof source?.url !== 'string')
+    .map(({ index }) => `source-index:${index}`);
   const missingSourceIds = sourceIds.filter(id => !admissionById.has(id));
   const orphanSourceIds = admissionIds.filter(id => !sourceById.has(id));
   const duplicateIds = duplicates(admissionIds);
-  const invalidEntries = admissions.filter(entry => !validAdmission(entry)).map(entry => entry?.sourceId || '(missing-id)');
+  const invalidEntries = admissions
+    .filter(entry => !validAdmission(entry))
+    .map(entry => entry?.sourceId || '(missing-id)');
   const endpointDriftSourceIds = admissions
-    .filter(entry => sourceById.has(entry.sourceId) && sourceById.get(entry.sourceId).url !== entry.endpointUrl)
+    .filter(
+      entry =>
+        typeof entry?.sourceId === 'string' &&
+        sourceById.has(entry.sourceId) &&
+        sourceById.get(entry.sourceId).url !== entry.endpointUrl
+    )
     .map(entry => entry.sourceId);
   const nameDriftSourceIds = admissions
-    .filter(entry => sourceById.has(entry.sourceId) && sourceById.get(entry.sourceId).name !== entry.name)
+    .filter(
+      entry =>
+        typeof entry?.sourceId === 'string' &&
+        sourceById.has(entry.sourceId) &&
+        sourceById.get(entry.sourceId).name !== entry.name
+    )
     .map(entry => entry.sourceId);
   const unadmittedNewSourceIds = sourceIds.filter(id => {
     if (LEGACY_SOURCE_IDS.includes(id)) return false;
@@ -186,6 +213,7 @@ export function validateSourceAdmissions(sources = SOURCES, admissions = SOURCE_
   const result = {
     duplicateCanonicalSourceIds,
     duplicateCanonicalEndpointUrls,
+    invalidCanonicalSources,
     missingSourceIds: unique(missingSourceIds),
     orphanSourceIds: unique(orphanSourceIds),
     duplicateIds,
@@ -201,30 +229,34 @@ export function validateSourceAdmissions(sources = SOURCES, admissions = SOURCE_
 }
 
 export function isProductionAdmissible(entry) {
+  if (!validAdmission(entry)) return false;
   return Boolean(
-    entry &&
-      entry.legacy === false &&
+    entry.legacy === false &&
       entry.reviewState === 'reviewed' &&
-      typeof entry.reviewedAt === 'string' &&
-      entry.reviewedAt.trim() &&
       entry.allowedUseStatus === 'verified-public-use' &&
       ['first-party', 'authorized-third-party'].includes(entry.endpointAuthority) &&
       entry.endpointEvidenceUrls.length > 0 &&
       entry.usagePolicyUrls.length > 0 &&
       entry.healthVerificationStatus === 'verified' &&
-      entry.itemLevelReviewRequired !== true &&
+      entry.itemLevelReviewRequired === false &&
       entry.currentUse.every(use => entry.permittedUse.includes(use))
   );
 }
 
 export function evaluateItemUse(entry, itemAllowedUseStatus = null) {
-  if (!entry) return { allowedUseStatus: 'unknown', displayMode: 'headline-link' };
+  if (!entry || !USE_STATUS_SET.has(entry.allowedUseStatus)) {
+    return { allowedUseStatus: 'unknown', displayMode: 'headline-link' };
+  }
   const statuses = [entry.allowedUseStatus];
   if (itemAllowedUseStatus != null) {
-    if (!USE_STATUS_SET.has(itemAllowedUseStatus)) throw new TypeError('item allowed-use status is not supported');
+    if (!USE_STATUS_SET.has(itemAllowedUseStatus)) {
+      throw new TypeError('item allowed-use status is not supported');
+    }
     statuses.push(itemAllowedUseStatus);
   }
-  const allowedUseStatus = statuses.sort((a, b) => useRestrictionRank(b) - useRestrictionRank(a))[0];
+  const allowedUseStatus = statuses.sort(
+    (a, b) => useRestrictionRank(b) - useRestrictionRank(a)
+  )[0];
   return {
     allowedUseStatus,
     displayMode:
@@ -241,14 +273,20 @@ export function admissionSummary(admissions = SOURCE_ADMISSIONS) {
   return {
     valid: validation.valid,
     totalLiveSources: admissions.length,
-    reviewedSources: admissions.filter(entry => entry.reviewState === 'reviewed').length,
-    legacyUnreviewedSources: admissions.filter(entry => entry.reviewState === 'legacy-unreviewed').length,
+    reviewedSources: admissions.filter(entry => entry?.reviewState === 'reviewed').length,
+    legacyUnreviewedSources: admissions.filter(
+      entry => entry?.reviewState === 'legacy-unreviewed'
+    ).length,
     remediationSourceIds: admissions
-      .filter(entry => ['permission-required', 'contract-required', 'prohibited'].includes(entry.allowedUseStatus))
+      .filter(entry =>
+        ['permission-required', 'contract-required', 'prohibited'].includes(
+          entry?.allowedUseStatus
+        )
+      )
       .map(entry => entry.sourceId)
       .sort(),
     unknownRightsSourceIds: admissions
-      .filter(entry => entry.allowedUseStatus === 'unknown')
+      .filter(entry => entry?.allowedUseStatus === 'unknown')
       .map(entry => entry.sourceId)
       .sort(),
   };
@@ -273,7 +311,8 @@ function legacy(name, endpointUrl, options = {}) {
     itemLevelStrategy: 'restrict-on-explicit-item-signal',
     reviewState: 'legacy-unreviewed',
     reviewedAt: null,
-    reviewerNotes: 'Legacy source predates the admission contract; usage rights remain explicitly unreviewed.',
+    reviewerNotes:
+      'Legacy source predates the admission contract; usage rights remain explicitly unreviewed.',
     healthVerificationStatus: 'telemetry-managed',
     legacy: true,
     ...options,
@@ -299,14 +338,14 @@ function reviewedLegacy(name, endpointUrl, options) {
     itemLevelStrategy: 'restrict-on-explicit-item-signal',
     reviewState: 'reviewed',
     reviewedAt: ADMISSION_REVIEW_DATE,
-    reviewerNotes: '',
+    reviewerNotes: 'Reviewed legacy source.',
     healthVerificationStatus: 'telemetry-managed',
     legacy: true,
     ...options,
   });
 }
 
-function admission(definition) {
+function admission(definition = {}) {
   return Object.freeze({
     ...definition,
     endpointEvidenceUrls: Object.freeze([...(definition.endpointEvidenceUrls || [])]),
@@ -332,49 +371,59 @@ function candidate(definition) {
 }
 
 function validAdmission(entry) {
-  const reviewedAtValid =
-    entry?.reviewState === 'legacy-unreviewed'
-      ? entry.reviewedAt == null || (typeof entry.reviewedAt === 'string' && entry.reviewedAt.trim())
-      : typeof entry?.reviewedAt === 'string' && entry.reviewedAt.trim();
-  return Boolean(
-    entry &&
-      typeof entry.sourceId === 'string' &&
-      entry.sourceId === slugifySourceName(entry.name) &&
-      typeof entry.name === 'string' &&
-      /^https:\/\//.test(entry.endpointUrl) &&
-      typeof entry.endpointType === 'string' &&
-      AUTHORITY_SET.has(entry.endpointAuthority) &&
-      Array.isArray(entry.endpointEvidenceUrls) &&
-      entry.endpointEvidenceUrls.length > 0 &&
-      entry.endpointEvidenceUrls.every(url => /^https:\/\//.test(url)) &&
-      typeof entry.authenticationRequirement === 'string' &&
-      Array.isArray(entry.usagePolicyUrls) &&
-      entry.usagePolicyUrls.every(url => /^https:\/\//.test(url)) &&
-      USE_STATUS_SET.has(entry.allowedUseStatus) &&
-      Array.isArray(entry.currentUse) &&
-      entry.currentUse.every(use => CURRENT_USE_SET.has(use)) &&
-      Array.isArray(entry.permittedUse) &&
-      entry.permittedUse.every(use => CURRENT_USE_SET.has(use)) &&
-      Number.isInteger(entry.excerptMaxChars) &&
-      entry.excerptMaxChars >= 0 &&
-      typeof entry.syndicatedContentBehavior === 'string' &&
-      typeof entry.itemLevelReviewRequired === 'boolean' &&
-      typeof entry.itemLevelStrategy === 'string' &&
-      REVIEW_STATE_SET.has(entry.reviewState) &&
-      reviewedAtValid &&
-      typeof entry.reviewerNotes === 'string' &&
-      entry.reviewerNotes.trim() &&
-      typeof entry.healthVerificationStatus === 'string' &&
-      typeof entry.legacy === 'boolean'
-  );
+  if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return false;
+  if (typeof entry.name !== 'string' || !entry.name.trim()) return false;
+  if (typeof entry.sourceId !== 'string' || entry.sourceId !== slugifySourceName(entry.name)) {
+    return false;
+  }
+  if (typeof entry.endpointUrl !== 'string' || !isHttps(entry.endpointUrl)) return false;
+  if (typeof entry.endpointType !== 'string' || !entry.endpointType.trim()) return false;
+  if (!AUTHORITY_SET.has(entry.endpointAuthority)) return false;
+  if (!nonEmptyHttpsList(entry.endpointEvidenceUrls)) return false;
+  if (typeof entry.authenticationRequirement !== 'string') return false;
+  if (!httpsList(entry.usagePolicyUrls)) return false;
+  if (!USE_STATUS_SET.has(entry.allowedUseStatus)) return false;
+  if (!useList(entry.currentUse) || !useList(entry.permittedUse)) return false;
+  if (!Number.isInteger(entry.excerptMaxChars) || entry.excerptMaxChars < 0) return false;
+  if (typeof entry.syndicatedContentBehavior !== 'string') return false;
+  if (typeof entry.itemLevelReviewRequired !== 'boolean') return false;
+  if (typeof entry.itemLevelStrategy !== 'string' || !entry.itemLevelStrategy.trim()) return false;
+  if (!REVIEW_STATE_SET.has(entry.reviewState)) return false;
+  if (!reviewDateValid(entry.reviewState, entry.reviewedAt)) return false;
+  if (typeof entry.reviewerNotes !== 'string' || !entry.reviewerNotes.trim()) return false;
+  if (typeof entry.healthVerificationStatus !== 'string') return false;
+  return typeof entry.legacy === 'boolean';
 }
 
+function safeSourceId(source) {
+  return typeof source?.name === 'string' && source.name.trim()
+    ? slugifySourceName(source.name)
+    : null;
+}
+function reviewDateValid(reviewState, reviewedAt) {
+  if (reviewState === 'legacy-unreviewed') return reviewedAt == null || validDateText(reviewedAt);
+  return validDateText(reviewedAt);
+}
+function validDateText(value) {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value.trim());
+}
+function isHttps(value) {
+  return /^https:\/\//.test(value);
+}
+function httpsList(values) {
+  return Array.isArray(values) && values.every(value => typeof value === 'string' && isHttps(value));
+}
+function nonEmptyHttpsList(values) {
+  return httpsList(values) && values.length > 0;
+}
+function useList(values) {
+  return Array.isArray(values) && values.every(use => CURRENT_USE_SET.has(use));
+}
 function currentUse(translated) {
   return translated
     ? ['headline-link', 'metadata', 'excerpt', 'translated-headline-summary']
     : ['headline-link', 'metadata', 'excerpt'];
 }
-
 function useRestrictionRank(status) {
   return {
     'verified-public-use': 0,
@@ -384,7 +433,6 @@ function useRestrictionRank(status) {
     prohibited: 4,
   }[status];
 }
-
 function duplicates(values) {
   const seen = new Set();
   const repeated = new Set();
