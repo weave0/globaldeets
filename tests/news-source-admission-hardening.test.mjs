@@ -76,3 +76,24 @@ test('production admission cannot be self-certified without dated review and usa
   const good = reviewed();
   assert.equal(admission.isProductionAdmissible(good), true);
 });
+
+test('malformed source and admission objects fail validation without throwing', () => {
+  const malformedAdmissions = [...admission.SOURCE_ADMISSIONS, { sourceId: 'broken' }, null];
+  const malformedSources = [...news.SOURCES, { url: 'https://broken.example/rss' }, null];
+
+  assert.doesNotThrow(() => admission.validateSourceAdmissions(news.SOURCES, malformedAdmissions));
+  assert.doesNotThrow(() => admission.validateSourceAdmissions(malformedSources, admission.SOURCE_ADMISSIONS));
+
+  const badAdmissionResult = admission.validateSourceAdmissions(news.SOURCES, malformedAdmissions);
+  assert.equal(badAdmissionResult.valid, false);
+  assert.ok(badAdmissionResult.invalidEntries.includes('broken'));
+  assert.ok(badAdmissionResult.invalidEntries.includes('(missing-id)'));
+
+  const badSourceResult = admission.validateSourceAdmissions(
+    malformedSources,
+    admission.SOURCE_ADMISSIONS
+  );
+  assert.equal(badSourceResult.valid, false);
+  assert.deepEqual(badSourceResult.invalidCanonicalSources, ['source-index:19', 'source-index:20']);
+  assert.equal(admission.isProductionAdmissible({ sourceId: 'broken' }), false);
+});
