@@ -257,8 +257,8 @@ export function validateSourceProvenance(sources = SOURCES, provenance = SOURCE_
       orphanSourceIds.length === 0 &&
       invalidEntries.length === 0,
     duplicateIds: [...new Set(duplicateIds)].sort(),
-    missingSourceIds: missingSourceIds.sort(),
-    orphanSourceIds: orphanSourceIds.sort(),
+    missingSourceIds: [...new Set(missingSourceIds)].sort(),
+    orphanSourceIds: [...new Set(orphanSourceIds)].sort(),
     invalidEntries: [...new Set(invalidEntries)].sort(),
   };
 }
