@@ -130,6 +130,12 @@ export const SOURCE_RESEARCH_CANDIDATES = Object.freeze([
 
 export const ADMISSION_FINGERPRINT = getAdmissionFingerprint();
 
+export function createSourceAdmission(definition) {
+  const entry = admission({ ...definition, legacy: definition?.legacy === true });
+  if (!validAdmission(entry)) throw new TypeError('source admission definition is invalid');
+  return entry;
+}
+
 export function getAdmissionFingerprint(admissions = SOURCE_ADMISSIONS, candidates = SOURCE_RESEARCH_CANDIDATES) {
   const canonical = [...admissions, ...candidates]
     .map(entry => JSON.stringify(entry))
@@ -168,6 +174,10 @@ export function validateSourceAdmissions(sources = SOURCES, admissions = SOURCE_
     const entry = admissionById.get(id);
     return !entry || !REVIEW_STATE_SET.has(entry.reviewState) || entry.legacy !== true;
   });
+  const newSourceMarkedLegacyIds = sourceIds.filter(id => {
+    if (LEGACY_SOURCE_IDS.includes(id)) return false;
+    return admissionById.get(id)?.legacy === true;
+  });
 
   const result = {
     missingSourceIds: unique(missingSourceIds),
@@ -178,6 +188,7 @@ export function validateSourceAdmissions(sources = SOURCES, admissions = SOURCE_
     nameDriftSourceIds: unique(nameDriftSourceIds),
     unadmittedNewSourceIds: unique(unadmittedNewSourceIds),
     legacyStateErrors: unique(legacyStateErrors),
+    newSourceMarkedLegacyIds: unique(newSourceMarkedLegacyIds),
   };
 
   return { valid: Object.values(result).every(values => values.length === 0), ...result };
@@ -186,6 +197,7 @@ export function validateSourceAdmissions(sources = SOURCES, admissions = SOURCE_
 export function isProductionAdmissible(entry) {
   return Boolean(
     entry &&
+      entry.legacy === false &&
       entry.reviewState === 'reviewed' &&
       entry.allowedUseStatus === 'verified-public-use' &&
       ['first-party', 'authorized-third-party'].includes(entry.endpointAuthority) &&
@@ -221,7 +233,6 @@ export function admissionSummary(admissions = SOURCE_ADMISSIONS) {
     totalLiveSources: admissions.length,
     reviewedSources: admissions.filter(entry => entry.reviewState === 'reviewed').length,
     legacyUnreviewedSources: admissions.filter(entry => entry.reviewState === 'legacy-unreviewed').length,
-    productionAdmissibleForNewSource: admissions.filter(isProductionAdmissible).length,
     remediationSourceIds: admissions
       .filter(entry => ['permission-required', 'contract-required', 'prohibited'].includes(entry.allowedUseStatus))
       .map(entry => entry.sourceId)
@@ -326,6 +337,7 @@ function validAdmission(entry) {
       Array.isArray(entry.currentUse) &&
       entry.currentUse.every(use => CURRENT_USE_SET.has(use)) &&
       Array.isArray(entry.permittedUse) &&
+      entry.permittedUse.every(use => CURRENT_USE_SET.has(use)) &&
       Number.isInteger(entry.excerptMaxChars) &&
       entry.excerptMaxChars >= 0 &&
       typeof entry.syndicatedContentBehavior === 'string' &&
@@ -334,7 +346,7 @@ function validAdmission(entry) {
       REVIEW_STATE_SET.has(entry.reviewState) &&
       typeof entry.reviewerNotes === 'string' &&
       typeof entry.healthVerificationStatus === 'string' &&
-      entry.legacy === true
+      typeof entry.legacy === 'boolean'
   );
 }
 
