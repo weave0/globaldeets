@@ -1,5 +1,5 @@
 // Deterministic intelligence primitives. Identity is explicit; fuzzy similarity never merges records.
-export const INTELLIGENCE_MODEL_VERSION = '2026-09-03.1';
+export const INTELLIGENCE_MODEL_VERSION = '2026-09-03.2';
 export const ENTITY_TYPES = Object.freeze([
   'person', 'organization', 'government-public-body', 'company', 'place', 'multilateral-body',
 ]);
@@ -12,7 +12,7 @@ export function createEntity(definition) {
   text(definition.identityKey, 'entity.identityKey');
   text(definition.displayName, 'entity.displayName');
   oneOf(definition.type, ENTITY_TYPE_SET, 'entity.type');
-  const normalizedStandardIds = standardIds(definition.standardIds || null);
+  const normalizedStandardIds = standardIds(definition.standardIds ?? null);
   if (definition.type === 'place' && definition.identityKey.startsWith('m49:')) {
     const keyM49 = m49Code(definition.identityKey.slice(4));
     if (definition.identityKey !== `m49:${keyM49}` || normalizedStandardIds?.m49 !== keyM49) {
@@ -24,13 +24,13 @@ export function createEntity(definition) {
     identityKey: definition.identityKey,
     type: definition.type,
     displayName: definition.displayName,
-    aliases: aliasRecords(definition.aliases || []),
-    evidenceRefs: stringList(definition.evidenceRefs || []),
-    countryEntityId: definition.countryEntityId || null,
+    aliases: aliasRecords(definition.aliases ?? []),
+    evidenceRefs: stringList(definition.evidenceRefs ?? []),
+    countryEntityId: optionalText(definition.countryEntityId, 'entity.countryEntityId'),
     standardIds: normalizedStandardIds,
     attributes: clone(definition.attributes ?? {}),
-    createdAt: definition.createdAt || null,
-    reviewedAt: definition.reviewedAt || null,
+    createdAt: definition.createdAt ?? null,
+    reviewedAt: definition.reviewedAt ?? null,
   });
 }
 
@@ -43,7 +43,7 @@ export function createM49PlaceEntity(definition) {
     ...definition,
     identityKey: `m49:${m49}`,
     type: 'place',
-    standardIds: { ...(definition.standardIds || {}), m49, isoAlpha2, isoAlpha3 },
+    standardIds: { ...(definition.standardIds ?? {}), m49, isoAlpha2, isoAlpha3 },
   });
 }
 
@@ -59,16 +59,16 @@ export function createEvent(definition) {
     title: definition.title,
     eventType: definition.eventType,
     status: definition.status,
-    observedAt: definition.observedAt || null,
-    startedAt: definition.startedAt || null,
-    endedAt: definition.endedAt || null,
-    entityIds: stringList(definition.entityIds || []),
-    placeEntityIds: stringList(definition.placeEntityIds || []),
-    articleIds: stringList(definition.articleIds || []),
-    unknowns: stringList(definition.unknowns || []),
-    evidenceRefs: stringList(definition.evidenceRefs || []),
-    createdAt: definition.createdAt || null,
-    reviewedAt: definition.reviewedAt || null,
+    observedAt: definition.observedAt ?? null,
+    startedAt: definition.startedAt ?? null,
+    endedAt: definition.endedAt ?? null,
+    entityIds: stringList(definition.entityIds ?? []),
+    placeEntityIds: stringList(definition.placeEntityIds ?? []),
+    articleIds: stringList(definition.articleIds ?? []),
+    unknowns: stringList(definition.unknowns ?? []),
+    evidenceRefs: stringList(definition.evidenceRefs ?? []),
+    createdAt: definition.createdAt ?? null,
+    reviewedAt: definition.reviewedAt ?? null,
   });
 }
 
@@ -80,12 +80,12 @@ export function makeStableEntityId(type, identityKey) {
     if (identityKey !== `m49:${code}`) throw new TypeError('M49 place identityKey must use a canonical three-digit code');
     return `place:m49:${code}`;
   }
-  return `entity:${type}:${fnv1a(`${type}\u001f${identityKey}`)}`;
+  return `entity:${type}:${encodeURIComponent(identityKey)}`;
 }
 
 export function makeStableEventId(eventKey) {
   text(eventKey, 'event.eventKey');
-  return `event:${fnv1a(eventKey)}`;
+  return `event:${encodeURIComponent(eventKey)}`;
 }
 
 export function normalizeAlias(value) {
@@ -115,6 +115,14 @@ export function validateIntelligenceGraph({ entities = [], events = [] } = {}) {
   const orphanEntityRefs = [];
   const orphanPlaceRefs = [];
   const nonPlaceRefs = [];
+  const orphanCountryRefs = [];
+  const nonPlaceCountryRefs = [];
+  for (const entity of entities) {
+    if (!entity.countryEntityId) continue;
+    const country = entityById.get(entity.countryEntityId);
+    if (!country) orphanCountryRefs.push(`${entity.id}:${entity.countryEntityId}`);
+    else if (country.type !== 'place') nonPlaceCountryRefs.push(`${entity.id}:${entity.countryEntityId}`);
+  }
   for (const event of events) {
     for (const id of event.entityIds || []) if (!entityById.has(id)) orphanEntityRefs.push(`${event.id}:${id}`);
     for (const id of event.placeEntityIds || []) {
@@ -129,6 +137,8 @@ export function validateIntelligenceGraph({ entities = [], events = [] } = {}) {
     orphanEntityRefs: unique(orphanEntityRefs),
     orphanPlaceRefs: unique(orphanPlaceRefs),
     nonPlaceRefs: unique(nonPlaceRefs),
+    orphanCountryRefs: unique(orphanCountryRefs),
+    nonPlaceCountryRefs: unique(nonPlaceCountryRefs),
     invalidEntityIds: unique(entities.filter(entity => !validEntity(entity)).map(entity => entity.id || '(missing-id)')),
     invalidEventIds: unique(events.filter(event => !validEvent(event)).map(event => event.id || '(missing-id)')),
   };
@@ -140,7 +150,7 @@ function aliasRecords(aliases) {
   return aliases.map(alias => {
     object(alias, 'entity alias');
     text(alias.value, 'entity alias.value');
-    const evidenceRefs = stringList(alias.evidenceRefs || []);
+    const evidenceRefs = stringList(alias.evidenceRefs ?? []);
     if (!evidenceRefs.length) throw new TypeError('entity alias.evidenceRefs must not be empty');
     return Object.freeze({ value: alias.value, normalized: normalizeAlias(alias.value), evidenceRefs, sourceNative: alias.sourceNative === true });
   });
@@ -178,6 +188,7 @@ function isoCode(value, length, field) {
 function validEntity(entity) {
   return Boolean(entity && typeof entity.id === 'string' && ENTITY_TYPE_SET.has(entity.type) &&
     typeof entity.identityKey === 'string' && typeof entity.displayName === 'string' &&
+    (entity.countryEntityId == null || (typeof entity.countryEntityId === 'string' && entity.countryEntityId.trim())) &&
     Array.isArray(entity.aliases) && entity.aliases.every(alias => Array.isArray(alias.evidenceRefs) && alias.evidenceRefs.length) &&
     entity.id === makeStableEntityId(entity.type, entity.identityKey));
 }
@@ -195,7 +206,7 @@ function addAlias(index, value, entityId) {
 }
 function duplicates(values) { const seen = new Set(); const repeated = new Set(); for (const value of values) { if (seen.has(value)) repeated.add(value); seen.add(value); } return [...repeated].sort(); }
 function unique(values) { return [...new Set(values)].sort(); }
-function fnv1a(value) { let hash = 0x811c9dc5; for (let i = 0; i < value.length; i++) { hash ^= value.charCodeAt(i); hash = Math.imul(hash, 0x01000193) >>> 0; } return hash.toString(16).padStart(8, '0'); }
+function optionalText(value, field) { if (value == null) return null; text(value, field); return value.trim(); }
 function object(value, field) { if (!value || typeof value !== 'object' || Array.isArray(value)) throw new TypeError(`${field} must be an object`); }
 function text(value, field) { if (typeof value !== 'string' || !value.trim()) throw new TypeError(`${field} must be a non-empty string`); }
 function oneOf(value, allowed, field) { if (!allowed.has(value)) throw new TypeError(`${field} is not supported`); }
