@@ -65,3 +65,6 @@ jobs:
                     echo "Production verification attempt ${attempt} failed; retrying after propagation delay."
                     sleep 10
                   done
+
+            - name: Verify production intelligence APIs
+              run: node tools/verify-intelligence-prod.js --base=https://globaldeets.com
