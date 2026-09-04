@@ -80,41 +80,47 @@ test('provenance registry maps exactly once to every canonical live source', () 
 
 test('provenance validation rejects missing, orphaned, duplicate, drifted, and invalid records', () => {
   const base = SOURCE_PROVENANCE.map(entry => ({ ...entry }));
+  const target = base[0];
+  const targetId = target.sourceId;
+
   const missing = validateSourceProvenance(SOURCES, base.slice(1));
   assert.equal(missing.valid, false);
-  assert.ok(missing.missingSourceIds.includes('bbc-world'));
+  assert.deepEqual(missing.missingSourceIds, [targetId]);
 
+  const orphanEntry = { ...target, sourceId: 'not-a-live-source' };
   const orphan = validateSourceProvenance(SOURCES, [
     ...base,
-    { ...base[0], sourceId: 'not-a-live-source' },
+    orphanEntry,
+    { ...orphanEntry },
   ]);
   assert.equal(orphan.valid, false);
-  assert.ok(orphan.orphanSourceIds.includes('not-a-live-source'));
+  assert.deepEqual(orphan.orphanSourceIds, ['not-a-live-source']);
 
-  const duplicate = validateSourceProvenance(SOURCES, [...base, { ...base[0] }]);
+  const duplicate = validateSourceProvenance(SOURCES, [...base, { ...target }]);
   assert.equal(duplicate.valid, false);
-  assert.ok(duplicate.duplicateIds.includes('bbc-world'));
+  assert.ok(duplicate.duplicateIds.includes(targetId));
 
   const invalid = validateSourceProvenance(SOURCES, [
-    { ...base[0], evidenceUrls: [] },
+    { ...target, evidenceUrls: [] },
     ...base.slice(1),
   ]);
   assert.equal(invalid.valid, false);
-  assert.ok(invalid.invalidEntries.includes('bbc-world'));
+  assert.ok(invalid.invalidEntries.includes(targetId));
 
   const nameDrift = validateSourceProvenance(SOURCES, [
-    { ...base[0], name: 'BBC World Renamed' },
+    { ...target, name: `${target.name} Renamed` },
     ...base.slice(1),
   ]);
   assert.equal(nameDrift.valid, false);
-  assert.ok(nameDrift.invalidEntries.includes('bbc-world'));
+  assert.ok(nameDrift.invalidEntries.includes(targetId));
 
+  const alternateLanguage = target.sourceLanguages[0] === 'fr' ? 'en' : 'fr';
   const languageDrift = validateSourceProvenance(SOURCES, [
-    { ...base[0], sourceLanguages: ['fr'] },
+    { ...target, sourceLanguages: [alternateLanguage] },
     ...base.slice(1),
   ]);
   assert.equal(languageDrift.valid, false);
-  assert.ok(languageDrift.invalidEntries.includes('bbc-world'));
+  assert.ok(languageDrift.invalidEntries.includes(targetId));
 });
 
 test('coverage inventory is deterministic and enriched from reviewed provenance', () => {
