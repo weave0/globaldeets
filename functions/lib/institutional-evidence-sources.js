@@ -18,13 +18,13 @@ const COLLECTION_STATE_SET = new Set(COLLECTION_STATES);
 export const INSTITUTIONAL_ENTITIES = Object.freeze([
   institution('United Nations', 'multilateral-body', 'institution:un', 'https://www.un.org'),
   institution('World Bank', 'multilateral-body', 'institution:world-bank', 'https://data.worldbank.org'),
-  institution('European Union Open Data', 'government-public-body', 'institution:eu-open-data', 'https://data.europa.eu'),
-  institution('U.S. General Services Administration', 'government-public-body', 'institution:us-gsa-data-gov', 'https://data.gov'),
+  institution('Publications Office of the European Union', 'government-public-body', 'institution:eu-publications-office', 'https://data.europa.eu/en/legal-notice'),
+  institution('U.S. General Services Administration', 'government-public-body', 'institution:us-gsa-data-gov', 'https://data.gov/about/'),
   institution('National Aeronautics and Space Administration', 'government-public-body', 'institution:nasa', 'https://data.nasa.gov'),
-  institution('World Health Organization', 'multilateral-body', 'institution:who', 'https://www.who.int/data/gho'),
+  institution('World Health Organization', 'multilateral-body', 'institution:who', 'https://www.who.int/data/gho/info/about-the-observatory'),
   institution('United States Environmental Protection Agency', 'government-public-body', 'institution:us-epa', 'https://www.epa.gov/environmental-topics'),
   institution('International Monetary Fund', 'multilateral-body', 'institution:imf', 'https://www.imf.org/en/Data'),
-  institution('Eurostat', 'government-public-body', 'institution:eurostat', 'https://ec.europa.eu/eurostat'),
+  institution('Eurostat', 'government-public-body', 'institution:eurostat', 'https://ec.europa.eu/eurostat/about-us'),
   institution('Centers for Disease Control and Prevention', 'government-public-body', 'institution:us-cdc', 'https://www.cdc.gov/datastatistics/index.html'),
 ]);
 
@@ -56,11 +56,12 @@ export const REVIEWED_INSTITUTIONAL_SOURCES = Object.freeze([
     knowledgeCategoryId: 'governance',
     knowledgeName: 'EU Open Data Portal',
     knowledgeUrl: 'https://data.europa.eu',
-    organizationEntityId: entityId('institution:eu-open-data', 'government-public-body'),
+    organizationEntityId: entityId('institution:eu-publications-office', 'government-public-body'),
     sourceClass: 'public-data-portal',
     evidenceRole: 'official-repository',
     jurisdiction: 'European Union',
     documentTypes: ['dataset', 'official-record'],
+    evidenceUrls: ['https://data.europa.eu/en/legal-notice'],
   }),
   source({
     sourceId: 'knowledge:governance:data-gov',
@@ -72,6 +73,7 @@ export const REVIEWED_INSTITUTIONAL_SOURCES = Object.freeze([
     evidenceRole: 'official-repository',
     jurisdiction: 'US',
     documentTypes: ['dataset', 'official-record'],
+    evidenceUrls: ['https://data.gov/about/'],
   }),
   source({
     sourceId: 'knowledge:science:nasa-open-data',
@@ -94,6 +96,7 @@ export const REVIEWED_INSTITUTIONAL_SOURCES = Object.freeze([
     evidenceRole: 'issuing-primary',
     jurisdiction: 'global',
     documentTypes: ['dataset', 'statistical-release', 'multilateral-publication'],
+    evidenceUrls: ['https://www.who.int/data/gho/info/about-the-observatory'],
   }),
   source({
     sourceId: 'knowledge:environment:epa-data',
@@ -127,6 +130,7 @@ export const REVIEWED_INSTITUTIONAL_SOURCES = Object.freeze([
     evidenceRole: 'issuing-primary',
     jurisdiction: 'European Union',
     documentTypes: ['dataset', 'statistical-release'],
+    evidenceUrls: ['https://ec.europa.eu/eurostat/about-us'],
   }),
   source({
     sourceId: 'knowledge:health:cdc-data',
@@ -140,6 +144,13 @@ export const REVIEWED_INSTITUTIONAL_SOURCES = Object.freeze([
     documentTypes: ['dataset', 'government-release', 'official-record'],
   }),
 ]);
+
+export function findReviewedInstitutionalSource(categoryId, name, url) {
+  const key = knowledgeKey(categoryId, name, url);
+  return REVIEWED_INSTITUTIONAL_SOURCES.find(item =>
+    knowledgeKey(item.knowledgeCategoryId, item.knowledgeName, item.knowledgeUrl) === key
+  ) || null;
+}
 
 export function validateInstitutionalSourceRegistry(
   knowledgeCatalog,
@@ -161,7 +172,10 @@ export function validateInstitutionalSourceRegistry(
     .map(item => item.sourceId);
   const invalidEntries = registry.filter(item => !validSource(item)).map(item => item.sourceId);
   const unsafeCollectionRefs = registry
-    .filter(item => item.collectionEligible && !item.machineReadableEndpoints.some(endpoint => endpoint.reviewStatus === 'verified'))
+    .filter(item => item.collectionEligible && (
+      item.collectionState !== 'endpoint-reviewed' ||
+      !item.machineReadableEndpoints.some(endpoint => endpoint.reviewStatus === 'verified')
+    ))
     .map(item => item.sourceId);
 
   return {
@@ -211,13 +225,17 @@ function source(definition) {
     collectionEligible: false,
     authenticationRequirement: 'unknown',
     licensingRequirement: 'unknown',
-    evidenceUrls: Object.freeze([definition.knowledgeUrl]),
+    evidenceUrls: Object.freeze([...(definition.evidenceUrls ?? [definition.knowledgeUrl])]),
     reviewStatus: 'reviewed-classification',
     reviewedAt: INSTITUTIONAL_REVIEW_DATE,
   });
 }
 
 function validSource(item) {
+  const collectionContractValid = !item.collectionEligible || (
+    item.collectionState === 'endpoint-reviewed' &&
+    item.machineReadableEndpoints.some(endpoint => endpoint.reviewStatus === 'verified')
+  );
   return Boolean(
     item &&
       typeof item.sourceId === 'string' &&
@@ -233,7 +251,7 @@ function validSource(item) {
       item.evidenceUrls.length > 0 &&
       Array.isArray(item.machineReadableEndpoints) &&
       item.reviewStatus === 'reviewed-classification' &&
-      item.collectionEligible === false
+      collectionContractValid
   );
 }
 
