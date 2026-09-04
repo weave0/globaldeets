@@ -29,13 +29,15 @@ function entity(identityKey, displayName = 'Alex Kim') {
   return model.createEntity({ identityKey, displayName, type: 'person', aliases: [alias('A. Kim')] });
 }
 
-test('entity identity is explicit and not derived from display-name similarity', () => {
+test('entity identity is explicit, deterministic, and collision-free by construction', () => {
   const first = entity('person:source-a:123');
   const reordered = model.createEntity({ aliases: [alias('A. Kim')], type: 'person', displayName: 'Alex Kim', identityKey: 'person:source-a:123' });
   const second = entity('person:source-b:456');
   assert.equal(first.id, reordered.id);
   assert.notEqual(first.id, second.id);
   assert.equal(first.displayName, second.displayName);
+  assert.equal(first.id, 'entity:person:person%3Asource-a%3A123');
+  assert.notEqual(model.makeStableEntityId('person', 'ke1mzdtk6'), model.makeStableEntityId('person', 'kgus2fumc'));
 });
 
 test('aliases require evidence and ambiguous aliases never choose a silent winner', () => {
@@ -46,13 +48,18 @@ test('aliases require evidence and ambiguous aliases never choose a silent winne
   assert.equal(model.resolveEntityAlias('missing', [a, b]).status, 'no-match');
 });
 
-test('M49 place identity is stable and rejects missing, zero, or malformed codes', () => {
+test('M49 place identity is stable and rejects missing, zero, malformed, or generic-constructor bypasses', () => {
   const us = model.createM49PlaceEntity({ displayName: 'United States of America', m49: '840', isoAlpha2: 'US', isoAlpha3: 'USA', evidenceRefs: [EVIDENCE] });
   assert.equal(us.id, 'place:m49:840');
   assert.deepEqual(us.standardIds, { m49: '840', isoAlpha2: 'US', isoAlpha3: 'USA' });
   assert.throws(() => model.createM49PlaceEntity({ displayName: 'Bad', isoAlpha2: 'XX', isoAlpha3: 'XXX' }), /m49/);
   assert.throws(() => model.createM49PlaceEntity({ displayName: 'Bad', m49: '000', isoAlpha2: 'XX', isoAlpha3: 'XXX' }), /000/);
   assert.throws(() => model.createM49PlaceEntity({ displayName: 'Bad', m49: '12x', isoAlpha2: 'XX', isoAlpha3: 'XXX' }), /m49/);
+  assert.throws(() => model.createEntity({ identityKey: 'm49:840', displayName: 'Bad', type: 'place' }), /matching standardIds\.m49/);
+  assert.throws(() => model.createEntity({ identityKey: 'm49:840', displayName: 'Bad', type: 'place', standardIds: { m49: '124' } }), /matching standardIds\.m49/);
+  assert.throws(() => model.createEntity({ identityKey: 'm49:84', displayName: 'Bad', type: 'place', standardIds: { m49: '084' } }), /canonical identityKey/);
+  const generic = model.createEntity({ identityKey: 'm49:840', displayName: 'United States of America', type: 'place', standardIds: { m49: '840', isoAlpha2: 'US', isoAlpha3: 'USA' } });
+  assert.equal(generic.id, us.id);
 });
 
 test('reviewed M49 seed is explicitly partial and has unique standard identifiers', () => {
@@ -65,7 +72,7 @@ test('reviewed M49 seed is explicitly partial and has unique standard identifier
   assert.equal(seed.getSeedPlaceByM49('36').standardIds.isoAlpha2, 'AU');
 });
 
-test('event identity depends on explicit event key rather than mutable title', () => {
+test('event identity depends on explicit event key rather than mutable title and avoids hash collisions', () => {
   const first = model.createEvent({ eventKey: 'incident:example:2026-09-03:001', title: 'Initial title', eventType: 'incident', status: 'developing', articleIds: ['article-b', 'article-a', 'article-a'], unknowns: ['cause', 'cause'] });
   const revised = model.createEvent({ eventKey: 'incident:example:2026-09-03:001', title: 'Revised title', eventType: 'incident', status: 'confirmed' });
   const distinct = model.createEvent({ eventKey: 'incident:example:2026-09-03:002', title: 'Initial title', eventType: 'incident', status: 'developing' });
@@ -73,6 +80,7 @@ test('event identity depends on explicit event key rather than mutable title', (
   assert.notEqual(first.id, distinct.id);
   assert.deepEqual(first.articleIds, ['article-a', 'article-b']);
   assert.deepEqual(first.unknowns, ['cause']);
+  assert.notEqual(model.makeStableEventId('krrteh2tr'), model.makeStableEventId('k8x9t7fdm'));
 });
 
 test('graph permits many-to-many article relations but rejects orphan and wrong-type place references', () => {
@@ -88,6 +96,20 @@ test('graph permits many-to-many article relations but rejects orphan and wrong-
   assert.equal(result.orphanEntityRefs.length, 1);
   assert.equal(result.orphanPlaceRefs.length, 1);
   assert.equal(result.nonPlaceRefs.length, 1);
+});
+
+test('graph validates entity country links instead of accepting dangling or non-place references', () => {
+  const place = seed.getSeedPlaceByIsoAlpha2('US');
+  const person = entity('person:test:country');
+  const validCompany = model.createEntity({ identityKey: 'company:test:valid', displayName: 'Valid Co', type: 'company', countryEntityId: place.id });
+  assert.equal(model.validateIntelligenceGraph({ entities: [place, validCompany] }).valid, true);
+
+  const missing = model.createEntity({ identityKey: 'company:test:missing', displayName: 'Missing Co', type: 'company', countryEntityId: 'place:missing' });
+  const wrongType = model.createEntity({ identityKey: 'company:test:wrong', displayName: 'Wrong Co', type: 'company', countryEntityId: person.id });
+  const result = model.validateIntelligenceGraph({ entities: [place, person, missing, wrongType] });
+  assert.equal(result.valid, false);
+  assert.equal(result.orphanCountryRefs.length, 1);
+  assert.equal(result.nonPlaceCountryRefs.length, 1);
 });
 
 test('/api/intelligence/schema exposes identity rules without claiming a complete country set', async () => {
