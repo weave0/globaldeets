@@ -15,6 +15,7 @@ const REQUIRED_ARRAY_FIELDS = Object.freeze([
 ]);
 const CLAIM_RELATIONS = new Set(['corroborates', 'contradicts', 'supersedes']);
 const EVIDENCE_RELATIONS = new Set(['supports', 'contradicts', 'supersedes']);
+const CORRECTION_STATUSES = new Set(['corrected', 'superseded', 'withdrawn']);
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export function validateDossierIntegrity(dossier) {
@@ -88,7 +89,13 @@ export function validateDossierIntegrity(dossier) {
   const sourceUrls = [];
   for (const [index, source] of sources.entries()) {
     if (!plainObject(source)) continue;
-    if (!text(source.id) || !text(source.name) || !text(source.url)) {
+    if (
+      !text(source.id) ||
+      !text(source.name) ||
+      !text(source.sourceClass) ||
+      !text(source.evidenceRole) ||
+      !text(source.url)
+    ) {
       issues.invalidRecords.push(`sources[${index}]:missing-core-field`);
       continue;
     }
@@ -125,8 +132,13 @@ export function validateDossierIntegrity(dossier) {
   for (const [index, item] of timeline.entries()) {
     if (!plainObject(item)) continue;
     const itemId = text(item.id) ? item.id : `timeline[${index}]`;
+    if (!text(item.id) || !text(item.label) || !text(item.eventId)) {
+      issues.invalidRecords.push(`${itemId}:missing-core-field`);
+    }
     if (!ISO_DATE.test(item.date || '')) issues.invalidRecords.push(`${itemId}:invalid-date`);
-    if (!eventById.has(item.eventId)) issues.timelineOrphans.push(`${itemId}:${item.eventId || '(missing-event)'}`);
+    if (!eventById.has(item.eventId)) {
+      issues.timelineOrphans.push(`${itemId}:${item.eventId || '(missing-event)'}`);
+    }
     if (!Array.isArray(item.evidenceIds)) issues.invalidRecords.push(`${itemId}:evidenceIds:not-array`);
     else {
       for (const id of item.evidenceIds) {
@@ -151,7 +163,23 @@ export function validateDossierIntegrity(dossier) {
   for (const [index, correction] of corrections.entries()) {
     if (!plainObject(correction)) continue;
     const itemId = text(correction.id) ? correction.id : `corrections[${index}]`;
-    if (!text(correction.correctedRef)) issues.invalidCorrections.push(`${itemId}:missing-correctedRef`);
+    if (
+      !text(correction.id) ||
+      !text(correction.issuerEntityId) ||
+      !text(correction.description) ||
+      !text(correction.correctedRef)
+    ) {
+      issues.invalidCorrections.push(`${itemId}:missing-core-field`);
+    }
+    if (!CORRECTION_STATUSES.has(correction.status)) {
+      issues.invalidCorrections.push(`${itemId}:invalid-status`);
+    }
+    if (!ISO_DATE.test(correction.observedAt || '')) {
+      issues.invalidCorrections.push(`${itemId}:invalid-observedAt`);
+    }
+    if (typeof correction.originalArtifactRetained !== 'boolean') {
+      issues.invalidCorrections.push(`${itemId}:originalArtifactRetained:not-boolean`);
+    }
     if (!entityById.has(correction.issuerEntityId)) {
       issues.correctionOrphans.push(`${itemId}:${correction.issuerEntityId || '(missing-issuer)'}`);
     }
@@ -160,8 +188,11 @@ export function validateDossierIntegrity(dossier) {
     checkReferences(itemId, correction.claimIds, claimById, 'claimIds', issues);
     if (!Array.isArray(correction.unknowns)) issues.invalidCorrections.push(`${itemId}:unknowns:not-array`);
     else {
+      const localUnknowns = new Set();
       for (const unknown of correction.unknowns) {
-        if (!topLevelUnknowns.has(unknown)) issues.invalidCorrections.push(`${itemId}:unknown-not-declared`);
+        if (!text(unknown)) issues.invalidCorrections.push(`${itemId}:unknown-not-text`);
+        else if (localUnknowns.has(unknown)) issues.invalidCorrections.push(`${itemId}:duplicate-unknown`);
+        else localUnknowns.add(unknown);
       }
     }
     if (Array.isArray(correction.evidenceIds) && text(correction.correctedRef)) {
