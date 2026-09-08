@@ -13,6 +13,53 @@ export const INSTITUTIONAL_ACQUISITIONS = Object.freeze([
   }),
 ]);
 
+export function getEndpointFingerprint(source, endpoint) {
+  if (!source || !endpoint) throw new TypeError('source and endpoint are required');
+  return stableFingerprint([
+    source.sourceId,
+    source.collectionState,
+    source.collectionEligible === true ? 'eligible' : 'ineligible',
+    endpoint.endpointId,
+    endpoint.url,
+    endpoint.endpointType,
+    endpoint.endpointAuthority,
+    endpoint.authenticationRequirement,
+    endpoint.accessUseStatus,
+    endpoint.reviewStatus,
+    endpoint.reviewedAt,
+    endpoint.collectionEligible === true ? 'eligible' : 'ineligible',
+    [...(endpoint.authorityEvidenceUrls || [])].sort().join('\u001d'),
+    [...(endpoint.usageEvidenceUrls || [])].sort().join('\u001d'),
+    [...(endpoint.intendedUses || [])].sort().join('\u001d'),
+    [...(endpoint.documentTypes || [])].sort().join('\u001d'),
+  ].join('\u001f'));
+}
+
+export function getAcquisitionFingerprint(
+  acquisitions = INSTITUTIONAL_ACQUISITIONS,
+  sources = REVIEWED_INSTITUTIONAL_SOURCES
+) {
+  const canonical = acquisitions
+    .map(acquisition => {
+      const source = sources.find(item => item.sourceId === acquisition.sourceId);
+      const endpoint = source?.machineReadableEndpoints?.find(item => item.endpointId === acquisition.endpointId);
+      return [
+        acquisition.acquisitionId,
+        acquisition.sourceId,
+        acquisition.endpointId,
+        acquisition.documentType,
+        acquisition.expectedPublisherCode || '',
+        acquisition.contentClass,
+        source && endpoint ? getEndpointFingerprint(source, endpoint) : 'missing-authority',
+      ].join('\u001f');
+    })
+    .sort()
+    .join('\u001e');
+  return stableFingerprint(canonical);
+}
+
+export const ACQUISITION_FINGERPRINT = getAcquisitionFingerprint();
+
 export function validateAcquisitionRegistry(
   acquisitions = INSTITUTIONAL_ACQUISITIONS,
   sources = REVIEWED_INSTITUTIONAL_SOURCES
@@ -61,6 +108,7 @@ export function validateAcquisitionRegistry(
       invalidAcquisitions.length === 0 &&
       unauthorizedAcquisitions.length === 0 &&
       endpointMismatches.length === 0,
+    acquisitionFingerprint: getAcquisitionFingerprint(acquisitions, sources),
     duplicateAcquisitionIds,
     invalidAcquisitions: unique(invalidAcquisitions),
     unauthorizedAcquisitions: unique(unauthorizedAcquisitions),
@@ -115,9 +163,13 @@ export async function acquireInstitutionalEvidence(
 
   const contentDigest = await sha256(raw);
   const retrievedAt = normalizeTime(now());
+  const endpointFingerprint = getEndpointFingerprint(source, endpoint);
+  const acquisitionFingerprint = getAcquisitionFingerprint(acquisitions, sources);
   const artifact = Object.freeze({
     artifactId: `artifact:${acquisition.acquisitionId}:${contentDigest.slice('sha256:'.length, 'sha256:'.length + 24)}`,
     acquisitionVersion: INSTITUTIONAL_ACQUISITION_VERSION,
+    acquisitionFingerprint,
+    endpointFingerprint,
     acquisitionId: acquisition.acquisitionId,
     sourceId: source.sourceId,
     organizationEntityId: source.organizationEntityId,
@@ -160,6 +212,10 @@ export function validateAcquiredArtifact(
   if (acquisition && artifact.sourceId !== acquisition.sourceId) errors.push('artifact:source-mismatch');
   if (acquisition && artifact.endpointId !== acquisition.endpointId) errors.push('artifact:endpoint-mismatch');
   if (endpoint && artifact.canonicalRef !== endpoint.url) errors.push('artifact:canonical-ref-drift');
+  if (endpoint && artifact.endpointFingerprint !== getEndpointFingerprint(source, endpoint)) errors.push('artifact:endpoint-fingerprint-drift');
+  if (artifact.acquisitionFingerprint !== getAcquisitionFingerprint(acquisitions, sources)) errors.push('artifact:acquisition-fingerprint-drift');
+  if (!/^[0-9a-f]{8}$/.test(artifact.endpointFingerprint || '')) errors.push('artifact:invalid-endpoint-fingerprint');
+  if (!/^[0-9a-f]{8}$/.test(artifact.acquisitionFingerprint || '')) errors.push('artifact:invalid-acquisition-fingerprint');
   if (!/^sha256:[0-9a-f]{64}$/.test(artifact.contentDigest || '')) errors.push('artifact:invalid-content-digest');
   if (!/^artifact:[^:]+(?:[:][^:]+)*:[0-9a-f]{24}$/.test(artifact.artifactId || '')) errors.push('artifact:invalid-id');
   if (!validIsoTime(artifact.retrievedAt)) errors.push('artifact:invalid-retrieved-at');
@@ -174,6 +230,7 @@ export function acquisitionSummary() {
   const validation = validateAcquisitionRegistry();
   return {
     acquisitionVersion: INSTITUTIONAL_ACQUISITION_VERSION,
+    acquisitionFingerprint: ACQUISITION_FINGERPRINT,
     configuredAcquisitions: INSTITUTIONAL_ACQUISITIONS.length,
     registryValid: validation.valid,
     arbitraryEndpointCollectionAllowed: false,
@@ -181,7 +238,14 @@ export function acquisitionSummary() {
     automaticClaimMutation: false,
     truthDetermination: false,
     staleArtifactFallbackOnFailure: false,
-    acquisitions: INSTITUTIONAL_ACQUISITIONS.map(item => ({ ...item })),
+    acquisitions: INSTITUTIONAL_ACQUISITIONS.map(item => {
+      const source = REVIEWED_INSTITUTIONAL_SOURCES.find(sourceRecord => sourceRecord.sourceId === item.sourceId);
+      const endpoint = source?.machineReadableEndpoints?.find(endpointRecord => endpointRecord.endpointId === item.endpointId);
+      return {
+        ...item,
+        endpointFingerprint: source && endpoint ? getEndpointFingerprint(source, endpoint) : null,
+      };
+    }),
   };
 }
 
@@ -200,6 +264,15 @@ async function sha256(value) {
   const bytes = new TextEncoder().encode(value);
   const digest = await crypto.subtle.digest('SHA-256', bytes);
   return `sha256:${[...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('')}`;
+}
+
+function stableFingerprint(value) {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash.toString(16).padStart(8, '0');
 }
 
 function normalizeTime(value) {
