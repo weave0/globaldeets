@@ -1,3 +1,4 @@
+import { validateDossierIntegrity } from '../../../lib/dossier-integrity.js';
 import { getSantaYnezDossier } from '../../../lib/santa-ynez-dossier.js';
 
 const ALLOWED_ORIGINS = new Set([
@@ -23,13 +24,24 @@ export async function onRequestOptions({ request }) {
   return new Response(null, { status: 204, headers: headers(request) });
 }
 
-export async function onRequestGet({ request }) {
-  const dossier = getSantaYnezDossier();
-  if (!dossier.validation.valid) {
+export function respondWithDossier(dossier, request) {
+  const integrity = validateDossierIntegrity(dossier);
+  if (dossier?.validation?.valid !== true || integrity.valid !== true) {
     return new Response(
-      JSON.stringify({ error: 'dossier-integrity-failed', validation: dossier.validation }),
+      JSON.stringify({
+        error: 'dossier-integrity-failed',
+        validation: dossier?.validation ?? null,
+        integrity,
+      }),
       { status: 500, headers: headers(request) }
     );
   }
-  return new Response(JSON.stringify(dossier), { status: 200, headers: headers(request) });
+  return new Response(JSON.stringify({ ...dossier, integrity }), {
+    status: 200,
+    headers: headers(request),
+  });
+}
+
+export async function onRequestGet({ request }) {
+  return respondWithDossier(getSantaYnezDossier(), request);
 }
