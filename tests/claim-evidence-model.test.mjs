@@ -11,6 +11,7 @@ const files = [
   ['../functions/lib/intelligence-model.js', join(functions, 'lib', 'intelligence-model.js')],
   ['../functions/lib/claim-evidence-model.js', join(functions, 'lib', 'claim-evidence-model.js')],
   ['../functions/lib/institutional-evidence-sources.js', join(functions, 'lib', 'institutional-evidence-sources.js')],
+  ['../functions/lib/institutional-evidence-acquisition.js', join(functions, 'lib', 'institutional-evidence-acquisition.js')],
   ['../functions/api/intelligence/evidence-schema.js', join(functions, 'api', 'intelligence', 'evidence-schema.js')],
 ];
 for (const [, target] of files) mkdirSync(dirname(target), { recursive: true });
@@ -209,19 +210,22 @@ test('supersession preserves both historical claims and evidence records instead
   assert.deepEqual(newEvidence.supersedesEvidenceIds, [oldEvidence.id]);
 });
 
-test('reviewed institutional overlay reuses exact Knowledge catalog entries but unreviewed candidates stay ineligible', () => {
+test('reviewed institutional overlay reuses exact Knowledge catalog entries and collection promotion stays endpoint-specific', () => {
   const validation = institutions.validateInstitutionalSourceRegistry(knowledgeCatalog);
   assert.equal(validation.valid, true);
   assert.equal(institutions.REVIEWED_INSTITUTIONAL_SOURCES.length, 10);
-  assert.equal(institutions.REVIEWED_INSTITUTIONAL_SOURCES.every(item => item.collectionEligible === false), true);
-  assert.equal(institutions.REVIEWED_INSTITUTIONAL_SOURCES.every(item => item.machineReadableEndpoints.length === 0), true);
+  assert.equal(institutions.REVIEWED_INSTITUTIONAL_SOURCES.filter(item => item.collectionEligible).length, 1);
+  assert.equal(institutions.REVIEWED_INSTITUTIONAL_SOURCES.filter(item => item.collectionState === 'endpoint-reviewed').length, 1);
+  assert.equal(institutions.REVIEWED_INSTITUTIONAL_SOURCES.filter(item => item.machineReadableEndpoints.length > 0).length, 1);
+  assert.equal(institutions.REVIEWED_INSTITUTIONAL_SOURCES.filter(item => !item.collectionEligible).length, 9);
   assert.ok(institutions.REVIEWED_INSTITUTIONAL_SOURCES.some(item => item.evidenceRole === 'issuing-primary'));
   assert.ok(institutions.findReviewedInstitutionalSource('governance', 'United Nations', 'https://www.un.org'));
   assert.equal(institutions.findReviewedInstitutionalSource('education', 'Wikipedia', 'https://www.wikipedia.org'), null);
   assert.equal(institutions.institutionalRegistrySummary().knowledgeCatalogIsIngestionAuthority, false);
+  assert.equal(institutions.institutionalRegistrySummary().observatoryIsCollectionAuthority, false);
 });
 
-test('/api/intelligence/evidence-schema exposes evidence-state rules without enabling bulk collection', async () => {
+test('/api/intelligence/evidence-schema exposes governed acquisition without enabling bulk collection', async () => {
   const response = await api.onRequestGet({ request: new Request('https://globaldeets.com/api/intelligence/evidence-schema', { headers: { Origin: 'https://globaldeets.com' } }) });
   const json = await response.json();
   assert.equal(response.status, 200);
@@ -233,6 +237,14 @@ test('/api/intelligence/evidence-schema exposes evidence-state rules without ena
   assert.equal(json.rules.supersessionDeletesHistory, false);
   assert.equal(json.rules.knowledgeCatalogIsIngestionAuthority, false);
   assert.equal(json.rules.machineReadableEndpointRequiresSeparateReview, true);
+  assert.equal(json.rules.collectionEligibilityRequiresReviewedEndpoint, true);
+  assert.equal(json.rules.arbitraryEndpointCollectionAllowed, false);
+  assert.equal(json.rules.observatoryIsCollectionAuthority, false);
+  assert.equal(json.rules.acquiredEvidenceAutomaticallyMutatesClaims, false);
+  assert.equal(json.rules.retrievalFailureUsesStaleArtifact, false);
   assert.equal(json.rules.bulkCollectionEnabled, false);
-  assert.equal(json.institutionalSources.collectionEligibleSources, 0);
+  assert.equal(json.institutionalSources.collectionEligibleSources, 1);
+  assert.equal(json.institutionalSources.endpointReviewedSources, 1);
+  assert.equal(json.acquisition.configuredAcquisitions, 1);
+  assert.equal(json.acquisition.registryValid, true);
 });
