@@ -26,9 +26,12 @@ const REQUIRED_DEPLOY_FILES = [
   '_headers',
   '_redirects',
   '_routes.json',
+  'dossiers/santa-ynez-pipeline/index.html',
+  'dossiers/santa-ynez-pipeline/dossier.js',
+  'dossiers/dossier.css',
 ];
 
-const PUBLIC_DIRECTORIES = ['assets', 'data', 'functions', 'shared'];
+const PUBLIC_DIRECTORIES = ['assets', 'data', 'dossiers', 'functions', 'shared'];
 
 const EXCLUDED_ROOT_JS = new Set([
   'build-assets.js',
@@ -110,7 +113,7 @@ function relativeParts(fullPath) {
 function assertCleanArtifact() {
   const missing = REQUIRED_DEPLOY_FILES.filter(name => !existsSync(join(OUT_DIR, name)));
   if (missing.length > 0) {
-    console.error('Refusing to deploy artifact missing required Pages controls:');
+    console.error('Refusing to deploy artifact missing required Pages controls or dossier assets:');
     for (const file of missing) console.error(`- ${file}`);
     process.exit(1);
   }

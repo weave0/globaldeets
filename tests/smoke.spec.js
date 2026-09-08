@@ -53,6 +53,124 @@ const newsFixture = {
   ],
 };
 
+const dossierFixture = {
+  dossierId: 'santa-ynez-pipeline',
+  dossierVersion: '2026-09-03.1',
+  reviewedAt: '2026-09-03',
+  validation: { valid: true },
+  integrity: { valid: true },
+  sources: [
+    {
+      id: 'source:court',
+      name: 'Federal court order',
+      sourceClass: 'court-record',
+      evidenceRole: 'primary-evidence',
+      url: 'https://example.com/court',
+    },
+    {
+      id: 'source:federal',
+      name: 'Federal agency',
+      sourceClass: 'institutional-statement',
+      evidenceRole: 'official-position',
+      url: 'https://example.com/federal',
+    },
+    {
+      id: 'source:state',
+      name: 'State agency',
+      sourceClass: 'institutional-statement',
+      evidenceRole: 'official-position',
+      url: 'https://example.com/state',
+    },
+  ],
+  entities: [
+    { id: 'entity:court', displayName: 'Federal court' },
+    { id: 'entity:federal', displayName: 'Federal agency' },
+    { id: 'entity:state', displayName: 'State agency' },
+  ],
+  events: [
+    { id: 'event:ruling', eventType: 'court-ruling', status: 'confirmed' },
+    { id: 'event:correction', eventType: 'correction', status: 'confirmed' },
+  ],
+  claims: [
+    {
+      id: 'claim:ruling',
+      proposition: 'The court imposed a penalty while declining pipeline shutdown.',
+      type: 'fact-assertion',
+      state: 'corroborated',
+      originSourceId: 'source:court',
+    },
+    {
+      id: 'claim:federal',
+      proposition: 'The federal agency described its action as an energy-security measure.',
+      type: 'official-position',
+      state: 'disputed',
+      originSourceId: 'source:federal',
+    },
+    {
+      id: 'claim:state',
+      proposition: 'The state challenged the federal authority asserted for the action.',
+      type: 'official-position',
+      state: 'disputed',
+      originSourceId: 'source:state',
+    },
+    {
+      id: 'claim:appeal',
+      proposition: 'A subsequent filing reported notices of appeal.',
+      type: 'fact-assertion',
+      state: 'single-source',
+      originSourceId: 'source:court',
+    },
+  ],
+  evidence: [
+    {
+      id: 'evidence:ruling',
+      issuerEntityId: 'entity:court',
+      evidenceKey: 'court-order',
+      documentType: 'judgment',
+      publishedAt: '2026-08-19',
+      canonicalRef: 'https://example.com/court',
+    },
+    {
+      id: 'evidence:correction',
+      issuerEntityId: 'entity:federal',
+      evidenceKey: 'correction',
+      documentType: 'government-release',
+      publishedAt: '2026-09-03',
+      canonicalRef: 'https://example.com/correction',
+    },
+  ],
+  claimRelations: [
+    { claimId: 'claim:federal', relatedClaimId: 'claim:state', relation: 'contradicts' },
+  ],
+  timeline: [
+    {
+      date: '2026-08-19',
+      eventId: 'event:ruling',
+      label: 'Federal court issues mixed order',
+      claimIds: ['claim:ruling'],
+      evidenceIds: ['evidence:ruling'],
+    },
+    {
+      date: '2026-09-03',
+      eventId: 'event:correction',
+      label: 'Agency corrects mistaken release',
+      claimIds: [],
+      evidenceIds: ['evidence:correction'],
+    },
+  ],
+  corrections: [
+    {
+      id: 'correction:doj:2026-09-03',
+      observedAt: '2026-09-03',
+      issuerEntityId: 'entity:federal',
+      evidenceIds: ['evidence:correction'],
+      description: 'The agency states that an earlier release mistakenly reprinted a prior item.',
+      originalArtifactRetained: false,
+    },
+  ],
+  unknowns: ['The final appellate outcome remains unresolved.'],
+};
+
 test.beforeEach(async ({ page }) => {
   await page.route('**/api/news**', async route => {
     await route.fulfill({
@@ -67,6 +185,14 @@ test.beforeEach(async ({ page }) => {
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify(newsFixture),
+    });
+  });
+
+  await page.route('**/api/intelligence/dossiers/santa-ynez-pipeline', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(dossierFixture),
     });
   });
 });
@@ -114,4 +240,33 @@ test('worldmap page loads map and webcam UI', async ({ page }) => {
   await expect(page.locator('#location-search')).toBeVisible();
   await expect(page.locator('#featured-list .featured-item').first()).toBeVisible();
   await expect(page.locator('#total-cams')).not.toHaveText('0');
+});
+
+test('Santa Ynez dossier renders an integrity-valid evidence interface on desktop', async ({ page }) => {
+  await page.goto('/dossiers/santa-ynez-pipeline/');
+
+  await expect(page.getByRole('heading', { name: /Santa Ynez Pipeline/i })).toBeVisible();
+  await expect(page.locator('body[data-dossier-ready="true"]')).toBeVisible();
+  await expect(page.getByText('Graph integrity validated')).toBeVisible();
+  await expect(page.locator('#established-claims .claim-card')).toHaveCount(1);
+  await expect(page.locator('#conflict-list .conflict-card')).toHaveCount(1);
+  await expect(page.getByText(/mistakenly reprinted a prior item/i)).toBeVisible();
+  await expect(page.locator('#timeline-list .timeline-item')).toHaveCount(2);
+  await expect(page.locator('#dossier-error')).toBeHidden();
+});
+
+test.describe('Santa Ynez dossier mobile surface', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test('remains readable without horizontal overflow', async ({ page }) => {
+    await page.goto('/dossiers/santa-ynez-pipeline/');
+
+    await expect(page.locator('body[data-dossier-ready="true"]')).toBeVisible();
+    await expect(page.getByRole('heading', { name: /What remains unresolved/i })).toBeVisible();
+    const dimensions = await page.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+    }));
+    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1);
+  });
 });

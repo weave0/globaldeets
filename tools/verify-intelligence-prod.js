@@ -8,8 +8,8 @@ function getArgValue(name) {
 const BASE = (getArgValue('--base=') || 'https://globaldeets.com').replace(/\/$/, '');
 const TIMEOUT_MS = 12_000;
 
-async function fetchJson(path) {
-  const response = await fetch(`${BASE}${path}`, {
+async function request(path) {
+  return fetch(`${BASE}${path}`, {
     headers: {
       'User-Agent': 'GlobalDeets-IntelligenceVerifier/1.0',
       'Cache-Control': 'no-cache',
@@ -17,6 +17,10 @@ async function fetchJson(path) {
     },
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
+}
+
+async function fetchJson(path) {
+  const response = await request(path);
   if (response.status !== 200) throw new Error(`${path} returned HTTP ${response.status}`);
   const contentType = response.headers.get('content-type') || '';
   if (!contentType.includes('application/json')) {
@@ -25,18 +29,31 @@ async function fetchJson(path) {
   return response.json();
 }
 
+async function fetchText(path) {
+  const response = await request(path);
+  if (response.status !== 200) throw new Error(`${path} returned HTTP ${response.status}`);
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('text/html')) {
+    throw new Error(`${path} returned unexpected content-type ${contentType}`);
+  }
+  return response.text();
+}
+
 function requireCondition(condition, message) {
   if (!condition) throw new Error(message);
 }
 
 (async () => {
-  const [coverage, sources, admission, schema, evidenceSchema] = await Promise.all([
-    fetchJson('/api/news/coverage'),
-    fetchJson('/api/news/sources'),
-    fetchJson('/api/news/admission'),
-    fetchJson('/api/intelligence/schema'),
-    fetchJson('/api/intelligence/evidence-schema'),
-  ]);
+  const [coverage, sources, admission, schema, evidenceSchema, dossier, dossierPage] =
+    await Promise.all([
+      fetchJson('/api/news/coverage'),
+      fetchJson('/api/news/sources'),
+      fetchJson('/api/news/admission'),
+      fetchJson('/api/intelligence/schema'),
+      fetchJson('/api/intelligence/evidence-schema'),
+      fetchJson('/api/intelligence/dossiers/santa-ynez-pipeline'),
+      fetchText('/dossiers/santa-ynez-pipeline/'),
+    ]);
 
   requireCondition(typeof coverage.sourceFingerprint === 'string', 'coverage fingerprint missing');
   requireCondition(typeof sources.sourceFingerprint === 'string', 'sources fingerprint missing');
@@ -103,8 +120,38 @@ function requireCondition(condition, message) {
   requireCondition(Number.isInteger(evidenceSchema.institutionalSources?.reviewedSources) && evidenceSchema.institutionalSources.reviewedSources > 0, 'reviewed institutional source count missing');
   requireCondition(evidenceSchema.institutionalSources?.collectionEligibleSources === 0, 'GD-015 must not silently enable institutional collection');
 
+  requireCondition(dossier.dossierId === 'santa-ynez-pipeline', 'Santa Ynez dossier identity changed');
+  requireCondition(typeof dossier.dossierVersion === 'string', 'Santa Ynez dossier version missing');
+  requireCondition(dossier.validation?.valid === true, 'Santa Ynez graph validation failed');
+  requireCondition(dossier.integrity?.valid === true, 'Santa Ynez dossier integrity failed');
+  requireCondition(dossier.rules?.truthScore === false, 'dossier truth score must remain disabled');
+  requireCondition(dossier.rules?.editorialVerdict === false, 'dossier editorial verdict must remain disabled');
+  requireCondition(Array.isArray(dossier.entities) && dossier.entities.length === 10, 'Santa Ynez entity count changed');
+  requireCondition(Array.isArray(dossier.events) && dossier.events.length === 7, 'Santa Ynez event count changed');
+  requireCondition(Array.isArray(dossier.claims) && dossier.claims.length === 11, 'Santa Ynez claim count changed');
+  requireCondition(Array.isArray(dossier.evidence) && dossier.evidence.length === 8, 'Santa Ynez evidence count changed');
+  requireCondition(Array.isArray(dossier.timeline) && dossier.timeline.length >= 7, 'Santa Ynez chronology missing');
+  requireCondition(
+    Array.isArray(dossier.claimRelations) && dossier.claimRelations.some(relation => relation.relation === 'contradicts'),
+    'Santa Ynez contradiction relationship missing'
+  );
+  const correction = Array.isArray(dossier.corrections)
+    ? dossier.corrections.find(item => item.id === 'correction:doj:2026-09-03')
+    : null;
+  requireCondition(correction?.status === 'corrected', 'DOJ correction record missing');
+  requireCondition(correction?.originalArtifactRetained === false, 'DOJ correction provenance state changed');
+  requireCondition(Array.isArray(dossier.unknowns) && dossier.unknowns.length > 0, 'Santa Ynez unresolved unknowns missing');
+  requireCondition(
+    dossierPage.includes('data-dossier-id="santa-ynez-pipeline"'),
+    'Santa Ynez dossier page identity marker missing'
+  );
+  requireCondition(
+    dossierPage.includes('id="dossier-app"') && dossierPage.includes('Evidence dossier'),
+    'Santa Ynez dossier page shell missing'
+  );
+
   console.log(
-    `Intelligence APIs certified: ${sources.totalSources} sources, ${coverage.gaps.length} coverage gaps, ${schema.placeSeed.count} place identities, ${evidenceSchema.institutionalSources.reviewedSources} reviewed institutional candidates, admission ${admission.admissionFingerprint}, models ${schema.modelVersion}/${evidenceSchema.modelVersion}`
+    `Intelligence APIs certified: ${sources.totalSources} sources, ${coverage.gaps.length} coverage gaps, ${schema.placeSeed.count} place identities, ${evidenceSchema.institutionalSources.reviewedSources} reviewed institutional candidates, admission ${admission.admissionFingerprint}, models ${schema.modelVersion}/${evidenceSchema.modelVersion}, dossier ${dossier.dossierVersion}`
   );
 })().catch(error => {
   console.error(`Intelligence API verification failed: ${error.message}`);
