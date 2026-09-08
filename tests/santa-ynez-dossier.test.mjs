@@ -57,6 +57,16 @@ test('dangling timeline references fail dossier integrity', () => {
   assert.ok(integrity.timelineOrphans.some(item => item.endsWith(':event:missing')));
 });
 
+test('timeline entries require stable identity and display label', () => {
+  const dossier = cloneDossier();
+  delete dossier.timeline[0].id;
+  dossier.timeline[0].label = '';
+
+  const integrity = validateDossierIntegrity(dossier);
+  assert.equal(integrity.valid, false);
+  assert.ok(integrity.invalidRecords.includes('timeline[0]:missing-core-field'));
+});
+
 test('malformed graph records fail closed instead of throwing', () => {
   const dossier = cloneDossier();
   dossier.claimRelations[0] = null;
@@ -87,13 +97,15 @@ test('correction must link its corrected URL to retained evidence', () => {
   );
 });
 
-test('correction unknowns must also be declared at dossier level', () => {
+test('correction shape rejects unsupported status and malformed local unknowns', () => {
   const dossier = cloneDossier();
-  dossier.corrections[0].unknowns.push('untracked correction uncertainty');
+  dossier.corrections[0].status = 'quietly-replaced';
+  dossier.corrections[0].unknowns.push('');
 
   const integrity = validateDossierIntegrity(dossier);
   assert.equal(integrity.valid, false);
-  assert.ok(integrity.invalidCorrections.includes('correction:doj:2026-09-03:unknown-not-declared'));
+  assert.ok(integrity.invalidCorrections.includes('correction:doj:2026-09-03:invalid-status'));
+  assert.ok(integrity.invalidCorrections.includes('correction:doj:2026-09-03:unknown-not-text'));
 });
 
 test('dossier API publishes only a graph that passes both validation layers', async () => {
