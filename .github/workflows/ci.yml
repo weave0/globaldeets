@@ -47,6 +47,7 @@ jobs:
           node --check tools/stage-deploy.js
           node --check tools/deploy-pages.js
           node --check tools/verify-intelligence-prod.js
+          node --check tools/verify-observatory-prod.js
           node --check functions/api/deploy.js
           node --check functions/api/news/health.js
           node --check functions/api/news/coverage.js
@@ -71,6 +72,7 @@ jobs:
           node --check shared/ecosystem-nav.js
           node --check playwright.config.js
           node --check tests/smoke.spec.js
+          node --check tests/observatory-smoke.spec.js
           node --check tests/news-source-admission.test.mjs
           node --check tests/news-source-admission-hardening.test.mjs
           node --check tests/news-admission-api.test.mjs
