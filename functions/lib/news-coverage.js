@@ -1,7 +1,8 @@
 // Deterministic coverage inventory derived from the canonical news source contract.
-// Provenance enriches observability but intentionally does not alter feed fetching or cache identity.
+// Provenance and admission enrich observability but intentionally do not alter feed fetching/cache identity.
 
 import { SOURCES, slugifySourceName } from '../api/news.js';
+import { SOURCE_ADMISSIONS, validateSourceAdmissions } from './news-source-admission.js';
 import { SOURCE_PROVENANCE, validateSourceProvenance } from './news-source-provenance.js';
 
 export const COVERAGE_POLICY = Object.freeze({
@@ -10,13 +11,20 @@ export const COVERAGE_POLICY = Object.freeze({
   minimumPrimarySourceInputs: 1,
 });
 
-export function buildCoverageInventory(sources = SOURCES, provenance = SOURCE_PROVENANCE) {
+export function buildCoverageInventory(
+  sources = SOURCES,
+  provenance = SOURCE_PROVENANCE,
+  admissions = SOURCE_ADMISSIONS
+) {
   const provenanceValidation = validateSourceProvenance(sources, provenance);
+  const admissionValidation = validateSourceAdmissions(sources, admissions);
   const provenanceById = new Map(provenance.map(entry => [entry.sourceId, entry]));
+  const admissionById = new Map(admissions.map(entry => [entry.sourceId, entry]));
   const normalizedSources = sources
     .map(source => {
       const sourceId = slugifySourceName(source.name);
       const metadata = provenanceById.get(sourceId) || {};
+      const admission = admissionById.get(sourceId) || {};
       return {
         sourceId,
         name: source.name,
@@ -28,6 +36,9 @@ export function buildCoverageInventory(sources = SOURCES, provenance = SOURCE_PR
         primaryCountry: metadata.primaryCountry || null,
         locality: metadata.locality || 'unknown',
         ownershipOperatorKnown: Boolean(metadata.ownershipOperator),
+        admissionReviewState: admission.reviewState || 'missing',
+        allowedUseStatus: admission.allowedUseStatus || 'missing',
+        endpointAuthority: admission.endpointAuthority || 'missing',
       };
     })
     .sort((a, b) => a.sourceId.localeCompare(b.sourceId));
@@ -52,7 +63,14 @@ export function buildCoverageInventory(sources = SOURCES, provenance = SOURCE_PR
   const geographicScopes = summarizeGroups(geographicScopeGroups, 'geographicScope');
   const sourceOriginCountries = summarizeGroups(countryGroups, 'country');
 
-  const gaps = buildGapSignals(normalizedSources, regions, provenanceValidation);
+  const admission = buildAdmissionInventory(admissions, admissionValidation);
+  const gaps = buildGapSignals(
+    normalizedSources,
+    regions,
+    provenanceValidation,
+    admissionValidation,
+    admission
+  );
   const englishSources = normalizedSources.filter(source => source.lang === 'en').length;
   const primarySourceInputs = normalizedSources.filter(
     source => source.evidenceRole === 'primary-source'
@@ -79,6 +97,7 @@ export function buildCoverageInventory(sources = SOURCES, provenance = SOURCE_PR
         .filter(source => !source.ownershipOperatorKnown)
         .map(source => source.sourceId),
     },
+    admission,
     regions,
     languages,
     sourceClasses,
@@ -89,7 +108,33 @@ export function buildCoverageInventory(sources = SOURCES, provenance = SOURCE_PR
   };
 }
 
-function buildGapSignals(sources, regions, provenanceValidation) {
+function buildAdmissionInventory(admissions, validation) {
+  return {
+    valid: validation.valid,
+    reviewedSources: admissions.filter(entry => entry.reviewState === 'reviewed').length,
+    legacyUnreviewedSources: admissions.filter(entry => entry.reviewState === 'legacy-unreviewed').length,
+    remediationSourceIds: admissions
+      .filter(entry => ['permission-required', 'contract-required', 'prohibited'].includes(entry.allowedUseStatus))
+      .map(entry => entry.sourceId)
+      .sort(),
+    unknownRightsSourceIds: admissions
+      .filter(entry => entry.allowedUseStatus === 'unknown')
+      .map(entry => entry.sourceId)
+      .sort(),
+    missingSourceIds: validation.missingSourceIds,
+    orphanSourceIds: validation.orphanSourceIds,
+    endpointDriftSourceIds: validation.endpointDriftSourceIds,
+    unadmittedNewSourceIds: validation.unadmittedNewSourceIds,
+  };
+}
+
+function buildGapSignals(
+  sources,
+  regions,
+  provenanceValidation,
+  admissionValidation,
+  admission
+) {
   const gaps = [];
 
   for (const region of regions) {
@@ -171,6 +216,42 @@ function buildGapSignals(sources, regions, provenanceValidation) {
       observed: provenanceValidation,
       target: 'exactly one valid provenance record per live source',
       detail: 'The provenance registry does not exactly match the canonical live source contract.',
+    });
+  }
+
+  if (!admissionValidation.valid) {
+    gaps.push({
+      id: 'source-admission:invalid',
+      type: 'source-admission-integrity',
+      severity: 'critical',
+      region: null,
+      observed: admissionValidation,
+      target: 'exactly one structurally valid admission record per live source and fully reviewed admission for every new source',
+      detail: 'The source-admission registry does not satisfy the canonical live-source contract.',
+    });
+  }
+
+  if (admission.legacyUnreviewedSources > 0) {
+    gaps.push({
+      id: 'source-admission:legacy-review-backlog',
+      type: 'source-admission-review',
+      severity: 'high',
+      region: null,
+      observed: admission.legacyUnreviewedSources,
+      target: 0,
+      detail: 'Legacy live sources remain explicitly unreviewed for usage rights and require source-by-source admission review.',
+    });
+  }
+
+  if (admission.remediationSourceIds.length > 0) {
+    gaps.push({
+      id: 'source-admission:remediation-required',
+      type: 'source-admission-remediation',
+      severity: 'high',
+      region: null,
+      observed: admission.remediationSourceIds,
+      target: 'authorized use path or reviewed restrictive fallback for each source',
+      detail: 'One or more reviewed legacy sources have permission/contract restrictions that require explicit remediation rather than silent removal or assumption.',
     });
   }
 

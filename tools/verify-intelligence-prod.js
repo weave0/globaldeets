@@ -30,24 +30,53 @@ function requireCondition(condition, message) {
 }
 
 (async () => {
-  const [coverage, sources, schema, evidenceSchema] = await Promise.all([
+  const [coverage, sources, admission, schema, evidenceSchema] = await Promise.all([
     fetchJson('/api/news/coverage'),
     fetchJson('/api/news/sources'),
+    fetchJson('/api/news/admission'),
     fetchJson('/api/intelligence/schema'),
     fetchJson('/api/intelligence/evidence-schema'),
   ]);
 
   requireCondition(typeof coverage.sourceFingerprint === 'string', 'coverage fingerprint missing');
   requireCondition(typeof sources.sourceFingerprint === 'string', 'sources fingerprint missing');
-  requireCondition(coverage.sourceFingerprint === sources.sourceFingerprint, 'coverage and source provenance fingerprints disagree');
+  requireCondition(typeof admission.sourceFingerprint === 'string', 'admission source fingerprint missing');
+  requireCondition(
+    coverage.sourceFingerprint === sources.sourceFingerprint &&
+      sources.sourceFingerprint === admission.sourceFingerprint,
+    'coverage, provenance, and admission source fingerprints disagree'
+  );
   requireCondition(coverage.provenance?.valid === true, 'coverage provenance validation failed');
+  requireCondition(coverage.admission?.valid === true, 'coverage admission validation failed');
   requireCondition(sources.validation?.valid === true, 'source registry validation failed');
+  requireCondition(admission.validation?.valid === true, 'source admission registry validation failed');
   requireCondition(Number.isInteger(coverage.totalSources), 'coverage totalSources missing');
   requireCondition(Number.isInteger(sources.totalSources), 'sources totalSources missing');
   requireCondition(Array.isArray(sources.sources), 'sources array missing');
+  requireCondition(Array.isArray(admission.liveAdmissions), 'live admission array missing');
+  requireCondition(Array.isArray(admission.researchCandidates), 'admission research candidate array missing');
   requireCondition(Array.isArray(coverage.gaps), 'coverage gaps array missing');
-  requireCondition(coverage.totalSources === sources.totalSources && sources.totalSources === sources.sources.length, 'source counts disagree across intelligence APIs');
-  requireCondition(sources.sources.every(source => Array.isArray(source.evidenceUrls) && source.evidenceUrls.length > 0), 'one or more source provenance records lack evidence URLs');
+  requireCondition(
+    coverage.totalSources === sources.totalSources &&
+      sources.totalSources === sources.sources.length &&
+      sources.totalSources === admission.liveAdmissions.length,
+    'source counts disagree across intelligence APIs'
+  );
+  requireCondition(
+    sources.sources.every(source => Array.isArray(source.evidenceUrls) && source.evidenceUrls.length > 0),
+    'one or more source provenance records lack evidence URLs'
+  );
+  requireCondition(typeof admission.admissionFingerprint === 'string', 'admission fingerprint missing');
+  requireCondition(admission.rules?.newSourcesRequireReviewedAdmission === true, 'new source admission gate changed');
+  requireCondition(admission.rules?.legacyUnreviewedMayRemainTemporarily === true, 'legacy migration boundary changed');
+  requireCondition(admission.rules?.endpointAuthorityIsUsagePermission === false, 'endpoint authority must remain separate from usage permission');
+  requireCondition(admission.rules?.feedHealthIsUsagePermission === false, 'feed health must remain separate from usage permission');
+  requireCondition(admission.rules?.itemRestrictionsOverrideSourcePermission === true, 'item restriction override contract changed');
+  requireCondition(admission.rules?.admissionMetadataChangesNewsCacheIdentity === false, 'admission metadata must not alter news cache identity');
+  requireCondition(
+    admission.liveAdmissions.every(entry => ['legacy-unreviewed', 'reviewed'].includes(entry.reviewState)),
+    'one or more live admissions lack explicit migration state'
+  );
 
   requireCondition(typeof schema.modelVersion === 'string', 'intelligence model version missing');
   requireCondition(Array.isArray(schema.entityTypes) && schema.entityTypes.includes('place'), 'place entity type missing');
@@ -74,7 +103,9 @@ function requireCondition(condition, message) {
   requireCondition(Number.isInteger(evidenceSchema.institutionalSources?.reviewedSources) && evidenceSchema.institutionalSources.reviewedSources > 0, 'reviewed institutional source count missing');
   requireCondition(evidenceSchema.institutionalSources?.collectionEligibleSources === 0, 'GD-015 must not silently enable institutional collection');
 
-  console.log(`Intelligence APIs certified: ${sources.totalSources} sources, ${coverage.gaps.length} coverage gaps, ${schema.placeSeed.count} place identities, ${evidenceSchema.institutionalSources.reviewedSources} reviewed institutional candidates, models ${schema.modelVersion}/${evidenceSchema.modelVersion}`);
+  console.log(
+    `Intelligence APIs certified: ${sources.totalSources} sources, ${coverage.gaps.length} coverage gaps, ${schema.placeSeed.count} place identities, ${evidenceSchema.institutionalSources.reviewedSources} reviewed institutional candidates, admission ${admission.admissionFingerprint}, models ${schema.modelVersion}/${evidenceSchema.modelVersion}`
+  );
 })().catch(error => {
   console.error(`Intelligence API verification failed: ${error.message}`);
   process.exit(1);

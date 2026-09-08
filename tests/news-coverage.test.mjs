@@ -12,6 +12,7 @@ const fixtureCoverageApi = join(fixtureFunctions, 'api', 'news', 'coverage.js');
 const fixtureSourcesApi = join(fixtureFunctions, 'api', 'news', 'sources.js');
 const fixtureCoverageLib = join(fixtureFunctions, 'lib', 'news-coverage.js');
 const fixtureProvenanceLib = join(fixtureFunctions, 'lib', 'news-source-provenance.js');
+const fixtureAdmissionLib = join(fixtureFunctions, 'lib', 'news-source-admission.js');
 
 mkdirSync(dirname(fixtureCoverageApi), { recursive: true });
 mkdirSync(dirname(fixtureCoverageLib), { recursive: true });
@@ -33,15 +34,21 @@ copyFileSync(
   fileURLToPath(new URL('../functions/lib/news-source-provenance.js', import.meta.url)),
   fixtureProvenanceLib
 );
+copyFileSync(
+  fileURLToPath(new URL('../functions/lib/news-source-admission.js', import.meta.url)),
+  fixtureAdmissionLib
+);
 
 const newsModule = await import(pathToFileURL(fixtureNews).href);
 const provenanceModule = await import(pathToFileURL(fixtureProvenanceLib).href);
+const admissionModule = await import(pathToFileURL(fixtureAdmissionLib).href);
 const coverageModule = await import(pathToFileURL(fixtureCoverageLib).href);
 const coverageApiModule = await import(pathToFileURL(fixtureCoverageApi).href);
 const sourcesApiModule = await import(pathToFileURL(fixtureSourcesApi).href);
 
 const { SOURCES, SOURCE_FINGERPRINT } = newsModule;
 const { SOURCE_PROVENANCE, validateSourceProvenance } = provenanceModule;
+const { SOURCE_ADMISSIONS, createSourceAdmission } = admissionModule;
 const { buildCoverageInventory } = coverageModule;
 const { onRequestGet: getCoverage } = coverageApiModule;
 const { onRequestGet: getSources } = sourcesApiModule;
@@ -49,6 +56,35 @@ const { onRequestGet: getSources } = sourcesApiModule;
 function request(path = '/api/news/coverage') {
   return new Request(`https://globaldeets.com${path}`, {
     headers: { Origin: 'https://globaldeets.com' },
+  });
+}
+
+function reviewedAdmission(source) {
+  const currentUse =
+    source.lang === 'en'
+      ? ['headline-link', 'metadata', 'excerpt']
+      : ['headline-link', 'metadata', 'excerpt', 'translated-headline-summary'];
+  return createSourceAdmission({
+    sourceId: source.name.toLowerCase(),
+    name: source.name,
+    endpointUrl: source.url,
+    endpointType: 'rss',
+    endpointAuthority: 'first-party',
+    endpointEvidenceUrls: [`${source.url}#evidence`],
+    authenticationRequirement: 'none',
+    usagePolicyUrls: [`${source.url}#terms`],
+    allowedUseStatus: 'verified-public-use',
+    currentUse,
+    permittedUse: currentUse,
+    excerptMaxChars: 280,
+    syndicatedContentBehavior: 'none-reviewed',
+    itemLevelReviewRequired: false,
+    itemLevelStrategy: 'preserve-origin-and-restrict-on-item-signal',
+    reviewState: 'reviewed',
+    reviewedAt: '2026-09-03',
+    reviewerNotes: 'Coverage fixture.',
+    healthVerificationStatus: 'verified',
+    legacy: false,
   });
 }
 
@@ -88,11 +124,7 @@ test('provenance validation rejects missing, orphaned, duplicate, drifted, and i
   assert.deepEqual(missing.missingSourceIds, [targetId]);
 
   const orphanEntry = { ...target, sourceId: 'not-a-live-source' };
-  const orphan = validateSourceProvenance(SOURCES, [
-    ...base,
-    orphanEntry,
-    { ...orphanEntry },
-  ]);
+  const orphan = validateSourceProvenance(SOURCES, [...base, orphanEntry, { ...orphanEntry }]);
   assert.equal(orphan.valid, false);
   assert.deepEqual(orphan.orphanSourceIds, ['not-a-live-source']);
 
@@ -123,11 +155,12 @@ test('provenance validation rejects missing, orphaned, duplicate, drifted, and i
   assert.ok(languageDrift.invalidEntries.includes(targetId));
 });
 
-test('coverage inventory is deterministic and enriched from reviewed provenance', () => {
-  const first = buildCoverageInventory(SOURCES, SOURCE_PROVENANCE);
+test('coverage inventory is deterministic and enriched from reviewed provenance and admission state', () => {
+  const first = buildCoverageInventory(SOURCES, SOURCE_PROVENANCE, SOURCE_ADMISSIONS);
   const second = buildCoverageInventory(
     SOURCES.map(source => ({ ...source })),
-    SOURCE_PROVENANCE.map(entry => ({ ...entry }))
+    SOURCE_PROVENANCE.map(entry => ({ ...entry })),
+    SOURCE_ADMISSIONS.map(entry => ({ ...entry }))
   );
 
   assert.deepEqual(first, second);
@@ -137,6 +170,10 @@ test('coverage inventory is deterministic and enriched from reviewed provenance'
   assert.equal(first.provenance.valid, true);
   assert.equal(first.provenance.reviewedSources, 19);
   assert.deepEqual(first.provenance.unknownOwnershipOperatorSourceIds, []);
+  assert.equal(first.admission.valid, true);
+  assert.equal(first.admission.reviewedSources, 2);
+  assert.equal(first.admission.legacyUnreviewedSources, 17);
+  assert.deepEqual(first.admission.remediationSourceIds, ['ap', 'guardian']);
   assert.equal(first.nonEnglishSources.length, 1);
   assert.ok(first.nonEnglishSources.includes('nhk'));
   assert.ok(first.sourceClasses.some(group => group.sourceClass === 'news-agency'));
@@ -144,8 +181,8 @@ test('coverage inventory is deterministic and enriched from reviewed provenance'
   assert.ok(first.sourceOriginCountries.some(group => group.country === 'UA'));
 });
 
-test('coverage inventory surfaces current evidence, locality, redundancy, and language blind spots', () => {
-  const inventory = buildCoverageInventory(SOURCES, SOURCE_PROVENANCE);
+test('coverage inventory surfaces evidence, locality, language, and admission blind spots', () => {
+  const inventory = buildCoverageInventory(SOURCES, SOURCE_PROVENANCE, SOURCE_ADMISSIONS);
   const gapIds = new Set(inventory.gaps.map(gap => gap.id));
 
   assert.equal(inventory.primarySourceInputs, 0);
@@ -158,9 +195,11 @@ test('coverage inventory surfaces current evidence, locality, redundancy, and la
   assert.ok(gapIds.has('source-language-diversity:europe'));
   assert.ok(gapIds.has('source-language-diversity:middle-east'));
   assert.ok(gapIds.has('source-language-diversity:pacific'));
+  assert.ok(gapIds.has('source-admission:legacy-review-backlog'));
+  assert.ok(gapIds.has('source-admission:remediation-required'));
 });
 
-test('coverage gap logic responds to stronger regional, language, primary-source, and local diversity', () => {
+test('coverage gap logic responds to stronger regional, language, primary-source, local, and admission diversity', () => {
   const sample = [
     { name: 'A', url: 'https://a.example/rss', region: 'alpha', lang: 'en' },
     { name: 'B', url: 'https://b.example/rss', region: 'alpha', lang: 'fr' },
@@ -181,16 +220,19 @@ test('coverage gap logic responds to stronger regional, language, primary-source
     evidenceUrls: [`https://${source.name.toLowerCase()}.example/about`],
     reviewedAt: '2026-09-03',
   }));
-  const inventory = buildCoverageInventory(sample, sampleProvenance);
+  const sampleAdmissions = sample.map(reviewedAdmission);
+  const inventory = buildCoverageInventory(sample, sampleProvenance, sampleAdmissions);
 
   assert.equal(inventory.gaps.length, 0);
   assert.equal(inventory.totalRegions, 2);
   assert.equal(inventory.totalLanguages, 4);
   assert.equal(inventory.englishSourceShare, 0.25);
   assert.equal(inventory.primarySourceInputs, 1);
+  assert.equal(inventory.admission.valid, true);
+  assert.equal(inventory.admission.legacyUnreviewedSources, 0);
 });
 
-test('/api/news/coverage exposes source fingerprint, provenance integrity, and actionable inventory', async () => {
+test('/api/news/coverage exposes source fingerprint, provenance integrity, admission debt, and actionable inventory', async () => {
   const response = await getCoverage({ request: request() });
   const json = await response.json();
 
@@ -200,14 +242,18 @@ test('/api/news/coverage exposes source fingerprint, provenance integrity, and a
   assert.equal(json.totalRegions, 7);
   assert.equal(json.provenance.valid, true);
   assert.equal(json.provenance.reviewedSources, 19);
+  assert.equal(json.admission.valid, true);
+  assert.equal(json.admission.legacyUnreviewedSources, 17);
+  assert.deepEqual(json.admission.remediationSourceIds, ['ap', 'guardian']);
   assert.ok(Array.isArray(json.sourceClasses));
   assert.ok(Array.isArray(json.evidenceRoles));
   assert.ok(Array.isArray(json.sourceOriginCountries));
   assert.ok(json.gaps.some(gap => gap.id === 'evidence-role:primary-source-inputs'));
+  assert.ok(json.gaps.some(gap => gap.id === 'source-admission:legacy-review-backlog'));
   assert.match(json.generatedAt, /^\d{4}-\d{2}-\d{2}T/);
 });
 
-test('/api/news/sources exposes the reviewed registry and its evidence links', async () => {
+test('/api/news/sources exposes the reviewed provenance registry and its evidence links', async () => {
   const response = await getSources({ request: request('/api/news/sources') });
   const json = await response.json();
 
