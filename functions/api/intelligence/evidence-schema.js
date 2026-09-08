@@ -8,10 +8,16 @@ import {
   EVIDENCE_RELATION_TYPES,
 } from '../../lib/claim-evidence-model.js';
 import {
+  ACCESS_USE_STATES,
   COLLECTION_STATES,
+  ENDPOINT_AUTHORITY_STATES,
   INSTITUTIONAL_EVIDENCE_ROLES,
   institutionalRegistrySummary,
 } from '../../lib/institutional-evidence-sources.js';
+import {
+  INSTITUTIONAL_ACQUISITION_VERSION,
+  acquisitionSummary,
+} from '../../lib/institutional-evidence-acquisition.js';
 
 const ALLOWED_ORIGINS = new Set([
   'https://globaldeets.com',
@@ -40,6 +46,7 @@ export async function onRequestGet({ request }) {
   return new Response(
     JSON.stringify({
       modelVersion: CLAIM_EVIDENCE_MODEL_VERSION,
+      acquisitionVersion: INSTITUTIONAL_ACQUISITION_VERSION,
       claimTypes: CLAIM_TYPES,
       claimStates: CLAIM_STATES,
       evidenceDocumentTypes: EVIDENCE_DOCUMENT_TYPES,
@@ -47,6 +54,8 @@ export async function onRequestGet({ request }) {
       evidenceRelationTypes: EVIDENCE_RELATION_TYPES,
       institutionalEvidenceRoles: INSTITUTIONAL_EVIDENCE_ROLES,
       collectionStates: COLLECTION_STATES,
+      endpointAuthorityStates: ENDPOINT_AUTHORITY_STATES,
+      accessUseStates: ACCESS_USE_STATES,
       rules: {
         truthScore: false,
         explicitClaimIdentity: true,
@@ -56,9 +65,15 @@ export async function onRequestGet({ request }) {
         supersessionDeletesHistory: false,
         knowledgeCatalogIsIngestionAuthority: false,
         machineReadableEndpointRequiresSeparateReview: true,
+        collectionEligibilityRequiresReviewedEndpoint: true,
+        arbitraryEndpointCollectionAllowed: false,
+        observatoryIsCollectionAuthority: false,
+        acquiredEvidenceAutomaticallyMutatesClaims: false,
+        retrievalFailureUsesStaleArtifact: false,
         bulkCollectionEnabled: false,
       },
       institutionalSources: institutionalRegistrySummary(),
+      acquisition: acquisitionSummary(),
     }),
     { headers: headers(request) }
   );
