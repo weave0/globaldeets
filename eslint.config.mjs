@@ -58,6 +58,7 @@ export default [
         setTimeout: 'readonly',
         clearInterval: 'readonly',
         clearTimeout: 'readonly',
+        TextEncoder: 'readonly',
         URL: 'readonly',
         URLSearchParams: 'readonly',
         WebcamManager: 'readonly',
