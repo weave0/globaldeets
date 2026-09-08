@@ -1,16 +1,40 @@
 /**
  * GFD Ecosystem Navigation Component JavaScript
- * Handles dropdown toggle, accessibility, and keyboard navigation
+ * Handles dropdown toggle, accessibility, keyboard navigation, and GlobalDeets evidence discovery.
  */
 
 (function () {
   'use strict';
 
-  // Wait for DOM to be ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initEcosystemNav);
+    document.addEventListener('DOMContentLoaded', initNavigation);
   } else {
+    initNavigation();
+  }
+
+  function initNavigation() {
+    initEvidenceDossierLink();
     initEcosystemNav();
+  }
+
+  function initEvidenceDossierLink() {
+    const path = window.location.pathname.replace(/\/$/, '');
+    if (path !== '/news' && path !== '/news.html') return;
+
+    const primaryNav = document.querySelector('.primary-nav');
+    if (!primaryNav || primaryNav.querySelector('[data-evidence-dossier-link]')) return;
+
+    const link = document.createElement('a');
+    link.href = '/dossiers/santa-ynez-pipeline/';
+    link.className = 'nav-icon-btn';
+    link.title = 'Evidence Dossier — Santa Ynez Pipeline';
+    link.setAttribute('aria-label', 'Evidence Dossier — Santa Ynez Pipeline');
+    link.setAttribute('data-evidence-dossier-link', 'santa-ynez-pipeline');
+    link.textContent = '◇';
+
+    const newsLink = primaryNav.querySelector('a[href="news.html"], a[href="/news"]');
+    if (newsLink) newsLink.insertAdjacentElement('afterend', link);
+    else primaryNav.appendChild(link);
   }
 
   function initEcosystemNav() {
@@ -21,7 +45,6 @@
     const dropdown = nav.querySelector('.ecosystem-dropdown');
     let backdrop = document.querySelector('.ecosystem-backdrop');
 
-    // Create backdrop if it doesn't exist
     if (!backdrop) {
       backdrop = document.createElement('div');
       backdrop.className = 'ecosystem-backdrop';
@@ -33,7 +56,6 @@
 
     let isOpen = false;
 
-    // Toggle dropdown
     function toggleDropdown(open) {
       isOpen = typeof open === 'boolean' ? open : !isOpen;
 
@@ -44,7 +66,6 @@
       dropdown.setAttribute('aria-hidden', !isOpen);
 
       if (isOpen) {
-        // Focus first link when opening
         const firstLink = dropdown.querySelector('.nav-link');
         if (firstLink) {
           setTimeout(() => firstLink.focus(), 100);
@@ -52,12 +73,10 @@
       }
     }
 
-    // Toggle button click
     toggleButton.addEventListener('click', () => {
       toggleDropdown();
     });
 
-    // Close on Escape key
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape' && isOpen) {
         toggleDropdown(false);
@@ -65,14 +84,12 @@
       }
     });
 
-    // Close when clicking outside
     document.addEventListener('click', e => {
       if (isOpen && !nav.contains(e.target)) {
         toggleDropdown(false);
       }
     });
 
-    // Close when clicking backdrop
     backdrop.addEventListener('click', () => {
       if (isOpen) {
         toggleDropdown(false);
@@ -80,7 +97,6 @@
       }
     });
 
-    // Keyboard navigation within dropdown
     const navLinks = dropdown.querySelectorAll('.nav-link, .nav-cta-link');
 
     dropdown.addEventListener('keydown', e => {
@@ -105,7 +121,6 @@
       }
     });
 
-    // Highlight current site
     const currentHostname = window.location.hostname;
     navLinks.forEach(link => {
       try {
@@ -113,8 +128,6 @@
         if (linkHostname === currentHostname) {
           link.classList.add('current-site');
           link.setAttribute('aria-current', 'page');
-
-          // Add visual indicator
           link.style.background = 'rgba(139, 92, 246, 0.12)';
           link.style.borderColor = 'rgba(139, 92, 246, 0.3)';
         }
@@ -123,7 +136,6 @@
       }
     });
 
-    // Track engagement for analytics
     toggleButton.addEventListener('click', () => {
       if (window.gtag) {
         window.gtag('event', 'ecosystem_nav_toggle', {
