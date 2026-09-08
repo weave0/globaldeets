@@ -45,6 +45,7 @@ export default [
         location: 'readonly',
         module: 'readonly',
         navigator: 'readonly',
+        Node: 'readonly',
         performance: 'readonly',
         process: 'readonly',
         projects: 'readonly',
