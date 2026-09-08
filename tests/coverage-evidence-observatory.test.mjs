@@ -29,7 +29,9 @@ test('canonical coverage and evidence observatory validates and preserves semant
   assert.equal(observatory.sourceRights.reviewedLiveSources, 2);
   assert.equal(observatory.sourceRights.legacyUnreviewedSources, 17);
   assert.equal(observatory.institutionalEvidence.reviewedSources, 10);
-  assert.equal(observatory.institutionalEvidence.collectionEligibleSources, 0);
+  assert.equal(observatory.institutionalEvidence.endpointReviewedSources, 1);
+  assert.equal(observatory.institutionalEvidence.collectionEligibleSources, 1);
+  assert.equal(observatory.institutionalEvidence.directoryOnlySources, 9);
   assert.equal(observatory.evidenceCoverage.dossierCount, 1);
   assert.deepEqual(observatory.evidenceCoverage.dossierIds, ['santa-ynez-pipeline']);
   assert.equal(observatory.rules.truthScore, false);
@@ -38,6 +40,7 @@ test('canonical coverage and evidence observatory validates and preserves semant
   assert.equal(observatory.rules.publisherQualityScore, false);
   assert.equal(observatory.rules.newsCoverageIsEvidenceCoverage, false);
   assert.equal(observatory.rules.collectionEligibilityRequiresEndpointReview, true);
+  assert.equal(observatory.rules.reviewedDirectoryIsCollectionAuthority, false);
   assert.equal(validation.valid, true, JSON.stringify(validation));
 });
 
@@ -135,6 +138,7 @@ test('observatory API returns only integrity-valid payloads and supports CORS pr
   assert.equal(payload.observatoryId, COVERAGE_EVIDENCE_OBSERVATORY_ID);
   assert.equal(payload.rules.truthScore, false);
   assert.equal(payload.rules.newsCoverageIsEvidenceCoverage, false);
+  assert.equal(payload.institutionalEvidence.collectionEligibleSources, 1);
 
   const preflight = await onRequestOptions({ request });
   assert.equal(preflight.status, 204);

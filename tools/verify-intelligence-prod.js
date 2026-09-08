@@ -44,13 +44,14 @@ function requireCondition(condition, message) {
 }
 
 (async () => {
-  const [coverage, sources, admission, schema, evidenceSchema, dossier, dossierPage] =
+  const [coverage, sources, admission, schema, evidenceSchema, acquisition, dossier, dossierPage] =
     await Promise.all([
       fetchJson('/api/news/coverage'),
       fetchJson('/api/news/sources'),
       fetchJson('/api/news/admission'),
       fetchJson('/api/intelligence/schema'),
       fetchJson('/api/intelligence/evidence-schema'),
+      fetchJson('/api/intelligence/acquisition/eurostat-density'),
       fetchJson('/api/intelligence/dossiers/santa-ynez-pipeline'),
       fetchText('/dossiers/santa-ynez-pipeline/'),
     ]);
@@ -107,6 +108,7 @@ function requireCondition(condition, message) {
   requireCondition(schema.placeSeed?.runtimeFetchRequired === false, 'production must not depend on live M49 fetching');
 
   requireCondition(typeof evidenceSchema.modelVersion === 'string', 'claim/evidence model version missing');
+  requireCondition(typeof evidenceSchema.acquisitionVersion === 'string', 'institutional acquisition model version missing');
   requireCondition(Array.isArray(evidenceSchema.claimTypes) && evidenceSchema.claimTypes.includes('allegation'), 'claim type contract missing');
   requireCondition(Array.isArray(evidenceSchema.claimStates) && evidenceSchema.claimStates.includes('contradicted'), 'claim state contract missing');
   requireCondition(Array.isArray(evidenceSchema.evidenceDocumentTypes) && evidenceSchema.evidenceDocumentTypes.includes('court-filing'), 'evidence document contract missing');
@@ -116,9 +118,31 @@ function requireCondition(condition, message) {
   requireCondition(evidenceSchema.rules?.supersessionDeletesHistory === false, 'supersession must preserve history');
   requireCondition(evidenceSchema.rules?.knowledgeCatalogIsIngestionAuthority === false, 'Knowledge catalog must not become ingestion authority');
   requireCondition(evidenceSchema.rules?.machineReadableEndpointRequiresSeparateReview === true, 'endpoint review boundary changed');
-  requireCondition(evidenceSchema.rules?.bulkCollectionEnabled === false, 'bulk evidence collection must remain disabled in GD-015');
-  requireCondition(Number.isInteger(evidenceSchema.institutionalSources?.reviewedSources) && evidenceSchema.institutionalSources.reviewedSources > 0, 'reviewed institutional source count missing');
-  requireCondition(evidenceSchema.institutionalSources?.collectionEligibleSources === 0, 'GD-015 must not silently enable institutional collection');
+  requireCondition(evidenceSchema.rules?.collectionEligibilityRequiresReviewedEndpoint === true, 'collection eligibility gate changed');
+  requireCondition(evidenceSchema.rules?.arbitraryEndpointCollectionAllowed === false, 'arbitrary endpoint collection must remain disabled');
+  requireCondition(evidenceSchema.rules?.observatoryIsCollectionAuthority === false, 'observatory must not become collection authority');
+  requireCondition(evidenceSchema.rules?.acquiredEvidenceAutomaticallyMutatesClaims === false, 'acquisition must not mutate claim state automatically');
+  requireCondition(evidenceSchema.rules?.retrievalFailureUsesStaleArtifact === false, 'retrieval failure must not silently serve stale evidence');
+  requireCondition(evidenceSchema.rules?.bulkCollectionEnabled === false, 'bulk evidence collection must remain disabled');
+  requireCondition(evidenceSchema.institutionalSources?.reviewedSources === 10, 'reviewed institutional source count changed');
+  requireCondition(evidenceSchema.institutionalSources?.endpointReviewedSources === 1, 'GD-018 endpoint-reviewed source count changed');
+  requireCondition(evidenceSchema.institutionalSources?.collectionEligibleSources === 1, 'GD-018 governed collection source count changed');
+  requireCondition(evidenceSchema.acquisition?.configuredAcquisitions === 1, 'GD-018 governed acquisition count changed');
+  requireCondition(evidenceSchema.acquisition?.registryValid === true, 'GD-018 acquisition registry invalid');
+  requireCondition(evidenceSchema.acquisition?.arbitraryEndpointCollectionAllowed === false, 'acquisition registry allows arbitrary endpoints');
+  requireCondition(evidenceSchema.acquisition?.automaticClaimMutation === false, 'acquisition registry allows automatic claim mutation');
+  requireCondition(evidenceSchema.acquisition?.staleArtifactFallbackOnFailure === false, 'acquisition registry allows stale fallback');
+
+  requireCondition(acquisition.acquisition?.registryValid === true, 'live governed acquisition registry invalid');
+  requireCondition(acquisition.acquisition?.configuredAcquisitions === 1, 'live governed acquisition count changed');
+  requireCondition(acquisition.artifact?.acquisitionId === 'eurostat:population-density:eu27-latest', 'Eurostat acquisition identity changed');
+  requireCondition(acquisition.artifact?.sourceId === 'knowledge:economy:eurostat', 'Eurostat source identity changed');
+  requireCondition(acquisition.artifact?.endpointId === 'eurostat:statistics-api:demo-r-d3dens:eu27-latest', 'Eurostat endpoint identity changed');
+  requireCondition(acquisition.artifact?.payload?.source === 'ESTAT', 'Eurostat publisher identity not verified');
+  requireCondition(/^sha256:[0-9a-f]{64}$/.test(acquisition.artifact?.contentDigest || ''), 'Eurostat artifact content digest missing');
+  requireCondition(Array.isArray(acquisition.artifact?.claimIds) && acquisition.artifact.claimIds.length === 0, 'acquired artifact silently linked claims');
+  requireCondition(acquisition.artifact?.claimStateMutation === false, 'acquired artifact silently mutated claim state');
+  requireCondition(acquisition.artifact?.truthDetermination === false, 'acquired artifact made a truth determination');
 
   requireCondition(dossier.dossierId === 'santa-ynez-pipeline', 'Santa Ynez dossier identity changed');
   requireCondition(typeof dossier.dossierVersion === 'string', 'Santa Ynez dossier version missing');
@@ -151,7 +175,7 @@ function requireCondition(condition, message) {
   );
 
   console.log(
-    `Intelligence APIs certified: ${sources.totalSources} sources, ${coverage.gaps.length} coverage gaps, ${schema.placeSeed.count} place identities, ${evidenceSchema.institutionalSources.reviewedSources} reviewed institutional candidates, admission ${admission.admissionFingerprint}, models ${schema.modelVersion}/${evidenceSchema.modelVersion}, dossier ${dossier.dossierVersion}`
+    `Intelligence APIs certified: ${sources.totalSources} news sources, ${coverage.gaps.length} coverage gaps, ${schema.placeSeed.count} place identities, ${evidenceSchema.institutionalSources.reviewedSources} institutional candidates / ${evidenceSchema.institutionalSources.collectionEligibleSources} governed collection source, acquisition ${acquisition.artifact.artifactId}, admission ${admission.admissionFingerprint}, models ${schema.modelVersion}/${evidenceSchema.modelVersion}, dossier ${dossier.dossierVersion}`
   );
 })().catch(error => {
   console.error(`Intelligence API verification failed: ${error.message}`);

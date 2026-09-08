@@ -55,6 +55,7 @@ jobs:
           node --check functions/api/news/admission.js
           node --check functions/api/intelligence/schema.js
           node --check functions/api/intelligence/evidence-schema.js
+          node --check functions/api/intelligence/acquisition/eurostat-density.js
           node --check functions/api/intelligence/dossiers/santa-ynez-pipeline.js
           node --check functions/api/intelligence/observatory/coverage.js
           node --check functions/lib/news-coverage.js
@@ -64,6 +65,7 @@ jobs:
           node --check functions/lib/m49-place-seed.js
           node --check functions/lib/claim-evidence-model.js
           node --check functions/lib/institutional-evidence-sources.js
+          node --check functions/lib/institutional-evidence-acquisition.js
           node --check functions/lib/dossier-integrity.js
           node --check functions/lib/santa-ynez-dossier.js
           node --check functions/lib/coverage-evidence-observatory.js
@@ -78,6 +80,7 @@ jobs:
           node --check tests/news-admission-api.test.mjs
           node --check tests/intelligence-model.test.mjs
           node --check tests/claim-evidence-model.test.mjs
+          node --check tests/institutional-evidence-acquisition.test.mjs
           node --check tests/santa-ynez-dossier.test.mjs
           node --check tests/coverage-evidence-observatory.test.mjs
 

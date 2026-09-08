@@ -42,12 +42,13 @@ function requireCondition(condition, message) {
 }
 
 (async () => {
-  const [observatory, coverage, sources, admission, evidenceSchema, dossier, page] = await Promise.all([
+  const [observatory, coverage, sources, admission, evidenceSchema, acquisition, dossier, page] = await Promise.all([
     json('/api/intelligence/observatory/coverage'),
     json('/api/news/coverage'),
     json('/api/news/sources'),
     json('/api/news/admission'),
     json('/api/intelligence/evidence-schema'),
+    json('/api/intelligence/acquisition/eurostat-density'),
     json('/api/intelligence/dossiers/santa-ynez-pipeline'),
     html('/observatory/coverage/'),
   ]);
@@ -86,7 +87,7 @@ function requireCondition(condition, message) {
   const legacyUnreviewed = admission.liveAdmissions.filter(entry => entry.reviewState === 'legacy-unreviewed').length;
   requireCondition(observatory.sourceRights?.reviewedLiveSources === reviewedLive, 'reviewed live source count drifted');
   requireCondition(observatory.sourceRights?.legacyUnreviewedSources === legacyUnreviewed, 'legacy review debt count drifted');
-  requireCondition(legacyUnreviewed === 17, 'GD-017 baseline must preserve the 17-source rights-review debt');
+  requireCondition(legacyUnreviewed === 17, 'source-rights review debt baseline changed unexpectedly');
 
   requireCondition(
     observatory.institutionalEvidence?.reviewedSources === evidenceSchema.institutionalSources?.reviewedSources,
@@ -96,10 +97,23 @@ function requireCondition(condition, message) {
     observatory.institutionalEvidence?.collectionEligibleSources === evidenceSchema.institutionalSources?.collectionEligibleSources,
     'institutional collection eligibility disagrees with evidence schema'
   );
+  requireCondition(
+    observatory.institutionalEvidence?.endpointReviewedSources === evidenceSchema.institutionalSources?.endpointReviewedSources,
+    'institutional endpoint-review count disagrees with evidence schema'
+  );
   requireCondition(observatory.institutionalEvidence?.reviewedSources === 10, 'reviewed institutional candidate baseline changed');
-  requireCondition(observatory.institutionalEvidence?.collectionEligibleSources === 0, 'institutional collection silently enabled');
+  requireCondition(observatory.institutionalEvidence?.endpointReviewedSources === 1, 'GD-018 endpoint-review count changed');
+  requireCondition(observatory.institutionalEvidence?.collectionEligibleSources === 1, 'GD-018 governed collection count changed');
+  requireCondition(observatory.institutionalEvidence?.directoryOnlySources === 9, 'directory-only candidate count changed');
+  requireCondition(evidenceSchema.rules?.observatoryIsCollectionAuthority === false, 'observatory became collection authority');
+  requireCondition(evidenceSchema.rules?.bulkCollectionEnabled === false, 'bulk collection became enabled');
 
-  requireCondition(observatory.evidenceCoverage?.dossierCount === 1, 'GD-017 dossier baseline changed');
+  requireCondition(acquisition.acquisition?.registryValid === true, 'governed acquisition registry invalid');
+  requireCondition(acquisition.artifact?.sourceId === 'knowledge:economy:eurostat', 'governed acquisition source changed');
+  requireCondition(acquisition.artifact?.claimStateMutation === false, 'governed acquisition mutated claim state');
+  requireCondition(acquisition.artifact?.truthDetermination === false, 'governed acquisition made a truth determination');
+
+  requireCondition(observatory.evidenceCoverage?.dossierCount === 1, 'dossier baseline changed');
   const dossierSummary = observatory.evidenceCoverage?.dossiers?.find(item => item.dossierId === 'santa-ynez-pipeline');
   requireCondition(Boolean(dossierSummary), 'Santa Ynez dossier missing from observatory');
   requireCondition(dossierSummary.integrityValid === true, 'observatory exposes invalid dossier');
@@ -112,7 +126,7 @@ function requireCondition(condition, message) {
 
   const gapTypes = new Set(observatory.gaps.map(gap => gap.type));
   requireCondition(gapTypes.has('source-rights-review-debt'), 'source-rights debt gap missing');
-  requireCondition(gapTypes.has('institutional-collection-eligibility'), 'institutional evidence eligibility gap missing');
+  requireCondition(gapTypes.has('institutional-collection-eligibility'), 'remaining institutional evidence eligibility gap missing');
   requireCondition(gapTypes.has('unresolved-claims'), 'unresolved dossier claim gap missing');
   requireCondition(gapTypes.has('correction-artifact-retention'), 'correction artifact gap missing');
   requireCondition(
@@ -125,7 +139,7 @@ function requireCondition(condition, message) {
   requireCondition(page.includes('News coverage ≠ evidence coverage'), 'observatory semantic separation label missing');
 
   console.log(
-    `Coverage & Evidence Observatory certified: ${observatory.newsCoverage.totalSources} live news sources, ${legacyUnreviewed} rights reviews open, ${observatory.institutionalEvidence.reviewedSources} institutional candidates / ${observatory.institutionalEvidence.collectionEligibleSources} collection-eligible, ${dossierSummary.unresolvedClaimCount} unresolved claims, ${observatory.gaps.length} explicit gaps`
+    `Coverage & Evidence Observatory certified: ${observatory.newsCoverage.totalSources} live news sources, ${legacyUnreviewed} rights reviews open, ${observatory.institutionalEvidence.reviewedSources} institutional candidates / ${observatory.institutionalEvidence.collectionEligibleSources} governed collection source, ${dossierSummary.unresolvedClaimCount} unresolved claims, ${observatory.gaps.length} explicit gaps`
   );
 })().catch(error => {
   console.error(`Coverage & Evidence Observatory verification failed: ${error.message}`);
