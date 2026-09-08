@@ -69,7 +69,7 @@
         record(
           titleCase(region.region || 'unknown'),
           region.sourceCount,
-          `${region.languageCount} source language${region.languageCount === 1 ? '' : 's'} · ${region.sourceOriginCountryCount} origin countr${region.sourceOriginCountryCount === 1 ? 'y' : 'ies'} · ${region.publisherCount} publisher${region.publisherCount === 1 ? '' : 's'}`
+          `${region.languageCount} source language${region.languageCount === 1 ? '' : 's'} · ${array(region.languages).join(', ') || 'language identities unavailable'}`
         )
       )
     );
