@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="GlobalDeets Coverage & Evidence Observatory — measurable news, provenance, source-rights, evidence, and unresolved intelligence gaps.">
+  <title>Coverage & Evidence Observatory | GlobalDeets</title>
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="stylesheet" href="/shared/ecosystem-nav.css">
+  <link rel="stylesheet" href="/observatory/coverage/observatory.css">
+</head>
+<body data-observatory-id="coverage-evidence" data-observatory-ready="false">
+  <div id="ecosystem-nav"></div>
+  <main class="observatory-shell">
+    <header class="hero">
+      <p class="eyebrow">GlobalDeets intelligence infrastructure</p>
+      <h1>Coverage &amp; Evidence Observatory</h1>
+      <p class="lede">A read-only view of what GlobalDeets can currently observe, what evidence it has, and what remains missing. Coverage signals are not truth, reliability, ideology, or publisher-quality scores.</p>
+      <div class="contract-strip" aria-label="Observatory contract">
+        <span>No truth score</span>
+        <span>No editorial verdict</span>
+        <span>News coverage ≠ evidence coverage</span>
+        <span>Collection eligibility stays explicit</span>
+      </div>
+    </header>
+
+    <section class="status-panel" aria-live="polite">
+      <div>
+        <p class="label">Integrity</p>
+        <p id="integrity-status" class="metric-value">Loading…</p>
+      </div>
+      <div>
+        <p class="label">Generated</p>
+        <p id="generated-at" class="metric-value metric-small">—</p>
+      </div>
+      <div>
+        <p class="label">Observatory version</p>
+        <p id="observatory-version" class="metric-value metric-small">—</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="baseline-heading">
+      <div class="section-heading">
+        <p class="eyebrow">Measured baseline</p>
+        <h2 id="baseline-heading">Separate systems, separate counts</h2>
+      </div>
+      <div id="baseline-grid" class="metric-grid"></div>
+    </section>
+
+    <section class="two-column" aria-label="Coverage inventories">
+      <article class="panel">
+        <div class="panel-heading">
+          <p class="eyebrow">News coverage</p>
+          <h2>Geographic and provenance footprint</h2>
+        </div>
+        <div id="region-list" class="record-list"></div>
+      </article>
+      <article class="panel">
+        <div class="panel-heading">
+          <p class="eyebrow">Evidence coverage</p>
+          <h2>Evidence classes in published dossiers</h2>
+        </div>
+        <div id="evidence-class-list" class="record-list"></div>
+      </article>
+    </section>
+
+    <section class="two-column" aria-label="Governance inventories">
+      <article class="panel">
+        <div class="panel-heading">
+          <p class="eyebrow">Source governance</p>
+          <h2>Rights review debt</h2>
+        </div>
+        <div id="rights-summary" class="record-list"></div>
+      </article>
+      <article class="panel">
+        <div class="panel-heading">
+          <p class="eyebrow">Institutional evidence</p>
+          <h2>Reviewed ≠ collectible</h2>
+        </div>
+        <div id="institutional-summary" class="record-list"></div>
+      </article>
+    </section>
+
+    <section aria-labelledby="dossiers-heading">
+      <div class="section-heading">
+        <p class="eyebrow">Dossier observability</p>
+        <h2 id="dossiers-heading">Unresolved claims, corrections, and event evidence</h2>
+      </div>
+      <div id="dossier-list" class="dossier-grid"></div>
+    </section>
+
+    <section aria-labelledby="gaps-heading">
+      <div class="section-heading">
+        <p class="eyebrow">Operational research queue</p>
+        <h2 id="gaps-heading">Explicit gaps</h2>
+        <p>Each gap shows why it exists, the observed state, and the next permitted research or engineering action. No gap silently admits a new source.</p>
+      </div>
+      <div id="gap-list" class="gap-list"></div>
+    </section>
+
+    <section class="panel method-panel" aria-labelledby="method-heading">
+      <div class="panel-heading">
+        <p class="eyebrow">Method</p>
+        <h2 id="method-heading">What this observatory does not claim</h2>
+      </div>
+      <p>It does not rank publishers, infer political bias, calculate factual accuracy, blend news-source counts with evidence counts, or treat a reviewed directory as permission to collect. Unknowns remain unknown until attributable evidence changes the underlying contract.</p>
+    </section>
+
+    <div id="observatory-error" class="error-panel" hidden>
+      The observatory payload failed its integrity contract and has been withheld.
+    </div>
+  </main>
+  <script src="/shared/ecosystem-nav.js"></script>
+  <script src="/observatory/coverage/observatory.js"></script>
+</body>
+</html>
