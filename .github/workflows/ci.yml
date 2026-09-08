@@ -25,6 +25,7 @@ jobs:
           test -f index.html     || (echo "MISSING: index.html" && exit 1)
           test -f _headers       || (echo "MISSING: _headers" && exit 1)
           test -f dossiers/santa-ynez-pipeline/index.html || (echo "MISSING: Santa Ynez dossier" && exit 1)
+          test -f observatory/coverage/index.html || (echo "MISSING: Coverage & Evidence Observatory" && exit 1)
           echo "All required files present."
 
       - name: Verify GA4 tag present
@@ -46,6 +47,7 @@ jobs:
           node --check tools/stage-deploy.js
           node --check tools/deploy-pages.js
           node --check tools/verify-intelligence-prod.js
+          node --check tools/verify-observatory-prod.js
           node --check functions/api/deploy.js
           node --check functions/api/news/health.js
           node --check functions/api/news/coverage.js
@@ -54,6 +56,7 @@ jobs:
           node --check functions/api/intelligence/schema.js
           node --check functions/api/intelligence/evidence-schema.js
           node --check functions/api/intelligence/dossiers/santa-ynez-pipeline.js
+          node --check functions/api/intelligence/observatory/coverage.js
           node --check functions/lib/news-coverage.js
           node --check functions/lib/news-source-provenance.js
           node --check functions/lib/news-source-admission.js
@@ -63,16 +66,20 @@ jobs:
           node --check functions/lib/institutional-evidence-sources.js
           node --check functions/lib/dossier-integrity.js
           node --check functions/lib/santa-ynez-dossier.js
+          node --check functions/lib/coverage-evidence-observatory.js
           node --check dossiers/santa-ynez-pipeline/dossier.js
+          node --check observatory/coverage/observatory.js
           node --check shared/ecosystem-nav.js
           node --check playwright.config.js
           node --check tests/smoke.spec.js
+          node --check tests/observatory-smoke.spec.js
           node --check tests/news-source-admission.test.mjs
           node --check tests/news-source-admission-hardening.test.mjs
           node --check tests/news-admission-api.test.mjs
           node --check tests/intelligence-model.test.mjs
           node --check tests/claim-evidence-model.test.mjs
           node --check tests/santa-ynez-dossier.test.mjs
+          node --check tests/coverage-evidence-observatory.test.mjs
 
       - name: Lint JavaScript
         run: npm run lint

@@ -68,3 +68,6 @@ jobs:
 
             - name: Verify production intelligence APIs
               run: node tools/verify-intelligence-prod.js --base=https://globaldeets.com
+
+            - name: Verify production coverage observatory
+              run: node tools/verify-observatory-prod.js --base=https://globaldeets.com

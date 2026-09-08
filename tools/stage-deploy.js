@@ -29,9 +29,14 @@ const REQUIRED_DEPLOY_FILES = [
   'dossiers/santa-ynez-pipeline/index.html',
   'dossiers/santa-ynez-pipeline/dossier.js',
   'dossiers/dossier.css',
+  'observatory/coverage/index.html',
+  'observatory/coverage/observatory.js',
+  'observatory/coverage/observatory.css',
+  'functions/api/intelligence/observatory/coverage.js',
+  'functions/lib/coverage-evidence-observatory.js',
 ];
 
-const PUBLIC_DIRECTORIES = ['assets', 'data', 'dossiers', 'functions', 'shared'];
+const PUBLIC_DIRECTORIES = ['assets', 'data', 'dossiers', 'functions', 'observatory', 'shared'];
 
 const EXCLUDED_ROOT_JS = new Set([
   'build-assets.js',
@@ -113,7 +118,7 @@ function relativeParts(fullPath) {
 function assertCleanArtifact() {
   const missing = REQUIRED_DEPLOY_FILES.filter(name => !existsSync(join(OUT_DIR, name)));
   if (missing.length > 0) {
-    console.error('Refusing to deploy artifact missing required Pages controls or dossier assets:');
+    console.error('Refusing to deploy artifact missing required Pages controls or intelligence assets:');
     for (const file of missing) console.error(`- ${file}`);
     process.exit(1);
   }
