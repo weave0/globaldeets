@@ -3,6 +3,10 @@ import {
   readCachedSourceHealth,
   validateCoverageEvidenceObservatory,
 } from '../../../lib/coverage-evidence-observatory.js';
+import {
+  buildLocalReportingObservatory,
+  validateLocalReportingObservatory,
+} from '../../../lib/local-reporting-observatory.js';
 
 const ALLOWED_ORIGINS = new Set([
   'https://globaldeets.com',
@@ -31,7 +35,14 @@ export async function onRequestGet({ env, request }) {
   try {
     const healthSnapshot = await readCachedSourceHealth(env);
     const observatory = buildCoverageEvidenceObservatory({ healthSnapshot });
-    const integrity = validateCoverageEvidenceObservatory(observatory);
+    const baseIntegrity = validateCoverageEvidenceObservatory(observatory);
+    const localReporting = buildLocalReportingObservatory();
+    const localIntegrity = validateLocalReportingObservatory(localReporting);
+    const integrity = {
+      ...baseIntegrity,
+      localReporting: localIntegrity,
+      valid: baseIntegrity.valid && localIntegrity.valid,
+    };
 
     if (!integrity.valid) {
       return new Response(
@@ -49,6 +60,7 @@ export async function onRequestGet({ env, request }) {
       JSON.stringify({
         generatedAt: new Date().toISOString(),
         ...observatory,
+        localReporting,
         integrity,
       }),
       { headers: headers(request) }
