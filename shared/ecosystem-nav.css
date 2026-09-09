@@ -97,12 +97,38 @@
   padding: 0 !important;
 }
 
+/*
+ * Retire the previous decorative badge around the logo. That wrapper carried
+ * 0.9rem vertical padding, a 112px minimum width, a black radial canvas,
+ * border/glow chrome and two oversized pseudo-elements. The approved GD moon
+ * is self-contained and must render directly on the page with no backing tile.
+ */
 .gfd-ecosystem-nav ~ header .site-logo-link,
 .gfd-ecosystem-nav ~ header .logo-link {
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   flex: 0 0 auto;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
   margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  isolation: auto !important;
+}
+
+.gfd-ecosystem-nav ~ header .site-logo-link::before,
+.gfd-ecosystem-nav ~ header .site-logo-link::after,
+.gfd-ecosystem-nav ~ header .logo-link::before,
+.gfd-ecosystem-nav ~ header .logo-link::after {
+  content: none !important;
+  display: none !important;
 }
 
 .gfd-ecosystem-nav ~ header .site-logo-mark,
