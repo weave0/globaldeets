@@ -19,13 +19,23 @@ test('canonical GlobalDeets mark is a transparent square SVG with no raster or b
   assert.match(mark, /stroke="url\(#gd\)"/);
 });
 
-test('shared navigation forces legacy raster logo surfaces onto the canonical square mark', () => {
-  assert.match(navCss, /\.ecosystem-logo\s*\{[\s\S]*content:\s*url\('\.\.\/assets\/logo-mark\.svg'\)/);
-  assert.match(navCss, /\.site-logo-mark\s*\{[\s\S]*width:\s*84px\s*!important;[\s\S]*height:\s*84px\s*!important;/);
+test('shared navigation uses the canonical compact square mark', () => {
+  assert.ok(navCss.includes("content: url('../assets/logo-mark.svg')"));
+  assert.ok(navCss.includes('width: 44px !important'));
+  assert.ok(navCss.includes('height: 44px !important'));
   assert.match(navJs, /const canonicalMark = '\/assets\/logo-mark\.svg';/);
   for (const legacyName of ['logo-mark.png', 'logo-vector.png', 'logo-nav.png', 'logo-globe.png']) {
     assert.ok(navJs.includes(`'${legacyName}'`), `legacy logo migration missing ${legacyName}`);
   }
+});
+
+test('shared navigation stays compact and stacks product navigation below the ecosystem strip', () => {
+  assert.ok(navCss.includes('--gfd-ecosystem-nav-height: 46px'));
+  assert.ok(navCss.includes('top: var(--gfd-ecosystem-nav-height) !important'));
+  assert.ok(navCss.includes('gap: 0.5rem !important'));
+  assert.ok(navCss.includes('margin-top: 0 !important'));
+  assert.ok(navCss.includes('width: 42px !important'));
+  assert.ok(navCss.includes('width: min(720px, calc(100vw - 2rem))'));
 });
 
 test('web app manifest prefers the scalable transparent mark while retaining maskable fallbacks', () => {
