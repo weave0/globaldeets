@@ -32,7 +32,7 @@
       let pathname;
       try {
         pathname = new URL(image.src, window.location.href).pathname;
-      } catch (_error) {
+      } catch (_) {
         return;
       }
       const filename = pathname.split('/').pop();
@@ -163,7 +163,7 @@
           link.style.background = 'rgba(139, 92, 246, 0.12)';
           link.style.borderColor = 'rgba(139, 92, 246, 0.3)';
         }
-      } catch (_error) {
+      } catch (_) {
         // Invalid URL, skip
       }
     });
