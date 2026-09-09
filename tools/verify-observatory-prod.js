@@ -56,6 +56,7 @@ function requireCondition(condition, message) {
   requireCondition(observatory.observatoryId === 'coverage-evidence', 'observatory identity changed');
   requireCondition(typeof observatory.observatoryVersion === 'string', 'observatory version missing');
   requireCondition(observatory.integrity?.valid === true, 'observatory integrity failed');
+  requireCondition(observatory.integrity?.localReporting?.valid === true, 'local reporting integrity failed');
   requireCondition(observatory.rules?.truthScore === false, 'observatory truth score must remain disabled');
   requireCondition(observatory.rules?.editorialVerdict === false, 'observatory editorial verdict must remain disabled');
   requireCondition(observatory.rules?.compositeCoverageScore === false, 'composite coverage score must remain disabled');
@@ -88,6 +89,44 @@ function requireCondition(condition, message) {
   requireCondition(observatory.sourceRights?.reviewedLiveSources === reviewedLive, 'reviewed live source count drifted');
   requireCondition(observatory.sourceRights?.legacyUnreviewedSources === legacyUnreviewed, 'legacy review debt count drifted');
   requireCondition(legacyUnreviewed === 17, 'source-rights review debt baseline changed unexpectedly');
+  requireCondition(sources.totalSources === 21, 'GD-019 live source count changed');
+  requireCondition(reviewedLive === 4, 'GD-019 reviewed live source count changed');
+
+  const subnationalSources = sources.sources.filter(source => source.geographicScope === 'subnational');
+  const subnationalIds = subnationalSources.map(source => source.sourceId).sort();
+  const subnationalJurisdictions = subnationalSources.flatMap(source => source.jurisdictionIds || []).sort();
+  requireCondition(
+    JSON.stringify(subnationalIds) === JSON.stringify(['calmatters', 'minnesota-reformer']),
+    'canonical subnational source identities changed'
+  );
+  requireCondition(
+    JSON.stringify(subnationalJurisdictions) === JSON.stringify(['US-CA', 'US-MN']),
+    'canonical subnational jurisdiction identities changed'
+  );
+  requireCondition(coverage.subnationalReporting?.sourceCount === subnationalSources.length, 'coverage subnational source count disagrees with provenance');
+  requireCondition(coverage.subnationalReporting?.jurisdictionCount === 2, 'coverage subnational jurisdiction count changed');
+  requireCondition(
+    JSON.stringify(coverage.subnationalReporting?.jurisdictionIds || []) === JSON.stringify(['US-CA', 'US-MN']),
+    'coverage subnational jurisdiction IDs changed'
+  );
+  requireCondition(coverage.subnationalReporting?.operatorCount === 2, 'subnational operator diversity changed');
+  requireCondition(coverage.localityRules?.routingRegionIsGeographicScope === false, 'routing region became geographic scope');
+  requireCondition(coverage.localityRules?.publisherOriginIsEventLocality === false, 'publisher origin became event locality');
+  requireCondition(coverage.localityRules?.sourceScopeMakesEveryItemLocal === false, 'source scope became automatic item locality');
+  requireCondition(coverage.localityRules?.subnationalReportingIsPrimaryEvidence === false, 'local reporting became primary evidence');
+  requireCondition(coverage.localityRules?.localPublisherImpliesIndependentCorroboration === false, 'local publisher became automatic corroboration');
+
+  requireCondition(observatory.localReporting?.sourceCount === coverage.subnationalReporting?.sourceCount, 'observatory local source count disagrees with coverage');
+  requireCondition(observatory.localReporting?.jurisdictionCount === coverage.subnationalReporting?.jurisdictionCount, 'observatory locality jurisdiction count disagrees with coverage');
+  requireCondition(observatory.localReporting?.operatorCount === coverage.subnationalReporting?.operatorCount, 'observatory locality operator count disagrees with coverage');
+  requireCondition(observatory.localReporting?.rules?.routingRegionIsGeographicScope === false, 'observatory collapsed routing and local scope');
+  requireCondition(observatory.localReporting?.rules?.sourceScopeMakesEveryItemLocal === false, 'observatory inferred item locality from source scope');
+  requireCondition(observatory.localReporting?.rules?.observatoryIsAdmissionAuthority === false, 'observatory became local source admission authority');
+  requireCondition(observatory.localReporting?.rules?.automaticSourceWeighting === false, 'observatory introduced local source weighting');
+  const laist = observatory.localReporting?.researchCandidates?.find(candidate => candidate.candidateId === 'laist-local');
+  requireCondition(laist?.disposition === 'research', 'LAist research-only disposition changed');
+  requireCondition(laist?.itemLevelReviewRequired === true, 'LAist mixed-origin item review blocker disappeared');
+  requireCondition(!admission.liveAdmissions.some(entry => entry.sourceId === 'laist'), 'LAist silently entered production admission');
 
   requireCondition(
     observatory.institutionalEvidence?.reviewedSources === evidenceSchema.institutionalSources?.reviewedSources,
@@ -133,13 +172,19 @@ function requireCondition(condition, message) {
     observatory.gaps.every(gap => typeof gap.nextAction === 'string' && Array.isArray(gap.requires)),
     'one or more observatory gaps lack operational actions'
   );
+  requireCondition(
+    !coverage.gaps.some(gap => gap.id === 'geographic-scope:subnational'),
+    'obsolete zero-subnational coverage gap remains after GD-019'
+  );
 
   requireCondition(page.includes('data-observatory-id="coverage-evidence"'), 'observatory page identity marker missing');
   requireCondition(page.includes('Coverage &amp; Evidence Observatory'), 'observatory page shell missing');
   requireCondition(page.includes('News coverage ≠ evidence coverage'), 'observatory semantic separation label missing');
+  requireCondition(page.includes('Routing region ≠ local scope'), 'locality semantic separation label missing');
+  requireCondition(page.includes('Reviewed source scope without locality inference'), 'local reporting UI section missing');
 
   console.log(
-    `Coverage & Evidence Observatory certified: ${observatory.newsCoverage.totalSources} live news sources, ${legacyUnreviewed} rights reviews open, ${observatory.institutionalEvidence.reviewedSources} institutional candidates / ${observatory.institutionalEvidence.collectionEligibleSources} governed collection source, ${dossierSummary.unresolvedClaimCount} unresolved claims, ${observatory.gaps.length} explicit gaps`
+    `Coverage & Evidence Observatory certified: ${observatory.newsCoverage.totalSources} live news sources, ${legacyUnreviewed} rights reviews open, ${observatory.localReporting.sourceCount} subnational sources / ${observatory.localReporting.jurisdictionCount} jurisdictions, ${observatory.institutionalEvidence.reviewedSources} institutional candidates / ${observatory.institutionalEvidence.collectionEligibleSources} governed collection source, ${dossierSummary.unresolvedClaimCount} unresolved claims, ${observatory.gaps.length} explicit gaps`
   );
 })().catch(error => {
   console.error(`Coverage & Evidence Observatory verification failed: ${error.message}`);
