@@ -80,6 +80,20 @@ export const SOURCES = [
     region: 'americas',
     lang: 'en',
   },
+  // GD-019 governed subnational pilot. Routing remains "americas"; the actual
+  // geographic scope is carried separately by reviewed provenance metadata.
+  {
+    name: 'Minnesota Reformer',
+    url: 'https://minnesotareformer.com/feed/localFeed',
+    region: 'americas',
+    lang: 'en',
+  },
+  {
+    name: 'CalMatters',
+    url: 'https://calmatters.org/feed/',
+    region: 'americas',
+    lang: 'en',
+  },
 
   // ── Pacific ───────────────────────────────────────────────────────────────
   {
