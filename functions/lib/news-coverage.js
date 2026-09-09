@@ -9,6 +9,7 @@ export const COVERAGE_POLICY = Object.freeze({
   minimumSourcesPerRegion: 2,
   portfolioEnglishConcentrationThreshold: 0.8,
   minimumPrimarySourceInputs: 1,
+  minimumSubnationalJurisdictions: 2,
 });
 
 export function buildCoverageInventory(
@@ -35,6 +36,14 @@ export function buildCoverageInventory(
         geographicScope: metadata.geographicScope || 'unknown',
         primaryCountry: metadata.primaryCountry || null,
         locality: metadata.locality || 'unknown',
+        scopeType: metadata.scopeType || null,
+        jurisdictionScheme: metadata.jurisdictionScheme || null,
+        jurisdictionIds: Array.isArray(metadata.jurisdictionIds) ? [...metadata.jurisdictionIds] : [],
+        scopeBasis: metadata.scopeBasis || null,
+        scopeEvidenceUrls: Array.isArray(metadata.scopeEvidenceUrls)
+          ? [...metadata.scopeEvidenceUrls]
+          : [],
+        ownershipOperator: metadata.ownershipOperator || null,
         ownershipOperatorKnown: Boolean(metadata.ownershipOperator),
         admissionReviewState: admission.reviewState || 'missing',
         allowedUseStatus: admission.allowedUseStatus || 'missing',
@@ -62,6 +71,7 @@ export function buildCoverageInventory(
   const evidenceRoles = summarizeGroups(evidenceRoleGroups, 'evidenceRole');
   const geographicScopes = summarizeGroups(geographicScopeGroups, 'geographicScope');
   const sourceOriginCountries = summarizeGroups(countryGroups, 'country');
+  const subnationalReporting = summarizeSubnationalReporting(normalizedSources);
 
   const admission = buildAdmissionInventory(admissions, admissionValidation);
   const gaps = buildGapSignals(
@@ -69,7 +79,8 @@ export function buildCoverageInventory(
     regions,
     provenanceValidation,
     admissionValidation,
-    admission
+    admission,
+    subnationalReporting
   );
   const englishSources = normalizedSources.filter(source => source.lang === 'en').length;
   const primarySourceInputs = normalizedSources.filter(
@@ -86,6 +97,14 @@ export function buildCoverageInventory(
       .filter(source => source.lang !== 'en')
       .map(source => source.sourceId),
     primarySourceInputs,
+    localityRules: {
+      routingRegionIsGeographicScope: false,
+      publisherOriginIsEventLocality: false,
+      sourceScopeMakesEveryItemLocal: false,
+      subnationalReportingIsPrimaryEvidence: false,
+      localPublisherImpliesIndependentCorroboration: false,
+    },
+    subnationalReporting,
     provenance: {
       valid: provenanceValidation.valid,
       reviewedSources: provenance.length,
@@ -105,6 +124,32 @@ export function buildCoverageInventory(
     geographicScopes,
     sourceOriginCountries,
     gaps,
+  };
+}
+
+function summarizeSubnationalReporting(sources) {
+  const subnational = sources.filter(source => source.geographicScope === 'subnational');
+  const jurisdictionIds = unique(subnational.flatMap(source => source.jurisdictionIds));
+  const operators = unique(subnational.map(source => source.ownershipOperator).filter(Boolean));
+  return {
+    sourceCount: subnational.length,
+    sourceIds: subnational.map(source => source.sourceId).sort(),
+    jurisdictionCount: jurisdictionIds.length,
+    jurisdictionIds,
+    operatorCount: operators.length,
+    operators,
+    sources: subnational
+      .map(source => ({
+        sourceId: source.sourceId,
+        routingRegion: source.region,
+        primaryCountry: source.primaryCountry,
+        scopeType: source.scopeType,
+        jurisdictionScheme: source.jurisdictionScheme,
+        jurisdictionIds: [...source.jurisdictionIds],
+        scopeBasis: source.scopeBasis,
+        scopeEvidenceUrls: [...source.scopeEvidenceUrls],
+      }))
+      .sort((a, b) => a.sourceId.localeCompare(b.sourceId)),
   };
 }
 
@@ -133,7 +178,8 @@ function buildGapSignals(
   regions,
   provenanceValidation,
   admissionValidation,
-  admission
+  admission,
+  subnationalReporting
 ) {
   const gaps = [];
 
@@ -194,8 +240,7 @@ function buildGapSignals(
     });
   }
 
-  const subnationalSources = sources.filter(source => source.geographicScope === 'subnational').length;
-  if (subnationalSources === 0) {
+  if (subnationalReporting.sourceCount === 0) {
     gaps.push({
       id: 'geographic-scope:subnational',
       type: 'geographic-scope',
@@ -204,6 +249,18 @@ function buildGapSignals(
       observed: 0,
       target: 'measurable subnational/local coverage where strategically relevant',
       detail: 'No current source is classified as a subnational/local source, limiting visibility below national and regional narratives.',
+    });
+  }
+
+  if (subnationalReporting.jurisdictionCount < COVERAGE_POLICY.minimumSubnationalJurisdictions) {
+    gaps.push({
+      id: 'geographic-scope:subnational-jurisdictions',
+      type: 'geographic-scope',
+      severity: 'medium',
+      region: null,
+      observed: subnationalReporting.jurisdictionIds,
+      target: COVERAGE_POLICY.minimumSubnationalJurisdictions,
+      detail: 'The reviewed subnational source portfolio does not yet span the minimum number of explicit jurisdictions.',
     });
   }
 
@@ -280,4 +337,8 @@ function groupSources(sources, field) {
 
 function roundRatio(value) {
   return Math.round(value * 10000) / 10000;
+}
+
+function unique(values) {
+  return [...new Set(values)].sort();
 }
