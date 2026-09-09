@@ -4,6 +4,20 @@
 import { SOURCES, slugifySourceName } from '../api/news.js';
 
 export const PROVENANCE_REVIEW_DATE = '2026-09-03';
+export const SUBNATIONAL_SCOPE_TYPES = Object.freeze([
+  'local',
+  'metro',
+  'state-province',
+  'regional-subnational',
+]);
+export const SCOPE_BASES = Object.freeze([
+  'publisher-declared-reviewed',
+  'independently-reviewed',
+  'unknown',
+]);
+
+const SUBNATIONAL_SCOPE_TYPE_SET = new Set(SUBNATIONAL_SCOPE_TYPES);
+const SCOPE_BASIS_SET = new Set(SCOPE_BASES);
 
 export const SOURCE_PROVENANCE = Object.freeze([
   record({
@@ -199,6 +213,48 @@ export const SOURCE_PROVENANCE = Object.freeze([
     evidenceUrls: ['https://en.mercopress.com/about-mercopress'],
   }),
   record({
+    sourceId: 'minnesota-reformer',
+    name: 'Minnesota Reformer',
+    organizationName: 'Minnesota Reformer',
+    sourceClass: 'nonprofit-state-newsroom',
+    evidenceRole: 'reporting',
+    geographicScope: 'subnational',
+    primaryCountry: 'US',
+    locality: 'state-province',
+    ownershipOperator: 'States Newsroom',
+    evidenceUrls: [
+      'https://minnesotareformer.com/about/',
+      'https://statesnewsroom.com/rss-feeds/',
+    ],
+    scopeType: 'state-province',
+    jurisdictionIds: ['US-MN'],
+    jurisdictionScheme: 'ISO 3166-2',
+    scopeBasis: 'publisher-declared-reviewed',
+    scopeEvidenceUrls: ['https://minnesotareformer.com/about/'],
+    reviewedAt: '2026-09-08',
+  }),
+  record({
+    sourceId: 'calmatters',
+    name: 'CalMatters',
+    organizationName: 'CalMatters',
+    sourceClass: 'nonprofit-state-newsroom',
+    evidenceRole: 'reporting',
+    geographicScope: 'subnational',
+    primaryCountry: 'US',
+    locality: 'state-province',
+    ownershipOperator: 'CalMatters',
+    evidenceUrls: [
+      'https://calmatters.org/about/',
+      'https://calmatters.org/about/republish/',
+    ],
+    scopeType: 'state-province',
+    jurisdictionIds: ['US-CA'],
+    jurisdictionScheme: 'ISO 3166-2',
+    scopeBasis: 'publisher-declared-reviewed',
+    scopeEvidenceUrls: ['https://calmatters.org/about/'],
+    reviewedAt: '2026-09-08',
+  }),
+  record({
     sourceId: 'abc-australia',
     name: 'ABC Australia',
     organizationName: 'Australian Broadcasting Corporation',
@@ -272,12 +328,14 @@ function record(definition) {
   return Object.freeze({
     ...definition,
     sourceLanguages: source ? [source.lang] : [],
-    reviewedAt: PROVENANCE_REVIEW_DATE,
+    reviewedAt: definition.reviewedAt || PROVENANCE_REVIEW_DATE,
+    jurisdictionIds: Object.freeze([...(definition.jurisdictionIds || [])]),
+    scopeEvidenceUrls: Object.freeze([...(definition.scopeEvidenceUrls || [])]),
   });
 }
 
 function isValidEntry(entry, source) {
-  return Boolean(
+  const baseValid = Boolean(
     entry &&
       source &&
       entry.sourceId === slugifySourceName(source.name) &&
@@ -294,5 +352,20 @@ function isValidEntry(entry, source) {
       entry.evidenceUrls.length > 0 &&
       entry.evidenceUrls.every(url => /^https:\/\//.test(url)) &&
       entry.reviewedAt
+  );
+  if (!baseValid) return false;
+  if (entry.geographicScope !== 'subnational') return true;
+  return Boolean(
+    SUBNATIONAL_SCOPE_TYPE_SET.has(entry.scopeType) &&
+      entry.locality === entry.scopeType &&
+      entry.jurisdictionScheme === 'ISO 3166-2' &&
+      Array.isArray(entry.jurisdictionIds) &&
+      entry.jurisdictionIds.length > 0 &&
+      entry.jurisdictionIds.every(id => /^[A-Z]{2}-[A-Z0-9]{1,3}$/.test(id)) &&
+      SCOPE_BASIS_SET.has(entry.scopeBasis) &&
+      entry.scopeBasis !== 'unknown' &&
+      Array.isArray(entry.scopeEvidenceUrls) &&
+      entry.scopeEvidenceUrls.length > 0 &&
+      entry.scopeEvidenceUrls.every(url => /^https:\/\//.test(url))
   );
 }
