@@ -23,6 +23,7 @@
     if (!data || typeof data !== 'object') throw new Error('Observatory payload missing');
     if (data.observatoryId !== 'coverage-evidence') throw new Error('Observatory identity mismatch');
     if (data.integrity?.valid !== true) throw new Error('Observatory integrity invalid');
+    if (data.integrity?.localReporting?.valid !== true) throw new Error('Local reporting integrity invalid');
     if (
       data.rules?.truthScore !== false ||
       data.rules?.editorialVerdict !== false ||
@@ -33,8 +34,25 @@
     ) {
       throw new Error('Observatory semantic contract changed');
     }
-    for (const field of ['newsCoverage', 'sourceRights', 'institutionalEvidence', 'evidenceCoverage']) {
+    for (const field of [
+      'newsCoverage',
+      'sourceRights',
+      'institutionalEvidence',
+      'evidenceCoverage',
+      'localReporting',
+    ]) {
       if (!data[field] || typeof data[field] !== 'object') throw new Error(`${field} missing`);
+    }
+    if (
+      data.localReporting.rules?.routingRegionIsGeographicScope !== false ||
+      data.localReporting.rules?.publisherOriginIsEventLocality !== false ||
+      data.localReporting.rules?.sourceScopeMakesEveryItemLocal !== false ||
+      data.localReporting.rules?.localReportingIsPrimaryEvidence !== false ||
+      data.localReporting.rules?.localPublisherImpliesIndependentCorroboration !== false ||
+      data.localReporting.rules?.observatoryIsAdmissionAuthority !== false ||
+      data.localReporting.rules?.automaticSourceWeighting !== false
+    ) {
+      throw new Error('Local reporting semantic contract changed');
     }
     if (!Array.isArray(data.gaps)) throw new Error('Gap inventory missing');
   }
@@ -54,6 +72,8 @@
     renderInto('baseline-grid', [
       metric(data.newsCoverage.totalSources, 'Live news sources'),
       metric(data.newsCoverage.gapCount, 'News coverage gaps'),
+      metric(data.localReporting.sourceCount, 'Subnational reporting sources'),
+      metric(data.localReporting.jurisdictionCount, 'Reviewed subnational jurisdictions'),
       metric(data.sourceRights.legacyUnreviewedSources, 'Legacy rights reviews open'),
       metric(data.institutionalEvidence.reviewedSources, 'Institutional candidates reviewed'),
       metric(data.institutionalEvidence.collectionEligibleSources, 'Institutional sources collection-eligible'),
@@ -80,6 +100,28 @@
         record(titleCase(item.documentType), item.count, 'Canonical evidence document type')
       )
     );
+
+    const local = data.localReporting;
+    const localRecords = array(local.sources).map(source =>
+      record(
+        source.sourceId,
+        array(source.jurisdictionIds).join(', '),
+        `${titleCase(source.scopeType)} scope · routing: ${source.routingRegion} · ${titleCase(source.scopeBasis)}`
+      )
+    );
+    const blockedLocal = array(local.researchCandidates).map(candidate =>
+      record(
+        `${candidate.name} — research only`,
+        'Blocked',
+        candidate.blocker || 'Requires additional review before admission.'
+      )
+    );
+    renderInto('local-reporting-summary', [
+      record('Reviewed jurisdictions', local.jurisdictionCount, joinIds(local.jurisdictionIds)),
+      record('Distinct operators', local.operatorCount, joinIds(local.operators)),
+      ...localRecords,
+      ...blockedLocal,
+    ]);
 
     const rights = data.sourceRights;
     renderInto('rights-summary', [
@@ -205,6 +247,7 @@
       'baseline-grid',
       'region-list',
       'evidence-class-list',
+      'local-reporting-summary',
       'rights-summary',
       'institutional-summary',
       'dossier-list',
