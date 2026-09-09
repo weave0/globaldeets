@@ -51,18 +51,26 @@ const EXAMPLE_SOURCE = Object.freeze({
   lang: 'en',
 });
 
-test('all 19 live sources have exact admission records and explicit migration state', () => {
+test('21 live sources partition into 19 frozen legacy IDs and two reviewed GD-019 additions', () => {
   const validation = admission.validateSourceAdmissions();
   assert.equal(validation.valid, true);
-  assert.equal(news.SOURCES.length, 19);
-  assert.equal(admission.SOURCE_ADMISSIONS.length, 19);
+  assert.equal(news.SOURCES.length, 21);
+  assert.equal(admission.SOURCE_ADMISSIONS.length, 21);
   assert.equal(admission.LEGACY_SOURCE_IDS.length, 19);
-  assert.equal(new Set(admission.SOURCE_ADMISSIONS.map(entry => entry.sourceId)).size, 19);
-  assert.equal(admission.SOURCE_ADMISSIONS.every(entry => entry.legacy === true), true);
+  assert.equal(new Set(admission.SOURCE_ADMISSIONS.map(entry => entry.sourceId)).size, 21);
+
+  const newEntries = admission.SOURCE_ADMISSIONS.filter(entry => entry.legacy === false);
+  assert.deepEqual(newEntries.map(entry => entry.sourceId).sort(), ['calmatters', 'minnesota-reformer']);
+  assert.equal(newEntries.every(entry => admission.isProductionAdmissible(entry)), true);
   assert.equal(
     admission.SOURCE_ADMISSIONS.every(entry => ['legacy-unreviewed', 'reviewed'].includes(entry.reviewState)),
     true
   );
+  assert.equal(
+    admission.SOURCE_ADMISSIONS.filter(entry => entry.reviewState === 'legacy-unreviewed').length,
+    17
+  );
+
   const nhk = admission.SOURCE_ADMISSIONS.find(entry => entry.sourceId === 'nhk');
   assert.ok(nhk.currentUse.includes('translated-headline-summary'));
   assert.equal(nhk.excerptMaxChars, 280);
@@ -149,14 +157,17 @@ test('item-level restriction overrides broader source-level permission', () => {
 test('research candidates remain queryable but cannot become production by implication', () => {
   const rnz = admission.SOURCE_RESEARCH_CANDIDATES.find(entry => entry.candidateId === 'rnz-pacific');
   const brasil = admission.SOURCE_RESEARCH_CANDIDATES.find(entry => entry.candidateId === 'agencia-brasil');
+  const laist = admission.SOURCE_RESEARCH_CANDIDATES.find(entry => entry.candidateId === 'laist-local');
   assert.equal(rnz.disposition, 'research');
   assert.equal(rnz.allowedUseStatus, 'permission-required');
   assert.equal(brasil.disposition, 'research');
   assert.equal(brasil.allowedUseStatus, 'verified-public-use');
   assert.equal(brasil.itemLevelReviewRequired, true);
   assert.equal(brasil.syndicatedContentBehavior, 'mixed-rights-partner-content');
-  assert.equal(admission.SOURCE_RESEARCH_CANDIDATES.some(entry => entry.name === 'RNZ Pacific'), true);
-  assert.equal(admission.SOURCE_RESEARCH_CANDIDATES.some(entry => entry.name === 'Agencia Brasil'), true);
+  assert.equal(laist.disposition, 'research');
+  assert.equal(laist.allowedUseStatus, 'verified-public-use');
+  assert.equal(laist.itemLevelReviewRequired, true);
+  assert.equal(admission.SOURCE_ADMISSIONS.some(entry => entry.sourceId === 'laist'), false);
 });
 
 test('admission telemetry changes independently of the canonical news feed cache fingerprint', () => {
