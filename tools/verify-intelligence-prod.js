@@ -96,6 +96,56 @@ function requireCondition(condition, message) {
     'one or more live admissions lack explicit migration state'
   );
 
+  requireCondition(sources.totalSources === 21, 'GD-019 source count changed');
+  const minnesota = admission.liveAdmissions.find(entry => entry.sourceId === 'minnesota-reformer');
+  const calmatters = admission.liveAdmissions.find(entry => entry.sourceId === 'calmatters');
+  for (const [label, entry] of [
+    ['Minnesota Reformer', minnesota],
+    ['CalMatters', calmatters],
+  ]) {
+    requireCondition(Boolean(entry), `${label} admission missing`);
+    requireCondition(entry.legacy === false, `${label} was incorrectly marked legacy`);
+    requireCondition(entry.reviewState === 'reviewed', `${label} admission review state changed`);
+    requireCondition(entry.allowedUseStatus === 'verified-public-use', `${label} usage state changed`);
+    requireCondition(entry.endpointAuthority === 'first-party', `${label} endpoint authority changed`);
+    requireCondition(entry.healthVerificationStatus === 'verified', `${label} admission health review changed`);
+    requireCondition(entry.itemLevelReviewRequired === false, `${label} unexpectedly requires item-level gating`);
+  }
+  const laist = admission.researchCandidates.find(entry => entry.candidateId === 'laist-local');
+  requireCondition(laist?.disposition === 'research', 'LAist research-only disposition changed');
+  requireCondition(laist?.itemLevelReviewRequired === true, 'LAist mixed-origin item blocker disappeared');
+  requireCondition(!admission.liveAdmissions.some(entry => entry.sourceId === 'laist'), 'LAist silently entered live admission');
+
+  requireCondition(coverage.subnationalReporting?.sourceCount === 2, 'GD-019 subnational source count changed');
+  requireCondition(coverage.subnationalReporting?.jurisdictionCount === 2, 'GD-019 subnational jurisdiction count changed');
+  requireCondition(
+    JSON.stringify(coverage.subnationalReporting?.jurisdictionIds || []) === JSON.stringify(['US-CA', 'US-MN']),
+    'GD-019 jurisdiction identities changed'
+  );
+  requireCondition(coverage.subnationalReporting?.operatorCount === 2, 'GD-019 subnational operator diversity changed');
+  requireCondition(coverage.localityRules?.routingRegionIsGeographicScope === false, 'routing region became geographic scope');
+  requireCondition(coverage.localityRules?.publisherOriginIsEventLocality === false, 'publisher origin became event locality');
+  requireCondition(coverage.localityRules?.sourceScopeMakesEveryItemLocal === false, 'source scope became automatic item locality');
+  requireCondition(coverage.localityRules?.subnationalReportingIsPrimaryEvidence === false, 'subnational reporting became primary evidence');
+  requireCondition(coverage.localityRules?.localPublisherImpliesIndependentCorroboration === false, 'local publisher became automatic corroboration');
+  requireCondition(
+    !coverage.gaps.some(gap => gap.id === 'geographic-scope:subnational'),
+    'zero-subnational gap remained after admitted pilot'
+  );
+
+  // Force the canonical news path to initialize the current source-fingerprinted feed/health snapshot,
+  // then verify both newly admitted endpoints returned parsable stories rather than merely HTTP 200.
+  await fetchJson('/api/news?region=americas&limit=100');
+  const newsHealth = await fetchJson('/api/news/health');
+  requireCondition(newsHealth.sourceFingerprint === coverage.sourceFingerprint, 'news health fingerprint disagrees with coverage');
+  requireCondition(newsHealth.totalSources === 21, 'news health source count changed');
+  for (const sourceId of ['minnesota-reformer', 'calmatters']) {
+    const health = newsHealth.sourceHealth?.find(entry => entry.sourceId === sourceId);
+    requireCondition(Boolean(health), `${sourceId} production health record missing`);
+    requireCondition(health.lastError == null, `${sourceId} production feed is degraded: ${health.lastError}`);
+    requireCondition(Number.isInteger(health.storyCount) && health.storyCount > 0, `${sourceId} returned no parsable stories`);
+  }
+
   requireCondition(typeof schema.modelVersion === 'string', 'intelligence model version missing');
   requireCondition(Array.isArray(schema.entityTypes) && schema.entityTypes.includes('place'), 'place entity type missing');
   requireCondition(Array.isArray(schema.eventStatuses) && schema.eventStatuses.includes('disputed'), 'event status contract missing');
@@ -175,7 +225,7 @@ function requireCondition(condition, message) {
   );
 
   console.log(
-    `Intelligence APIs certified: ${sources.totalSources} news sources, ${coverage.gaps.length} coverage gaps, ${schema.placeSeed.count} place identities, ${evidenceSchema.institutionalSources.reviewedSources} institutional candidates / ${evidenceSchema.institutionalSources.collectionEligibleSources} governed collection source, acquisition ${acquisition.artifact.artifactId}, admission ${admission.admissionFingerprint}, models ${schema.modelVersion}/${evidenceSchema.modelVersion}, dossier ${dossier.dossierVersion}`
+    `Intelligence APIs certified: ${sources.totalSources} news sources, ${coverage.subnationalReporting.sourceCount} subnational sources / ${coverage.subnationalReporting.jurisdictionCount} jurisdictions, ${coverage.gaps.length} coverage gaps, ${schema.placeSeed.count} place identities, ${evidenceSchema.institutionalSources.reviewedSources} institutional candidates / ${evidenceSchema.institutionalSources.collectionEligibleSources} governed collection source, acquisition ${acquisition.artifact.artifactId}, admission ${admission.admissionFingerprint}, models ${schema.modelVersion}/${evidenceSchema.modelVersion}, dossier ${dossier.dossierVersion}`
   );
 })().catch(error => {
   console.error(`Intelligence API verification failed: ${error.message}`);

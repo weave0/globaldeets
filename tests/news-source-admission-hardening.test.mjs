@@ -94,6 +94,6 @@ test('malformed source and admission objects fail validation without throwing', 
     admission.SOURCE_ADMISSIONS
   );
   assert.equal(badSourceResult.valid, false);
-  assert.deepEqual(badSourceResult.invalidCanonicalSources, ['source-index:19', 'source-index:20']);
+  assert.deepEqual(badSourceResult.invalidCanonicalSources, ['source-index:21', 'source-index:22']);
   assert.equal(admission.isProductionAdmissible({ sourceId: 'broken' }), false);
 });

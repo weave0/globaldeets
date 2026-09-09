@@ -17,12 +17,12 @@ const fixture = {
     automaticRemediation: false,
   },
   newsCoverage: {
-    totalSources: 19,
+    totalSources: 21,
     totalRegions: 7,
     totalLanguages: 2,
-    englishSourceShare: 18 / 19,
+    englishSourceShare: 20 / 21,
     primarySourceInputs: 0,
-    gapCount: 11,
+    gapCount: 9,
     regions: [
       {
         region: 'pacific',
@@ -32,24 +32,82 @@ const fixture = {
         publisherCount: 1,
       },
       {
-        region: 'global',
+        region: 'americas',
         sourceCount: 4,
-        languageCount: 2,
-        sourceOriginCountryCount: 4,
+        languageCount: 1,
+        sourceOriginCountryCount: 2,
         publisherCount: 4,
+      },
+      {
+        region: 'global',
+        sourceCount: 3,
+        languageCount: 1,
+        sourceOriginCountryCount: 3,
+        publisherCount: 3,
       },
     ],
     sourceOriginCountries: [],
     sourceClasses: [],
     evidenceRoles: [],
-    geographicScopes: [],
+    geographicScopes: [{ geographicScope: 'subnational', sourceCount: 2, sourceIds: ['calmatters', 'minnesota-reformer'] }],
     provenance: { valid: true },
     admission: { valid: true },
   },
+  localReporting: {
+    version: '2026-09-08.1',
+    rules: {
+      routingRegionIsGeographicScope: false,
+      publisherOriginIsEventLocality: false,
+      sourceScopeMakesEveryItemLocal: false,
+      localReportingIsPrimaryEvidence: false,
+      localPublisherImpliesIndependentCorroboration: false,
+      observatoryIsAdmissionAuthority: false,
+      automaticSourceWeighting: false,
+    },
+    sourceCount: 2,
+    sourceIds: ['calmatters', 'minnesota-reformer'],
+    jurisdictionCount: 2,
+    jurisdictionIds: ['US-CA', 'US-MN'],
+    operatorCount: 2,
+    operators: ['CalMatters', 'States Newsroom'],
+    sources: [
+      {
+        sourceId: 'calmatters',
+        routingRegion: 'americas',
+        primaryCountry: 'US',
+        scopeType: 'state-province',
+        jurisdictionScheme: 'ISO 3166-2',
+        jurisdictionIds: ['US-CA'],
+        scopeBasis: 'publisher-declared-reviewed',
+        scopeEvidenceUrls: ['https://calmatters.org/about/'],
+      },
+      {
+        sourceId: 'minnesota-reformer',
+        routingRegion: 'americas',
+        primaryCountry: 'US',
+        scopeType: 'state-province',
+        jurisdictionScheme: 'ISO 3166-2',
+        jurisdictionIds: ['US-MN'],
+        scopeBasis: 'publisher-declared-reviewed',
+        scopeEvidenceUrls: ['https://minnesotareformer.com/about/'],
+      },
+    ],
+    researchCandidates: [
+      {
+        candidateId: 'laist-local',
+        name: 'LAist',
+        disposition: 'research',
+        endpointAuthority: 'first-party',
+        allowedUseStatus: 'verified-public-use',
+        itemLevelReviewRequired: true,
+        blocker: 'mixed-origin feed requires deterministic item-origin restriction handling',
+      },
+    ],
+  },
   sourceRights: {
-    totalLiveSources: 19,
-    reviewedLiveSources: 2,
-    reviewedLiveSourceIds: ['ap', 'guardian'],
+    totalLiveSources: 21,
+    reviewedLiveSources: 4,
+    reviewedLiveSourceIds: ['ap', 'calmatters', 'guardian', 'minnesota-reformer'],
     legacyUnreviewedSources: 17,
     legacyUnreviewedSourceIds: ['bbc-world', 'cna', 'dawn'],
     remediationSourceIds: ['ap', 'guardian'],
@@ -58,6 +116,12 @@ const fixture = {
       {
         candidateId: 'rnz-pacific',
         name: 'RNZ Pacific',
+        disposition: 'research',
+        collectionEligible: false,
+      },
+      {
+        candidateId: 'laist-local',
+        name: 'LAist',
         disposition: 'research',
         collectionEligible: false,
       },
@@ -129,7 +193,7 @@ const fixture = {
   operationalHealth: {
     status: 'unavailable',
     generatedAt: null,
-    totalSources: 19,
+    totalSources: 21,
     healthySources: null,
     degradedSources: null,
     degradedSourceIds: [],
@@ -160,7 +224,7 @@ const fixture = {
       requires: ['manual-review', 'code'],
     },
   ],
-  integrity: { valid: true },
+  integrity: { valid: true, localReporting: { valid: true, errors: [] } },
 };
 
 test.beforeEach(async ({ page }) => {
@@ -181,7 +245,12 @@ test('coverage observatory renders an integrity-valid decomposed intelligence su
   await expect(page.getByText('Integrity validated')).toBeVisible();
   await expect(page.getByText('Legacy rights reviews open')).toBeVisible();
   await expect(page.getByText('Institutional sources collection-eligible')).toBeVisible();
+  await expect(page.getByText('Subnational reporting sources')).toBeVisible();
+  await expect(page.getByText('Reviewed subnational jurisdictions')).toBeVisible();
+  await expect(page.getByText('US-CA · US-MN')).toBeVisible();
+  await expect(page.getByText('LAist — research only')).toBeVisible();
   await expect(page.getByText('News coverage ≠ evidence coverage')).toBeVisible();
+  await expect(page.getByText('Routing region ≠ local scope')).toBeVisible();
   await expect(page.locator('#dossier-list .dossier-card')).toHaveCount(1);
   await expect(page.locator('#gap-list .gap-card')).toHaveCount(2);
   await expect(page.locator('#observatory-error')).toBeHidden();
@@ -194,6 +263,7 @@ test.describe('coverage observatory mobile surface', () => {
     await page.goto('/observatory/coverage/');
     await expect(page.locator('body[data-observatory-ready="true"]')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Explicit gaps' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Reviewed source scope without locality inference' })).toBeVisible();
     const dimensions = await page.evaluate(() => ({
       scrollWidth: document.documentElement.scrollWidth,
       clientWidth: document.documentElement.clientWidth,

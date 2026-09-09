@@ -61,6 +61,7 @@ jobs:
           node --check functions/lib/news-coverage.js
           node --check functions/lib/news-source-provenance.js
           node --check functions/lib/news-source-admission.js
+          node --check functions/lib/local-reporting-observatory.js
           node --check functions/lib/intelligence-model.js
           node --check functions/lib/m49-place-seed.js
           node --check functions/lib/claim-evidence-model.js
@@ -83,6 +84,7 @@ jobs:
           node --check tests/institutional-evidence-acquisition.test.mjs
           node --check tests/santa-ynez-dossier.test.mjs
           node --check tests/coverage-evidence-observatory.test.mjs
+          node --check tests/local-reporting-observatory.test.mjs
 
       - name: Lint JavaScript
         run: npm run lint

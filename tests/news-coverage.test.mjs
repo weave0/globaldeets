@@ -18,26 +18,11 @@ mkdirSync(dirname(fixtureCoverageApi), { recursive: true });
 mkdirSync(dirname(fixtureCoverageLib), { recursive: true });
 writeFileSync(join(fixtureFunctions, 'package.json'), '{"type":"module"}\n');
 copyFileSync(fileURLToPath(new URL('../functions/api/news.js', import.meta.url)), fixtureNews);
-copyFileSync(
-  fileURLToPath(new URL('../functions/api/news/coverage.js', import.meta.url)),
-  fixtureCoverageApi
-);
-copyFileSync(
-  fileURLToPath(new URL('../functions/api/news/sources.js', import.meta.url)),
-  fixtureSourcesApi
-);
-copyFileSync(
-  fileURLToPath(new URL('../functions/lib/news-coverage.js', import.meta.url)),
-  fixtureCoverageLib
-);
-copyFileSync(
-  fileURLToPath(new URL('../functions/lib/news-source-provenance.js', import.meta.url)),
-  fixtureProvenanceLib
-);
-copyFileSync(
-  fileURLToPath(new URL('../functions/lib/news-source-admission.js', import.meta.url)),
-  fixtureAdmissionLib
-);
+copyFileSync(fileURLToPath(new URL('../functions/api/news/coverage.js', import.meta.url)), fixtureCoverageApi);
+copyFileSync(fileURLToPath(new URL('../functions/api/news/sources.js', import.meta.url)), fixtureSourcesApi);
+copyFileSync(fileURLToPath(new URL('../functions/lib/news-coverage.js', import.meta.url)), fixtureCoverageLib);
+copyFileSync(fileURLToPath(new URL('../functions/lib/news-source-provenance.js', import.meta.url)), fixtureProvenanceLib);
+copyFileSync(fileURLToPath(new URL('../functions/lib/news-source-admission.js', import.meta.url)), fixtureAdmissionLib);
 
 const newsModule = await import(pathToFileURL(fixtureNews).href);
 const provenanceModule = await import(pathToFileURL(fixtureProvenanceLib).href);
@@ -93,7 +78,7 @@ test('provenance registry maps exactly once to every canonical live source', () 
 
   assert.equal(validation.valid, true);
   assert.equal(SOURCE_PROVENANCE.length, SOURCES.length);
-  assert.equal(SOURCE_PROVENANCE.length, 19);
+  assert.equal(SOURCE_PROVENANCE.length, 21);
   assert.deepEqual(validation.duplicateIds, []);
   assert.deepEqual(validation.missingSourceIds, []);
   assert.deepEqual(validation.orphanSourceIds, []);
@@ -109,9 +94,13 @@ test('provenance registry maps exactly once to every canonical live source', () 
   assert.equal(cna.organizationName, 'CNA');
   assert.equal(cna.ownershipOperator, 'Mediacorp');
 
-  const dawn = SOURCE_PROVENANCE.find(entry => entry.sourceId === 'dawn');
-  assert.equal(dawn.organizationName, 'Dawn');
-  assert.equal(dawn.ownershipOperator, 'Pakistan Herald Publications Private Limited');
+  const minnesota = SOURCE_PROVENANCE.find(entry => entry.sourceId === 'minnesota-reformer');
+  assert.equal(minnesota.geographicScope, 'subnational');
+  assert.deepEqual(minnesota.jurisdictionIds, ['US-MN']);
+
+  const calmatters = SOURCE_PROVENANCE.find(entry => entry.sourceId === 'calmatters');
+  assert.equal(calmatters.geographicScope, 'subnational');
+  assert.deepEqual(calmatters.jurisdictionIds, ['US-CA']);
 });
 
 test('provenance validation rejects missing, orphaned, duplicate, drifted, and invalid records', () => {
@@ -164,30 +153,33 @@ test('coverage inventory is deterministic and enriched from reviewed provenance 
   );
 
   assert.deepEqual(first, second);
-  assert.equal(first.totalSources, 19);
+  assert.equal(first.totalSources, 21);
   assert.equal(first.totalRegions, 7);
   assert.equal(first.totalLanguages, 2);
   assert.equal(first.provenance.valid, true);
-  assert.equal(first.provenance.reviewedSources, 19);
+  assert.equal(first.provenance.reviewedSources, 21);
   assert.deepEqual(first.provenance.unknownOwnershipOperatorSourceIds, []);
   assert.equal(first.admission.valid, true);
-  assert.equal(first.admission.reviewedSources, 2);
+  assert.equal(first.admission.reviewedSources, 4);
   assert.equal(first.admission.legacyUnreviewedSources, 17);
   assert.deepEqual(first.admission.remediationSourceIds, ['ap', 'guardian']);
+  assert.equal(first.subnationalReporting.sourceCount, 2);
+  assert.deepEqual(first.subnationalReporting.jurisdictionIds, ['US-CA', 'US-MN']);
   assert.equal(first.nonEnglishSources.length, 1);
   assert.ok(first.nonEnglishSources.includes('nhk'));
   assert.ok(first.sourceClasses.some(group => group.sourceClass === 'news-agency'));
-  assert.ok(first.geographicScopes.some(group => group.geographicScope === 'national'));
+  assert.ok(first.geographicScopes.some(group => group.geographicScope === 'subnational'));
   assert.ok(first.sourceOriginCountries.some(group => group.country === 'UA'));
 });
 
-test('coverage inventory surfaces evidence, locality, language, and admission blind spots', () => {
+test('coverage inventory surfaces remaining evidence, language, regional, and admission blind spots without claiming no subnational inputs', () => {
   const inventory = buildCoverageInventory(SOURCES, SOURCE_PROVENANCE, SOURCE_ADMISSIONS);
   const gapIds = new Set(inventory.gaps.map(gap => gap.id));
 
   assert.equal(inventory.primarySourceInputs, 0);
   assert.ok(gapIds.has('evidence-role:primary-source-inputs'));
-  assert.ok(gapIds.has('geographic-scope:subnational'));
+  assert.equal(gapIds.has('geographic-scope:subnational'), false);
+  assert.equal(gapIds.has('geographic-scope:subnational-jurisdictions'), false);
   assert.ok(gapIds.has('regional-redundancy:pacific'));
   assert.ok(gapIds.has('portfolio-language-concentration:en'));
   assert.ok(gapIds.has('source-language-diversity:africa'));
@@ -199,7 +191,7 @@ test('coverage inventory surfaces evidence, locality, language, and admission bl
   assert.ok(gapIds.has('source-admission:remediation-required'));
 });
 
-test('coverage gap logic responds to stronger regional, language, primary-source, local, and admission diversity', () => {
+test('coverage gap logic responds to stronger regional, language, primary-source, subnational, and admission diversity', () => {
   const sample = [
     { name: 'A', url: 'https://a.example/rss', region: 'alpha', lang: 'en' },
     { name: 'B', url: 'https://b.example/rss', region: 'alpha', lang: 'fr' },
@@ -212,13 +204,22 @@ test('coverage gap logic responds to stronger regional, language, primary-source
     organizationName: `${source.name} Organization`,
     sourceClass: index === 0 ? 'institution' : 'newsroom',
     evidenceRole: index === 0 ? 'primary-source' : 'reporting',
-    geographicScope: index === 0 ? 'subnational' : 'national',
+    geographicScope: index < 2 ? 'subnational' : 'national',
     primaryCountry: ['AA', 'BB', 'CC', 'DD'][index],
-    locality: 'local',
+    locality: index < 2 ? 'state-province' : 'local',
     sourceLanguages: [source.lang],
     ownershipOperator: `${source.name} Organization`,
     evidenceUrls: [`https://${source.name.toLowerCase()}.example/about`],
     reviewedAt: '2026-09-03',
+    ...(index < 2
+      ? {
+          scopeType: 'state-province',
+          jurisdictionIds: [`AA-${index + 1}`],
+          jurisdictionScheme: 'ISO 3166-2',
+          scopeBasis: 'independently-reviewed',
+          scopeEvidenceUrls: [`https://${source.name.toLowerCase()}.example/scope`],
+        }
+      : {}),
   }));
   const sampleAdmissions = sample.map(reviewedAdmission);
   const inventory = buildCoverageInventory(sample, sampleProvenance, sampleAdmissions);
@@ -228,11 +229,12 @@ test('coverage gap logic responds to stronger regional, language, primary-source
   assert.equal(inventory.totalLanguages, 4);
   assert.equal(inventory.englishSourceShare, 0.25);
   assert.equal(inventory.primarySourceInputs, 1);
+  assert.equal(inventory.subnationalReporting.jurisdictionCount, 2);
   assert.equal(inventory.admission.valid, true);
   assert.equal(inventory.admission.legacyUnreviewedSources, 0);
 });
 
-test('/api/news/coverage exposes source fingerprint, provenance integrity, admission debt, and actionable inventory', async () => {
+test('/api/news/coverage exposes source fingerprint, provenance integrity, admission debt, and governed locality inventory', async () => {
   const response = await getCoverage({ request: request() });
   const json = await response.json();
 
@@ -241,10 +243,14 @@ test('/api/news/coverage exposes source fingerprint, provenance integrity, admis
   assert.equal(json.totalSources, SOURCES.length);
   assert.equal(json.totalRegions, 7);
   assert.equal(json.provenance.valid, true);
-  assert.equal(json.provenance.reviewedSources, 19);
+  assert.equal(json.provenance.reviewedSources, 21);
   assert.equal(json.admission.valid, true);
+  assert.equal(json.admission.reviewedSources, 4);
   assert.equal(json.admission.legacyUnreviewedSources, 17);
   assert.deepEqual(json.admission.remediationSourceIds, ['ap', 'guardian']);
+  assert.equal(json.subnationalReporting.sourceCount, 2);
+  assert.deepEqual(json.subnationalReporting.jurisdictionIds, ['US-CA', 'US-MN']);
+  assert.equal(json.localityRules.routingRegionIsGeographicScope, false);
   assert.ok(Array.isArray(json.sourceClasses));
   assert.ok(Array.isArray(json.evidenceRoles));
   assert.ok(Array.isArray(json.sourceOriginCountries));
@@ -253,7 +259,7 @@ test('/api/news/coverage exposes source fingerprint, provenance integrity, admis
   assert.match(json.generatedAt, /^\d{4}-\d{2}-\d{2}T/);
 });
 
-test('/api/news/sources exposes the reviewed provenance registry and its evidence links', async () => {
+test('/api/news/sources exposes the reviewed provenance registry and explicit subnational scope evidence', async () => {
   const response = await getSources({ request: request('/api/news/sources') });
   const json = await response.json();
 
@@ -261,7 +267,10 @@ test('/api/news/sources exposes the reviewed provenance registry and its evidenc
   assert.equal(json.sourceFingerprint, SOURCE_FINGERPRINT);
   assert.equal(json.validation.valid, true);
   assert.equal(json.totalSources, SOURCES.length);
-  assert.equal(json.sources.length, 19);
+  assert.equal(json.sources.length, 21);
   assert.ok(json.sources.every(source => source.organizationName));
   assert.ok(json.sources.every(source => source.evidenceUrls.every(url => url.startsWith('https://'))));
+  const subnational = json.sources.filter(source => source.geographicScope === 'subnational');
+  assert.equal(subnational.length, 2);
+  assert.deepEqual(subnational.flatMap(source => source.jurisdictionIds).sort(), ['US-CA', 'US-MN']);
 });

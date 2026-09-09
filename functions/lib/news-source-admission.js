@@ -4,6 +4,7 @@
 import { SOURCES, slugifySourceName } from '../api/news.js';
 
 export const ADMISSION_REVIEW_DATE = '2026-09-03';
+export const GD019_REVIEW_DATE = '2026-09-08';
 export const ALLOWED_USE_STATUSES = Object.freeze([
   'verified-public-use',
   'permission-required',
@@ -88,6 +89,41 @@ export const SOURCE_ADMISSIONS = Object.freeze([
   legacy('Dawn', 'https://www.dawn.com/feeds/home/'),
   legacy('NPR', 'https://feeds.npr.org/1004/rss.xml'),
   legacy('Mercopress', 'https://en.mercopress.com/rss/'),
+  reviewedNew('Minnesota Reformer', 'https://minnesotareformer.com/feed/localFeed', {
+    endpointEvidenceUrls: [
+      'https://minnesotareformer.com/feed/localFeed',
+      'https://statesnewsroom.com/rss-feeds/',
+      'https://minnesotareformer.com/about/',
+    ],
+    usagePolicyUrls: [
+      'https://statesnewsroom.com/rss-feeds/',
+      'https://minnesotareformer.com/about/',
+    ],
+    allowedUseStatus: 'verified-public-use',
+    permittedUse: currentUse(false),
+    syndicatedContentBehavior: 'republisher-local-feed-excludes-network-national-content',
+    itemLevelReviewRequired: false,
+    itemLevelStrategy: 'dedicated-local-feed',
+    reviewerNotes:
+      'States Newsroom explicitly documents state-site /feed/localFeed endpoints for republishers and says those feeds contain republishable state-newsroom stories while excluding D.C./National team content. Minnesota Reformer states its work is CC BY-NC-ND 4.0 with attribution/link conditions. GlobalDeets uses only headline/link, metadata and a bounded excerpt.',
+  }),
+  reviewedNew('CalMatters', 'https://calmatters.org/feed/', {
+    endpointEvidenceUrls: [
+      'https://calmatters.org/feed/',
+      'https://calmatters.org/about/republish/',
+    ],
+    usagePolicyUrls: [
+      'https://calmatters.org/about/republish/',
+      'https://calmatters.org/about/policies-and-standards/',
+    ],
+    allowedUseStatus: 'verified-public-use',
+    permittedUse: currentUse(false),
+    syndicatedContentBehavior: 'publisher-text-republishable-third-party-visuals-restricted',
+    itemLevelReviewRequired: false,
+    itemLevelStrategy: 'text-metadata-only-no-third-party-visual-use',
+    reviewerNotes:
+      'CalMatters publishes a first-party RSS endpoint and explicitly permits free article republication subject to attribution, canonical-link, editing and commercial-use conditions. GlobalDeets uses only headline/link, metadata and a bounded excerpt and does not ingest article imagery, avoiding the separately restricted wire/third-party visual lane.',
+  }),
   legacy('ABC Australia', 'https://www.abc.net.au/news/feed/51120/rss.xml'),
   legacy('Premium Times', 'https://www.premiumtimesng.com/feed/'),
   legacy('The East African', 'https://www.theeastafrican.co.ke/rss.xml'),
@@ -124,6 +160,24 @@ export const SOURCE_RESEARCH_CANDIDATES = Object.freeze([
     itemLevelReviewRequired: true,
     reviewerNotes:
       'Agencia Brasil publishes a journalistic reproduction policy, but partner-agency material can carry separate restrictions. Production admission requires a verified item-origin/restriction signal strategy first.',
+  }),
+  candidate({
+    candidateId: 'laist-local',
+    name: 'LAist',
+    endpointUrl: 'https://laist.com/rss/latest-news',
+    endpointType: 'rss',
+    endpointAuthority: 'first-party',
+    endpointEvidenceUrls: [
+      'https://laist.com/rss-feed',
+      'https://laist.com/rss/latest-news',
+    ],
+    usagePolicyUrls: ['https://laist.com/editorial-ethics-and-guidelines/republish'],
+    allowedUseStatus: 'verified-public-use',
+    disposition: 'research',
+    syndicatedContentBehavior: 'mixed-origin-partner-content',
+    itemLevelReviewRequired: true,
+    reviewerNotes:
+      'LAist is a strong metro-local candidate and permits republication of its original editorial content, but its current latest-stories feed visibly includes partner material while its republication policy excludes partner content. Keep research-only until a deterministic item-origin restriction signal or narrower authorized feed is proven.',
   }),
 ]);
 
@@ -345,6 +399,32 @@ function reviewedLegacy(name, endpointUrl, options) {
   });
 }
 
+function reviewedNew(name, endpointUrl, options) {
+  return admission({
+    sourceId: slugifySourceName(name),
+    name,
+    endpointUrl,
+    endpointType: 'rss',
+    endpointAuthority: 'first-party',
+    endpointEvidenceUrls: [endpointUrl],
+    authenticationRequirement: 'none-observed',
+    usagePolicyUrls: [],
+    allowedUseStatus: 'unknown',
+    currentUse: currentUse(false),
+    permittedUse: [],
+    excerptMaxChars: 280,
+    syndicatedContentBehavior: 'unknown',
+    itemLevelReviewRequired: true,
+    itemLevelStrategy: 'restrict-on-explicit-item-signal',
+    reviewState: 'reviewed',
+    reviewedAt: GD019_REVIEW_DATE,
+    reviewerNotes: 'Reviewed new source.',
+    healthVerificationStatus: 'verified',
+    legacy: false,
+    ...options,
+  });
+}
+
 function admission(definition = {}) {
   return Object.freeze({
     ...definition,
@@ -364,7 +444,7 @@ function candidate(definition) {
     permittedUse: Object.freeze([]),
     authenticationRequirement: definition.authenticationRequirement || 'unknown',
     healthVerificationStatus: 'research-only',
-    reviewedAt: ADMISSION_REVIEW_DATE,
+    reviewedAt: GD019_REVIEW_DATE,
     itemLevelReviewRequired: definition.itemLevelReviewRequired === true,
     syndicatedContentBehavior: definition.syndicatedContentBehavior || 'unknown',
   });
