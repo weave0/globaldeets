@@ -1,6 +1,7 @@
 /**
  * GFD Ecosystem Navigation Component JavaScript
- * Handles dropdown toggle, accessibility, keyboard navigation, and GlobalDeets evidence discovery.
+ * Handles dropdown toggle, accessibility, keyboard navigation, GlobalDeets evidence discovery,
+ * and canonical GlobalDeets brand-mark normalization.
  */
 
 (function () {
@@ -13,8 +14,39 @@
   }
 
   function initNavigation() {
+    initBrandMarks();
     initEvidenceDossierLink();
     initEcosystemNav();
+  }
+
+  function initBrandMarks() {
+    const canonicalMark = '/assets/logo-mark.svg';
+    const legacyLogoNames = new Set([
+      'logo-mark.png',
+      'logo-vector.png',
+      'logo-nav.png',
+      'logo-globe.png',
+    ]);
+
+    document.querySelectorAll('img').forEach(image => {
+      let pathname;
+      try {
+        pathname = new URL(image.src, window.location.href).pathname;
+      } catch (_) {
+        return;
+      }
+      const filename = pathname.split('/').pop();
+      if (!legacyLogoNames.has(filename)) return;
+      image.src = canonicalMark;
+      image.removeAttribute('width');
+      image.removeAttribute('height');
+      image.dataset.brandMark = 'gd-moon';
+    });
+
+    document.querySelectorAll('link[rel~="icon"]').forEach(link => {
+      link.href = canonicalMark;
+      link.type = 'image/svg+xml';
+    });
   }
 
   function initEvidenceDossierLink() {
@@ -131,7 +163,7 @@
           link.style.background = 'rgba(139, 92, 246, 0.12)';
           link.style.borderColor = 'rgba(139, 92, 246, 0.3)';
         }
-      } catch (e) {
+      } catch (_) {
         // Invalid URL, skip
       }
     });

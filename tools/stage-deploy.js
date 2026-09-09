@@ -26,6 +26,7 @@ const REQUIRED_DEPLOY_FILES = [
   '_headers',
   '_redirects',
   '_routes.json',
+  'assets/logo-mark.svg',
   'dossiers/santa-ynez-pipeline/index.html',
   'dossiers/santa-ynez-pipeline/dossier.js',
   'dossiers/dossier.css',
