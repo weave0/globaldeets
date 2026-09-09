@@ -33,7 +33,7 @@ test('shared navigation stays compact and stacks product navigation below the ec
   assert.ok(navCss.includes('--gfd-ecosystem-nav-height: 46px'));
   assert.ok(navCss.includes('top: var(--gfd-ecosystem-nav-height) !important'));
   assert.ok(navCss.includes('gap: 0.5rem !important'));
-  assert.ok(navCss.includes('margin-top: 0 !important'));
+  assert.ok(navCss.includes('margin: 0 !important'));
   assert.ok(navCss.includes('width: 42px !important'));
   assert.ok(navCss.includes('width: min(720px, calc(100vw - 2rem))'));
 });
