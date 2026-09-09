@@ -24,9 +24,9 @@ test('canonical coverage and evidence observatory validates and preserves semant
 
   assert.equal(observatory.observatoryId, COVERAGE_EVIDENCE_OBSERVATORY_ID);
   assert.equal(observatory.observatoryVersion, COVERAGE_EVIDENCE_OBSERVATORY_VERSION);
-  assert.equal(observatory.newsCoverage.totalSources, 19);
-  assert.equal(observatory.sourceRights.totalLiveSources, 19);
-  assert.equal(observatory.sourceRights.reviewedLiveSources, 2);
+  assert.equal(observatory.newsCoverage.totalSources, 21);
+  assert.equal(observatory.sourceRights.totalLiveSources, 21);
+  assert.equal(observatory.sourceRights.reviewedLiveSources, 4);
   assert.equal(observatory.sourceRights.legacyUnreviewedSources, 17);
   assert.equal(observatory.institutionalEvidence.reviewedSources, 10);
   assert.equal(observatory.institutionalEvidence.endpointReviewedSources, 1);
@@ -127,7 +127,7 @@ test('cached health is observational only and rejects stale source identities', 
   assert.ok(observatory.gaps.some(gap => gap.type === 'degraded-source-health'));
 });
 
-test('observatory API returns only integrity-valid payloads and supports CORS preflight', async () => {
+test('observatory API returns integrity-valid evidence and local-reporting payloads with no authority collapse', async () => {
   const request = new Request('https://globaldeets.com/api/intelligence/observatory/coverage', {
     headers: { Origin: 'https://globaldeets.com' },
   });
@@ -135,10 +135,17 @@ test('observatory API returns only integrity-valid payloads and supports CORS pr
   assert.equal(response.status, 200);
   const payload = await response.json();
   assert.equal(payload.integrity.valid, true);
+  assert.equal(payload.integrity.localReporting.valid, true);
   assert.equal(payload.observatoryId, COVERAGE_EVIDENCE_OBSERVATORY_ID);
   assert.equal(payload.rules.truthScore, false);
   assert.equal(payload.rules.newsCoverageIsEvidenceCoverage, false);
   assert.equal(payload.institutionalEvidence.collectionEligibleSources, 1);
+  assert.equal(payload.localReporting.sourceCount, 2);
+  assert.deepEqual(payload.localReporting.jurisdictionIds, ['US-CA', 'US-MN']);
+  assert.equal(payload.localReporting.rules.routingRegionIsGeographicScope, false);
+  assert.equal(payload.localReporting.rules.sourceScopeMakesEveryItemLocal, false);
+  assert.equal(payload.localReporting.rules.observatoryIsAdmissionAuthority, false);
+  assert.ok(payload.localReporting.researchCandidates.some(candidate => candidate.candidateId === 'laist-local'));
 
   const preflight = await onRequestOptions({ request });
   assert.equal(preflight.status, 204);
