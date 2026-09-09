@@ -40,10 +40,43 @@
   font-size: 0.9375rem;
 }
 
+/*
+ * GlobalDeets brand mark
+ *
+ * The old raster logo was a wide crop on a black canvas. That made the mark
+ * look clipped anywhere the layout expected a compact square. The canonical
+ * brand mark is now a transparent 1:1 SVG and this shared stylesheet forces
+ * legacy <img> references onto that asset until every old raster reference is
+ * retired. Keeping the mark inside an explicit square also makes browser,
+ * mobile and ecosystem-nav rendering deterministic.
+ */
 .ecosystem-logo {
+  content: url('../assets/logo-mark.svg');
   height: 28px;
-  width: auto;
-  filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.6)) drop-shadow(0 0 8px rgba(16, 185, 129, 0.3));
+  width: 28px;
+  max-width: 28px;
+  object-fit: contain;
+  display: block;
+  background: transparent;
+  filter: drop-shadow(0 0 6px rgba(0, 245, 255, 0.45))
+    drop-shadow(0 0 8px rgba(168, 85, 247, 0.35));
+}
+
+/* Primary GlobalDeets header mark is also normalized to a true square. */
+.site-logo-mark {
+  content: url('../assets/logo-mark.svg');
+  width: 84px !important;
+  height: 84px !important;
+  max-width: 84px;
+  object-fit: contain;
+  display: block;
+  background: transparent;
+}
+
+header.scrolled .site-logo-mark {
+  width: 54px !important;
+  height: 54px !important;
+  max-width: 54px;
 }
 
 .ecosystem-title {
@@ -232,7 +265,9 @@
   }
 
   .ecosystem-logo {
+    width: 24px;
     height: 24px;
+    max-width: 24px;
   }
 }
 
