@@ -31,26 +31,67 @@ const newsFixture = {
       published: '2026-05-25T09:15:00Z',
     },
   ],
-  sourceHealth: [
-    {
-      id: 'reuters',
-      name: 'Reuters',
-      url: 'https://www.reuters.com/world/',
-      region: 'global',
-      fetched: 1,
-      lastError: null,
-      stale: false,
-    },
-    {
-      id: 'bbc-world',
-      name: 'BBC World',
-      url: 'https://www.bbc.com/news/world',
-      region: 'europe',
-      fetched: 1,
-      lastError: null,
-      stale: false,
-    },
+};
+
+const coverageFixture = {
+  generatedAt: '2026-09-12T15:30:00.000Z',
+  sourceFingerprint: 'fixture-gd020',
+  totalSources: 21,
+  totalRegions: 7,
+  totalLanguages: 2,
+  englishSourceShare: 0.9524,
+  nonEnglishSources: ['nhk'],
+  primarySourceInputs: 0,
+  subnationalReporting: {
+    sourceCount: 2,
+    sourceIds: ['calmatters', 'minnesota-reformer'],
+    jurisdictionCount: 2,
+    jurisdictionIds: ['US-CA', 'US-MN'],
+  },
+  gaps: [
+    { id: 'portfolio-language-concentration:en', severity: 'high' },
+    { id: 'source-admission:legacy-review-backlog', severity: 'high' },
+    { id: 'source-admission:remediation-required', severity: 'high' },
   ],
+};
+
+const sourcesFixture = {
+  sourceFingerprint: 'fixture-gd020',
+  reviewedAt: '2026-09-08',
+  validation: { valid: true },
+  totalSources: 21,
+  sources: [
+    { sourceId: 'bbc-world', name: 'BBC World' },
+    { sourceId: 'ap', name: 'AP' },
+    { sourceId: 'guardian', name: 'Guardian' },
+    { sourceId: 'al-jazeera', name: 'Al Jazeera' },
+    { sourceId: 'anadolu-agency', name: 'Anadolu Agency' },
+    { sourceId: 'dw', name: 'DW' },
+    { sourceId: 'france-24', name: 'France 24' },
+    { sourceId: 'kyiv-independent', name: 'Kyiv Independent' },
+    { sourceId: 'ukrinform', name: 'Ukrinform' },
+    { sourceId: 'nhk', name: 'NHK' },
+    { sourceId: 'yonhap', name: 'Yonhap' },
+    { sourceId: 'the-hindu', name: 'The Hindu' },
+    { sourceId: 'cna', name: 'CNA' },
+    { sourceId: 'dawn', name: 'Dawn' },
+    { sourceId: 'npr', name: 'NPR' },
+    { sourceId: 'mercopress', name: 'Mercopress' },
+    { sourceId: 'minnesota-reformer', name: 'Minnesota Reformer' },
+    { sourceId: 'calmatters', name: 'CalMatters' },
+    { sourceId: 'abc-australia', name: 'ABC Australia' },
+    { sourceId: 'premium-times', name: 'Premium Times' },
+    { sourceId: 'the-east-african', name: 'The East African' },
+  ],
+};
+
+const healthFixture = {
+  generatedAt: new Date().toISOString(),
+  sourceFingerprint: 'fixture-gd020',
+  cacheAgeSeconds: 15,
+  healthySources: 20,
+  totalSources: 21,
+  sourceHealth: [],
 };
 
 const dossierFixture = {
@@ -171,22 +212,23 @@ const dossierFixture = {
   unknowns: ['The final appellate outcome remains unresolved.'],
 };
 
-test.beforeEach(async ({ page }) => {
-  await page.route('**/api/news**', async route => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(newsFixture),
-    });
-  });
+async function fulfillNewsApi(route) {
+  const url = new URL(route.request().url());
+  let fixture = newsFixture;
 
-  await page.route('https://globaldeets.com/api/news**', async route => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(newsFixture),
-    });
+  if (url.pathname === '/api/news/coverage') fixture = coverageFixture;
+  if (url.pathname === '/api/news/sources') fixture = sourcesFixture;
+  if (url.pathname === '/api/news/health') fixture = healthFixture;
+
+  await route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify(fixture),
   });
+}
+
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/news**', fulfillNewsApi);
 
   await page.route('**/api/intelligence/dossiers/santa-ynez-pipeline', async route => {
     await route.fulfill({
@@ -204,9 +246,22 @@ test('homepage loads the primary GlobalDeets surface', async ({ page }) => {
   await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible();
   await expect(page.locator('#globe-hero-container')).toBeVisible();
   await expect(page.getByRole('heading', { name: /The Earth,\s*Right Now\./i })).toBeVisible();
+  await expect(page.locator('.dm-stat').filter({ hasText: 'Live Sources' })).toContainText('21');
+  await expect(page.locator('.dm-stat').filter({ hasText: 'Regions' })).toContainText('7');
+  await expect(page.locator('.dm-stat').filter({ hasText: 'Local/State Sources' })).toContainText('2');
+  await expect(page.locator('.dm-stat').filter({ hasText: 'Open Coverage Gaps' })).toContainText('3');
+  await expect(page.getByRole('link', { name: 'Coverage & Evidence Observatory' })).toHaveAttribute(
+    'href',
+    '/observatory/coverage/'
+  );
+  await expect(page.getByRole('link', { name: 'Open Evidence Dossier' })).toHaveAttribute(
+    'href',
+    '/dossiers/santa-ynez-pipeline/'
+  );
+  await expect(page.getByText(/0 Paywalls/i)).toHaveCount(0);
 });
 
-test('news page renders feed and avoids the hard failure state', async ({ page }) => {
+test('news page renders feed and exposes live source transparency', async ({ page }) => {
   await page.goto('/news.html');
 
   await expect(page.getByRole('heading', { name: /World News Feed/i })).toBeVisible();
@@ -215,6 +270,41 @@ test('news page renders feed and avoids the hard failure state', async ({ page }
   await expect(page.locator('#news-grid .news-card')).toHaveCount(3);
   await expect(page.locator('.news-error')).toHaveCount(0);
   await expect(page.getByText(/Unable to load news feed/i)).toHaveCount(0);
+  await expect(page.locator('#news-source-count')).toHaveText('21 source endpoints in the live contract');
+  await expect(page.locator('#news-health-status')).toContainText('20/21 endpoints healthy');
+  await expect(page.locator('.news-status-bar').filter({ hasText: 'Sources:' })).toContainText(
+    'Minnesota Reformer'
+  );
+  await expect(page.locator('.news-status-bar').filter({ hasText: 'Sources:' })).toContainText(
+    'CalMatters'
+  );
+  await expect(page.getByRole('link', { name: 'Coverage & Evidence Observatory →' })).toHaveAttribute(
+    'href',
+    '/observatory/coverage/'
+  );
+});
+
+test('news trust endpoints fail open without taking down the feed', async ({ page }) => {
+  await page.unroute('**/api/news**');
+  await page.route('**/api/news**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/api/news/sources' || url.pathname === '/api/news/health') {
+      await route.fulfill({ status: 503, contentType: 'application/json', body: '{}' });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(newsFixture),
+    });
+  });
+
+  await page.goto('/news.html');
+
+  await expect(page.locator('#news-grid .news-card')).toHaveCount(3);
+  await expect(page.locator('#news-source-count')).toHaveText('Source inventory temporarily unavailable');
+  await expect(page.locator('#news-health-status')).toHaveText('Health snapshot temporarily unavailable');
+  await expect(page.locator('.news-error')).toHaveCount(0);
 });
 
 test('globe page loads with the canvas hero surface present', async ({ page }) => {
