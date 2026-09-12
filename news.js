@@ -1,6 +1,8 @@
 /**
  * GlobalDeets — News Feed Page Renderer
- * Fetches /api/news and renders region-filtered news cards
+ * Fetches /api/news and renders region-filtered news cards.
+ * Consumer trust signals are hydrated independently so observability failures
+ * never block the core source-linked news experience.
  */
 (function () {
   'use strict';
@@ -31,9 +33,11 @@
   // Init
   // -------------------------------------------------------------------------
   function init() {
+    prepareTrustSurface();
     renderTabs();
     bindSearch();
     loadNews(true);
+    hydrateTrustSurface();
 
     document.getElementById('load-more-btn')?.addEventListener('click', () => loadNews(false));
   }
@@ -47,6 +51,119 @@
       renderVisibleCards();
       updateStatus();
     });
+  }
+
+  // -------------------------------------------------------------------------
+  // Consumer trust / observability surface
+  // -------------------------------------------------------------------------
+  function prepareTrustSurface() {
+    const subtitle = document.querySelector('.news-page-subtitle');
+    if (subtitle) {
+      subtitle.textContent =
+        'Live source-linked headlines across seven routing regions. Original publisher links stay visible; freshness, provenance, and coverage gaps are inspectable.';
+    }
+
+    const tagline = document.querySelector('.logo .tagline');
+    if (tagline) tagline.textContent = 'World News · Source-Linked · Coverage Visible';
+
+    const sourceNote = document.querySelector('.news-sources-note');
+    if (sourceNote) sourceNote.textContent = 'Source inventory loading…';
+
+    if (!document.getElementById('news-trust-bar')) {
+      const tools = document.querySelector('.news-tools');
+      if (tools) {
+        const trustBar = document.createElement('div');
+        trustBar.id = 'news-trust-bar';
+        trustBar.className = 'news-status-bar';
+        trustBar.setAttribute('aria-label', 'Source coverage and freshness');
+
+        const sourceCount = document.createElement('span');
+        sourceCount.id = 'news-source-count';
+        sourceCount.textContent = 'Source contract loading…';
+
+        const health = document.createElement('span');
+        health.id = 'news-health-status';
+        health.setAttribute('aria-live', 'polite');
+        health.textContent = 'Health snapshot loading…';
+
+        const links = document.createElement('span');
+        links.className = 'news-sources-note';
+
+        const observatoryLink = document.createElement('a');
+        observatoryLink.href = '/observatory/coverage/';
+        observatoryLink.textContent = 'Coverage & Evidence Observatory →';
+
+        const separator = document.createTextNode(' · ');
+
+        const dossierLink = document.createElement('a');
+        dossierLink.href = '/dossiers/santa-ynez-pipeline/';
+        dossierLink.textContent = 'Evidence dossier';
+
+        links.append(observatoryLink, separator, dossierLink);
+        trustBar.append(sourceCount, health, links);
+        tools.insertAdjacentElement('afterend', trustBar);
+      }
+    }
+  }
+
+  async function fetchJson(path) {
+    const response = await fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
+    return response.json();
+  }
+
+  async function hydrateTrustSurface() {
+    const [sourcesResult, healthResult] = await Promise.allSettled([
+      fetchJson('/api/news/sources'),
+      fetchJson('/api/news/health'),
+    ]);
+
+    const sourceCount = document.getElementById('news-source-count');
+    const sourceNote = document.querySelector('.news-sources-note:not(#news-trust-bar .news-sources-note)');
+
+    if (sourcesResult.status === 'fulfilled') {
+      const sourceData = sourcesResult.value;
+      const sources = Array.isArray(sourceData.sources) ? sourceData.sources : [];
+      if (sourceCount) {
+        sourceCount.textContent = `${sourceData.totalSources ?? sources.length} source endpoints in the live contract`;
+      }
+      if (sourceNote) {
+        const names = sources.map(source => source.name).filter(Boolean);
+        sourceNote.textContent = names.length
+          ? `Sources: ${names.join(' · ')}`
+          : 'Source inventory is available in the Coverage & Evidence Observatory.';
+      }
+    } else {
+      if (sourceCount) sourceCount.textContent = 'Source inventory temporarily unavailable';
+      if (sourceNote) {
+        sourceNote.textContent = 'Source inventory is available in the Coverage & Evidence Observatory.';
+      }
+      console.warn('GlobalDeets source inventory unavailable:', sourcesResult.reason);
+    }
+
+    const healthNode = document.getElementById('news-health-status');
+    if (healthResult.status === 'fulfilled') {
+      const health = healthResult.value;
+      if (healthNode) {
+        const healthy = Number.isFinite(health.healthySources) ? health.healthySources : '—';
+        const total = Number.isFinite(health.totalSources) ? health.totalSources : '—';
+        healthNode.textContent = `${healthy}/${total} endpoints healthy · checked ${formatSnapshotTime(health.generatedAt)}`;
+      }
+    } else {
+      if (healthNode) healthNode.textContent = 'Health snapshot temporarily unavailable';
+      console.warn('GlobalDeets health snapshot unavailable:', healthResult.reason);
+    }
+  }
+
+  function formatSnapshotTime(iso) {
+    if (!iso) return 'time unavailable';
+    const date = new Date(iso);
+    const ageMs = Date.now() - date.getTime();
+    if (Number.isNaN(ageMs)) return 'time unavailable';
+    if (ageMs < 60_000) return 'just now';
+    if (ageMs < 3_600_000) return `${Math.max(1, Math.round(ageMs / 60_000))}m ago`;
+    if (ageMs < 86_400_000) return `${Math.round(ageMs / 3_600_000)}h ago`;
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
   // -------------------------------------------------------------------------
@@ -89,7 +206,6 @@
 
     const grid = document.getElementById('news-grid');
     const loadBtn = document.getElementById('load-more-btn');
-    const status = document.getElementById('news-status');
 
     if (reset && grid) {
       grid.innerHTML = '<div class="news-skeleton"></div>'.repeat(6);
