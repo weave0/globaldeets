@@ -1,13 +1,14 @@
 // Cloudflare Pages Functions Middleware
-// Applies security headers to all responses
+// Applies security headers to API/payment responses routed through Functions.
+// Static pages are governed separately by the root `_headers` policy.
 
 const BASE_SECURITY_HEADERS = {
   'Content-Security-Policy':
-    "default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https: blob:; connect-src 'self' https:; font-src 'self' data: https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+    "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
   'X-Frame-Options': 'DENY',
   'X-Content-Type-Options': 'nosniff',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Referrer-Policy': 'no-referrer',
   'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
 };
 
