@@ -32,13 +32,25 @@ test('/api/news/admission exposes live review debt, governed new sources, resear
   assert.match(json.admissionFingerprint, /^[0-9a-f]{8}$/);
   assert.equal(json.validation.valid, true);
   assert.equal(json.summary.totalLiveSources, 21);
-  assert.equal(json.summary.reviewedSources, 4);
-  assert.equal(json.summary.legacyUnreviewedSources, 17);
-  assert.deepEqual(json.summary.remediationSourceIds, ['ap', 'guardian']);
+  assert.equal(json.summary.reviewedSources, 13);
+  assert.equal(json.summary.legacyUnreviewedSources, 8);
+  assert.deepEqual(json.summary.remediationSourceIds, [
+    'abc-australia',
+    'ap',
+    'bbc-world',
+    'cna',
+    'dawn',
+    'dw',
+    'guardian',
+    'premium-times',
+    'the-east-african',
+    'ukrinform',
+  ]);
   assert.equal(json.liveAdmissions.length, 21);
   assert.equal(json.researchCandidates.length, 3);
   assert.ok(json.liveAdmissions.some(entry => entry.sourceId === 'minnesota-reformer' && entry.legacy === false));
   assert.ok(json.liveAdmissions.some(entry => entry.sourceId === 'calmatters' && entry.legacy === false));
+  assert.ok(json.liveAdmissions.some(entry => entry.sourceId === 'mercopress' && entry.allowedUseStatus === 'verified-public-use'));
   assert.ok(json.researchCandidates.some(entry => entry.candidateId === 'laist-local' && entry.itemLevelReviewRequired === true));
   assert.equal(json.rules.newSourcesRequireReviewedAdmission, true);
   assert.equal(json.rules.itemRestrictionsOverrideSourcePermission, true);
