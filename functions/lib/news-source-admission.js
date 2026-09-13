@@ -55,7 +55,16 @@ export const LEGACY_SOURCE_IDS = Object.freeze([
 ].sort());
 
 export const SOURCE_ADMISSIONS = Object.freeze([
-  legacy('BBC World', 'https://feeds.bbci.co.uk/news/world/rss.xml'),
+  reviewedLegacy('BBC World', 'https://feeds.bbci.co.uk/news/world/rss.xml', {
+    usagePolicyUrls: [
+      'https://downloads.bbc.co.uk/usingthebbc/bbc_terms_of_use_19September2022english.pdf',
+      'https://information-syndication.api.bbc.com/',
+    ],
+    allowedUseStatus: 'permission-required',
+    reviewedAt: '2026-09-13',
+    reviewerNotes:
+      'BBC terms distinguish personal/public feed use from business use and state that business RSS use requires permission and may involve a fee. Keep public GlobalDeets use headline-link only unless an authorized syndication path is established.',
+  }),
   reviewedLegacy('AP', 'https://rsshub.app/apnews/topics/world-news', {
     endpointAuthority: 'unverified-third-party',
     endpointEvidenceUrls: ['https://api.ap.org/media/v/docs/Getting_Started_API.htm'],
@@ -78,17 +87,44 @@ export const SOURCE_ADMISSIONS = Object.freeze([
   }),
   legacy('Al Jazeera', 'https://www.aljazeera.com/xml/rss/all.xml'),
   legacy('Anadolu Agency', 'https://aa.com.tr/en/rss/default?cat=world'),
-  legacy('DW', 'https://rss.dw.com/xml/rss-en-world'),
+  reviewedLegacy('DW', 'https://rss.dw.com/xml/rss-en-world', {
+    usagePolicyUrls: [
+      'https://www.dw.com/en/news-from-germany/a-65919184',
+      'https://b2b.dw.com/page/dw-terms-conditions',
+      'https://www.dw.com/downloads/35915853/contentbox_english.pdf',
+    ],
+    allowedUseStatus: 'permission-required',
+    reviewedAt: '2026-09-13',
+    reviewerNotes:
+      'DW offers content integration to professional partners but directs reuse through contact/customized-feed and distribution terms. Keep GlobalDeets headline-link only pending authorization.',
+  }),
   legacy('France 24', 'https://www.france24.com/en/rss'),
   legacy('Kyiv Independent', 'https://kyivindependent.com/news-archive/rss/'),
-  legacy('Ukrinform', 'https://www.ukrinform.net/rss/block-lastnews'),
+  reviewedLegacy('Ukrinform', 'https://www.ukrinform.net/rss/block-lastnews', {
+    usagePolicyUrls: ['https://www.ukrinform.net/info/subscribe_conditions.html'],
+    allowedUseStatus: 'contract-required',
+    reviewedAt: '2026-09-13',
+    syndicatedContentBehavior: 'subscription-newswire',
+    reviewerNotes:
+      'Ukrinform documents paid/subscription newswire products, including English-language service. Public RSS availability does not establish excerpt republication rights; keep headline-link only pending an authorized reuse path.',
+  }),
   legacy('NHK', 'https://www3.nhk.or.jp/rss/news/cat0.xml', { translated: true }),
   legacy('Yonhap', 'https://en.yna.co.kr/RSS/news.xml'),
   legacy('The Hindu', 'https://www.thehindu.com/news/international/feeder/default.rss'),
   legacy('CNA', 'https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=6311'),
   legacy('Dawn', 'https://www.dawn.com/feeds/home/'),
   legacy('NPR', 'https://feeds.npr.org/1004/rss.xml'),
-  legacy('Mercopress', 'https://en.mercopress.com/rss/'),
+  reviewedLegacy('Mercopress', 'https://en.mercopress.com/rss/', {
+    endpointEvidenceUrls: ['https://en.mercopress.com/rss/', 'https://en.mercopress.com/feeds'],
+    usagePolicyUrls: ['https://en.mercopress.com/feeds'],
+    allowedUseStatus: 'verified-public-use',
+    permittedUse: currentUse(false),
+    itemLevelReviewRequired: false,
+    itemLevelStrategy: 'preserve-source-and-original-link',
+    reviewedAt: '2026-09-13',
+    reviewerNotes:
+      'MercoPress explicitly welcomes webmasters including its news updates on their sites with the original article link preserved. GlobalDeets may use headline/link, metadata and a bounded RSS excerpt; this finding does not authorize full-article republication.',
+  }),
   reviewedNew('Minnesota Reformer', 'https://minnesotareformer.com/feed/localFeed', {
     endpointEvidenceUrls: [
       'https://minnesotareformer.com/feed/localFeed',
@@ -125,7 +161,13 @@ export const SOURCE_ADMISSIONS = Object.freeze([
       'CalMatters publishes a first-party RSS endpoint and explicitly permits free article republication subject to attribution, canonical-link, editing and commercial-use conditions. GlobalDeets uses only headline/link, metadata and a bounded excerpt and does not ingest article imagery, avoiding the separately restricted wire/third-party visual lane.',
   }),
   legacy('ABC Australia', 'https://www.abc.net.au/news/feed/51120/rss.xml'),
-  legacy('Premium Times', 'https://www.premiumtimesng.com/feed/'),
+  reviewedLegacy('Premium Times', 'https://www.premiumtimesng.com/feed/', {
+    usagePolicyUrls: ['https://www.premiumtimesng.com/terms-and-conditions'],
+    allowedUseStatus: 'permission-required',
+    reviewedAt: '2026-09-13',
+    reviewerNotes:
+      'Premium Times states site content is for personal, non-commercial use and prohibits reproduction, distribution or republication without prior written consent. Keep GlobalDeets headline-link only pending permission.',
+  }),
   legacy('The East African', 'https://www.theeastafrican.co.ke/rss.xml'),
 ]);
 
