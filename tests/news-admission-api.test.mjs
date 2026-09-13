@@ -19,7 +19,7 @@ for (const [source, target] of files) copyFileSync(fileURLToPath(new URL(source,
 const news = await import(pathToFileURL(join(functions, 'api', 'news.js')).href);
 const api = await import(pathToFileURL(join(functions, 'api', 'news', 'admission.js')).href);
 
-test('/api/news/admission exposes live review debt, governed new sources, research candidates, and fail-closed rules', async () => {
+test('/api/news/admission exposes fully reviewed live sources without hiding unresolved rights', async () => {
   const response = await api.onRequestGet({
     request: new Request('https://globaldeets.com/api/news/admission', {
       headers: { Origin: 'https://globaldeets.com' },
@@ -32,25 +32,31 @@ test('/api/news/admission exposes live review debt, governed new sources, resear
   assert.match(json.admissionFingerprint, /^[0-9a-f]{8}$/);
   assert.equal(json.validation.valid, true);
   assert.equal(json.summary.totalLiveSources, 21);
-  assert.equal(json.summary.reviewedSources, 13);
-  assert.equal(json.summary.legacyUnreviewedSources, 8);
+  assert.equal(json.summary.reviewedSources, 21);
+  assert.equal(json.summary.legacyUnreviewedSources, 0);
   assert.deepEqual(json.summary.remediationSourceIds, [
     'abc-australia',
+    'al-jazeera',
+    'anadolu-agency',
     'ap',
     'bbc-world',
     'cna',
     'dawn',
     'dw',
+    'france-24',
     'guardian',
+    'kyiv-independent',
     'premium-times',
     'the-east-african',
     'ukrinform',
+    'yonhap',
   ]);
+  assert.deepEqual(json.summary.unknownRightsSourceIds, ['nhk', 'npr', 'the-hindu']);
   assert.equal(json.liveAdmissions.length, 21);
   assert.equal(json.researchCandidates.length, 3);
-  assert.ok(json.liveAdmissions.some(entry => entry.sourceId === 'minnesota-reformer' && entry.legacy === false));
-  assert.ok(json.liveAdmissions.some(entry => entry.sourceId === 'calmatters' && entry.legacy === false));
+  assert.ok(json.liveAdmissions.every(entry => entry.reviewState === 'reviewed'));
   assert.ok(json.liveAdmissions.some(entry => entry.sourceId === 'mercopress' && entry.allowedUseStatus === 'verified-public-use'));
+  assert.ok(json.liveAdmissions.some(entry => entry.sourceId === 'nhk' && entry.allowedUseStatus === 'unknown'));
   assert.ok(json.researchCandidates.some(entry => entry.candidateId === 'laist-local' && entry.itemLevelReviewRequired === true));
   assert.equal(json.rules.newSourcesRequireReviewedAdmission, true);
   assert.equal(json.rules.itemRestrictionsOverrideSourcePermission, true);
