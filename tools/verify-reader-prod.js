@@ -10,12 +10,15 @@ function requireCondition(condition, message) {
 async function verifyHomepage(page) {
   await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
 
-  const liveSources = page.locator('.dm-stat').filter({ hasText: 'Live Sources' }).locator('.dm-stat-value');
+  const liveSources = page
+    .locator('.dm-stat')
+    .filter({ hasText: 'Live Source Endpoints' })
+    .locator('.dm-stat-value');
   await liveSources.waitFor({ state: 'visible', timeout: 20_000 });
   await page.waitForFunction(
     () => {
       const stat = [...document.querySelectorAll('.dm-stat')].find(node =>
-        node.querySelector('.dm-stat-label')?.textContent.trim() === 'Live Sources'
+        node.querySelector('.dm-stat-label')?.textContent.trim() === 'Live Source Endpoints'
       );
       return stat?.querySelector('.dm-stat-value')?.textContent.trim() === '21';
     },
@@ -23,7 +26,10 @@ async function verifyHomepage(page) {
     { timeout: 20_000 }
   );
 
-  requireCondition((await liveSources.textContent())?.trim() === '21', 'homepage did not render 21 live sources');
+  requireCondition(
+    (await liveSources.textContent())?.trim() === '21',
+    'homepage did not render 21 live source endpoints'
+  );
 
   const observatoryLink = page.locator('a[href="/observatory/coverage/"]');
   requireCondition((await observatoryLink.count()) > 0, 'homepage coverage observatory link missing');
@@ -66,8 +72,14 @@ async function verifyServiceWorker(page) {
   requireCondition(response.ok(), `service worker returned HTTP ${response.status()}`);
   const body = await response.text();
   requireCondition(body.includes("globaldeets-cache-v3"), 'production service worker cache version is stale');
-  requireCondition(body.includes('self.skipWaiting()'), 'production service worker does not activate the new shell promptly');
-  requireCondition(body.includes('self.clients.claim()'), 'production service worker does not claim existing clients');
+  requireCondition(
+    body.includes('self.skipWaiting()'),
+    'production service worker does not activate the new shell promptly'
+  );
+  requireCondition(
+    body.includes('self.clients.claim()'),
+    'production service worker does not claim existing clients'
+  );
 }
 
 (async () => {
@@ -79,7 +91,9 @@ async function verifyServiceWorker(page) {
     await verifyHomepage(page);
     await verifyNews(page);
     await verifyServiceWorker(page);
-    console.log('Production reader verification passed: rendered homepage, news evidence bridge, and PWA shell are current.');
+    console.log(
+      'Production reader verification passed: rendered homepage, news evidence bridge, and PWA shell are current.'
+    );
   } finally {
     await browser.close();
   }
