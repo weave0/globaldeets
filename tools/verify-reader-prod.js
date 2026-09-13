@@ -36,12 +36,26 @@ async function verifyHomepage(page) {
 }
 
 async function verifyNews(page) {
+  const rawResponse = await page.request.get(`${BASE}/news.html`);
+  requireCondition(rawResponse.ok(), `news document returned HTTP ${rawResponse.status()}`);
+  const rawHtml = await rawResponse.text();
+  requireCondition(
+    rawHtml.includes('21 governed source endpoints'),
+    'raw news HTML does not describe the 21-source governed portfolio'
+  );
+  requireCondition(
+    rawHtml.includes('Minnesota Reformer') && rawHtml.includes('CalMatters'),
+    'raw news HTML fallback source list is missing admitted subnational sources'
+  );
+
   await page.goto(`${BASE}/news.html`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
 
   const subtitle = (await page.locator('.news-page-subtitle').textContent()) || '';
   requireCondition(
-    subtitle.includes('21 governed source endpoints'),
-    'news static reader copy does not describe the 21-source governed portfolio'
+    subtitle.includes('Live source-linked headlines across seven routing regions') &&
+      subtitle.includes('source provenance') &&
+      subtitle.includes('coverage gaps'),
+    'hydrated news reader subtitle did not render the governed source-context contract'
   );
 
   await page.locator('#news-grid .news-card').first().waitFor({ state: 'visible', timeout: 30_000 });
@@ -92,7 +106,7 @@ async function verifyServiceWorker(page) {
     await verifyNews(page);
     await verifyServiceWorker(page);
     console.log(
-      'Production reader verification passed: rendered homepage, news evidence bridge, and PWA shell are current.'
+      'Production reader verification passed: raw news HTML, rendered homepage, hydrated news evidence bridge, and PWA shell are current.'
     );
   } finally {
     await browser.close();
