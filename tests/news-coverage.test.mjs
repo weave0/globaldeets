@@ -154,7 +154,7 @@ test('provenance validation rejects missing, orphaned, duplicate, drifted, and i
     ...base.slice(1),
   ]);
   assert.equal(languageDrift.valid, false);
-  assert.ok(invalid.invalidEntries.includes(targetId));
+  assert.ok(languageDrift.invalidEntries.includes(targetId));
 });
 
 test('coverage inventory is deterministic and enriched from reviewed provenance and admission state', () => {
