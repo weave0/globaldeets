@@ -68,12 +68,64 @@ test('21 live sources partition into 19 frozen legacy IDs and two reviewed GD-01
   );
   assert.equal(
     admission.SOURCE_ADMISSIONS.filter(entry => entry.reviewState === 'legacy-unreviewed').length,
-    17
+    12
   );
 
   const nhk = admission.SOURCE_ADMISSIONS.find(entry => entry.sourceId === 'nhk');
   assert.ok(nhk.currentUse.includes('translated-headline-summary'));
   assert.equal(nhk.excerptMaxChars, 280);
+});
+
+test('reviewed legacy tranche stays restrictive except MercoPress bounded feed-card use', () => {
+  const expected = {
+    'bbc-world': 'permission-required',
+    dw: 'permission-required',
+    ukrinform: 'contract-required',
+    'premium-times': 'permission-required',
+    mercopress: 'verified-public-use',
+  };
+
+  for (const [sourceId, status] of Object.entries(expected)) {
+    const entry = admission.SOURCE_ADMISSIONS.find(candidate => candidate.sourceId === sourceId);
+    assert.equal(entry.reviewState, 'reviewed');
+    assert.equal(entry.reviewedAt, '2026-09-13');
+    assert.equal(entry.allowedUseStatus, status);
+  }
+
+  for (const sourceId of ['bbc-world', 'dw', 'ukrinform', 'premium-times']) {
+    const entry = admission.SOURCE_ADMISSIONS.find(candidate => candidate.sourceId === sourceId);
+    assert.deepEqual(admission.evaluateItemUse(entry), {
+      allowedUseStatus: entry.allowedUseStatus,
+      displayMode: 'headline-link',
+    });
+    assert.deepEqual(entry.permittedUse, []);
+  }
+
+  const mercopress = admission.SOURCE_ADMISSIONS.find(entry => entry.sourceId === 'mercopress');
+  assert.deepEqual(mercopress.permittedUse, ['headline-link', 'metadata', 'excerpt']);
+  assert.equal(mercopress.itemLevelReviewRequired, false);
+  assert.deepEqual(admission.evaluateItemUse(mercopress), {
+    allowedUseStatus: 'verified-public-use',
+    displayMode: 'current-use',
+  });
+});
+
+test('admission summary reports the promoted tranche without hiding unresolved rights debt', () => {
+  const summary = admission.admissionSummary();
+  assert.equal(summary.valid, true);
+  assert.equal(summary.totalLiveSources, 21);
+  assert.equal(summary.reviewedSources, 9);
+  assert.equal(summary.legacyUnreviewedSources, 12);
+  assert.deepEqual(summary.remediationSourceIds, [
+    'ap',
+    'bbc-world',
+    'dw',
+    'guardian',
+    'premium-times',
+    'ukrinform',
+  ]);
+  assert.ok(summary.unknownRightsSourceIds.includes('npr'));
+  assert.equal(summary.unknownRightsSourceIds.includes('mercopress'), false);
 });
 
 test('known AP and Guardian constraints remain visible without silently removing either source', () => {
