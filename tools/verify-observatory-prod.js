@@ -86,11 +86,23 @@ function requireCondition(condition, message) {
 
   const reviewedLive = admission.liveAdmissions.filter(entry => entry.reviewState === 'reviewed').length;
   const legacyUnreviewed = admission.liveAdmissions.filter(entry => entry.reviewState === 'legacy-unreviewed').length;
+  const unknownRights = admission.liveAdmissions
+    .filter(entry => entry.allowedUseStatus === 'unknown')
+    .map(entry => entry.sourceId)
+    .sort();
   requireCondition(observatory.sourceRights?.reviewedLiveSources === reviewedLive, 'reviewed live source count drifted');
   requireCondition(observatory.sourceRights?.legacyUnreviewedSources === legacyUnreviewed, 'legacy review debt count drifted');
-  requireCondition(legacyUnreviewed === 8, 'source-rights review debt baseline changed unexpectedly');
+  requireCondition(legacyUnreviewed === 0, 'legacy source review backlog returned');
   requireCondition(sources.totalSources === 21, 'GD-019 live source count changed');
-  requireCondition(reviewedLive === 13, 'reviewed live source baseline changed');
+  requireCondition(reviewedLive === 21, 'reviewed live source baseline changed');
+  requireCondition(
+    JSON.stringify(unknownRights) === JSON.stringify(['nhk', 'npr', 'the-hindu']),
+    'reviewed unknown-rights baseline changed'
+  );
+  requireCondition(
+    JSON.stringify(observatory.sourceRights?.unknownRightsSourceIds || []) === JSON.stringify(unknownRights),
+    'observatory unknown-rights sources disagree with admission API'
+  );
 
   const subnationalSources = sources.sources.filter(source => source.geographicScope === 'subnational');
   const subnationalIds = subnationalSources.map(source => source.sourceId).sort();
@@ -164,7 +176,7 @@ function requireCondition(condition, message) {
   requireCondition(dossierSummary.unknownCount === dossier.unknowns.length, 'unknown count disagrees with dossier API');
 
   const gapTypes = new Set(observatory.gaps.map(gap => gap.type));
-  requireCondition(gapTypes.has('source-rights-review-debt'), 'source-rights debt gap missing');
+  requireCondition(!gapTypes.has('source-rights-review-debt'), 'completed legacy review still reported as open review debt');
   requireCondition(gapTypes.has('institutional-collection-eligibility'), 'remaining institutional evidence eligibility gap missing');
   requireCondition(gapTypes.has('unresolved-claims'), 'unresolved dossier claim gap missing');
   requireCondition(gapTypes.has('correction-artifact-retention'), 'correction artifact gap missing');
@@ -176,6 +188,10 @@ function requireCondition(condition, message) {
     !coverage.gaps.some(gap => gap.id === 'geographic-scope:subnational'),
     'obsolete zero-subnational coverage gap remains after GD-019'
   );
+  requireCondition(
+    !coverage.gaps.some(gap => gap.id === 'source-admission:legacy-review-backlog'),
+    'completed source-admission review still reported as backlog'
+  );
 
   requireCondition(page.includes('data-observatory-id="coverage-evidence"'), 'observatory page identity marker missing');
   requireCondition(page.includes('Coverage &amp; Evidence Observatory'), 'observatory page shell missing');
@@ -184,7 +200,7 @@ function requireCondition(condition, message) {
   requireCondition(page.includes('Reviewed source scope without locality inference'), 'local reporting UI section missing');
 
   console.log(
-    `Coverage & Evidence Observatory certified: ${observatory.newsCoverage.totalSources} live news sources, ${legacyUnreviewed} rights reviews open, ${observatory.localReporting.sourceCount} subnational sources / ${observatory.localReporting.jurisdictionCount} jurisdictions, ${observatory.institutionalEvidence.reviewedSources} institutional candidates / ${observatory.institutionalEvidence.collectionEligibleSources} governed collection source, ${dossierSummary.unresolvedClaimCount} unresolved claims, ${observatory.gaps.length} explicit gaps`
+    `Coverage & Evidence Observatory certified: ${observatory.newsCoverage.totalSources} live news sources, ${legacyUnreviewed} legacy reviews open, ${unknownRights.length} reviewed rights states unresolved, ${observatory.localReporting.sourceCount} subnational sources / ${observatory.localReporting.jurisdictionCount} jurisdictions, ${observatory.institutionalEvidence.reviewedSources} institutional candidates / ${observatory.institutionalEvidence.collectionEligibleSources} governed collection source, ${dossierSummary.unresolvedClaimCount} unresolved claims, ${observatory.gaps.length} explicit gaps`
   );
 })().catch(error => {
   console.error(`Coverage & Evidence Observatory verification failed: ${error.message}`);
