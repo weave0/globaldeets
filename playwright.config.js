@@ -22,6 +22,7 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: /mobile-reader\.spec\.js/,
       use: { ...devices['Desktop Chrome'] },
     },
     {
