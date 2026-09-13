@@ -12,13 +12,13 @@ async function verifyHomepage(page) {
 
   const liveSources = page
     .locator('.dm-stat')
-    .filter({ hasText: 'Live Source Endpoints' })
+    .filter({ hasText: 'Live Sources' })
     .locator('.dm-stat-value');
   await liveSources.waitFor({ state: 'visible', timeout: 20_000 });
   await page.waitForFunction(
     () => {
       const stat = [...document.querySelectorAll('.dm-stat')].find(node =>
-        node.querySelector('.dm-stat-label')?.textContent.trim() === 'Live Source Endpoints'
+        node.querySelector('.dm-stat-label')?.textContent.trim() === 'Live Sources'
       );
       return stat?.querySelector('.dm-stat-value')?.textContent.trim() === '21';
     },
@@ -28,7 +28,7 @@ async function verifyHomepage(page) {
 
   requireCondition(
     (await liveSources.textContent())?.trim() === '21',
-    'homepage did not render 21 live source endpoints'
+    'homepage did not render 21 live sources'
   );
 
   const observatoryLink = page.locator('a[href="/observatory/coverage/"]');
