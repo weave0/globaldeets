@@ -138,15 +138,19 @@
       const sources = Array.isArray(sourceData.sources) ? sourceData.sources : [];
       sourceById = new Map(sources.map(source => [source.sourceId, source]));
       const count = document.getElementById('news-source-count');
-      if (count) count.textContent = `${sourceData.totalSources ?? sources.length} reviewed source identities`;
+      if (count) {
+        count.textContent = `${sourceData.totalSources ?? sources.length} source endpoints in the live contract`;
+      }
       const sourceNote = document.querySelector('.news-status-bar:not(#news-trust-bar) .news-sources-note');
       if (sourceNote) {
         const names = sources.map(source => source.name).filter(Boolean);
-        sourceNote.textContent = names.length ? `Sources: ${names.join(' · ')}` : 'Source inventory available in the Observatory.';
+        sourceNote.textContent = names.length
+          ? `Sources: ${names.join(' · ')}`
+          : 'Source inventory available in the Observatory.';
       }
     } else {
       const count = document.getElementById('news-source-count');
-      if (count) count.textContent = 'Source provenance temporarily unavailable';
+      if (count) count.textContent = 'Source inventory temporarily unavailable';
       console.warn('GlobalDeets source inventory unavailable:', sourcesResult.reason);
     }
 
@@ -190,18 +194,26 @@
 
     const admissionSummary = window.__globalDeetsAdmissionSummary;
     if (!coverageData && !admissionSummary) {
-      summary.textContent = 'Coverage context is temporarily unavailable. Headlines and original publisher links remain available.';
+      summary.textContent =
+        'Coverage context is temporarily unavailable. Headlines and original publisher links remain available.';
       gaps.replaceChildren();
       return;
     }
 
-    const region = currentRegion === 'global'
-      ? null
-      : (Array.isArray(coverageData?.regions) ? coverageData.regions.find(item => item.region === currentRegion) : null);
+    const region =
+      currentRegion === 'global'
+        ? null
+        : Array.isArray(coverageData?.regions)
+          ? coverageData.regions.find(item => item.region === currentRegion)
+          : null;
     const pieces = [];
     if (region) {
       pieces.push(`${region.sourceCount ?? '—'} source endpoints route into ${REGION_LABELS[currentRegion]}`);
-      if (Number.isFinite(region.languageCount)) pieces.push(`${region.languageCount} source language${region.languageCount === 1 ? '' : 's'} represented`);
+      if (Number.isFinite(region.languageCount)) {
+        pieces.push(
+          `${region.languageCount} source language${region.languageCount === 1 ? '' : 's'} represented`
+        );
+      }
     } else if (Number.isFinite(coverageData?.totalSources)) {
       pieces.push(`${coverageData.totalSources} live source endpoints across the portfolio`);
     }
@@ -209,26 +221,35 @@
       pieces.push(`${admissionSummary.reviewedSources} rights records reviewed`);
     }
     if (Array.isArray(admissionSummary?.unknownRightsSourceIds)) {
-      pieces.push(`${admissionSummary.unknownRightsSourceIds.length} reviewed rights state${admissionSummary.unknownRightsSourceIds.length === 1 ? '' : 's'} still unresolved`);
+      pieces.push(
+        `${admissionSummary.unknownRightsSourceIds.length} reviewed rights state${admissionSummary.unknownRightsSourceIds.length === 1 ? '' : 's'} still unresolved`
+      );
     }
-    summary.textContent = pieces.length ? pieces.join(' · ') : 'Governed source and coverage records are available.';
+    summary.textContent = pieces.length
+      ? pieces.join(' · ')
+      : 'Governed source and coverage records are available.';
 
     const relevant = relevantCoverageGaps(coverageData?.gaps);
-    gaps.replaceChildren(...relevant.map(gap => {
-      const item = document.createElement('div');
-      item.className = 'news-context-gap';
-      item.dataset.severity = gap.severity || 'info';
-      const label = gap.detail || gap.type || gap.id || 'Coverage limitation';
-      item.innerHTML = `<span class="news-context-gap-label">${escapeHtml(label)}</span>${gap.nextAction ? `<span class="news-context-gap-action">${escapeHtml(gap.nextAction)}</span>` : ''}`;
-      return item;
-    }));
+    gaps.replaceChildren(
+      ...relevant.map(gap => {
+        const item = document.createElement('div');
+        item.className = 'news-context-gap';
+        item.dataset.severity = gap.severity || 'info';
+        const label = gap.detail || gap.type || gap.id || 'Coverage limitation';
+        item.innerHTML = `<span class="news-context-gap-label">${escapeHtml(label)}</span>${gap.nextAction ? `<span class="news-context-gap-action">${escapeHtml(gap.nextAction)}</span>` : ''}`;
+        return item;
+      })
+    );
   }
 
   function relevantCoverageGaps(value) {
     const gaps = Array.isArray(value) ? value : [];
-    const regional = currentRegion === 'global'
-      ? gaps
-      : gaps.filter(gap => !gap.region || gap.region === currentRegion || gap.routingRegion === currentRegion);
+    const regional =
+      currentRegion === 'global'
+        ? gaps
+        : gaps.filter(
+            gap => !gap.region || gap.region === currentRegion || gap.routingRegion === currentRegion
+          );
     return regional
       .filter(gap => gap && (gap.severity === 'high' || gap.severity === 'medium'))
       .slice(0, 3);
@@ -248,8 +269,10 @@
   function renderTabs() {
     const tabBar = document.getElementById('region-tabs');
     if (!tabBar) return;
-    tabBar.innerHTML = REGIONS.map(r => `
-      <button class="region-tab${r === currentRegion ? ' active' : ''}" data-region="${r}">${REGION_LABELS[r]}</button>`).join('');
+    tabBar.innerHTML = REGIONS.map(
+      r => `
+      <button class="region-tab${r === currentRegion ? ' active' : ''}" data-region="${r}">${REGION_LABELS[r]}</button>`
+    ).join('');
     tabBar.addEventListener('click', e => {
       const btn = e.target.closest('.region-tab');
       if (!btn || btn.classList.contains('active')) return;
@@ -295,7 +318,8 @@
       })
       .catch(err => {
         if (grid && reset) {
-          grid.innerHTML = '<div class="news-error"><p>Unable to load news feed. The worker may be warming up.</p><button onclick="location.reload()">Retry</button></div>';
+          grid.innerHTML =
+            '<div class="news-error"><p>Unable to load news feed. The worker may be warming up.</p><button onclick="location.reload()">Retry</button></div>';
         }
         if (loadBtn) loadBtn.disabled = false;
         console.error('News fetch failed:', err);
@@ -334,9 +358,10 @@
     const policyBadge = headlineLinkOnly
       ? '<span class="news-source-badge news-source-badge--restricted" title="The reviewed source-use record does not authorize the richer card treatment">Headline/link only</span>'
       : '<span class="news-source-badge news-source-badge--bounded" title="The reviewed source-use record permits GlobalDeets current bounded display">Bounded display</span>';
-    const summaryHtml = typeof item.summary === 'string' && item.summary.trim()
-      ? `<p class="news-summary">${escapeHtml(item.summary)}</p>`
-      : '';
+    const summaryHtml =
+      typeof item.summary === 'string' && item.summary.trim()
+        ? `<p class="news-summary">${escapeHtml(item.summary)}</p>`
+        : '';
     const contextHtml = buildSourceContext(item, provenance, admission);
 
     card.innerHTML = `
@@ -360,11 +385,23 @@
     const status = admission?.allowedUseStatus || item.allowedUseStatus || 'unknown';
     const explanation = rightsExplanation(status, item.displayMode);
     const facts = [];
-    if (provenance?.sourceClass) facts.push(`<span><strong>Source type:</strong> ${escapeHtml(humanize(provenance.sourceClass))}</span>`);
-    if (provenance?.evidenceRole) facts.push(`<span><strong>Role:</strong> ${escapeHtml(humanize(provenance.evidenceRole))}</span>`);
-    if (provenance?.geographicScope) facts.push(`<span><strong>Reviewed scope:</strong> ${escapeHtml(humanize(provenance.geographicScope))}</span>`);
-    if (provenance?.ownershipOperator) facts.push(`<span><strong>Operator:</strong> ${escapeHtml(provenance.ownershipOperator)}</span>`);
-    if (admission?.reviewedAt) facts.push(`<span><strong>Rights review:</strong> ${escapeHtml(admission.reviewedAt)}</span>`);
+    if (provenance?.sourceClass) {
+      facts.push(`<span><strong>Source type:</strong> ${escapeHtml(humanize(provenance.sourceClass))}</span>`);
+    }
+    if (provenance?.evidenceRole) {
+      facts.push(`<span><strong>Role:</strong> ${escapeHtml(humanize(provenance.evidenceRole))}</span>`);
+    }
+    if (provenance?.geographicScope) {
+      facts.push(
+        `<span><strong>Reviewed scope:</strong> ${escapeHtml(humanize(provenance.geographicScope))}</span>`
+      );
+    }
+    if (provenance?.ownershipOperator) {
+      facts.push(`<span><strong>Operator:</strong> ${escapeHtml(provenance.ownershipOperator)}</span>`);
+    }
+    if (admission?.reviewedAt) {
+      facts.push(`<span><strong>Rights review:</strong> ${escapeHtml(admission.reviewedAt)}</span>`);
+    }
     return `
       <details class="news-source-context">
         <summary>Why this source is shown this way</summary>
@@ -401,8 +438,13 @@
 
   function getVisibleItems() {
     if (!searchTerm) return allItems;
-    return allItems.filter(item => [item.headline, item.summary, item.source, item.region]
-      .filter(Boolean).join(' ').toLowerCase().includes(searchTerm));
+    return allItems.filter(item =>
+      [item.headline, item.summary, item.source, item.region]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(searchTerm)
+    );
   }
 
   function updateStatus() {
@@ -418,12 +460,21 @@
   function escapeHtml(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
+
   function escapeAttr(str) {
-    return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
   }
+
   function humanize(value) {
-    return String(value || '').replace(/[-_]/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+    return String(value || '')
+      .replace(/[-_]/g, ' ')
+      .replace(/\b\w/g, letter => letter.toUpperCase());
   }
+
   function formatTime(iso) {
     if (!iso) return '';
     try {
