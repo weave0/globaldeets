@@ -1,7 +1,7 @@
 /**
  * GFD Ecosystem Navigation Component JavaScript
  * Handles dropdown toggle, accessibility, keyboard navigation, GlobalDeets evidence discovery,
- * and canonical GlobalDeets brand-mark normalization.
+ * canonical GlobalDeets brand-mark normalization, and the certified mobile support layer.
  */
 
 (function () {
@@ -14,9 +14,19 @@
   }
 
   function initNavigation() {
+    initMobileCertificationStyles();
     initBrandMarks();
     initEvidenceDossierLink();
     initEcosystemNav();
+  }
+
+  function initMobileCertificationStyles() {
+    if (document.querySelector('link[data-gd025-mobile]')) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '/shared/gd025-mobile.css';
+    link.dataset.gd025Mobile = 'true';
+    document.head.appendChild(link);
   }
 
   function initBrandMarks() {

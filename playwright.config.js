@@ -8,6 +8,7 @@ const mobileChromium = {
   hasTouch: true,
   deviceScaleFactor: 3,
 };
+const mobileSpecs = /mobile-(reader|secondary-surfaces)\.spec\.js/;
 
 module.exports = defineConfig({
   testDir: './tests',
@@ -22,12 +23,12 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: /mobile-reader\.spec\.js/,
+      testIgnore: mobileSpecs,
       use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'mobile-iphone',
-      testMatch: /mobile-reader\.spec\.js/,
+      testMatch: mobileSpecs,
       use: {
         ...mobileChromium,
         viewport: { width: 390, height: 844 },
@@ -35,7 +36,7 @@ module.exports = defineConfig({
     },
     {
       name: 'mobile-android-narrow',
-      testMatch: /mobile-reader\.spec\.js/,
+      testMatch: mobileSpecs,
       use: {
         ...mobileChromium,
         viewport: { width: 360, height: 800 },

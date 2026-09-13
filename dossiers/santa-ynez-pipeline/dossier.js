@@ -1,10 +1,21 @@
 const DOSSIER_API = '/api/intelligence/dossiers/santa-ynez-pipeline';
 
+ensureMobileCertificationStyles();
+
 const app = document.getElementById('dossier-app');
 const statusLine = document.getElementById('dossier-status');
 const errorPanel = document.getElementById('dossier-error');
 
 loadDossier();
+
+function ensureMobileCertificationStyles() {
+  if (document.querySelector('link[data-gd025-dossier-mobile]')) return;
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = '/dossiers/gd025-mobile.css';
+  link.dataset.gd025DossierMobile = 'true';
+  document.head.appendChild(link);
+}
 
 async function loadDossier() {
   try {
@@ -79,10 +90,7 @@ function renderClaimCards(containerId, claims, sourceById) {
       const source = sourceById.get(claim.originSourceId);
       const card = element('article', 'claim-card');
       const meta = element('div', 'claim-meta');
-      meta.append(
-        pill(humanize(claim.state)),
-        pill(humanize(claim.type))
-      );
+      meta.append(pill(humanize(claim.state)), pill(humanize(claim.type)));
       card.append(
         meta,
         element('p', null, claim.proposition),
