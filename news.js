@@ -225,6 +225,8 @@
         currentOffset += items.length;
         window.__globalDeetsNewsTotal = data.total;
         window.__globalDeetsNewsCached = data.cached;
+        window.__globalDeetsNewsAdmissionFingerprint = data.admissionFingerprint;
+        window.__globalDeetsNewsDisplayPolicyVersion = data.displayPolicyVersion;
 
         renderVisibleCards();
         updateStatus();
@@ -271,16 +273,24 @@
 
       const pubTime = formatTime(item.published);
       const dateAttr = item.published ? ` datetime="${escapeAttr(item.published)}"` : '';
+      const headlineLinkOnly = item.displayMode === 'headline-link';
 
-      const mtBadge = item.translated
+      const mtBadge = !headlineLinkOnly && item.translated
         ? `<span class="news-mt-badge" title="Machine translated from ${escapeAttr(item.originalLang || 'original language')} · Cloudflare AI (m2m100)">MT</span>`
-        : item.originalLang && item.originalLang !== 'en' && !item.translated
+        : !headlineLinkOnly && item.originalLang && item.originalLang !== 'en' && !item.translated
           ? `<span class="news-mt-badge news-mt-badge--failed" title="Originally in ${escapeAttr(item.originalLang)}; translation unavailable">⚠ ${escapeAttr(item.originalLang?.toUpperCase())}</span>`
           : '';
+      const policyBadge = headlineLinkOnly
+        ? '<span class="news-source-badge" title="Source admission currently permits headline and publisher link display only">Headline/link only</span>'
+        : '';
+      const summaryHtml = typeof item.summary === 'string' && item.summary.trim()
+        ? `<p class="news-summary">${escapeHtml(item.summary)}</p>`
+        : '';
 
       card.innerHTML = `
         <div class="news-card-header">
           <span class="news-source-badge">${escapeHtml(item.source || '')}</span>
+          ${policyBadge}
           ${mtBadge}
           <time class="news-time"${dateAttr}>${pubTime}</time>
         </div>
@@ -291,7 +301,7 @@
             ${escapeHtml(item.headline || '')}
           </a>
         </h2>
-        <p class="news-summary">${escapeHtml(item.summary || '')}</p>
+        ${summaryHtml}
         <div class="news-card-footer">
           <span class="news-region-tag">${escapeHtml(REGION_LABELS[item.region] || item.region || '')}</span>
           <a class="news-read-link"
