@@ -26,8 +26,9 @@ test('canonical coverage and evidence observatory validates and preserves semant
   assert.equal(observatory.observatoryVersion, COVERAGE_EVIDENCE_OBSERVATORY_VERSION);
   assert.equal(observatory.newsCoverage.totalSources, 21);
   assert.equal(observatory.sourceRights.totalLiveSources, 21);
-  assert.equal(observatory.sourceRights.reviewedLiveSources, 13);
-  assert.equal(observatory.sourceRights.legacyUnreviewedSources, 8);
+  assert.equal(observatory.sourceRights.reviewedLiveSources, 21);
+  assert.equal(observatory.sourceRights.legacyUnreviewedSources, 0);
+  assert.deepEqual(observatory.sourceRights.unknownRightsSourceIds, ['nhk', 'npr', 'the-hindu']);
   assert.equal(observatory.institutionalEvidence.reviewedSources, 10);
   assert.equal(observatory.institutionalEvidence.endpointReviewedSources, 1);
   assert.equal(observatory.institutionalEvidence.collectionEligibleSources, 1);
@@ -44,7 +45,7 @@ test('canonical coverage and evidence observatory validates and preserves semant
   assert.equal(validation.valid, true, JSON.stringify(validation));
 });
 
-test('dossier observability derives unresolved claims, evidence classes, corrections, and explicit gaps', () => {
+test('dossier observability keeps rights review debt distinct from unresolved rights states', () => {
   const observatory = canonical();
   const dossier = observatory.evidenceCoverage.dossiers[0];
   const documentTypes = new Set(observatory.evidenceCoverage.evidenceClasses.map(item => item.documentType));
@@ -60,7 +61,8 @@ test('dossier observability derives unresolved claims, evidence classes, correct
   assert.ok(documentTypes.has('regulator-release'));
   assert.ok(documentTypes.has('corporate-filing'));
   assert.ok(documentTypes.has('government-release'));
-  assert.ok(gapTypes.has('source-rights-review-debt'));
+  assert.equal(gapTypes.has('source-rights-review-debt'), false);
+  assert.deepEqual(observatory.sourceRights.unknownRightsSourceIds, ['nhk', 'npr', 'the-hindu']);
   assert.ok(gapTypes.has('institutional-collection-eligibility'));
   assert.ok(gapTypes.has('unresolved-claims'));
   assert.ok(gapTypes.has('correction-artifact-retention'));
@@ -139,6 +141,8 @@ test('observatory API returns integrity-valid evidence and local-reporting paylo
   assert.equal(payload.observatoryId, COVERAGE_EVIDENCE_OBSERVATORY_ID);
   assert.equal(payload.rules.truthScore, false);
   assert.equal(payload.rules.newsCoverageIsEvidenceCoverage, false);
+  assert.equal(payload.sourceRights.legacyUnreviewedSources, 0);
+  assert.deepEqual(payload.sourceRights.unknownRightsSourceIds, ['nhk', 'npr', 'the-hindu']);
   assert.equal(payload.institutionalEvidence.collectionEligibleSources, 1);
   assert.equal(payload.localReporting.sourceCount, 2);
   assert.deepEqual(payload.localReporting.jurisdictionIds, ['US-CA', 'US-MN']);
