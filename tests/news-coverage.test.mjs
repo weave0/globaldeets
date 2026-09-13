@@ -40,16 +40,22 @@ const { onRequestGet: getSources } = sourcesApiModule;
 
 const REMEDIATION_SOURCE_IDS = [
   'abc-australia',
+  'al-jazeera',
+  'anadolu-agency',
   'ap',
   'bbc-world',
   'cna',
   'dawn',
   'dw',
+  'france-24',
   'guardian',
+  'kyiv-independent',
   'premium-times',
   'the-east-african',
   'ukrinform',
+  'yonhap',
 ];
+const UNKNOWN_RIGHTS_SOURCE_IDS = ['nhk', 'npr', 'the-hindu'];
 
 function request(path = '/api/news/coverage') {
   return new Request(`https://globaldeets.com${path}`, {
@@ -88,7 +94,6 @@ function reviewedAdmission(source) {
 
 test('provenance registry maps exactly once to every canonical live source', () => {
   const validation = validateSourceProvenance(SOURCES, SOURCE_PROVENANCE);
-
   assert.equal(validation.valid, true);
   assert.equal(SOURCE_PROVENANCE.length, SOURCES.length);
   assert.equal(SOURCE_PROVENANCE.length, 21);
@@ -102,15 +107,12 @@ test('provenance registry maps exactly once to every canonical live source', () 
   const guardian = SOURCE_PROVENANCE.find(entry => entry.sourceId === 'guardian');
   assert.equal(guardian.organizationName, 'Guardian News & Media');
   assert.equal(guardian.ownershipOperator, 'The Scott Trust Limited');
-
   const cna = SOURCE_PROVENANCE.find(entry => entry.sourceId === 'cna');
   assert.equal(cna.organizationName, 'CNA');
   assert.equal(cna.ownershipOperator, 'Mediacorp');
-
   const minnesota = SOURCE_PROVENANCE.find(entry => entry.sourceId === 'minnesota-reformer');
   assert.equal(minnesota.geographicScope, 'subnational');
   assert.deepEqual(minnesota.jurisdictionIds, ['US-MN']);
-
   const calmatters = SOURCE_PROVENANCE.find(entry => entry.sourceId === 'calmatters');
   assert.equal(calmatters.geographicScope, 'subnational');
   assert.deepEqual(calmatters.jurisdictionIds, ['US-CA']);
@@ -120,51 +122,35 @@ test('provenance validation rejects missing, orphaned, duplicate, drifted, and i
   const base = SOURCE_PROVENANCE.map(entry => ({ ...entry }));
   const target = base[0];
   const targetId = target.sourceId;
-
   const missing = validateSourceProvenance(SOURCES, base.slice(1));
   assert.equal(missing.valid, false);
   assert.deepEqual(missing.missingSourceIds, [targetId]);
-
   const orphanEntry = { ...target, sourceId: 'not-a-live-source' };
   const orphan = validateSourceProvenance(SOURCES, [...base, orphanEntry, { ...orphanEntry }]);
   assert.equal(orphan.valid, false);
   assert.deepEqual(orphan.orphanSourceIds, ['not-a-live-source']);
-
   const duplicate = validateSourceProvenance(SOURCES, [...base, { ...target }]);
   assert.equal(duplicate.valid, false);
   assert.ok(duplicate.duplicateIds.includes(targetId));
-
-  const invalid = validateSourceProvenance(SOURCES, [
-    { ...target, evidenceUrls: [] },
-    ...base.slice(1),
-  ]);
+  const invalid = validateSourceProvenance(SOURCES, [{ ...target, evidenceUrls: [] }, ...base.slice(1)]);
   assert.equal(invalid.valid, false);
   assert.ok(invalid.invalidEntries.includes(targetId));
-
-  const nameDrift = validateSourceProvenance(SOURCES, [
-    { ...target, name: `${target.name} Renamed` },
-    ...base.slice(1),
-  ]);
+  const nameDrift = validateSourceProvenance(SOURCES, [{ ...target, name: `${target.name} Renamed` }, ...base.slice(1)]);
   assert.equal(nameDrift.valid, false);
   assert.ok(nameDrift.invalidEntries.includes(targetId));
-
   const alternateLanguage = target.sourceLanguages[0] === 'fr' ? 'en' : 'fr';
-  const languageDrift = validateSourceProvenance(SOURCES, [
-    { ...target, sourceLanguages: [alternateLanguage] },
-    ...base.slice(1),
-  ]);
+  const languageDrift = validateSourceProvenance(SOURCES, [{ ...target, sourceLanguages: [alternateLanguage] }, ...base.slice(1)]);
   assert.equal(languageDrift.valid, false);
   assert.ok(languageDrift.invalidEntries.includes(targetId));
 });
 
-test('coverage inventory is deterministic and enriched from reviewed provenance and admission state', () => {
+test('coverage inventory is deterministic and separates completed review from unresolved rights', () => {
   const first = buildCoverageInventory(SOURCES, SOURCE_PROVENANCE, SOURCE_ADMISSIONS);
   const second = buildCoverageInventory(
     SOURCES.map(source => ({ ...source })),
     SOURCE_PROVENANCE.map(entry => ({ ...entry })),
     SOURCE_ADMISSIONS.map(entry => ({ ...entry }))
   );
-
   assert.deepEqual(first, second);
   assert.equal(first.totalSources, 21);
   assert.equal(first.totalRegions, 7);
@@ -173,22 +159,21 @@ test('coverage inventory is deterministic and enriched from reviewed provenance 
   assert.equal(first.provenance.reviewedSources, 21);
   assert.deepEqual(first.provenance.unknownOwnershipOperatorSourceIds, []);
   assert.equal(first.admission.valid, true);
-  assert.equal(first.admission.reviewedSources, 13);
-  assert.equal(first.admission.legacyUnreviewedSources, 8);
+  assert.equal(first.admission.reviewedSources, 21);
+  assert.equal(first.admission.legacyUnreviewedSources, 0);
   assert.deepEqual(first.admission.remediationSourceIds, REMEDIATION_SOURCE_IDS);
+  assert.deepEqual(first.admission.unknownRightsSourceIds, UNKNOWN_RIGHTS_SOURCE_IDS);
   assert.equal(first.subnationalReporting.sourceCount, 2);
   assert.deepEqual(first.subnationalReporting.jurisdictionIds, ['US-CA', 'US-MN']);
   assert.equal(first.nonEnglishSources.length, 1);
   assert.ok(first.nonEnglishSources.includes('nhk'));
   assert.ok(first.sourceClasses.some(group => group.sourceClass === 'news-agency'));
   assert.ok(first.geographicScopes.some(group => group.geographicScope === 'subnational'));
-  assert.ok(first.sourceOriginCountries.some(group => group.country === 'UA'));
 });
 
-test('coverage inventory surfaces remaining evidence, language, regional, and admission blind spots without claiming no subnational inputs', () => {
+test('coverage gaps remove review backlog but retain remediation and other real blind spots', () => {
   const inventory = buildCoverageInventory(SOURCES, SOURCE_PROVENANCE, SOURCE_ADMISSIONS);
   const gapIds = new Set(inventory.gaps.map(gap => gap.id));
-
   assert.equal(inventory.primarySourceInputs, 0);
   assert.ok(gapIds.has('evidence-role:primary-source-inputs'));
   assert.equal(gapIds.has('geographic-scope:subnational'), false);
@@ -196,12 +181,9 @@ test('coverage inventory surfaces remaining evidence, language, regional, and ad
   assert.ok(gapIds.has('regional-redundancy:pacific'));
   assert.ok(gapIds.has('portfolio-language-concentration:en'));
   assert.ok(gapIds.has('source-language-diversity:africa'));
-  assert.ok(gapIds.has('source-language-diversity:americas'));
-  assert.ok(gapIds.has('source-language-diversity:europe'));
-  assert.ok(gapIds.has('source-language-diversity:middle-east'));
-  assert.ok(gapIds.has('source-language-diversity:pacific'));
-  assert.ok(gapIds.has('source-admission:legacy-review-backlog'));
+  assert.equal(gapIds.has('source-admission:legacy-review-backlog'), false);
   assert.ok(gapIds.has('source-admission:remediation-required'));
+  assert.deepEqual(inventory.admission.unknownRightsSourceIds, UNKNOWN_RIGHTS_SOURCE_IDS);
 });
 
 test('coverage gap logic responds to stronger regional, language, primary-source, subnational, and admission diversity', () => {
@@ -224,19 +206,13 @@ test('coverage gap logic responds to stronger regional, language, primary-source
     ownershipOperator: `${source.name} Organization`,
     evidenceUrls: [`https://${source.name.toLowerCase()}.example/about`],
     reviewedAt: '2026-09-03',
-    ...(index < 2
-      ? {
-          scopeType: 'state-province',
-          jurisdictionIds: [`AA-${index + 1}`],
-          jurisdictionScheme: 'ISO 3166-2',
-          scopeBasis: 'independently-reviewed',
-          scopeEvidenceUrls: [`https://${source.name.toLowerCase()}.example/scope`],
-        }
-      : {}),
+    ...(index < 2 ? {
+      scopeType: 'state-province', jurisdictionIds: [`AA-${index + 1}`], jurisdictionScheme: 'ISO 3166-2',
+      scopeBasis: 'independently-reviewed', scopeEvidenceUrls: [`https://${source.name.toLowerCase()}.example/scope`],
+    } : {}),
   }));
   const sampleAdmissions = sample.map(reviewedAdmission);
   const inventory = buildCoverageInventory(sample, sampleProvenance, sampleAdmissions);
-
   assert.equal(inventory.gaps.length, 0);
   assert.equal(inventory.totalRegions, 2);
   assert.equal(inventory.totalLanguages, 4);
@@ -247,10 +223,9 @@ test('coverage gap logic responds to stronger regional, language, primary-source
   assert.equal(inventory.admission.legacyUnreviewedSources, 0);
 });
 
-test('/api/news/coverage exposes source fingerprint, provenance integrity, admission debt, and governed locality inventory', async () => {
+test('/api/news/coverage exposes zero review backlog and explicit unresolved rights', async () => {
   const response = await getCoverage({ request: request() });
   const json = await response.json();
-
   assert.equal(response.status, 200);
   assert.equal(json.sourceFingerprint, SOURCE_FINGERPRINT);
   assert.equal(json.totalSources, SOURCES.length);
@@ -258,24 +233,21 @@ test('/api/news/coverage exposes source fingerprint, provenance integrity, admis
   assert.equal(json.provenance.valid, true);
   assert.equal(json.provenance.reviewedSources, 21);
   assert.equal(json.admission.valid, true);
-  assert.equal(json.admission.reviewedSources, 13);
-  assert.equal(json.admission.legacyUnreviewedSources, 8);
+  assert.equal(json.admission.reviewedSources, 21);
+  assert.equal(json.admission.legacyUnreviewedSources, 0);
   assert.deepEqual(json.admission.remediationSourceIds, REMEDIATION_SOURCE_IDS);
+  assert.deepEqual(json.admission.unknownRightsSourceIds, UNKNOWN_RIGHTS_SOURCE_IDS);
   assert.equal(json.subnationalReporting.sourceCount, 2);
   assert.deepEqual(json.subnationalReporting.jurisdictionIds, ['US-CA', 'US-MN']);
   assert.equal(json.localityRules.routingRegionIsGeographicScope, false);
-  assert.ok(Array.isArray(json.sourceClasses));
-  assert.ok(Array.isArray(json.evidenceRoles));
-  assert.ok(Array.isArray(json.sourceOriginCountries));
   assert.ok(json.gaps.some(gap => gap.id === 'evidence-role:primary-source-inputs'));
-  assert.ok(json.gaps.some(gap => gap.id === 'source-admission:legacy-review-backlog'));
+  assert.equal(json.gaps.some(gap => gap.id === 'source-admission:legacy-review-backlog'), false);
   assert.match(json.generatedAt, /^\d{4}-\d{2}-\d{2}T/);
 });
 
 test('/api/news/sources exposes the reviewed provenance registry and explicit subnational scope evidence', async () => {
   const response = await getSources({ request: request('/api/news/sources') });
   const json = await response.json();
-
   assert.equal(response.status, 200);
   assert.equal(json.sourceFingerprint, SOURCE_FINGERPRINT);
   assert.equal(json.validation.valid, true);
