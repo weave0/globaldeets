@@ -201,8 +201,8 @@ test('verified-public-use sources retain only their reviewed bounded excerpt', a
   assert.equal(items[0].sourceId, 'minnesota-reformer');
 });
 
-test('unknown legacy sources fail closed to headline-link with no publisher summary', async () => {
-  const { items } = await applyAdmissionPolicy([rawStory('BBC World')]);
+test('unresolved legacy sources fail closed to headline-link with no publisher summary', async () => {
+  const { items } = await applyAdmissionPolicy([rawStory('NPR')]);
   assert.equal(items.length, 1);
   assert.equal(items[0].allowedUseStatus, 'unknown');
   assert.equal(items[0].displayMode, 'headline-link');
