@@ -70,7 +70,11 @@ async function verifyPhone(browser, viewport, label) {
     await requireVisible(page.locator('.contract-strip'), `${label} observatory contract`);
 
     await verifySurface(page, '/dossiers/santa-ynez-pipeline/', '#dossier-app', `${label} dossier`);
-    await requireVisible(page.getByRole('heading', { name: /Santa Ynez Pipeline/i }), `${label} dossier heading`);
+    await requireVisible(page.locator('#dossier-title'), `${label} dossier heading`);
+    requireCondition(
+      ((await page.locator('#dossier-title').textContent()) || '').includes('Santa Ynez Pipeline'),
+      `${label} dossier canonical title is incorrect`
+    );
     await requireTouchTarget(page.locator('.dossier-nav a').first(), `${label} dossier navigation`);
     await requireTouchTarget(page.locator('.source-details summary'), `${label} dossier source disclosure`);
   } finally {
