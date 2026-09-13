@@ -55,7 +55,7 @@ export const SOURCES = [
   },
 
   // ── Asia ──────────────────────────────────────────────────────────────────
-  // NHK Japanese-language feed — translated to English via MT on cache-miss
+  // NHK Japanese-language feed — translation occurs only when the admission ledger permits it.
   { name: 'NHK', url: 'https://www3.nhk.or.jp/rss/news/cat0.xml', region: 'asia', lang: 'ja' },
   { name: 'Yonhap', url: 'https://en.yna.co.kr/RSS/news.xml', region: 'asia', lang: 'en' },
   {
@@ -145,7 +145,8 @@ export function getSourceFingerprint(sources = SOURCES) {
 }
 
 export const SOURCE_FINGERPRINT = getSourceFingerprint();
-export const CACHE_KEY = `news_feed_v2_${SOURCE_FINGERPRINT}`;
+export const DISPLAY_POLICY_VERSION = 'gd021-admission-v1';
+export const CACHE_KEY_PREFIX = `news_feed_v3_${SOURCE_FINGERPRINT}_${DISPLAY_POLICY_VERSION}`;
 export const SOURCE_HEALTH_KEY = `news_source_health_v2_${SOURCE_FINGERPRINT}`;
 const CACHE_TTL_SECONDS = 900; // 15 minutes
 export const SOURCE_HEALTH_TTL_SECONDS = 86_400; // retain latest observation for 24 hours
@@ -201,9 +202,100 @@ export async function onRequestOptions({ request }) {
   return new Response(null, { status: 204, headers: getCorsHeaders(request) });
 }
 
+async function loadAdmissionContract() {
+  return import('../lib/news-source-admission.js');
+}
+
+export function getFeedCacheIdentity(admissionFingerprint) {
+  if (typeof admissionFingerprint !== 'string' || !admissionFingerprint) {
+    throw new TypeError('admission fingerprint is required');
+  }
+  return {
+    cacheKey: `${CACHE_KEY_PREFIX}_${admissionFingerprint}`,
+    admissionFingerprint,
+    displayPolicyVersion: DISPLAY_POLICY_VERSION,
+  };
+}
+
+function buildAdmissionIndex(admissions) {
+  return new Map(
+    (Array.isArray(admissions) ? admissions : [])
+      .filter(entry => typeof entry?.sourceId === 'string')
+      .map(entry => [entry.sourceId, entry])
+  );
+}
+
+export async function applyAdmissionPolicy(items, contract = null) {
+  const resolvedContract = contract || (await loadAdmissionContract());
+  const admissions = resolvedContract.SOURCE_ADMISSIONS || [];
+  const evaluateItemUse = resolvedContract.evaluateItemUse;
+  const allowedStatuses = new Set(resolvedContract.ALLOWED_USE_STATUSES || []);
+  const admissionById = buildAdmissionIndex(admissions);
+
+  if (typeof evaluateItemUse !== 'function') {
+    throw new TypeError('source admission evaluator is unavailable');
+  }
+
+  const governedItems = [];
+  for (const item of Array.isArray(items) ? items : []) {
+    const sourceId = slugifySourceName(item?.source || '');
+    const admission = admissionById.get(sourceId);
+    const itemStatus = item?.itemAllowedUseStatus ?? null;
+
+    let decision;
+    if (itemStatus != null && !allowedStatuses.has(itemStatus)) {
+      decision = { allowedUseStatus: 'prohibited', displayMode: 'exclude' };
+    } else {
+      decision = evaluateItemUse(admission, itemStatus);
+    }
+
+    if (decision.displayMode === 'exclude') continue;
+
+    const governed = {
+      id: item.id,
+      headline: item.headline,
+      summary: item.summary,
+      source: item.source,
+      sourceId,
+      sourceUrl: item.sourceUrl,
+      published: item.published,
+      region: item.region,
+      lang: item.lang,
+      translated: Boolean(item.translated),
+      originalLang: item.originalLang || item.lang,
+      allowedUseStatus: decision.allowedUseStatus,
+      displayMode: decision.displayMode,
+    };
+
+    if (decision.displayMode === 'headline-link') {
+      governed.summary = null;
+      governed.translated = false;
+      governed.originalLang = item.lang;
+    } else {
+      const permitsExcerpt = Array.isArray(admission?.permittedUse)
+        ? admission.permittedUse.includes('excerpt')
+        : false;
+      if (!permitsExcerpt) {
+        governed.summary = null;
+      } else if (typeof governed.summary === 'string') {
+        const maxChars = Number.isInteger(admission?.excerptMaxChars)
+          ? admission.excerptMaxChars
+          : 0;
+        governed.summary = governed.summary.slice(0, Math.max(0, maxChars));
+      }
+    }
+
+    governedItems.push(governed);
+  }
+
+  return { items: governedItems, admissionById };
+}
+
 export async function onRequestGet({ env, request }) {
   const url = new URL(request.url);
   const headers = getCorsHeaders(request);
+  const admissionContract = await loadAdmissionContract();
+  const cacheIdentity = getFeedCacheIdentity(admissionContract.ADMISSION_FINGERPRINT);
 
   const rawRegion = url.searchParams.get('region') || 'global';
   const region = VALID_REGIONS.has(rawRegion) ? rawRegion : 'global';
@@ -213,9 +305,9 @@ export async function onRequestGet({ env, request }) {
   );
   const offset = Math.max(parseInt(url.searchParams.get('offset') || '0', 10) || 0, 0);
 
-  // Source definitions are part of the cache key, so changing any source deterministically
-  // invalidates the old feed instead of waiting for TTL expiry.
-  const cached = await readFeedCache(env);
+  // Source definitions, admission ledger state, and the display-policy contract all participate
+  // in cache identity. Restrictive governance changes therefore cannot reuse a richer old payload.
+  const cached = await readFeedCache(env, cacheIdentity.cacheKey);
   if (cached) {
     const filtered = filterByRegion(cached, region);
     const page = filtered.slice(offset, offset + limit);
@@ -225,14 +317,19 @@ export async function onRequestGet({ env, request }) {
         cached: true,
         total: filtered.length,
         sourceFingerprint: SOURCE_FINGERPRINT,
+        admissionFingerprint: cacheIdentity.admissionFingerprint,
+        displayPolicyVersion: cacheIdentity.displayPolicyVersion,
       }),
       { headers }
     );
   }
 
-  const { items, sourceHealth } = await fetchAllSources();
-  await translateNonEnglish(items, env);
-  await writeCaches(env, items, sourceHealth);
+  const { items: acquiredItems, sourceHealth } = await fetchAllSources();
+  // Governance is applied before translation and before KV persistence. Restricted summaries
+  // therefore never enter the translated or cached consumer payload.
+  const { items, admissionById } = await applyAdmissionPolicy(acquiredItems, admissionContract);
+  await translateNonEnglish(items, env, admissionById);
+  await writeCaches(env, items, sourceHealth, cacheIdentity.cacheKey);
 
   const filtered = filterByRegion(items, region);
   const page = filtered.slice(offset, offset + limit);
@@ -242,26 +339,28 @@ export async function onRequestGet({ env, request }) {
       cached: false,
       total: filtered.length,
       sourceFingerprint: SOURCE_FINGERPRINT,
+      admissionFingerprint: cacheIdentity.admissionFingerprint,
+      displayPolicyVersion: cacheIdentity.displayPolicyVersion,
     }),
     { headers }
   );
 }
 
-async function readFeedCache(env) {
+async function readFeedCache(env, cacheKey) {
   if (!env.NEWS_CACHE) return null;
   try {
-    return await env.NEWS_CACHE.get(CACHE_KEY, { type: 'json' });
+    return await env.NEWS_CACHE.get(cacheKey, { type: 'json' });
   } catch (error) {
-    logOperationalError('kv_read_feed', error, { cacheKey: CACHE_KEY });
+    logOperationalError('kv_read_feed', error, { cacheKey });
     return null;
   }
 }
 
-async function writeCaches(env, items, sourceHealth) {
+async function writeCaches(env, items, sourceHealth, cacheKey) {
   if (!env.NEWS_CACHE) return;
   try {
     await Promise.all([
-      env.NEWS_CACHE.put(CACHE_KEY, JSON.stringify(items), {
+      env.NEWS_CACHE.put(cacheKey, JSON.stringify(items), {
         expirationTtl: CACHE_TTL_SECONDS,
       }),
       env.NEWS_CACHE.put(
@@ -276,16 +375,22 @@ async function writeCaches(env, items, sourceHealth) {
     ]);
   } catch (error) {
     logOperationalError('kv_write_news', error, {
-      feedCacheKey: CACHE_KEY,
+      feedCacheKey: cacheKey,
       healthCacheKey: SOURCE_HEALTH_KEY,
     });
   }
 }
 
-async function translateNonEnglish(items, env) {
+export async function translateNonEnglish(items, env, admissionById = new Map()) {
   if (!env?.AI) return;
 
-  const toTranslate = items.filter(i => i.lang && i.lang !== 'en');
+  const toTranslate = items.filter(item => {
+    if (!item?.lang || item.lang === 'en' || item.displayMode !== 'current-use') return false;
+    const admission = admissionById.get(item.sourceId);
+    return Array.isArray(admission?.permittedUse)
+      ? admission.permittedUse.includes('translated-headline-summary')
+      : false;
+  });
   if (!toTranslate.length) return;
 
   await Promise.all(
@@ -422,7 +527,7 @@ function makeSourceHealth(source, observation) {
 }
 
 export function slugifySourceName(name) {
-  return name
+  return String(name || '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
