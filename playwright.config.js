@@ -18,6 +18,22 @@ module.exports = defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      name: 'mobile-iphone',
+      testMatch: /mobile-reader\.spec\.js/,
+      use: {
+        ...devices['iPhone 14'],
+        viewport: { width: 390, height: 844 },
+      },
+    },
+    {
+      name: 'mobile-android-narrow',
+      testMatch: /mobile-reader\.spec\.js/,
+      use: {
+        ...devices['Galaxy S9+'],
+        viewport: { width: 360, height: 800 },
+      },
+    },
   ],
   webServer: shouldStartLocalServer
     ? {
