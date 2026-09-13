@@ -8,6 +8,10 @@
  */
 
 const STRIPE_API_VERSION = '2025-04-10';
+export const CHECKOUT_RATE_LIMIT = 5;
+export const CHECKOUT_RATE_WINDOW_SECONDS = 10;
+const CHECKOUT_COUNTER_TTL_SECONDS = 20;
+const CHECKOUT_COUNTER_PREFIX = 'sec002_checkout_v1';
 const ALLOWED_ORIGINS = new Set([
   'https://globaldeets.com',
   'https://www.globaldeets.com',
@@ -35,11 +39,60 @@ function originIsAllowed(request) {
   return !origin || ALLOWED_ORIGINS.has(origin);
 }
 
-function json(body, status, request) {
+function json(body, status, request, extraHeaders = {}) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: corsHeaders(request),
+    headers: { ...corsHeaders(request), ...extraHeaders },
   });
+}
+
+function logThrottleError(error) {
+  console.error(
+    JSON.stringify({
+      event: 'globaldeets.checkout.throttle.error',
+      error: error?.message || String(error || 'unknown error'),
+    })
+  );
+}
+
+async function digestClientKey(clientIp, bucket) {
+  const bytes = new TextEncoder().encode(`${CHECKOUT_COUNTER_PREFIX}:${bucket}:${clientIp}`);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+export async function enforceCheckoutThrottle(env, request, nowMs = Date.now()) {
+  // The edge Rulesets rate-limit remains the primary control. This short-lived KV counter is a
+  // privacy-minimized defense-in-depth fallback and intentionally does not log or persist raw IPs.
+  if (!env?.NEWS_CACHE) return { allowed: true, enforced: false, retryAfterSeconds: 0 };
+
+  const clientIp = request?.headers?.get('CF-Connecting-IP')?.trim();
+  if (!clientIp) return { allowed: true, enforced: false, retryAfterSeconds: 0 };
+
+  try {
+    const windowMs = CHECKOUT_RATE_WINDOW_SECONDS * 1000;
+    const bucket = Math.floor(nowMs / windowMs);
+    const elapsedMs = nowMs - bucket * windowMs;
+    const retryAfterSeconds = Math.max(1, Math.ceil((windowMs - elapsedMs) / 1000));
+    const digest = await digestClientKey(clientIp, bucket);
+    const key = `${CHECKOUT_COUNTER_PREFIX}:${bucket}:${digest}`;
+    const record = await env.NEWS_CACHE.get(key, { type: 'json' });
+    const count = Number.isInteger(record?.count) ? record.count : 0;
+
+    if (count >= CHECKOUT_RATE_LIMIT) {
+      return { allowed: false, enforced: true, retryAfterSeconds };
+    }
+
+    await env.NEWS_CACHE.put(key, JSON.stringify({ count: count + 1 }), {
+      expirationTtl: CHECKOUT_COUNTER_TTL_SECONDS,
+    });
+    return { allowed: true, enforced: true, retryAfterSeconds: 0 };
+  } catch (error) {
+    // Availability is preserved if KV is unavailable; the Cloudflare edge rule remains the
+    // authoritative abuse boundary once Rulesets write authorization is restored.
+    logThrottleError(error);
+    return { allowed: true, enforced: false, retryAfterSeconds: 0 };
+  }
 }
 
 export async function onRequestPost(context) {
@@ -47,6 +100,16 @@ export async function onRequestPost(context) {
 
   if (!originIsAllowed(request)) {
     return json({ error: 'Origin not allowed' }, 403, request);
+  }
+
+  const throttle = await enforceCheckoutThrottle(env, request);
+  if (!throttle.allowed) {
+    return json(
+      { error: 'Too many checkout requests. Please try again shortly.' },
+      429,
+      request,
+      { 'Retry-After': String(throttle.retryAfterSeconds) }
+    );
   }
 
   const stripeSecret = env?.STRIPE;
