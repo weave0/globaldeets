@@ -49,6 +49,38 @@ function exportProjectsList() {
   if (window.showToast) window.showToast('Projects exported successfully!', 'success');
 }
 
+function ensureMobileTouchTargets() {
+  if (document.getElementById('gd024-mobile-touch-targets')) return;
+  const style = document.createElement('style');
+  style.id = 'gd024-mobile-touch-targets';
+  style.textContent = `
+    @media (max-width: 700px) {
+      .gfd-ecosystem-nav ~ header {
+        padding: 0.15rem 0 !important;
+      }
+      .gfd-ecosystem-nav ~ header .nav-icon-btn {
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+      }
+      .ecosystem-toggle {
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+      }
+      .featured-platform .platform-actions a,
+      .featured-platform .platform-actions button {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 function getHomepageMetric(label) {
   return [...document.querySelectorAll('.dm-stat')].find(
     stat => stat.querySelector('.dm-stat-label')?.textContent.trim() === label
@@ -179,6 +211,7 @@ window.addEventListener('scroll', () => {
 
 // Initialize
 function init() {
+  ensureMobileTouchTargets();
   if (window.renderProjects && typeof projects !== 'undefined') window.renderProjects(projects);
   if (window.updateStats && typeof projects !== 'undefined') window.updateStats(projects);
   attachEventListeners();
