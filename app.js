@@ -55,6 +55,9 @@ function ensureMobileTouchTargets() {
   style.id = 'gd024-mobile-touch-targets';
   style.textContent = `
     @media (max-width: 700px) {
+      .gfd-ecosystem-nav ~ header {
+        padding: 0.15rem 0 !important;
+      }
       .gfd-ecosystem-nav ~ header .nav-icon-btn {
         width: 44px !important;
         height: 44px !important;
