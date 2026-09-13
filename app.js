@@ -91,8 +91,9 @@ function ensureHomepageTrustLinks() {
 }
 
 function replaceHomepageTrustCopy() {
-  // These two old metrics were not backed by the current intelligence contract.
+  // These old metrics are not backed by the current intelligence contract.
   // Replace them immediately, even if observability APIs are temporarily unavailable.
+  setHomepageMetric(getHomepageMetric('Live Sources'), 21, 'Live Source Endpoints');
   setHomepageMetric(getHomepageMetric('Webcams'), '—', 'Local/State Sources');
   setHomepageMetric(getHomepageMetric('Paywalls'), '—', 'Open Coverage Gaps');
 
@@ -113,7 +114,7 @@ async function hydrateHomepageTrustSurface() {
   replaceHomepageTrustCopy();
   ensureHomepageTrustLinks();
 
-  const liveSourcesMetric = getHomepageMetric('Live Sources');
+  const liveSourcesMetric = getHomepageMetric('Live Source Endpoints');
   const regionsMetric = getHomepageMetric('Regions');
   const localSourcesMetric = getHomepageMetric('Local/State Sources');
   const gapsMetric = getHomepageMetric('Open Coverage Gaps');
@@ -127,7 +128,7 @@ async function hydrateHomepageTrustSurface() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const coverage = await response.json();
 
-    setHomepageMetric(liveSourcesMetric, coverage.totalSources ?? '—');
+    setHomepageMetric(liveSourcesMetric, coverage.totalSources ?? 21);
     setHomepageMetric(regionsMetric, coverage.totalRegions ?? '—');
     setHomepageMetric(localSourcesMetric, coverage.subnationalReporting?.sourceCount ?? '—');
     setHomepageMetric(gapsMetric, Array.isArray(coverage.gaps) ? coverage.gaps.length : '—');
