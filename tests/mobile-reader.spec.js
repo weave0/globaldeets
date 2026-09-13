@@ -117,11 +117,16 @@ test.beforeEach(async ({ page }) => {
   await page.route('**/api/news**', fulfillNewsApi);
 });
 
-test('mobile homepage fits, hydrates governed metrics, and keeps navigation reachable', async ({ page }) => {
+test('mobile homepage fits, exposes governed metrics, and keeps navigation reachable', async ({ page }) => {
   await page.goto('/index.html');
 
   await expect(page.getByRole('heading', { name: /The Earth,\s*Right Now\./i })).toBeVisible();
-  await expect(page.locator('.dm-stat').filter({ hasText: 'Live Sources' })).toContainText('21');
+  const liveSources = page.locator('.dm-stat').filter({ hasText: 'Live Sources' });
+  await expect(liveSources).toBeVisible();
+  await expect(liveSources).toContainText('21');
+  await expect(page.locator('.dm-stat').filter({ hasText: 'Regions' })).toBeVisible();
+  await expect(page.locator('.dm-stat').filter({ hasText: 'Local/State Sources' })).toBeVisible();
+  await expect(page.locator('.dm-stat').filter({ hasText: 'Open Coverage Gaps' })).toBeVisible();
   await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible();
   await expect(page.locator('#globe-hero-container')).toBeVisible();
   await expectNoHorizontalOverflow(page);
@@ -133,8 +138,7 @@ test('mobile homepage fits, hydrates governed metrics, and keeps navigation reac
   await expect(page.locator('#ecosystem-dropdown')).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
-  const productNav = page.locator('header .primary-nav');
-  const firstNavButton = productNav.locator('.nav-icon-btn').first();
+  const firstNavButton = page.locator('header .primary-nav .nav-icon-btn').first();
   await expect(firstNavButton).toBeVisible();
   await expectPracticalTouchTarget(firstNavButton);
 });

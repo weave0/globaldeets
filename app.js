@@ -11,7 +11,6 @@ const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
   ? 'https://globaldeets.com'
   : '';
 
-// Debounce helper
 function debounce(func, wait) {
   let timeout;
   return function (...args) {
@@ -20,7 +19,6 @@ function debounce(func, wait) {
   };
 }
 
-// Show/hide loading
 function showLoading() {
   loadingIndicator?.classList.add('active');
 }
@@ -28,7 +26,6 @@ function hideLoading() {
   loadingIndicator?.classList.remove('active');
 }
 
-// Check performance
 function checkPerformance() {
   if (typeof projects !== 'undefined' && projects.length > 50) {
     showLoading();
@@ -36,7 +33,6 @@ function checkPerformance() {
   }
 }
 
-// Export projects
 function exportProjectsList() {
   const filtered = typeof projects === 'undefined' ? [] : projects;
   const blob = new Blob([JSON.stringify(filtered, null, 2)], { type: 'application/json' });
@@ -75,6 +71,39 @@ function ensureMobileTouchTargets() {
         min-height: 44px;
         display: inline-flex;
         align-items: center;
+      }
+    }
+    @media (max-width: 480px) {
+      .featured-platform .screenshot-fallback {
+        display: block !important;
+        aspect-ratio: auto !important;
+        min-height: 0;
+        border-style: solid;
+      }
+      .featured-platform .dashboard-mock {
+        height: auto;
+        padding: 0.8rem;
+        gap: 0.55rem;
+      }
+      .featured-platform .dm-header {
+        gap: 0.5rem;
+        align-items: flex-start;
+      }
+      .featured-platform .dm-source {
+        text-align: right;
+      }
+      .featured-platform .dm-stats-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+      }
+      .featured-platform .dm-stat {
+        min-width: 0;
+        padding: 0.55rem 0.35rem;
+      }
+      .featured-platform .dm-chart,
+      .featured-platform .dm-rows {
+        display: none;
       }
     }
   `;
@@ -123,8 +152,6 @@ function ensureHomepageTrustLinks() {
 }
 
 function replaceHomepageTrustCopy() {
-  // Replace stale fallback values immediately, even if observability APIs are temporarily unavailable.
-  // Keep the established metric label so reader tests and assistive discovery remain stable.
   setHomepageMetric(getHomepageMetric('Live Sources'), 21);
   setHomepageMetric(getHomepageMetric('Webcams'), '—', 'Local/State Sources');
   setHomepageMetric(getHomepageMetric('Paywalls'), '—', 'Open Coverage Gaps');
@@ -165,12 +192,10 @@ async function hydrateHomepageTrustSurface() {
     setHomepageMetric(localSourcesMetric, coverage.subnationalReporting?.sourceCount ?? '—');
     setHomepageMetric(gapsMetric, Array.isArray(coverage.gaps) ? coverage.gaps.length : '—');
   } catch (error) {
-    // Fail open: the homepage remains usable and links to the observatory stay available.
     console.warn('GlobalDeets coverage snapshot unavailable:', error);
   }
 }
 
-// Attach listeners
 function attachEventListeners() {
   if (searchInput && window.filterProjects) {
     searchInput.addEventListener('input', debounce(window.filterProjects, 300));
@@ -199,7 +224,6 @@ function attachEventListeners() {
   }
 }
 
-// Header scroll effect
 window.addEventListener('scroll', () => {
   const currentScroll = window.pageYOffset;
   const header = document.querySelector('header');
@@ -209,7 +233,6 @@ window.addEventListener('scroll', () => {
   }
 });
 
-// Initialize
 function init() {
   ensureMobileTouchTargets();
   if (window.renderProjects && typeof projects !== 'undefined') window.renderProjects(projects);
@@ -217,7 +240,6 @@ function init() {
   attachEventListeners();
   checkPerformance();
   hydrateHomepageTrustSurface();
-  // UI effects module will auto-init when available
 }
 
 if (document.readyState === 'loading') {
