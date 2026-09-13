@@ -7,6 +7,18 @@ function requireCondition(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+async function verifyNoHorizontalOverflow(page, label) {
+  const overflow = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+    bodyScrollWidth: document.body.scrollWidth,
+  }));
+  requireCondition(
+    overflow.scrollWidth <= overflow.viewport + 1 && overflow.bodyScrollWidth <= overflow.viewport + 1,
+    `${label} has horizontal overflow: viewport=${overflow.viewport}, document=${overflow.scrollWidth}, body=${overflow.bodyScrollWidth}`
+  );
+}
+
 async function verifyHomepage(page) {
   await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
 
@@ -81,6 +93,50 @@ async function verifyNews(page) {
   requireCondition((await bridgeStyles.count()) === 1, 'reader evidence-bridge stylesheet was not loaded');
 }
 
+async function verifyMobileSurface(browser, viewport, label) {
+  const context = await browser.newContext({
+    viewport,
+    isMobile: true,
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+
+  try {
+    await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.locator('.dm-stat').filter({ hasText: 'Live Sources' }).waitFor({ state: 'visible', timeout: 20_000 });
+    await page.waitForFunction(
+      () => {
+        const stat = [...document.querySelectorAll('.dm-stat')].find(node =>
+          node.querySelector('.dm-stat-label')?.textContent.trim() === 'Live Sources'
+        );
+        return stat?.querySelector('.dm-stat-value')?.textContent.trim() === '21';
+      },
+      undefined,
+      { timeout: 20_000 }
+    );
+    await page.locator('#globe-hero-container').waitFor({ state: 'visible', timeout: 20_000 });
+    await verifyNoHorizontalOverflow(page, `${label} homepage`);
+
+    const navButton = page.locator('header .nav-icon-btn').first();
+    await navButton.waitFor({ state: 'visible', timeout: 10_000 });
+    const navBox = await navButton.boundingBox();
+    requireCondition(navBox && navBox.width >= 36 && navBox.height >= 36, `${label} primary nav touch target is too small`);
+
+    await page.goto(`${BASE}/news.html`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await page.locator('#news-grid .news-card').first().waitFor({ state: 'visible', timeout: 30_000 });
+    await page.locator('#news-coverage-context').waitFor({ state: 'visible', timeout: 30_000 });
+    await page.locator('.news-source-context').first().waitFor({ state: 'attached', timeout: 20_000 });
+    await verifyNoHorizontalOverflow(page, `${label} news reader`);
+
+    const regionTab = page.locator('.region-tab').first();
+    await regionTab.waitFor({ state: 'visible', timeout: 10_000 });
+    const tabBox = await regionTab.boundingBox();
+    requireCondition(tabBox && tabBox.width >= 36 && tabBox.height >= 36, `${label} region tab touch target is too small`);
+  } finally {
+    await context.close();
+  }
+}
+
 async function verifyServiceWorker(page) {
   const response = await page.request.get(`${BASE}/service-worker.js`);
   requireCondition(response.ok(), `service worker returned HTTP ${response.status()}`);
@@ -105,10 +161,13 @@ async function verifyServiceWorker(page) {
     await verifyHomepage(page);
     await verifyNews(page);
     await verifyServiceWorker(page);
+    await verifyMobileSurface(browser, { width: 390, height: 844 }, 'iPhone-class');
+    await verifyMobileSurface(browser, { width: 360, height: 800 }, 'narrow Android-class');
     console.log(
-      'Production reader verification passed: raw news HTML, rendered homepage, hydrated news evidence bridge, and PWA shell are current.'
+      'Production reader verification passed: desktop + mobile rendered surfaces, raw news HTML, evidence bridge, and PWA shell are current.'
     );
   } finally {
+    await context.close();
     await browser.close();
   }
 })().catch(error => {
