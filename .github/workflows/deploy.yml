@@ -113,3 +113,19 @@ jobs:
                     echo "Rendered reader verification attempt ${attempt} failed; retrying after propagation delay."
                     sleep 10
                   done
+
+            - name: Verify secondary mobile production surfaces
+              run: |
+                  for attempt in 1 2 3 4 5 6; do
+                    if node tools/verify-secondary-mobile-prod.js --base=https://globaldeets.com; then
+                      exit 0
+                    fi
+
+                    if [ "${attempt}" -eq 6 ]; then
+                      echo "Secondary mobile surfaces did not converge after all verification attempts."
+                      exit 1
+                    fi
+
+                    echo "Secondary mobile verification attempt ${attempt} failed; retrying after propagation delay."
+                    sleep 10
+                  done
