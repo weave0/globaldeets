@@ -2,6 +2,12 @@ const { defineConfig, devices } = require('@playwright/test');
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5500';
 const shouldStartLocalServer = !process.env.PLAYWRIGHT_BASE_URL;
+const mobileChromium = {
+  ...devices['Desktop Chrome'],
+  isMobile: true,
+  hasTouch: true,
+  deviceScaleFactor: 3,
+};
 
 module.exports = defineConfig({
   testDir: './tests',
@@ -22,7 +28,7 @@ module.exports = defineConfig({
       name: 'mobile-iphone',
       testMatch: /mobile-reader\.spec\.js/,
       use: {
-        ...devices['iPhone 14'],
+        ...mobileChromium,
         viewport: { width: 390, height: 844 },
       },
     },
@@ -30,7 +36,7 @@ module.exports = defineConfig({
       name: 'mobile-android-narrow',
       testMatch: /mobile-reader\.spec\.js/,
       use: {
-        ...devices['Galaxy S9+'],
+        ...mobileChromium,
         viewport: { width: 360, height: 800 },
       },
     },
