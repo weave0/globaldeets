@@ -32,7 +32,25 @@ function reviewedNewSource(overrides = {}) {
 
 const EXAMPLE_SOURCE = Object.freeze({ name: 'Example News', url: 'https://example.com/rss.xml', region: 'global', lang: 'en' });
 
-test('21 live sources retain 19 frozen legacy IDs and two reviewed GD-019 additions', () => {
+const RESTRICTED_REVIEWED = {
+  'abc-australia': 'permission-required',
+  'al-jazeera': 'permission-required',
+  'anadolu-agency': 'contract-required',
+  ap: 'contract-required',
+  'bbc-world': 'permission-required',
+  cna: 'permission-required',
+  dawn: 'permission-required',
+  dw: 'permission-required',
+  'france-24': 'permission-required',
+  guardian: 'permission-required',
+  'kyiv-independent': 'permission-required',
+  'premium-times': 'permission-required',
+  'the-east-african': 'permission-required',
+  ukrinform: 'contract-required',
+  yonhap: 'permission-required',
+};
+
+test('all 21 live sources are reviewed while frozen legacy identity remains intact', () => {
   const validation = admission.validateSourceAdmissions();
   assert.equal(validation.valid, true);
   assert.equal(news.SOURCES.length, 21);
@@ -42,55 +60,50 @@ test('21 live sources retain 19 frozen legacy IDs and two reviewed GD-019 additi
   const newEntries = admission.SOURCE_ADMISSIONS.filter(entry => entry.legacy === false);
   assert.deepEqual(newEntries.map(entry => entry.sourceId).sort(), ['calmatters', 'minnesota-reformer']);
   assert.equal(newEntries.every(entry => admission.isProductionAdmissible(entry)), true);
-  assert.equal(admission.SOURCE_ADMISSIONS.filter(entry => entry.reviewState === 'legacy-unreviewed').length, 8);
+  assert.equal(admission.SOURCE_ADMISSIONS.filter(entry => entry.reviewState === 'legacy-unreviewed').length, 0);
+  assert.equal(admission.SOURCE_ADMISSIONS.every(entry => entry.reviewState === 'reviewed'), true);
   const nhk = admission.SOURCE_ADMISSIONS.find(entry => entry.sourceId === 'nhk');
   assert.ok(nhk.currentUse.includes('translated-headline-summary'));
 });
 
-test('reviewed legacy tranches remain restrictive except MercoPress bounded feed-card use', () => {
-  const expected = {
-    'bbc-world': 'permission-required', dw: 'permission-required', ukrinform: 'contract-required',
-    'premium-times': 'permission-required', cna: 'permission-required', dawn: 'permission-required',
-    'abc-australia': 'permission-required', 'the-east-african': 'permission-required', mercopress: 'verified-public-use',
-  };
-  for (const [sourceId, status] of Object.entries(expected)) {
+test('reviewed restrictive and unknown legacy sources remain headline-link only', () => {
+  for (const [sourceId, status] of Object.entries(RESTRICTED_REVIEWED)) {
     const entry = admission.SOURCE_ADMISSIONS.find(candidate => candidate.sourceId === sourceId);
     assert.equal(entry.reviewState, 'reviewed');
-    assert.equal(entry.reviewedAt, '2026-09-13');
     assert.equal(entry.allowedUseStatus, status);
-  }
-  for (const sourceId of Object.keys(expected).filter(id => id !== 'mercopress')) {
-    const entry = admission.SOURCE_ADMISSIONS.find(candidate => candidate.sourceId === sourceId);
     assert.equal(admission.evaluateItemUse(entry).displayMode, 'headline-link');
     assert.deepEqual(entry.permittedUse, []);
   }
-  const mercopress = admission.SOURCE_ADMISSIONS.find(entry => entry.sourceId === 'mercopress');
+
+  for (const sourceId of ['nhk', 'npr', 'the-hindu']) {
+    const entry = admission.SOURCE_ADMISSIONS.find(candidate => candidate.sourceId === sourceId);
+    assert.equal(entry.reviewState, 'reviewed');
+    assert.equal(entry.reviewedAt, '2026-09-13');
+    assert.equal(entry.allowedUseStatus, 'unknown');
+    assert.equal(admission.evaluateItemUse(entry).displayMode, 'headline-link');
+    assert.deepEqual(entry.permittedUse, []);
+  }
+});
+
+test('MercoPress remains the only promoted legacy source with bounded current-use permission', () => {
+  const permittedLegacy = admission.SOURCE_ADMISSIONS.filter(
+    entry => entry.legacy === true && entry.allowedUseStatus === 'verified-public-use'
+  );
+  assert.deepEqual(permittedLegacy.map(entry => entry.sourceId), ['mercopress']);
+  const mercopress = permittedLegacy[0];
   assert.deepEqual(mercopress.permittedUse, ['headline-link', 'metadata', 'excerpt']);
   assert.equal(mercopress.itemLevelReviewRequired, false);
   assert.deepEqual(admission.evaluateItemUse(mercopress), { allowedUseStatus: 'verified-public-use', displayMode: 'current-use' });
 });
 
-test('admission summary reports both promoted tranches and unresolved rights debt', () => {
+test('admission summary distinguishes zero review debt from three unresolved rights states', () => {
   const summary = admission.admissionSummary();
   assert.equal(summary.valid, true);
   assert.equal(summary.totalLiveSources, 21);
-  assert.equal(summary.reviewedSources, 13);
-  assert.equal(summary.legacyUnreviewedSources, 8);
-  assert.deepEqual(summary.remediationSourceIds, [
-    'abc-australia', 'ap', 'bbc-world', 'cna', 'dawn', 'dw', 'guardian', 'premium-times', 'the-east-african', 'ukrinform',
-  ]);
-  assert.ok(summary.unknownRightsSourceIds.includes('npr'));
-  assert.equal(summary.unknownRightsSourceIds.includes('mercopress'), false);
-});
-
-test('known AP and Guardian constraints remain visible without silently removing either source', () => {
-  const ap = admission.SOURCE_ADMISSIONS.find(entry => entry.sourceId === 'ap');
-  const guardian = admission.SOURCE_ADMISSIONS.find(entry => entry.sourceId === 'guardian');
-  assert.equal(ap.allowedUseStatus, 'contract-required');
-  assert.equal(ap.endpointAuthority, 'unverified-third-party');
-  assert.equal(guardian.allowedUseStatus, 'permission-required');
-  assert.ok(news.SOURCES.some(source => source.name === 'AP'));
-  assert.ok(news.SOURCES.some(source => source.name === 'Guardian'));
+  assert.equal(summary.reviewedSources, 21);
+  assert.equal(summary.legacyUnreviewedSources, 0);
+  assert.deepEqual(summary.remediationSourceIds, Object.keys(RESTRICTED_REVIEWED).sort());
+  assert.deepEqual(summary.unknownRightsSourceIds, ['nhk', 'npr', 'the-hindu']);
 });
 
 test('a new canonical source without admission fails closed', () => {
