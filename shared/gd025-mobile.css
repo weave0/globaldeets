@@ -1,0 +1,80 @@
+/* GD-025 secondary-surface mobile certification layer.
+ * Loaded by the shared ecosystem navigation after page-specific CSS so these
+ * accessibility/touch rules win without changing desktop presentation. */
+@media (max-width: 900px) {
+  .ecosystem-toggle {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .gfd-ecosystem-nav ~ header .nav-icon-btn,
+  .world-header .nav-icon-btn {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .globe-filter-btn,
+  .knowledge-filter-pill {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .globe-filter-btn {
+    padding: 0.55rem 0.9rem;
+  }
+
+  .knowledge-filter-pill {
+    padding: 0.5rem 0.8rem;
+  }
+
+  #news-overlay-close {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #news-overlay-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .world-header .control-btn,
+  .world-header .nav-home,
+  .panel-toggle-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .search-box input,
+  .filter-section select {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 600px) {
+  .globe-filter-bar {
+    width: calc(100vw - 1rem);
+    max-width: calc(100vw - 1rem);
+    max-height: 9rem;
+    overflow-y: auto;
+    border-radius: 18px;
+    padding: 0.5rem;
+  }
+
+  .globe-filter-btn {
+    flex: 1 1 calc(50% - 0.4rem);
+  }
+
+  .knowledge-filters {
+    gap: 0.45rem;
+  }
+}
