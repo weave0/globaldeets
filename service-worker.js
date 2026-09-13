@@ -1,5 +1,5 @@
 // Basic service worker for offline caching
-const CACHE_NAME = 'globaldeets-cache-v2';
+const CACHE_NAME = 'globaldeets-cache-v3';
 const CORE_ASSETS = [
   '/',
   'index.html',
@@ -32,18 +32,22 @@ const CORE_ASSETS = [
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_ASSETS)));
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches
-      .keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
+    Promise.all([
+      caches
+        .keys()
+        .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))),
+      self.clients.claim(),
+    ])
   );
 });
 
-// Network falling back to cache, with offline fallback for navigation requests
+// Network first, falling back to cache. Successful GET responses refresh the current cache.
 self.addEventListener('fetch', event => {
   const { request } = event;
   if (request.method !== 'GET') return;
@@ -52,7 +56,6 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     fetch(request)
       .then(resp => {
-        // Stale-while-revalidate style caching for GET
         const copy = resp.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
         return resp;
