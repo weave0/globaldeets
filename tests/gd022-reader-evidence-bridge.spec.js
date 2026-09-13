@@ -131,14 +131,15 @@ test('news reader surfaces governed provenance and rights without inventing trus
   await expect(guardian.locator('.news-rights-state')).toContainText('withholds the publisher summary');
   await expect(guardian.locator('.news-source-facts')).toContainText('The Scott Trust Limited');
   await expect(guardian.locator('.news-source-context-caveat')).toContainText('not a truth score');
+  await expect(guardian.locator('.news-source-context-caveat')).toContainText('bias rating');
   await expect(guardian.locator('.news-summary')).toHaveCount(0);
 
   const merco = page.locator('.news-card').filter({ hasText: 'Bounded-use source story' });
   await merco.locator('.news-source-context summary').click();
   await expect(merco.locator('.news-rights-state')).toContainText('Bounded reuse reviewed');
   await expect(merco.locator('.news-rights-state')).toContainText('says nothing about whether the story is true');
+  await expect(merco.locator('.news-source-context-caveat')).toContainText('bias rating');
   await expect(merco.locator('.news-summary')).toHaveCount(1);
-  await expect(page.getByText(/bias rating/i)).toBeVisible();
 });
 
 test('region coverage context changes with routing filter without claiming story locality', async ({ page }) => {
