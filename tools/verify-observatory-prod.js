@@ -88,9 +88,9 @@ function requireCondition(condition, message) {
   const legacyUnreviewed = admission.liveAdmissions.filter(entry => entry.reviewState === 'legacy-unreviewed').length;
   requireCondition(observatory.sourceRights?.reviewedLiveSources === reviewedLive, 'reviewed live source count drifted');
   requireCondition(observatory.sourceRights?.legacyUnreviewedSources === legacyUnreviewed, 'legacy review debt count drifted');
-  requireCondition(legacyUnreviewed === 17, 'source-rights review debt baseline changed unexpectedly');
+  requireCondition(legacyUnreviewed === 8, 'source-rights review debt baseline changed unexpectedly');
   requireCondition(sources.totalSources === 21, 'GD-019 live source count changed');
-  requireCondition(reviewedLive === 4, 'GD-019 reviewed live source count changed');
+  requireCondition(reviewedLive === 13, 'reviewed live source baseline changed');
 
   const subnationalSources = sources.sources.filter(source => source.geographicScope === 'subnational');
   const subnationalIds = subnationalSources.map(source => source.sourceId).sort();
