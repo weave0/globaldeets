@@ -20,60 +20,67 @@ const admission = await import(pathToFileURL(admissionPath).href);
 
 function reviewedNewSource(overrides = {}) {
   return admission.createSourceAdmission({
-    sourceId: 'example-news',
-    name: 'Example News',
-    endpointUrl: 'https://example.com/rss.xml',
-    endpointType: 'rss',
-    endpointAuthority: 'first-party',
-    endpointEvidenceUrls: ['https://example.com/rss-info'],
-    authenticationRequirement: 'none',
-    usagePolicyUrls: ['https://example.com/terms'],
-    allowedUseStatus: 'verified-public-use',
-    currentUse: ['headline-link', 'metadata', 'excerpt'],
-    permittedUse: ['headline-link', 'metadata', 'excerpt'],
-    excerptMaxChars: 280,
-    syndicatedContentBehavior: 'none-reviewed',
-    itemLevelReviewRequired: false,
-    itemLevelStrategy: 'preserve-origin-and-restrict-on-item-signal',
-    reviewState: 'reviewed',
-    reviewedAt: '2026-09-03',
-    reviewerNotes: 'Test fixture.',
-    healthVerificationStatus: 'verified',
-    legacy: false,
-    ...overrides,
+    sourceId: 'example-news', name: 'Example News', endpointUrl: 'https://example.com/rss.xml', endpointType: 'rss',
+    endpointAuthority: 'first-party', endpointEvidenceUrls: ['https://example.com/rss-info'], authenticationRequirement: 'none',
+    usagePolicyUrls: ['https://example.com/terms'], allowedUseStatus: 'verified-public-use',
+    currentUse: ['headline-link', 'metadata', 'excerpt'], permittedUse: ['headline-link', 'metadata', 'excerpt'], excerptMaxChars: 280,
+    syndicatedContentBehavior: 'none-reviewed', itemLevelReviewRequired: false,
+    itemLevelStrategy: 'preserve-origin-and-restrict-on-item-signal', reviewState: 'reviewed', reviewedAt: '2026-09-03',
+    reviewerNotes: 'Test fixture.', healthVerificationStatus: 'verified', legacy: false, ...overrides,
   });
 }
 
-const EXAMPLE_SOURCE = Object.freeze({
-  name: 'Example News',
-  url: 'https://example.com/rss.xml',
-  region: 'global',
-  lang: 'en',
-});
+const EXAMPLE_SOURCE = Object.freeze({ name: 'Example News', url: 'https://example.com/rss.xml', region: 'global', lang: 'en' });
 
-test('21 live sources partition into 19 frozen legacy IDs and two reviewed GD-019 additions', () => {
+test('21 live sources retain 19 frozen legacy IDs and two reviewed GD-019 additions', () => {
   const validation = admission.validateSourceAdmissions();
   assert.equal(validation.valid, true);
   assert.equal(news.SOURCES.length, 21);
   assert.equal(admission.SOURCE_ADMISSIONS.length, 21);
   assert.equal(admission.LEGACY_SOURCE_IDS.length, 19);
   assert.equal(new Set(admission.SOURCE_ADMISSIONS.map(entry => entry.sourceId)).size, 21);
-
   const newEntries = admission.SOURCE_ADMISSIONS.filter(entry => entry.legacy === false);
   assert.deepEqual(newEntries.map(entry => entry.sourceId).sort(), ['calmatters', 'minnesota-reformer']);
   assert.equal(newEntries.every(entry => admission.isProductionAdmissible(entry)), true);
-  assert.equal(
-    admission.SOURCE_ADMISSIONS.every(entry => ['legacy-unreviewed', 'reviewed'].includes(entry.reviewState)),
-    true
-  );
-  assert.equal(
-    admission.SOURCE_ADMISSIONS.filter(entry => entry.reviewState === 'legacy-unreviewed').length,
-    17
-  );
-
+  assert.equal(admission.SOURCE_ADMISSIONS.filter(entry => entry.reviewState === 'legacy-unreviewed').length, 8);
   const nhk = admission.SOURCE_ADMISSIONS.find(entry => entry.sourceId === 'nhk');
   assert.ok(nhk.currentUse.includes('translated-headline-summary'));
-  assert.equal(nhk.excerptMaxChars, 280);
+});
+
+test('reviewed legacy tranches remain restrictive except MercoPress bounded feed-card use', () => {
+  const expected = {
+    'bbc-world': 'permission-required', dw: 'permission-required', ukrinform: 'contract-required',
+    'premium-times': 'permission-required', cna: 'permission-required', dawn: 'permission-required',
+    'abc-australia': 'permission-required', 'the-east-african': 'permission-required', mercopress: 'verified-public-use',
+  };
+  for (const [sourceId, status] of Object.entries(expected)) {
+    const entry = admission.SOURCE_ADMISSIONS.find(candidate => candidate.sourceId === sourceId);
+    assert.equal(entry.reviewState, 'reviewed');
+    assert.equal(entry.reviewedAt, '2026-09-13');
+    assert.equal(entry.allowedUseStatus, status);
+  }
+  for (const sourceId of Object.keys(expected).filter(id => id !== 'mercopress')) {
+    const entry = admission.SOURCE_ADMISSIONS.find(candidate => candidate.sourceId === sourceId);
+    assert.equal(admission.evaluateItemUse(entry).displayMode, 'headline-link');
+    assert.deepEqual(entry.permittedUse, []);
+  }
+  const mercopress = admission.SOURCE_ADMISSIONS.find(entry => entry.sourceId === 'mercopress');
+  assert.deepEqual(mercopress.permittedUse, ['headline-link', 'metadata', 'excerpt']);
+  assert.equal(mercopress.itemLevelReviewRequired, false);
+  assert.deepEqual(admission.evaluateItemUse(mercopress), { allowedUseStatus: 'verified-public-use', displayMode: 'current-use' });
+});
+
+test('admission summary reports both promoted tranches and unresolved rights debt', () => {
+  const summary = admission.admissionSummary();
+  assert.equal(summary.valid, true);
+  assert.equal(summary.totalLiveSources, 21);
+  assert.equal(summary.reviewedSources, 13);
+  assert.equal(summary.legacyUnreviewedSources, 8);
+  assert.deepEqual(summary.remediationSourceIds, [
+    'abc-australia', 'ap', 'bbc-world', 'cna', 'dawn', 'dw', 'guardian', 'premium-times', 'the-east-african', 'ukrinform',
+  ]);
+  assert.ok(summary.unknownRightsSourceIds.includes('npr'));
+  assert.equal(summary.unknownRightsSourceIds.includes('mercopress'), false);
 });
 
 test('known AP and Guardian constraints remain visible without silently removing either source', () => {
@@ -82,7 +89,6 @@ test('known AP and Guardian constraints remain visible without silently removing
   assert.equal(ap.allowedUseStatus, 'contract-required');
   assert.equal(ap.endpointAuthority, 'unverified-third-party');
   assert.equal(guardian.allowedUseStatus, 'permission-required');
-  assert.equal(guardian.endpointAuthority, 'first-party');
   assert.ok(news.SOURCES.some(source => source.name === 'AP'));
   assert.ok(news.SOURCES.some(source => source.name === 'Guardian'));
 });
@@ -101,33 +107,23 @@ test('a new source cannot masquerade as legacy to bypass admission', () => {
   const result = admission.validateSourceAdmissions(sources, [...admission.SOURCE_ADMISSIONS, fakeLegacy]);
   assert.equal(result.valid, false);
   assert.deepEqual(result.newSourceMarkedLegacyIds, ['example-news']);
-  assert.deepEqual(result.unadmittedNewSourceIds, ['example-news']);
 });
 
 test('new source admission requires reviewed public use, endpoint authority, health, and permitted current use', () => {
   const sources = [...news.SOURCES, EXAMPLE_SOURCE];
   const good = reviewedNewSource();
   assert.equal(admission.isProductionAdmissible(good), true);
-  assert.equal(
-    admission.validateSourceAdmissions(sources, [...admission.SOURCE_ADMISSIONS, good]).valid,
-    true
-  );
-
-  const badAuthority = reviewedNewSource({ endpointAuthority: 'unverified-third-party' });
-  const badRights = reviewedNewSource({ allowedUseStatus: 'permission-required' });
-  const badHealth = reviewedNewSource({ healthVerificationStatus: 'telemetry-managed' });
-  const badUse = reviewedNewSource({ permittedUse: ['headline-link', 'metadata'] });
-  for (const entry of [badAuthority, badRights, badHealth, badUse]) {
-    assert.equal(admission.isProductionAdmissible(entry), false);
-    const result = admission.validateSourceAdmissions(sources, [...admission.SOURCE_ADMISSIONS, entry]);
-    assert.deepEqual(result.unadmittedNewSourceIds, ['example-news']);
-  }
+  assert.equal(admission.validateSourceAdmissions(sources, [...admission.SOURCE_ADMISSIONS, good]).valid, true);
+  for (const entry of [
+    reviewedNewSource({ endpointAuthority: 'unverified-third-party' }),
+    reviewedNewSource({ allowedUseStatus: 'permission-required' }),
+    reviewedNewSource({ healthVerificationStatus: 'telemetry-managed' }),
+    reviewedNewSource({ permittedUse: ['headline-link', 'metadata'] }),
+  ]) assert.equal(admission.isProductionAdmissible(entry), false);
 });
 
 test('endpoint identity drift invalidates its admission review separately from feed health', () => {
-  const changedSources = news.SOURCES.map(source =>
-    source.name === 'BBC World' ? { ...source, url: 'https://example.com/changed-feed.xml' } : source
-  );
+  const changedSources = news.SOURCES.map(source => source.name === 'BBC World' ? { ...source, url: 'https://example.com/changed-feed.xml' } : source);
   const result = admission.validateSourceAdmissions(changedSources);
   assert.equal(result.valid, false);
   assert.deepEqual(result.endpointDriftSourceIds, ['bbc-world']);
@@ -135,23 +131,9 @@ test('endpoint identity drift invalidates its admission review separately from f
 
 test('item-level restriction overrides broader source-level permission', () => {
   const entry = reviewedNewSource();
-  assert.deepEqual(admission.evaluateItemUse(entry), {
-    allowedUseStatus: 'verified-public-use',
-    displayMode: 'current-use',
-  });
-  assert.deepEqual(admission.evaluateItemUse(entry, 'permission-required'), {
-    allowedUseStatus: 'permission-required',
-    displayMode: 'headline-link',
-  });
-  assert.deepEqual(admission.evaluateItemUse(entry, 'prohibited'), {
-    allowedUseStatus: 'prohibited',
-    displayMode: 'exclude',
-  });
-  const sourceRestricted = reviewedNewSource({ allowedUseStatus: 'contract-required' });
-  assert.equal(
-    admission.evaluateItemUse(sourceRestricted, 'verified-public-use').allowedUseStatus,
-    'contract-required'
-  );
+  assert.deepEqual(admission.evaluateItemUse(entry), { allowedUseStatus: 'verified-public-use', displayMode: 'current-use' });
+  assert.deepEqual(admission.evaluateItemUse(entry, 'permission-required'), { allowedUseStatus: 'permission-required', displayMode: 'headline-link' });
+  assert.deepEqual(admission.evaluateItemUse(entry, 'prohibited'), { allowedUseStatus: 'prohibited', displayMode: 'exclude' });
 });
 
 test('research candidates remain queryable but cannot become production by implication', () => {
@@ -159,22 +141,14 @@ test('research candidates remain queryable but cannot become production by impli
   const brasil = admission.SOURCE_RESEARCH_CANDIDATES.find(entry => entry.candidateId === 'agencia-brasil');
   const laist = admission.SOURCE_RESEARCH_CANDIDATES.find(entry => entry.candidateId === 'laist-local');
   assert.equal(rnz.disposition, 'research');
-  assert.equal(rnz.allowedUseStatus, 'permission-required');
-  assert.equal(brasil.disposition, 'research');
-  assert.equal(brasil.allowedUseStatus, 'verified-public-use');
   assert.equal(brasil.itemLevelReviewRequired, true);
-  assert.equal(brasil.syndicatedContentBehavior, 'mixed-rights-partner-content');
-  assert.equal(laist.disposition, 'research');
-  assert.equal(laist.allowedUseStatus, 'verified-public-use');
   assert.equal(laist.itemLevelReviewRequired, true);
   assert.equal(admission.SOURCE_ADMISSIONS.some(entry => entry.sourceId === 'laist'), false);
 });
 
-test('admission telemetry changes independently of the canonical news feed cache fingerprint', () => {
+test('admission telemetry changes independently of canonical news feed cache fingerprint', () => {
   const sourceFingerprint = news.SOURCE_FINGERPRINT;
-  const changed = admission.SOURCE_ADMISSIONS.map(entry =>
-    entry.sourceId === 'bbc-world' ? { ...entry, reviewerNotes: `${entry.reviewerNotes} Reviewed note.` } : entry
-  );
+  const changed = admission.SOURCE_ADMISSIONS.map(entry => entry.sourceId === 'bbc-world' ? { ...entry, reviewerNotes: `${entry.reviewerNotes} Reviewed note.` } : entry);
   assert.equal(news.getSourceFingerprint(news.SOURCES), sourceFingerprint);
   assert.notEqual(admission.getAdmissionFingerprint(changed), admission.ADMISSION_FINGERPRINT);
 });

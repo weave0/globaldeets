@@ -38,6 +38,19 @@ const { buildCoverageInventory } = coverageModule;
 const { onRequestGet: getCoverage } = coverageApiModule;
 const { onRequestGet: getSources } = sourcesApiModule;
 
+const REMEDIATION_SOURCE_IDS = [
+  'abc-australia',
+  'ap',
+  'bbc-world',
+  'cna',
+  'dawn',
+  'dw',
+  'guardian',
+  'premium-times',
+  'the-east-african',
+  'ukrinform',
+];
+
 function request(path = '/api/news/coverage') {
   return new Request(`https://globaldeets.com${path}`, {
     headers: { Origin: 'https://globaldeets.com' },
@@ -160,9 +173,9 @@ test('coverage inventory is deterministic and enriched from reviewed provenance 
   assert.equal(first.provenance.reviewedSources, 21);
   assert.deepEqual(first.provenance.unknownOwnershipOperatorSourceIds, []);
   assert.equal(first.admission.valid, true);
-  assert.equal(first.admission.reviewedSources, 4);
-  assert.equal(first.admission.legacyUnreviewedSources, 17);
-  assert.deepEqual(first.admission.remediationSourceIds, ['ap', 'guardian']);
+  assert.equal(first.admission.reviewedSources, 13);
+  assert.equal(first.admission.legacyUnreviewedSources, 8);
+  assert.deepEqual(first.admission.remediationSourceIds, REMEDIATION_SOURCE_IDS);
   assert.equal(first.subnationalReporting.sourceCount, 2);
   assert.deepEqual(first.subnationalReporting.jurisdictionIds, ['US-CA', 'US-MN']);
   assert.equal(first.nonEnglishSources.length, 1);
@@ -245,9 +258,9 @@ test('/api/news/coverage exposes source fingerprint, provenance integrity, admis
   assert.equal(json.provenance.valid, true);
   assert.equal(json.provenance.reviewedSources, 21);
   assert.equal(json.admission.valid, true);
-  assert.equal(json.admission.reviewedSources, 4);
-  assert.equal(json.admission.legacyUnreviewedSources, 17);
-  assert.deepEqual(json.admission.remediationSourceIds, ['ap', 'guardian']);
+  assert.equal(json.admission.reviewedSources, 13);
+  assert.equal(json.admission.legacyUnreviewedSources, 8);
+  assert.deepEqual(json.admission.remediationSourceIds, REMEDIATION_SOURCE_IDS);
   assert.equal(json.subnationalReporting.sourceCount, 2);
   assert.deepEqual(json.subnationalReporting.jurisdictionIds, ['US-CA', 'US-MN']);
   assert.equal(json.localityRules.routingRegionIsGeographicScope, false);
