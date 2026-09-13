@@ -106,7 +106,7 @@ async function expectNoHorizontalOverflow(page) {
   expect(overflow.bodyScrollWidth).toBeLessThanOrEqual(overflow.viewport + 1);
 }
 
-async function expectPracticalTouchTarget(locator, minimum = 40) {
+async function expectPracticalTouchTarget(locator, minimum = 44) {
   const box = await locator.boundingBox();
   expect(box).not.toBeNull();
   expect(box.width).toBeGreaterThanOrEqual(minimum);
@@ -128,6 +128,7 @@ test('mobile homepage fits, hydrates governed metrics, and keeps navigation reac
 
   const ecosystemToggle = page.locator('.ecosystem-toggle');
   await expect(ecosystemToggle).toBeVisible();
+  await expectPracticalTouchTarget(ecosystemToggle);
   await ecosystemToggle.click();
   await expect(page.locator('#ecosystem-dropdown')).toBeVisible();
   await expectNoHorizontalOverflow(page);
@@ -135,7 +136,7 @@ test('mobile homepage fits, hydrates governed metrics, and keeps navigation reac
   const productNav = page.locator('header .primary-nav');
   const firstNavButton = productNav.locator('.nav-icon-btn').first();
   await expect(firstNavButton).toBeVisible();
-  await expectPracticalTouchTarget(firstNavButton, 36);
+  await expectPracticalTouchTarget(firstNavButton);
 });
 
 test('mobile news reader fits and keeps evidence controls usable', async ({ page }) => {
@@ -150,16 +151,17 @@ test('mobile news reader fits and keeps evidence controls usable', async ({ page
   const tabs = page.locator('.region-tab');
   expect(await tabs.count()).toBeGreaterThan(1);
   await expect(tabs.first()).toBeVisible();
-  await expectPracticalTouchTarget(tabs.first(), 36);
+  await expectPracticalTouchTarget(tabs.first());
 
   const sourceContext = page.locator('.news-source-context').first();
-  await sourceContext.locator('summary').click();
+  const sourceSummary = sourceContext.locator('summary');
+  await expectPracticalTouchTarget(sourceSummary);
+  await sourceSummary.click();
   await expect(sourceContext.locator('.news-source-context-body')).toBeVisible();
 
-  const publisherLink = page.locator('.news-headline a').first();
+  const publisherLink = page.locator('.news-read-link').first();
   await expect(publisherLink).toBeVisible();
-  const linkBox = await publisherLink.boundingBox();
-  expect(linkBox?.width || 0).toBeGreaterThan(120);
+  await expectPracticalTouchTarget(publisherLink);
 
   await expectNoHorizontalOverflow(page);
 });
