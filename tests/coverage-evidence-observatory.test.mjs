@@ -26,8 +26,8 @@ test('canonical coverage and evidence observatory validates and preserves semant
   assert.equal(observatory.observatoryVersion, COVERAGE_EVIDENCE_OBSERVATORY_VERSION);
   assert.equal(observatory.newsCoverage.totalSources, 21);
   assert.equal(observatory.sourceRights.totalLiveSources, 21);
-  assert.equal(observatory.sourceRights.reviewedLiveSources, 4);
-  assert.equal(observatory.sourceRights.legacyUnreviewedSources, 17);
+  assert.equal(observatory.sourceRights.reviewedLiveSources, 13);
+  assert.equal(observatory.sourceRights.legacyUnreviewedSources, 8);
   assert.equal(observatory.institutionalEvidence.reviewedSources, 10);
   assert.equal(observatory.institutionalEvidence.endpointReviewedSources, 1);
   assert.equal(observatory.institutionalEvidence.collectionEligibleSources, 1);
