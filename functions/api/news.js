@@ -151,6 +151,11 @@ export const SOURCE_HEALTH_KEY = `news_source_health_v2_${SOURCE_FINGERPRINT}`;
 const CACHE_TTL_SECONDS = 900; // 15 minutes
 export const SOURCE_HEALTH_TTL_SECONDS = 86_400; // retain latest observation for 24 hours
 export const SOURCE_TIMEOUT_MS = 5000;
+// Frozen at module initialization so caller mutation cannot expand expensive work.
+export const MAX_SOURCE_FANOUT = SOURCES.length;
+export const MAX_TRANSLATION_ITEMS = 8;
+export const MAX_TRANSLATION_AI_CALLS = 16;
+const inFlightRegenerations = new Map();
 const VALID_REGIONS = new Set([
   'global',
   'middle-east',
@@ -183,6 +188,16 @@ function logOperationalError(phase, error, details = {}) {
       sourceFingerprint: SOURCE_FINGERPRINT,
       ...details,
       error: error?.message || String(error || 'unknown error'),
+    })
+  );
+}
+
+function logOperationalEvent(event, details = {}) {
+  console.log(
+    JSON.stringify({
+      event: `globaldeets.news.${event}`,
+      sourceFingerprint: SOURCE_FINGERPRINT,
+      ...details,
     })
   );
 }
@@ -324,13 +339,7 @@ export async function onRequestGet({ env, request }) {
     );
   }
 
-  const { items: acquiredItems, sourceHealth } = await fetchAllSources();
-  // Governance is applied before translation and before KV persistence. Restricted summaries
-  // therefore never enter the translated or cached consumer payload.
-  const { items, admissionById } = await applyAdmissionPolicy(acquiredItems, admissionContract);
-  await translateNonEnglish(items, env, admissionById);
-  await writeCaches(env, items, sourceHealth, cacheIdentity.cacheKey);
-
+  const { items } = await getOrCreateRegeneration(env, cacheIdentity, admissionContract);
   const filtered = filterByRegion(items, region);
   const page = filtered.slice(offset, offset + limit);
   return new Response(
@@ -344,6 +353,32 @@ export async function onRequestGet({ env, request }) {
     }),
     { headers }
   );
+}
+
+export async function getOrCreateRegeneration(env, cacheIdentity, admissionContract) {
+  const key = cacheIdentity.cacheKey;
+  const existing = inFlightRegenerations.get(key);
+  if (existing) {
+    logOperationalEvent('regeneration_coalesced', { cacheKey: key });
+    return existing;
+  }
+
+  logOperationalEvent('regeneration_started', { cacheKey: key });
+  const regeneration = regenerateFeed(env, cacheIdentity, admissionContract).finally(() => {
+    inFlightRegenerations.delete(key);
+  });
+  inFlightRegenerations.set(key, regeneration);
+  return regeneration;
+}
+
+export async function regenerateFeed(env, cacheIdentity, admissionContract, sources = SOURCES) {
+  const { items: acquiredItems, sourceHealth } = await fetchAllSources(sources);
+  // Governance is applied before translation and before KV persistence. Restricted summaries
+  // therefore never enter the translated or cached consumer payload.
+  const { items, admissionById } = await applyAdmissionPolicy(acquiredItems, admissionContract);
+  await translateNonEnglish(items, env, admissionById);
+  await writeCaches(env, items, sourceHealth, cacheIdentity.cacheKey);
+  return { items, sourceHealth };
 }
 
 async function readFeedCache(env, cacheKey) {
@@ -384,17 +419,36 @@ async function writeCaches(env, items, sourceHealth, cacheKey) {
 export async function translateNonEnglish(items, env, admissionById = new Map()) {
   if (!env?.AI) return;
 
-  const toTranslate = items.filter(item => {
+  const candidates = items.filter(item => {
     if (!item?.lang || item.lang === 'en' || item.displayMode !== 'current-use') return false;
     const admission = admissionById.get(item.sourceId);
     return Array.isArray(admission?.permittedUse)
       ? admission.permittedUse.includes('translated-headline-summary')
       : false;
   });
-  if (!toTranslate.length) return;
+  if (!candidates.length) return;
+
+  const selected = [];
+  let remainingCalls = MAX_TRANSLATION_AI_CALLS;
+  for (const item of candidates.slice(0, MAX_TRANSLATION_ITEMS)) {
+    const callCost = 1 + (item.summary ? 1 : 0);
+    if (callCost > remainingCalls) break;
+    remainingCalls -= callCost;
+    selected.push(item);
+  }
+
+  if (selected.length < candidates.length) {
+    logOperationalEvent('translation_budget_exhausted', {
+      candidateItems: candidates.length,
+      selectedItems: selected.length,
+      maxItems: MAX_TRANSLATION_ITEMS,
+      maxCalls: MAX_TRANSLATION_AI_CALLS,
+    });
+  }
+  if (!selected.length) return;
 
   await Promise.all(
-    toTranslate.map(async item => {
+    selected.map(async item => {
       const sourceLang = LANG_NAMES[item.lang] || item.lang;
       try {
         const [headlineRes, summaryRes] = await Promise.all([
@@ -428,8 +482,18 @@ export async function translateNonEnglish(items, env, admissionById = new Map())
   );
 }
 
-async function fetchAllSources() {
-  const results = await Promise.all(SOURCES.map(source => fetchAndParseRSS(source)));
+export async function fetchAllSources(sources = SOURCES) {
+  const requestedSources = Array.isArray(sources) ? sources : [];
+  const boundedSources = requestedSources.slice(0, MAX_SOURCE_FANOUT);
+  if (boundedSources.length < requestedSources.length) {
+    logOperationalEvent('source_fanout_capped', {
+      requestedSources: requestedSources.length,
+      selectedSources: boundedSources.length,
+      maxSources: MAX_SOURCE_FANOUT,
+    });
+  }
+
+  const results = await Promise.all(boundedSources.map(source => fetchAndParseRSS(source)));
 
   const items = results.flatMap(result => result.items);
   const sourceHealth = results.map(result => result.health);
