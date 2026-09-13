@@ -97,3 +97,19 @@ jobs:
                     echo "Observatory verification attempt ${attempt} failed; retrying after propagation delay."
                     sleep 10
                   done
+
+            - name: Verify rendered production reader
+              run: |
+                  for attempt in 1 2 3 4 5 6; do
+                    if node tools/verify-reader-prod.js --base=https://globaldeets.com; then
+                      exit 0
+                    fi
+
+                    if [ "${attempt}" -eq 6 ]; then
+                      echo "Rendered production reader did not converge after all verification attempts."
+                      exit 1
+                    fi
+
+                    echo "Rendered reader verification attempt ${attempt} failed; retrying after propagation delay."
+                    sleep 10
+                  done
