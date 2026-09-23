@@ -33,6 +33,10 @@ const REQUIRED_DEPLOY_FILES = [
   'observatory/coverage/index.html',
   'observatory/coverage/observatory.js',
   'observatory/coverage/observatory.css',
+  'observatory/mission-control/index.html',
+  'observatory/mission-control/mission-control.js',
+  'observatory/mission-control/mission-control.css',
+  'observatory/mission-control/mission-control-data.json',
   'functions/api/intelligence/observatory/coverage.js',
   'functions/lib/coverage-evidence-observatory.js',
 ];
