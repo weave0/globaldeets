@@ -1,3 +1,6 @@
+const { execFileSync } = require('node:child_process');
+const path = require('node:path');
+const { pathToFileURL } = require('node:url');
 const { expect, test } = require('@playwright/test');
 
 const newsFixture = {
@@ -237,6 +240,75 @@ test.beforeEach(async ({ page }) => {
       body: JSON.stringify(dossierFixture),
     });
   });
+});
+
+// The source registry is ESM in a typeless package, which Playwright's CJS loader cannot import,
+// so read the canonical count in a plain Node process.
+function canonicalSourceCount() {
+  const registryUrl = pathToFileURL(
+    path.join(__dirname, '..', 'functions', 'lib', 'news-source-provenance.js')
+  ).href;
+  const output = execFileSync(
+    process.execPath,
+    [
+      '--no-warnings',
+      '--input-type=module',
+      '-e',
+      `const { SOURCE_PROVENANCE } = await import(${JSON.stringify(registryUrl)}); process.stdout.write(String(SOURCE_PROVENANCE.length));`,
+    ],
+    { encoding: 'utf8' }
+  );
+  const count = Number(output.trim());
+  if (!Number.isInteger(count) || count < 1) {
+    throw new Error(`Unreadable canonical source count: ${JSON.stringify(output)}`);
+  }
+  return count;
+}
+
+test('homepage raw HTML exposes the canonical live source count before JavaScript runs', async ({
+  request,
+}) => {
+  const expected = canonicalSourceCount();
+  const response = await request.get('/index.html');
+
+  expect(response.ok()).toBeTruthy();
+  const html = await response.text();
+  expect(html).toMatch(
+    new RegExp(
+      `<span class="dm-stat-value">${expected}<\\/span>\\s*<span class="dm-stat-label">Live Sources<\\/span>`
+    )
+  );
+});
+
+test('homepage keeps the static live source count when coverage omits totalSources', async ({
+  page,
+}) => {
+  const expected = canonicalSourceCount();
+  const coverageWithoutTotal = { ...coverageFixture };
+  delete coverageWithoutTotal.totalSources;
+  await page.unroute('**/api/news**');
+  await page.route('**/api/news**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/api/news/coverage') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(coverageWithoutTotal),
+      });
+      return;
+    }
+    await fulfillNewsApi(route);
+  });
+
+  await page.goto('/index.html');
+
+  // Wait for hydration to land (other metrics come from the same response).
+  await expect(page.locator('.dm-stat').filter({ hasText: 'Open Coverage Gaps' })).toContainText(
+    '3'
+  );
+  await expect(
+    page.locator('.dm-stat').filter({ hasText: 'Live Sources' }).locator('.dm-stat-value')
+  ).toHaveText(String(expected));
 });
 
 test('homepage loads the primary GlobalDeets surface', async ({ page }) => {
