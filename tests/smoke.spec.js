@@ -239,6 +239,16 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
+test('homepage raw HTML exposes the canonical live source count before JavaScript runs', async ({ request }) => {
+  const response = await request.get('/index.html');
+
+  expect(response.ok()).toBeTruthy();
+  const html = await response.text();
+  expect(html).toMatch(
+    /<span class="dm-stat-value">21<\/span>\s*<span class="dm-stat-label">Live Sources<\/span>/
+  );
+});
+
 test('homepage loads the primary GlobalDeets surface', async ({ page }) => {
   await page.goto('/index.html');
 
