@@ -152,7 +152,6 @@ function ensureHomepageTrustLinks() {
 }
 
 function replaceHomepageTrustCopy() {
-  setHomepageMetric(getHomepageMetric('Live Sources'), 21);
   setHomepageMetric(getHomepageMetric('Webcams'), '—', 'Local/State Sources');
   setHomepageMetric(getHomepageMetric('Paywalls'), '—', 'Open Coverage Gaps');
 
@@ -177,6 +176,8 @@ async function hydrateHomepageTrustSurface() {
   const regionsMetric = getHomepageMetric('Regions');
   const localSourcesMetric = getHomepageMetric('Local/State Sources');
   const gapsMetric = getHomepageMetric('Open Coverage Gaps');
+  const staticLiveSources =
+    liveSourcesMetric?.querySelector('.dm-stat-value')?.textContent.trim() || '—';
 
   if (!liveSourcesMetric && !regionsMetric && !localSourcesMetric && !gapsMetric) return;
 
@@ -187,7 +188,7 @@ async function hydrateHomepageTrustSurface() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const coverage = await response.json();
 
-    setHomepageMetric(liveSourcesMetric, coverage.totalSources ?? 21);
+    setHomepageMetric(liveSourcesMetric, coverage.totalSources ?? staticLiveSources);
     setHomepageMetric(regionsMetric, coverage.totalRegions ?? '—');
     setHomepageMetric(localSourcesMetric, coverage.subnationalReporting?.sourceCount ?? '—');
     setHomepageMetric(gapsMetric, Array.isArray(coverage.gaps) ? coverage.gaps.length : '—');
