@@ -130,6 +130,11 @@ function ensureHomepageTrustLinks() {
 
   const links = [
     {
+      href: '/observatory/mission-control/',
+      label: 'Mission Control',
+      className: 'btn-primary',
+    },
+    {
       href: '/observatory/coverage/',
       label: 'Coverage & Evidence Observatory',
       className: 'btn-sample',
