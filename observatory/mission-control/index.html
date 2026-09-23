@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="GlobalDeets Mission Control — investor evidence, estate observability, and prioritized operating gaps.">
+  <meta name="description" content="GlobalDeets Mission Control — investor evidence, estate observability, and prioritized operating intelligence.">
   <title>Mission Control | GlobalDeets</title>
   <link rel="icon" href="/assets/favicon.png">
   <link rel="stylesheet" href="/shared/ecosystem-nav.css">
@@ -13,37 +13,67 @@
   <div id="ecosystem-nav"></div>
   <main class="shell">
     <header class="hero">
-      <p class="eyebrow">GlobalDeets investor + operator intelligence</p>
-      <h1>Mission Control</h1>
-      <p class="lede">A truthful view of what is working, what is measurable, what is missing, and what matters next across GlobalDeets and the wider web estate.</p>
-      <div class="contract-strip" aria-label="Mission Control contract">
-        <span>Human traffic ≠ edge traffic</span><span>Missing measurement ≠ zero</span><span>Investor claims require provenance</span><span>Gaps are prioritized, not hidden</span>
+      <div class="hero-copy">
+        <p class="eyebrow">GlobalDeets investor + operator intelligence</p>
+        <h1>Mission Control</h1>
+        <p class="lede">One evidence-backed view of momentum, measurement quality, estate health, and the work that most changes the business next.</p>
+      </div>
+      <div class="contract-strip" aria-label="Mission Control evidence contract">
+        <span>Certified facts first</span><span>Human traffic ≠ edge traffic</span><span>Missing measurement ≠ zero</span><span>Gaps stay visible until closed</span>
       </div>
     </header>
+
     <section aria-labelledby="snapshot-heading">
-      <div class="section-heading"><p class="eyebrow">Showcase evidence</p><h2 id="snapshot-heading">What we can responsibly show now</h2></div>
+      <div class="section-heading">
+        <div><p class="eyebrow">Investor snapshot</p><h2 id="snapshot-heading">What is demonstrably real today</h2></div>
+        <p class="section-note">Operational telemetry is shown separately from investor-safe audience claims.</p>
+      </div>
       <div id="investor-grid" class="metric-grid"></div>
     </section>
-    <section class="two-column" aria-label="Audience and estate diagnostics">
-      <article class="panel"><div class="panel-heading"><p class="eyebrow">Audience measurement</p><h2>Traffic quality before traction</h2></div><div id="traffic-quality"></div></article>
-      <article class="panel"><div class="panel-heading"><p class="eyebrow">Estate observability</p><h2>Can we see every property?</h2></div><div id="estate-observability"></div></article>
+
+    <section class="panel thesis-panel" aria-labelledby="thesis-heading">
+      <div class="panel-heading"><p class="eyebrow">Business interpretation</p><h2 id="thesis-heading">Why this matters</h2></div>
+      <div id="investment-thesis" class="thesis-grid"></div>
     </section>
+
+    <section aria-labelledby="diagnostics-heading">
+      <div class="section-heading"><div><p class="eyebrow">Visual diagnostics</p><h2 id="diagnostics-heading">Signal, coverage, and exposure</h2></div></div>
+      <div class="visual-grid">
+        <article class="panel"><div class="panel-heading"><p class="eyebrow">Traffic composition</p><h3>Raw edge traffic quality</h3></div><div id="traffic-quality"></div></article>
+        <article class="panel"><div class="panel-heading"><p class="eyebrow">Estate observability</p><h3>Can we see every property?</h3></div><div id="estate-observability"></div></article>
+        <article class="panel"><div class="panel-heading"><p class="eyebrow">Risk distribution</p><h3>Open work by severity</h3></div><div id="risk-distribution"></div></article>
+      </div>
+    </section>
+
     <section aria-labelledby="gaps-heading">
       <div class="section-heading queue-heading">
-        <div><p class="eyebrow">Prioritized operating queue</p><h2 id="gaps-heading">Gaps, risks, and opportunities</h2></div>
+        <div>
+          <p class="eyebrow">Prioritized operating queue</p>
+          <h2 id="gaps-heading">Gaps, risks, and opportunities</h2>
+          <p id="queue-summary" class="section-note"></p>
+        </div>
         <div class="controls">
+          <label>Find<input id="gap-search" type="search" placeholder="Search work"></label>
           <label>Severity<select id="severity-filter"><option value="all">All</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></label>
+          <label>Status<select id="status-filter"><option value="all">All</option><option value="open">Open</option><option value="in-progress">In progress</option><option value="blocked">Blocked</option><option value="closed">Closed</option></select></label>
           <label>Domain<select id="domain-filter"><option value="all">All</option></select></label>
-          <label>Sort<select id="sort-order"><option value="priority">Priority</option><option value="severity">Severity</option><option value="domain">Domain</option></select></label>
+          <label>Sort<select id="sort-order"><option value="priority">Priority</option><option value="severity">Severity</option><option value="impact">Business impact</option><option value="age">Age</option><option value="domain">Domain</option></select></label>
         </div>
       </div>
       <div id="gap-list" class="gap-list"></div>
     </section>
-    <section class="panel" aria-labelledby="coverage-heading">
-      <div class="panel-heading"><p class="eyebrow">Governed intelligence</p><h2 id="coverage-heading">Coverage &amp; evidence state</h2></div>
-      <div id="coverage-bridge"></div><p><a href="/observatory/coverage/">Open the full Coverage &amp; Evidence Observatory →</a></p>
+
+    <section class="two-column" aria-label="Governance and provenance">
+      <article class="panel" aria-labelledby="coverage-heading">
+        <div class="panel-heading"><p class="eyebrow">Governed intelligence</p><h2 id="coverage-heading">Coverage &amp; evidence state</h2></div>
+        <div id="coverage-bridge"></div>
+        <p><a href="/observatory/coverage/">Open Coverage &amp; Evidence Observatory →</a></p>
+      </article>
+      <article class="panel method-panel">
+        <div class="panel-heading"><p class="eyebrow">Provenance</p><h2>How to read this page</h2></div>
+        <p id="provenance-note">Loading provenance…</p>
+      </article>
     </section>
-    <section class="panel method-panel"><div class="panel-heading"><p class="eyebrow">Provenance</p><h2>How to read this page</h2></div><p id="provenance-note">Loading provenance…</p></section>
     <div id="mission-control-error" class="error-panel" hidden>Mission Control data could not be validated and has been withheld.</div>
   </main>
   <script src="/shared/ecosystem-nav.js"></script>
