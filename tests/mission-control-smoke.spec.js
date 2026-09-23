@@ -22,7 +22,7 @@ test('Mission Control renders investor-safe evidence, visuals, and business inte
   await expect(page.getByText('A governed world-information layer is already live')).toBeVisible();
   await expect(page.getByText('Certify human audience metrics')).toBeVisible();
   await expect(page.getByText(/Raw edge visits cannot be presented as audience/)).toBeVisible();
-  await expect(page.getByText('Investor-safe audience')).toBeVisible();
+  await expect(page.getByText('Investor-safe audience', { exact: true })).toBeVisible();
   await expect(page.getByText('Not yet certified')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Open work by severity' })).toBeVisible();
   await expect(page.locator('#mission-control-error')).toBeHidden();
