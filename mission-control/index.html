@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="GlobalDeets Mission Control — live reachability for every ecosystem site plus a sortable, severity-ranked engineering and business-readiness gap radar."
+    />
+    <title>Mission Control | GlobalDeets</title>
+    <link rel="icon" href="/assets/favicon.png" />
+    <link rel="canonical" href="https://globaldeets.com/mission-control/" />
+    <link rel="stylesheet" href="/shared/ecosystem-nav.css" />
+    <link rel="stylesheet" href="/mission-control/mission-control.css" />
+  </head>
+  <body data-mission-control-id="mission-control" data-mission-control-ready="false">
+    <div id="ecosystem-nav"></div>
+    <main class="mc-shell">
+      <header class="hero">
+        <p class="eyebrow">GlobalDeets operational infrastructure</p>
+        <h1>Mission Control</h1>
+        <p class="lede">
+          A read-only radar over GlobalDeets and the sibling ecosystem sites — live reachability
+          plus a curated, severity-ranked list of what's broken, missing, or stale. Built so gaps on
+          sites nobody actively lives in don't go unnoticed.
+        </p>
+        <div class="contract-strip" aria-label="Mission Control contract">
+          <span>No composite health score</span>
+          <span>No uptime SLA</span>
+          <span>No automatic remediation</span>
+          <span>Severity is human-assigned, not inferred</span>
+        </div>
+      </header>
+
+      <section class="status-panel" aria-live="polite">
+        <div>
+          <p class="label">Integrity</p>
+          <p id="integrity-status" class="metric-value">Loading…</p>
+        </div>
+        <div>
+          <p class="label">Generated</p>
+          <p id="generated-at" class="metric-value metric-small">—</p>
+        </div>
+        <div>
+          <p class="label">Sites reachable</p>
+          <p id="sites-reachable" class="metric-value metric-small">—</p>
+        </div>
+        <div>
+          <p class="label">Mission Control version</p>
+          <p id="observatory-version" class="metric-value metric-small">—</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="sites-heading">
+        <div class="section-heading">
+          <p class="eyebrow">Ecosystem site health</p>
+          <h2 id="sites-heading">Live reachability, checked from the Cloudflare edge</h2>
+          <p>
+            Every load re-probes GlobalDeets and each sibling site. A single failed probe is a
+            signal to check further, not a diagnosis.
+          </p>
+        </div>
+        <div id="site-grid" class="site-grid"></div>
+      </section>
+
+      <section aria-labelledby="severity-heading">
+        <div class="section-heading">
+          <p class="eyebrow">Open gap distribution</p>
+          <h2 id="severity-heading">By severity</h2>
+        </div>
+        <div
+          id="severity-bar"
+          class="severity-bar"
+          role="img"
+          aria-label="Open gaps by severity"
+        ></div>
+        <div class="severity-bar-legend">
+          <span><i class="sw-critical"></i>Critical</span>
+          <span><i class="sw-high"></i>High</span>
+          <span><i class="sw-medium"></i>Medium</span>
+          <span><i class="sw-low"></i>Low</span>
+          <span id="severity-total"></span>
+        </div>
+      </section>
+
+      <section aria-labelledby="gaps-heading">
+        <div class="section-heading">
+          <p class="eyebrow">Gap radar</p>
+          <h2 id="gaps-heading">Sortable, filterable gap list</h2>
+          <p>
+            Click a column header to sort. Filter by site, category, severity, or status. Each row
+            shows the observed state and the next permitted action — no gap here silently fixes
+            itself.
+          </p>
+        </div>
+
+        <div class="gap-controls">
+          <select id="filter-site" aria-label="Filter by site">
+            <option value="all">All sites</option>
+          </select>
+          <select id="filter-category" aria-label="Filter by category">
+            <option value="all">All categories</option>
+          </select>
+          <select id="filter-severity" aria-label="Filter by severity">
+            <option value="all">All severities</option>
+            <option value="critical">Critical</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+          <select id="filter-status" aria-label="Filter by status">
+            <option value="open" selected>Open</option>
+            <option value="in-progress">In progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="all">All statuses</option>
+          </select>
+          <input
+            type="search"
+            id="filter-search"
+            placeholder="Search gaps…"
+            aria-label="Search gaps"
+          />
+          <span id="gap-count" class="gap-count"></span>
+        </div>
+
+        <div class="gap-table-wrap">
+          <table class="gap-table">
+            <thead>
+              <tr>
+                <th data-sort-key="severity" aria-sort="ascending">
+                  Severity<span class="sort-arrow"></span>
+                </th>
+                <th data-sort-key="site" aria-sort="none">Site<span class="sort-arrow"></span></th>
+                <th data-sort-key="title" aria-sort="none">Gap<span class="sort-arrow"></span></th>
+                <th data-sort-key="status" aria-sort="none">
+                  Status<span class="sort-arrow"></span>
+                </th>
+                <th data-sort-key="detectedAt" aria-sort="none">
+                  Detected<span class="sort-arrow"></span>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="gap-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="method-panel" aria-labelledby="method-heading">
+        <p class="eyebrow">Method</p>
+        <h2 id="method-heading">What this does not claim</h2>
+        <p>
+          Mission Control does not rank sites against each other, does not compute a single
+          readiness percentage, and does not resolve a gap automatically because a probe recovered.
+          A curated gap stays open until a human marks it resolved. Live-probe gaps are generated
+          fresh on every load from the current reachability check only.
+        </p>
+      </section>
+
+      <div id="mc-error" class="error-panel" hidden>
+        The Mission Control payload failed its integrity contract and has been withheld.
+      </div>
+    </main>
+    <script src="/shared/ecosystem-nav.js"></script>
+    <script src="/mission-control/mission-control.js"></script>
+  </body>
+</html>

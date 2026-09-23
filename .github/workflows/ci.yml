@@ -26,6 +26,7 @@ jobs:
           test -f _headers       || (echo "MISSING: _headers" && exit 1)
           test -f dossiers/santa-ynez-pipeline/index.html || (echo "MISSING: Santa Ynez dossier" && exit 1)
           test -f observatory/coverage/index.html || (echo "MISSING: Coverage & Evidence Observatory" && exit 1)
+          test -f mission-control/index.html || (echo "MISSING: Mission Control" && exit 1)
           echo "All required files present."
 
       - name: Verify GA4 tag present
@@ -85,6 +86,12 @@ jobs:
           node --check tests/santa-ynez-dossier.test.mjs
           node --check tests/coverage-evidence-observatory.test.mjs
           node --check tests/local-reporting-observatory.test.mjs
+          node --check functions/lib/mission-control.js
+          node --check functions/lib/mission-control-gaps.js
+          node --check functions/api/ops/mission-control.js
+          node --check mission-control/mission-control.js
+          node --check tests/mission-control.test.mjs
+          node --check tests/mission-control-smoke.spec.js
 
       - name: Lint JavaScript
         run: npm run lint
