@@ -20,13 +20,13 @@ export const MISSION_CONTROL_GAPS = Object.freeze([
     severity: 'high',
     title: 'Root documentation describes a product that no longer exists',
     observedState:
-      "README.md, STATUS.md, and VALIDATION_REPORT.md describe a password-gated 12-project portfolio ('weaver' gate, Netlify hosting, Chart.js analytics dashboard) dated Nov 2025. Production is a public Cloudflare Pages news/civic-data platform with a source-rights governance engine, an evidence observatory, and a published dossier.",
+      "README.md, STATUS.md, and VALIDATION_REPORT.md described a password-gated 12-project portfolio ('weaver' gate, Netlify hosting, Chart.js analytics dashboard) dated Nov 2025, contradicting the public Cloudflare Pages news/civic-data platform actually in production.",
     targetState:
-      'Root docs describe the current product truthfully: what GlobalDeets is, how it is governed, and where to find the observatory and mission-control surfaces. Stale files are rewritten or retired.',
+      'Root docs describe the current product truthfully: what GlobalDeets is, how it is governed, and where to find the observatory and mission-control surfaces.',
     nextAction:
-      "Rewrite README.md and STATUS.md against current production; fold VALIDATION_REPORT.md's still-true checks into a current doc or remove it.",
+      'Resolved: README.md and STATUS.md rewritten against current production; VALIDATION_REPORT.md retired (nothing in it was still accurate).',
     detectedAt: '2026-09-23',
-    status: 'open',
+    status: 'resolved',
   }),
   Object.freeze({
     id: 'no-investor-facing-surface',
