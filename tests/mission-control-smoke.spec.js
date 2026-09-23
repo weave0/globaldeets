@@ -24,7 +24,7 @@ test('Mission Control renders investor-safe evidence and a prioritized gap queue
   await expect(page.getByRole('heading', { name: 'Mission Control' })).toBeVisible();
   await expect(page.locator('body[data-mission-control-ready="true"]')).toBeVisible();
   await expect(page.getByText('25', { exact: true }).first()).toBeVisible();
-  await expect(page.getByText('21/25', { exact: true })).toBeVisible();
+  await expect(page.locator('#investor-grid').getByText('21/25', { exact: true })).toBeVisible();
   await expect(page.getByText('Certify human audience metrics')).toBeVisible();
   await expect(page.getByText(/Do not pitch 36,391 raw edge visits as audience/)).toBeVisible();
   await expect(page.getByText('Investor-safe audience metric')).toBeVisible();
