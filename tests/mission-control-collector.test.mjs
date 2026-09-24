@@ -35,7 +35,7 @@ test('first scheduled collection seeds history, probes all 25 zones, and replace
   assert.equal(estate.summary.unavailableZones, 0);
 
   // Only the authoritative contract can prove health; HTTP 200 elsewhere is reachable-unverified.
-  assert.equal(estate.summary.verifiedHealthyZones, 1);
+  assert.equal(estate.summary.verifiedHealthyZones, 4, "only the four owner-derived authoritative contracts can prove health");
   assert.equal(estate.properties[0].diagnosticState, 'verified-healthy');
   const cs = estate.properties[1];
   assert.equal(cs.availability.state, 'available');

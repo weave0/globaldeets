@@ -38,7 +38,8 @@ export function validateReading(reading, label) {
   const valued = reading.evidenceState === 'measured' || reading.evidenceState === 'partial';
   if (valued && !numeric) errors.push(label + ': ' + reading.evidenceState + ' without a numeric value');
   if (!valued && reading.value !== null) errors.push(label + ': ' + reading.evidenceState + ' must not carry a value');
-  if (valued && reading.value < 0) errors.push(label + ': negative value');
+  // A change (percent) may be negative; every count must not be.
+  if (valued && reading.value < 0 && reading.unit !== 'percent') errors.push(label + ': negative value');
   if (!valued && !reading.reason) errors.push(label + ': ' + reading.evidenceState + ' needs a reason');
   return errors;
 }

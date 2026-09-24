@@ -70,7 +70,7 @@ function maturityRows({ estate, audience, events }) {
   const applicableInstrumentation = s.instrumentation.applicable;
   const eventApplicable = events.coverage.propertiesApplicable;
   const audienceMeasured = audienceUsable(audience) ? audience.estate.propertiesMeasured : 0;
-  const twoVantage = rows.filter(row => (row.availability.vantages || []).filter(item => item.conclusive).length >= 2).length;
+  const twoVantage = rows.filter(row => row.probeExpectation.expectation === 'serves-content' && (row.availability.vantages || []).filter(item => item.conclusive).length >= 2).length;
   const probed = s.availabilityKnownZones + s.conflictingZones;
   const stateOf = (numerator, denominator, full = 100) => (denominator == null || denominator === 0 ? 'unknown' : numerator === 0 ? 'absent' : (numerator / denominator) * 100 >= full ? 'complete' : 'partial');
   const row = (id, label, decision, numerator, denominator, detail) => ({ id, label, decision, numerator, denominator, pct: pct(numerator, denominator), state: stateOf(numerator, denominator), detail });
@@ -254,7 +254,7 @@ function wins({ estate, audience, history }) {
   }
   const flagship = rows.find(row => row.propertyId === 'globaldeets.com');
   if (flagship?.diagnosticState === 'verified-healthy') list.push({ id: 'win:flagship-verified', title: 'GlobalDeets passes its authoritative critical path', detail: flagship.criticalPath.checks.length + ' production checks (site, news, mission-control and coverage APIs) pass on fresh evidence.', evidence: 'estate-health' });
-  if (s.criticalPathAuthoritativeZones > 1) list.push({ id: 'win:critical-paths', title: s.criticalPathAuthoritativeZones + ' properties are tested on what matters, not just the homepage', detail: 'Owner-derived critical paths: ' + rows.filter(row => row.criticalPath.contract.level === 'authoritative').map(row => row.propertyId).join(', ') + '.', evidence: 'estate-registry' });
+  if (s.criticalPathAuthoritativeZones > 1) list.push({ id: 'win:critical-paths', title: s.criticalPathAuthoritativeZones + ' properties have a critical path defined from the owner\'s own configuration, not just a homepage check', detail: 'Owner-derived critical paths: ' + rows.filter(row => row.criticalPath.contract.level === 'authoritative').map(row => row.propertyId).join(', ') + '.', evidence: 'estate-registry' });
   if (s.vantages.valid >= 2 && s.vantages.conflict === 0) list.push({ id: 'win:second-vantage', title: 'A second network independently confirms the estate', detail: s.vantages.agree + ' properties agree across vantages' + (s.vantages.partial ? ', ' + s.vantages.partial + ' confirmed by one vantage while another was blocked' : '') + '; no vantage conflicts.', evidence: 'estate-health' });
   if (audienceUsable(audience) && audience.estate.movers.growing.length) {
     const top = audience.estate.movers.growing[0];

@@ -73,6 +73,19 @@ export function makeResolver(hosts, overrides = {}) {
   return { resolve4: host => answer(lookup(host).a), resolve6: host => answer(lookup(host).aaaa) };
 }
 
+/** Builds a JSON body that satisfies a check's jsonRequires (dotted paths, equals, type). */
+function jsonSatisfying(requirements) {
+  const body = {};
+  for (const requirement of requirements) {
+    const keys = requirement.path.split('.');
+    let cursor = body;
+    for (const key of keys.slice(0, -1)) cursor = cursor[key] ||= {};
+    const value = Object.hasOwn(requirement, 'equals') ? requirement.equals : requirement.type === 'array' ? [] : requirement.type === 'number' ? 1 : requirement.type === 'object' ? {} : 'x';
+    cursor[keys[keys.length - 1]] = value;
+  }
+  return body;
+}
+
 const CANARIES = { 'www.cloudflare.com': { title: 'cf' }, 'example.com': { title: 'Example Domain' } };
 
 /** A healthy estate: every serving property answers 2xx with its baseline title; parked zones publish nothing. */
@@ -85,13 +98,26 @@ export function healthyWorld(reg = registry(), clock = makeClock()) {
     served.add(host);
     if (property.probe.expectedFinalHost && property.probe.expectedFinalHost !== host) {
       sites[host] = { redirectTo: 'https://' + property.probe.expectedFinalHost + '/' };
-      sites[property.probe.expectedFinalHost] = { title: property.displayName + ' home' };
+      const finalBaseline = property.probe.criticalPath?.checks?.find(check => check.kind === 'page' && check.titleMatches);
+      sites[property.probe.expectedFinalHost] = { title: finalBaseline ? finalBaseline.titleMatches : property.displayName + ' home' };
       served.add(property.probe.expectedFinalHost);
       continue;
     }
     const baseline = property.probe.criticalPath?.checks?.find(check => check.kind === 'page');
     const title = baseline ? baseline.titleMatches.replace(/^cultur$/i, 'Explore Cultures') : property.displayName;
-    sites[host] = { title };
+    // Every non-root check of a registered critical-path contract is served in the healthy world, so an owner-derived
+    // authoritative contract passes unless a test deliberately breaks it.
+    const paths = {};
+    for (const check of property.probe.criticalPath?.checks || []) {
+      const pathname = check.path.split('?')[0];
+      if (pathname === (property.probe.path || '/')) continue;
+      paths[pathname] = check.kind === 'json'
+        ? { contentType: 'application/json', json: jsonSatisfying(check.jsonRequires || []) }
+        : { body: html(property.displayName, (check.bodyIncludes || []).join(' ') + ' ' + 'x'.repeat(check.minBytes || 0)) };
+    }
+    const rootCheck = property.probe.criticalPath?.checks?.find(check => check.path === (property.probe.path || '/'));
+    const root = rootCheck?.minBytes ? { title, body: html(title, 'x'.repeat(rootCheck.minBytes)) } : { title };
+    sites[host] = Object.keys(paths).length ? { ...root, paths } : root;
   }
   sites['globaldeets.com'] = {
     title: 'GlobalDeets — Earth Information',
