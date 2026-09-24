@@ -6,6 +6,8 @@
  * a run-level observation. Health is derived later by the explicit health contract.
  */
 
+import { detectInstrumentation } from './instrumentation.mjs';
+
 const HTTP_OK = status => status >= 200 && status < 300;
 
 export const FAILURE_NEXT_ACTIONS = Object.freeze({
@@ -165,6 +167,7 @@ async function fetchOnce(url, options, ctx) {
       cfMitigated: response.headers.get('cf-mitigated') || null,
       text: body.text,
       bytes: body.bytes,
+      truncated: body.truncated,
       durationMs: ctx.now() - started,
     };
   }
@@ -236,10 +239,14 @@ export function evaluateCheck(check, response) {
   if (check.contentType && !String(response.contentType || '').toLowerCase().includes(check.contentType)) {
     return { ...base, pass: false, detail: 'content-type-mismatch:' + (response.contentType || 'none') };
   }
+  if (check.minBytes && (response.bytes ?? 0) < check.minBytes) return { ...base, pass: false, detail: 'too-small:' + (response.bytes ?? 0) };
   if (check.kind === 'page' && check.titleMatches) {
     const title = extractTitle(response.text);
     if (!title) return { ...base, pass: false, detail: 'title-missing' };
     if (!new RegExp(check.titleMatches, 'i').test(title)) return { ...base, pass: false, detail: 'title-mismatch:' + title.slice(0, 80) };
+  }
+  for (const needle of check.bodyIncludes || []) {
+    if (!String(response.text || '').toLowerCase().includes(String(needle).toLowerCase())) return { ...base, pass: false, detail: 'body-missing:' + String(needle).slice(0, 40) };
   }
   if (check.kind === 'json') {
     let document;
@@ -370,6 +377,17 @@ export async function probeProperty(property, ctx) {
   record.tls = await inspectTls(host, ctx);
   const primary = { observed: interpreted.observed, response: result.failure ? null : result };
   record.criticalPath = await evaluateCriticalPath(property, primary, ctx);
+  // Instrumentation is read from the same page response the availability verdict rests on; a blocked or failed
+  // response yields no detection, which the classifier reports as inaccessible/unknown rather than absent.
+  if (!result.failure && HTTP_OK(result.status) && !looksLikeChallenge(result)) {
+    record.instrumentation = {
+      ...detectInstrumentation(result.text, { contentType: result.contentType, truncated: result.truncated === true, placeholders: ctx.placeholders || [] }),
+      viaRedirect: (result.chain || []).length > 0,
+      inspectedUrl: result.finalUrl || url,
+    };
+  } else {
+    record.instrumentation = { evaluated: false, providers: [], bytesInspected: 0, complete: false, reason: 'The page was not served successfully to this vantage.', viaRedirect: false, inspectedUrl: null };
+  }
 
   let state;
   let blocked = false;
@@ -446,7 +464,7 @@ async function probeCanaries(canaries, ctx) {
  */
 export async function probeEstate(registry, ctx, runMeta = {}) {
   const contract = registry.probeContract;
-  const full = { ...ctx, contract };
+  const full = { ...ctx, contract, placeholders: registry.instrumentationContract?.placeholderMeasurementIds || [] };
   const startedAt = new Date(ctx.now()).toISOString();
   const canaries = await probeCanaries(registry.canaries || [], full);
   const vantageValid = canaries.length === 0 ? true : canaries.some(item => item.ok);
@@ -478,7 +496,8 @@ export async function probeEstate(registry, ctx, runMeta = {}) {
     runId: runMeta.runId || startedAt,
     startedAt,
     finishedAt: new Date(ctx.now()).toISOString(),
-    vantage: contract.vantage,
+    vantage: runMeta.vantage || contract.vantage,
+    network: runMeta.network || null,
     vantageCount: 1,
     validity: vantageValid ? 'valid' : 'invalid-vantage',
     canaries,
@@ -502,7 +521,7 @@ export async function confirmFailures(registry, run, ctx) {
   const failed = run.properties.filter(item => item.observation.state === 'unavailable');
   if (!failed.length) return run;
   const contract = registry.probeContract;
-  const full = { ...ctx, contract };
+  const full = { ...ctx, contract, placeholders: registry.instrumentationContract?.placeholderMeasurementIds || [] };
   if (contract.confirmationDelayMs > 0) await ctx.sleep(contract.confirmationDelayMs);
   const byId = new Map(registry.properties.map(property => [property.propertyId, property]));
   const confirmedAt = new Date(ctx.now()).toISOString();

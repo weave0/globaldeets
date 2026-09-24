@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { loadConfig } from './lib/collect.mjs';
 import { assemblePlane } from './lib/plane.mjs';
 import { expectedPropertyIds, validateDataPlane, validateRegistry } from './lib/contracts.mjs';
-import { PUBLISHED_FILES } from './lib/evidence.mjs';
+import { PUBLISHED_FILES, planeDocuments } from './lib/evidence.mjs';
 
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const outDir = resolve(root, process.argv.find(item => item.startsWith('--out='))?.slice(6) || 'observatory/mission-control');
@@ -29,13 +29,7 @@ if (errors.length) {
   process.exit(1);
 }
 
-const outputs = {
-  'history.json': plane.history,
-  'estate-health.json': plane.estate,
-  'diagnostics.json': plane.diagnostics,
-  'mission-control-data.json': plane.summary,
-  'probes.json': plane.probes,
-};
+const outputs = planeDocuments(plane);
 let drift = 0;
 mkdirSync(outDir, { recursive: true });
 for (const name of PUBLISHED_FILES) {

@@ -18,6 +18,8 @@ try {
   const result = await runCollection({
     root,
     evidenceDir,
+    secondaryDir: arg('secondary-dir') ? resolve(arg('secondary-dir')) : null,
+    dryRun: process.argv.includes('--dry-run'),
     deps: defaultDeps(),
     env: process.env,
     runId,
@@ -26,8 +28,12 @@ try {
     log: message => console.log('[mission-control] ' + message),
   });
   const summary = result.plane.estate.summary;
-  console.log('[mission-control] published: ' + JSON.stringify({ run: result.run.runId, validity: result.run.validity, snapshot: result.plane.snapshotAction, ...summary }));
+  console.log('[mission-control] ' + (process.argv.includes('--dry-run') ? 'dry run (nothing persisted): ' : 'published: ') + JSON.stringify({ run: result.run.runId, validity: result.run.validity, snapshot: result.plane.snapshotAction, ...summary }));
   console.log('[mission-control] inventory: ' + result.inventoryNote);
+  console.log('[mission-control] audience: ' + result.plane.audience.source.status + '; business events: ' + result.plane.events.source.status + '; queue: ' + JSON.stringify(result.plane.diagnostics.summary));
+  for (const property of result.plane.estate.properties) {
+    if (['failing', 'degraded', 'conflicting-evidence', 'blocked'].includes(property.profile.operatingStatus.key)) console.log('[mission-control] attention: ' + property.propertyId + ' ' + property.diagnosticState + ' (' + property.availability.reason + ')');
+  }
   if (result.run.validity !== 'valid') {
     console.error('[mission-control] probe vantage invalid; last valid evidence preserved and staleness will surface');
     process.exitCode = 2;

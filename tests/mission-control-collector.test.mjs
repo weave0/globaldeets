@@ -109,8 +109,13 @@ test('an outage is confirmed, escalated by investor criticality, preserved in ag
   assert.equal(outageCs.severity, 'critical');
   assert.ok(outageCs.nextAction && outageCs.observed.includes('http-5xx'));
   assert.equal(plane.estate.properties[1].availability.confidence, 'confirmed');
-  assert.equal(plane.diagnostics.items[0].id, 'measurement:audience-certification', 'investor-blocking sorts before pages');
-  assert.equal(plane.diagnostics.items[1].id, 'availability:outage:culturesherpa.org');
+  // GD-031: ranking is an explainable score. An investor-critical outage outranks everything; the investor-blocking
+  // audience gap still outranks an ordinary outage; and the published breakdown adds up to the score.
+  const ids = plane.diagnostics.items.map(item => item.id);
+  assert.equal(ids[0], 'availability:outage:culturesherpa.org', 'a confirmed investor-critical outage ranks first');
+  assert.ok(ids.indexOf('measurement:audience-certification') < ids.indexOf('availability:outage:agentkagent.com'), 'investor-blocking measurement gap outranks an ordinary outage');
+  assert.ok(outageCs.priorityBreakdown.some(part => part.factor === 'investor-critical'), 'the score explains why');
+  assert.equal(outageCs.priorityBreakdown.reduce((sum, part) => sum + part.points, 0), outageCs.priorityScore);
 
   // Still down a day later: age accrues from the first observation.
   const still = await collect(dir, { mutate: down, runId: 'o2', start: Date.parse('2026-10-03T06:00:00Z') });

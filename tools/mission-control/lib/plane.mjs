@@ -1,10 +1,16 @@
 /**
  * Assembles the full Mission Control data plane from evidence. Pure and deterministic:
  * the only clock is the `now` input.
+ *
+ * Order matters: estate -> audience + business events -> history snapshot -> diagnostics (which score and
+ * rank findings using all of them) -> executive summary (which derives from all of the above).
  */
 import { buildEstateHealth } from './estate.mjs';
 import { buildDiagnostics } from './diagnostics.mjs';
-import { buildScheduledSnapshot, initialHistory, pruneHistory, upsertSnapshot } from './ledger.mjs';
+import { buildAudience } from './audience.mjs';
+import { buildBusinessEvents } from './events.mjs';
+import { buildExecutive } from './executive.mjs';
+import { buildScheduledSnapshot, HISTORY_SCHEMA_VERSION, INGESTION_SEAMS, initialHistory, pruneHistory, upsertSnapshot } from './ledger.mjs';
 
 export function compactRun(run) {
   return {
@@ -68,6 +74,24 @@ function trafficSummary(history, staticSummary) {
   };
 }
 
+function compactSecondary(run) {
+  return {
+    vantage: run.vantage,
+    network: run.network || null,
+    runId: run.runId,
+    startedAt: run.startedAt,
+    finishedAt: run.finishedAt,
+    validity: run.validity,
+    canaries: run.canaries,
+    properties: run.properties.map(item => ({
+      propertyId: item.propertyId,
+      observation: { state: item.observation.state, blocked: Boolean(item.observation.blocked), failureClass: item.observation.failureClass || null, confirmed: item.observation.confirmed ?? null },
+      http: item.http ? { status: item.http.status ?? null, durationMs: item.http.durationMs ?? null } : null,
+      criticalPath: { state: item.criticalPath?.state || 'unknown' },
+    })),
+  };
+}
+
 export function assemblePlane({
   registry,
   manual,
@@ -76,24 +100,35 @@ export function assemblePlane({
   history: existingHistory = null,
   inventory = null,
   latestValidRun = null,
+  secondaryRuns = [],
   latestAttempt = null,
   compactRuns = [],
   previousDiagnostics = null,
   operational = null,
+  rumReception = null,
+  goldInput = null,
+  insightsInput = null,
+  eventsInput = null,
   now,
   scheduleSnapshot = false,
 }) {
   let history = existingHistory || initialHistory(historySeed, now);
+  history = { ...history, schemaVersion: HISTORY_SCHEMA_VERSION, ingestionSeams: INGESTION_SEAMS };
   const recentCutoff = Date.parse(now) - 7 * 86400000;
   const recentRuns = compactRuns.filter(run => Date.parse(run.finishedAt) >= recentCutoff);
 
-  let estate = buildEstateHealth({ registry, inventory, probeRun: latestValidRun, latestAttempt, recentRuns, now });
+  const estate = buildEstateHealth({ registry, inventory, probeRun: latestValidRun, secondaryRuns, latestAttempt, recentRuns, rumReception, now });
+  const audience = buildAudience({ registry, now, gold: goldInput, insights: insightsInput });
+  const availabilityById = new Map(estate.properties.map(row => [row.propertyId, row.availability.freshness.state === 'expired' ? 'unknown' : row.availability.state]));
+  const events = buildBusinessEvents({ registry, now, feed: eventsInput, availabilityById });
 
   let snapshotAction = 'none';
   if (scheduleSnapshot) {
     const snapshot = buildScheduledSnapshot({
       estate,
       operational,
+      audience,
+      events,
       observedAt: now,
       runId: latestAttempt?.runId || latestValidRun?.runId || 'unknown',
       dayRollup: dayRollupFor(now.slice(0, 10), compactRuns),
@@ -103,9 +138,10 @@ export function assemblePlane({
     snapshotAction = result.action;
   }
 
-  const diagnostics = buildDiagnostics({ estate, history, manual, previous: previousDiagnostics, latestAttempt, now });
+  const diagnostics = buildDiagnostics({ estate, history, manual, previous: previousDiagnostics, latestAttempt, audience, events, now });
+  const executive = buildExecutive({ registry, estate, audience, events, diagnostics, history, now });
 
-  const missingRum = estate.properties.filter(item => item.observability.state === 'unobserved').map(item => item.propertyId);
+  const missingRum = estate.properties.filter(item => item.observability.rum !== 'on').map(item => item.propertyId);
   const summary = {
     missionControlId: staticSummary.missionControlId,
     snapshotVersion: history.snapshots.length ? history.snapshots[history.snapshots.length - 1].snapshotId : 'unseeded',
@@ -114,26 +150,30 @@ export function assemblePlane({
     dataPlane: staticSummary.dataPlane,
     estate: {
       activeZones: estate.summary.activeZones,
-      rumObservedZones: estate.summary.rumObservedZones,
-      rumCoveragePct: Math.round((estate.summary.rumObservedZones / estate.summary.activeZones) * 100),
-      missingRumZones: missingRum,
+      // The Cloudflare RUM flag is a carried-forward SETTING. It is not evidence that telemetry is collected.
+      rumSettingOnZones: estate.summary.rumObservedZones,
+      rumSettingCoveragePct: Math.round((estate.summary.rumObservedZones / estate.summary.activeZones) * 100),
+      rumSettingOffZones: missingRum,
+      instrumentation: estate.summary.instrumentation,
       source: estate.evidence.inventory.source,
       inventoryAsOf: estate.evidence.inventory.asOf,
     },
+    audience: { status: audience.source.status, propertiesMeasured: audience.estate.propertiesMeasured, edgeRequests28d: audience.estate.requests[28].value, observedAt: audience.source.observedAt },
+    businessEvents: { status: events.source.status, instrumented: events.coverage.instrumented },
     globaldeetsTraffic: trafficSummary(history, staticSummary),
     investmentThesis: staticSummary.investmentThesis,
   };
 
   const probes = {
     contractName: 'globaldeets-probes',
-    schemaVersion: '1.0.0',
+    schemaVersion: '1.1.0',
     generatedAt: now,
-    note: 'Raw latest valid production probe run plus compact recent run summaries, for agents. Health is derived in estate-health.json under the explicit health contract.',
+    note: 'Raw latest valid production probe run plus compact recent run summaries and secondary vantage observations, for agents. Health is derived in estate-health.json under the explicit health contract.',
     latestAttempt,
     latest: latestValidRun,
+    secondaryVantages: secondaryRuns.map(compactSecondary),
     recentRuns: compactRuns.filter(run => Date.parse(run.finishedAt) >= Date.parse(now) - 28 * 86400000),
   };
 
-  estate = { ...estate };
-  return { history, estate, diagnostics, summary, probes, snapshotAction };
+  return { history, estate, diagnostics, summary, probes, audience, events, executive, snapshotAction };
 }

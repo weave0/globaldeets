@@ -7,7 +7,25 @@ import { dirname, join } from 'node:path';
 
 export class EvidenceCorruptError extends Error {}
 
-export const PUBLISHED_FILES = ['history.json', 'estate-health.json', 'diagnostics.json', 'mission-control-data.json', 'probes.json'];
+/** The five files published before GD-031. An evidence branch holding exactly these is a valid, readable legacy set. */
+export const LEGACY_PUBLISHED_FILES = ['history.json', 'estate-health.json', 'diagnostics.json', 'mission-control-data.json', 'probes.json'];
+export const PUBLISHED_FILES = [...LEGACY_PUBLISHED_FILES, 'audience.json', 'business-events.json', 'executive.json'];
+
+/** Maps published file names to plane keys. */
+export const PLANE_KEYS = {
+  'history.json': 'history',
+  'estate-health.json': 'estate',
+  'diagnostics.json': 'diagnostics',
+  'mission-control-data.json': 'summary',
+  'probes.json': 'probes',
+  'audience.json': 'audience',
+  'business-events.json': 'events',
+  'executive.json': 'executive',
+};
+
+export function planeDocuments(plane) {
+  return Object.fromEntries(PUBLISHED_FILES.map(name => [name, plane[PLANE_KEYS[name]]]));
+}
 const PROBE_RUN_RETENTION_DAYS = 120;
 
 export function readJsonStrict(path) {
@@ -93,7 +111,7 @@ export function persistEvidence(dir, { plane, latestValidRun, inventory, compact
   const prev = join(dir, 'latest.prev');
   rmSync(next, { recursive: true, force: true });
   rmSync(prev, { recursive: true, force: true });
-  const documents = { 'history.json': plane.history, 'estate-health.json': plane.estate, 'diagnostics.json': plane.diagnostics, 'mission-control-data.json': plane.summary, 'probes.json': plane.probes };
+  const documents = planeDocuments(plane);
   for (const name of PUBLISHED_FILES) atomicWrite(join(next, name), pretty(documents[name]));
   if (existsSync(latest)) renameSync(latest, prev);
   renameSync(next, latest);

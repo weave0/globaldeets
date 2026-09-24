@@ -1,0 +1,1917 @@
+{
+  "contractName": "globaldeets-audience",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-09-24T16:29:00Z",
+  "policy": {
+    "edgeTrafficIsHumanAudience": false,
+    "missingIsZero": false,
+    "fixturesAreProduction": false,
+    "uniquesAreAdditive": false,
+    "trendsRequireComparableWindows": true,
+    "classificationIsInferredFromEdge": false
+  },
+  "source": {
+    "status": "awaiting-authorized-source",
+    "kind": "canonical-gold",
+    "reason": "No governed Canonical Gold source is configured for Mission Control.",
+    "requirement": {
+      "what": "A read credential for the governed Canonical Gold and Traffic Insights documents.",
+      "where": "https://traffic.goodflippindesign.com/gold/ (admin-gated by design; the documents are produced daily by the Traffic Intelligence pipeline).",
+      "secrets": [
+        "MISSION_CONTROL_GOLD_SOURCE",
+        "MISSION_CONTROL_GOLD_TOKEN"
+      ],
+      "owner": "Traffic Intelligence owner (weave0/goodflippindesign, workflow traffic-intelligence-deploy.yml)"
+    },
+    "gold": null,
+    "insights": {
+      "status": "absent",
+      "reason": "No Gold document was read, so no insights document is consulted.",
+      "generatedAt": null
+    },
+    "observedAt": null,
+    "freshness": {
+      "state": "unknown",
+      "ageHours": null,
+      "freshUntil": null,
+      "expiresAt": null
+    }
+  },
+  "classification": {
+    "support": {
+      "certified-human": "unsupported",
+      "likely-human": "unsupported",
+      "automated-agentic": "unsupported",
+      "unknown": "all-measured-traffic"
+    },
+    "composition": null,
+    "note": "Cloudflare zone analytics count requests, not people. No connected source separates certified humans, likely humans or automated agents, so all measured traffic is reported as unclassified edge requests."
+  },
+  "windowsDays": [
+    7,
+    28,
+    90
+  ],
+  "materiality": {
+    "minPercent": 10,
+    "minAbsoluteRequests": 100
+  },
+  "estate": {
+    "requests": {
+      "7": {
+        "evidenceState": "awaiting-authorized-source",
+        "value": null,
+        "unit": "requests",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "28": {
+        "evidenceState": "awaiting-authorized-source",
+        "value": null,
+        "unit": "requests",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "90": {
+        "evidenceState": "awaiting-authorized-source",
+        "value": null,
+        "unit": "requests",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      }
+    },
+    "pageViews": {
+      "7": {
+        "evidenceState": "awaiting-authorized-source",
+        "value": null,
+        "unit": "page views",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "28": {
+        "evidenceState": "awaiting-authorized-source",
+        "value": null,
+        "unit": "page views",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "90": {
+        "evidenceState": "awaiting-authorized-source",
+        "value": null,
+        "unit": "page views",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      }
+    },
+    "propertiesExpected": 25,
+    "propertiesMeasured": 0,
+    "trend": {
+      "7": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "28": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "90": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      }
+    },
+    "concentration": null,
+    "movers": {
+      "window": null,
+      "growing": [],
+      "declining": []
+    }
+  },
+  "properties": [
+    {
+      "propertyId": "globaldeets.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "culturesherpa.org",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "culturesherpa.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "agentkagent.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "aiaimate.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "artificelligance.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "artificelligence.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "brettleeweaver.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "citizenapproved.org",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "cyancanoe.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "flipskillet.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "flipskillit.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "foxyana.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "fwomps.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "fwomp.us",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "gflippinv.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "goodflippindesign.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "goodflippinluck.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "goodflippinnews.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "goodflippinvibes.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "goodflippinyikes.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "heavymoose.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "lowertownstpaul.org",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "minnesotapeace.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    },
+    {
+      "propertyId": "redleopardofstpaul.com",
+      "requests": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "requests",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "pageViews": {
+        "7": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "awaiting-authorized-source",
+          "value": null,
+          "unit": "page views",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "trend": {
+        "7": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "28": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        },
+        "90": {
+          "evidenceState": "unavailable",
+          "value": null,
+          "unit": "percent",
+          "reason": "Awaiting authorized source (see source.requirement)."
+        }
+      },
+      "share28d": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": "percent",
+        "reason": "Awaiting authorized source (see source.requirement)."
+      },
+      "rank28d": null,
+      "direction": "unknown"
+    }
+  ],
+  "series": {
+    "estateDaily": {
+      "status": "unavailable",
+      "reason": "No governed Canonical Gold source is configured for Mission Control.",
+      "unit": "requests",
+      "points": [],
+      "propertiesIncluded": [],
+      "incompleteDates": []
+    },
+    "byProperty": []
+  }
+}
