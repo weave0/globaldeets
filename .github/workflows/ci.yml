@@ -29,6 +29,10 @@ jobs:
           test -f observatory/mission-control/history.json || (echo "MISSING: Mission Control history" && exit 1)
           test -f observatory/mission-control/estate-health.json || (echo "MISSING: Mission Control estate health" && exit 1)
           test -f observatory/mission-control/diagnostics.json || (echo "MISSING: Mission Control diagnostics" && exit 1)
+          test -f observatory/mission-control/probes.json || (echo "MISSING: Mission Control probes" && exit 1)
+          test -f observatory/mission-control/evidence-semantics.js || (echo "MISSING: Mission Control evidence semantics" && exit 1)
+          test -f tools/mission-control/config/estate-registry.json || (echo "MISSING: estate registry" && exit 1)
+          test -f .github/workflows/mission-control-evidence.yml || (echo "MISSING: scheduled evidence workflow" && exit 1)
           echo "All required files present."
 
       - name: Verify GA4 tag present
@@ -76,6 +80,21 @@ jobs:
           node --check dossiers/santa-ynez-pipeline/dossier.js
           node --check observatory/coverage/observatory.js
           node --check observatory/mission-control/mission-control.js
+          node --check observatory/mission-control/evidence-semantics.js
+          node --check tools/verify-mission-control-prod.js
+          node --check tools/mission-control/collect.mjs
+          node --check tools/mission-control/build.mjs
+          node --check tools/mission-control/overlay.mjs
+          node --check tools/mission-control/lib/probe.mjs
+          node --check tools/mission-control/lib/estate.mjs
+          node --check tools/mission-control/lib/diagnostics.mjs
+          node --check tools/mission-control/lib/ledger.mjs
+          node --check tools/mission-control/lib/gold.mjs
+          node --check tools/mission-control/lib/plane.mjs
+          node --check tools/mission-control/lib/contracts.mjs
+          node --check tools/mission-control/lib/evidence.mjs
+          node --check tools/mission-control/lib/collect.mjs
+          node --check tools/mission-control/lib/cloudflare-inventory.mjs
           node --check shared/ecosystem-nav.js
           node --check playwright.config.js
           node --check tests/smoke.spec.js
@@ -91,10 +110,22 @@ jobs:
           node --check tests/local-reporting-observatory.test.mjs
           node --check tests/mission-control-data.test.mjs
           node --check tests/mission-control-smoke.spec.js
+          node --check tests/mission-control-probe.test.mjs
+          node --check tests/mission-control-collector.test.mjs
+          node --check tests/mission-control-evidence.test.mjs
+          node --check tests/mission-control-scheduler.test.mjs
       - name: Reject stale investor-facing copy
         run: |
           if grep -qi "Data Platform Showcase" categories.html; then echo "STALE: portfolio-era categories copy" && exit 1; fi
 
+
+      - name: Mission Control seed data plane matches the deterministic build
+        run: node tools/mission-control/build.mjs --check
+
+      - name: Reject unsourced Mission Control health claims
+        run: |
+          if grep -rniE "availability: *'?healthy|status: *'?up'" observatory/mission-control/mission-control.js; then echo "STALE: hard-coded health claim in Mission Control UI" && exit 1; fi
+          if grep -qE "No estate-wide production availability probe is connected|Availability and critical-path state remain unknown until probes are connected" observatory/mission-control/mission-control.js observatory/mission-control/index.html; then echo "STALE: GD-029 placeholder copy" && exit 1; fi
 
       - name: Lint JavaScript
         run: npm run lint

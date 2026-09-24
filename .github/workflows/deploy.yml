@@ -33,12 +33,22 @@ jobs:
                   npm run lint
                   npm run test:smoke
 
+            - name: Fetch validated Mission Control evidence (if any)
+              run: |
+                  if git ls-remote --exit-code --heads origin mission-control-evidence >/dev/null 2>&1; then
+                    git fetch --depth=1 origin mission-control-evidence
+                    git worktree add --detach .evidence FETCH_HEAD
+                  else
+                    echo "::warning::No mission-control-evidence branch yet; deploying the committed seed data plane."
+                  fi
+
             - name: Stage clean deploy artifact
               run: npm run stage:deploy
               env:
                   NODE_ENV: production
                   CF_PAGES_BRANCH: main
                   CF_PAGES_COMMIT_SHA: ${{ github.sha }}
+                  MISSION_CONTROL_EVIDENCE_DIR: .evidence
 
             - name: Deploy to Cloudflare Pages
               uses: cloudflare/wrangler-action@v4
@@ -127,5 +137,25 @@ jobs:
                     fi
 
                     echo "Secondary mobile verification attempt ${attempt} failed; retrying after propagation delay."
+                    sleep 10
+                  done
+
+            - name: Verify Mission Control data plane
+              run: |
+                  expected_at=""
+                  if [ -f .evidence/latest/estate-health.json ]; then
+                    expected_at=$(node -p "require('./.evidence/latest/estate-health.json').generatedAt || ''")
+                  fi
+                  for attempt in 1 2 3 4 5 6; do
+                    if node tools/verify-mission-control-prod.js --base=https://globaldeets.com --min-generated-at="${expected_at}"; then
+                      exit 0
+                    fi
+
+                    if [ "${attempt}" -eq 6 ]; then
+                      echo "Mission Control data plane did not converge after all verification attempts."
+                      exit 1
+                    fi
+
+                    echo "Mission Control verification attempt ${attempt} failed; retrying after propagation delay."
                     sleep 10
                   done

@@ -72,6 +72,31 @@ export default [
       'no-empty': ['error', { allowEmptyCatch: true }],
     },
   },
+  // GD-030 Mission Control tooling and tests are ES modules that run on Node.
+  {
+    files: ['tools/mission-control/**/*.mjs', 'tests/helpers/*.mjs', 'tests/mission-control-*.test.mjs'],
+    languageOptions: {
+      ecmaVersion: 2024,
+      sourceType: 'module',
+      globals: {
+        AbortSignal: 'readonly',
+        Buffer: 'readonly',
+        Response: 'readonly',
+        TextDecoder: 'readonly',
+        TypeError: 'readonly',
+        URL: 'readonly',
+        console: 'readonly',
+        fetch: 'readonly',
+        process: 'readonly',
+        setTimeout: 'readonly',
+        structuredClone: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['error', strictUnused],
+      'no-empty': ['error', { allowEmptyCatch: true }],
+    },
+  },
   // Build tuple metadata is intentionally retained for readability even when a crop loop
   // consumes only the slug/position fields.
   {

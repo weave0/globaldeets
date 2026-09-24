@@ -3,3 +3,12 @@
 @media(max-width:1100px){.chart-grid{grid-template-columns:1fr 1fr}.chart-grid .audience-card{grid-column:1/-1}}
 @media(max-width:760px){.chart-grid{grid-template-columns:1fr}.chart-grid .audience-card{grid-column:auto}.range-control{width:100%}.range-control select{width:100%}.estate-table-wrap{border-radius:14px}.trend-caption{grid-template-columns:1fr}.trend-caption span:last-child{text-align:left}}
 
+.chart-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.chart-grid .audience-card{grid-column:1/-1}
+.evidence-status{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.evidence-status .warning{grid-column:1/-1}
+.evidence-status .record[data-freshness="fresh"] .record-value{color:var(--green)}.evidence-status .record[data-freshness="stale"] .record-value{color:var(--amber)}.evidence-status .record[data-freshness="expired"] .record-value,.evidence-status .record[data-freshness="unknown"] .record-value{color:var(--danger)}
+.state-available,.state-verified-healthy,.state-pass{color:var(--green);border-color:rgba(126,231,184,.35)}
+.state-reachable-unverified{color:var(--cyan);border-color:rgba(130,233,255,.35)}
+.state-degraded,.state-contract-drift,.state-drift,.state-evidence-stale,.state-probe-blocked,.state-no-service-published{color:var(--amber);border-color:rgba(255,201,119,.35)}
+.state-outage,.state-unavailable,.state-critical-path-failed,.state-fail,.state-evidence-expired{color:var(--danger);border-color:rgba(255,155,143,.45)}
+@media(max-width:1100px){.chart-grid{grid-template-columns:1fr 1fr}.evidence-status{grid-template-columns:1fr}}
+@media(max-width:760px){.chart-grid{grid-template-columns:1fr}.chart-grid .audience-card{grid-column:auto}}

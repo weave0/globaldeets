@@ -1,0 +1,124 @@
+{
+  "contractName": "globaldeets-diagnostics-manual",
+  "schemaVersion": "1.0.0",
+  "note": "Hand-authored judgments with no derivable evidence. Anything computable from probe/history/inventory evidence is derived by tools/mission-control/lib/diagnostics.mjs and must not be copied here.",
+  "items": [
+    {
+      "id": "business:conversion-measurement",
+      "severity": "high",
+      "domain": "business",
+      "status": "open",
+      "businessImpact": "high",
+      "ownerLane": "Growth / business",
+      "openedAt": "2026-09-23",
+      "title": "Instrument meaningful business conversion events",
+      "observed": "No certified investor-facing funnel for subscriber, partner, donor, sponsor, licensing, or investor-intent conversion is connected.",
+      "businessReason": "Traffic without conversion or retention evidence does not explain economic potential.",
+      "evidence": [
+        {
+          "type": "mission-control",
+          "ref": "business-event-ingestion-seam",
+          "state": "unavailable"
+        }
+      ],
+      "nextAction": "Define the business-event taxonomy and connect first-party or GA4 event telemetry with source, window, and attribution limits.",
+      "escalation": {
+        "level": "high",
+        "blocksInvestorClaim": false,
+        "escalateWhen": "Investor materials require funnel or retention claims that cannot be sourced.",
+        "targetLane": "Growth / business",
+        "class": "measurement-claim-block"
+      },
+      "priorityHint": 3
+    },
+    {
+      "id": "product:culture-convergence",
+      "severity": "medium",
+      "domain": "opportunity",
+      "status": "open",
+      "businessImpact": "medium",
+      "ownerLane": "Product strategy",
+      "openedAt": "2026-09-23",
+      "title": "Quantify Culture Sherpa convergence opportunity",
+      "observed": "Culture Sherpa remains prominent in the estate and conceptually aligned with GlobalDeets place context, but shared usage evidence is not yet connected.",
+      "businessReason": "The integration thesis could improve differentiation and depth, but should be supported by actual overlap and utility evidence.",
+      "evidence": [
+        {
+          "type": "estate-health",
+          "ref": "culturesherpa.org",
+          "state": "measured"
+        },
+        {
+          "type": "product-plan",
+          "ref": "GLOBALDEETS_2030_PRODUCT_PLAN.md",
+          "state": "documented"
+        }
+      ],
+      "nextAction": "Measure cross-navigation, overlap, unique utility, search demand, and content reuse before making convergence claims.",
+      "escalation": {
+        "level": "medium",
+        "blocksInvestorClaim": false,
+        "escalateWhen": "Integration is presented as realized value before shared usage evidence exists.",
+        "targetLane": "Product strategy",
+        "class": "business-opportunity"
+      },
+      "priorityHint": 6
+    },
+    {
+      "id": "narrative:repository-metadata",
+      "severity": "medium",
+      "domain": "provenance",
+      "status": "open",
+      "businessImpact": "medium",
+      "ownerLane": "Product narrative",
+      "openedAt": "2026-09-24",
+      "title": "Replace stale GitHub repository description",
+      "observed": "GitHub still describes GlobalDeets as a portfolio and research intelligence showcase even though README, STATUS, and the live product have moved on.",
+      "businessReason": "Repository metadata is visible during diligence and can reintroduce the obsolete product story.",
+      "evidence": [
+        {
+          "type": "github-repository-metadata",
+          "ref": "weave0/globaldeets",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Update the repository description to the source-first world-information product narrative.",
+      "escalation": {
+        "level": "medium",
+        "blocksInvestorClaim": false,
+        "escalateWhen": "Repository metadata remains inconsistent with the live product during external diligence.",
+        "targetLane": "Product narrative",
+        "class": "narrative-provenance"
+      },
+      "priorityHint": 7
+    },
+    {
+      "id": "narrative:live-copy-cleanup",
+      "severity": "low",
+      "domain": "product-quality",
+      "status": "closed",
+      "businessImpact": "low",
+      "ownerLane": "Frontend / product",
+      "openedAt": "2026-09-23",
+      "title": "Remove remaining portfolio-era live copy",
+      "observed": "GD-029 removes the remaining Data Platform Showcase language from categories.html.",
+      "businessReason": "Live product surfaces should tell one coherent story.",
+      "evidence": [
+        {
+          "type": "source-change",
+          "ref": "categories.html",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Keep CI drift checks active.",
+      "escalation": {
+        "level": "none",
+        "blocksInvestorClaim": false,
+        "escalateWhen": "Portfolio-showcase language reappears on investor-adjacent live surfaces.",
+        "targetLane": "Frontend / product",
+        "class": "none"
+      },
+      "priorityHint": 8
+    }
+  ]
+}

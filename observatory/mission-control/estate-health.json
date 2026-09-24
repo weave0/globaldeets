@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "contractName": "globaldeets-estate-health",
   "generatedAt": "2026-09-24T16:29:00Z",
   "propertyCount": 25,
@@ -7,26 +7,111 @@
     "unknownIsHealthy": false,
     "missingIsZero": false,
     "deploySuccessEqualsAvailability": false,
-    "zoneEqualsIndependentAudience": false
+    "zoneEqualsIndependentAudience": false,
+    "httpReachabilityEqualsHealth": false,
+    "providerTopologyIsUnhealthy": false,
+    "expiredEvidenceIsCurrent": false
+  },
+  "healthContract": {
+    "version": "1.0.0",
+    "states": [
+      "verified-healthy",
+      "reachable-unverified",
+      "degraded",
+      "critical-path-failed",
+      "outage",
+      "no-service-published",
+      "probe-blocked",
+      "contract-drift",
+      "evidence-stale",
+      "evidence-expired",
+      "health-evidence-incomplete"
+    ],
+    "rules": [
+      "verified-healthy requires FRESH conclusive availability AND an authoritative critical-path pass.",
+      "HTTP 2xx alone yields reachable-unverified, never verified-healthy.",
+      "A successful deploy is not availability evidence.",
+      "A blocked probe (edge challenge, 401/403, 429) is insufficient evidence, not an outage.",
+      "A zone that publishes no web address and declares no service is no-service-published, not an outage.",
+      "Provider topology (Pages, Workers, external hosts) never by itself makes a property unhealthy.",
+      "Baseline (non-authoritative) contract mismatches are contract-drift for review, never outages.",
+      "Expired evidence is presented as unknown; a confirmed outage keeps its alarm while it ages.",
+      "A probe run whose independent canaries were unreachable is invalid and yields unknown for every property."
+    ]
+  },
+  "freshnessPolicy": {
+    "probe": {
+      "cadenceHours": 6,
+      "freshWithinHours": 8,
+      "expiredAfterHours": 24
+    },
+    "history": {
+      "cadenceHours": 6,
+      "freshWithinHours": 30,
+      "expiredAfterHours": 72
+    },
+    "inventory": {
+      "cadenceHours": 24,
+      "freshWithinHours": 48,
+      "expiredAfterHours": 168
+    }
+  },
+  "evidence": {
+    "probe": {
+      "runId": null,
+      "observedAt": null,
+      "validity": "none",
+      "vantage": null,
+      "vantageCount": 0,
+      "canaries": [],
+      "syntheticTraffic": null,
+      "freshness": {
+        "state": "unknown",
+        "ageHours": null,
+        "freshUntil": null,
+        "expiresAt": null
+      },
+      "latestAttempt": null
+    },
+    "inventory": {
+      "asOf": "2026-09-24T16:29:00Z",
+      "source": "Cloudflare account zone inventory + per-zone RUM settings",
+      "refreshed": false,
+      "freshness": {
+        "state": "fresh",
+        "ageHours": 0,
+        "freshUntil": "2026-09-26T16:29:00.000Z",
+        "expiresAt": "2026-10-01T16:29:00.000Z"
+      }
+    }
   },
   "summary": {
     "activeZones": 25,
     "rumObservedZones": 21,
     "rumUnobservedZones": 4,
     "availabilityKnownZones": 0,
+    "availableZones": 0,
+    "degradedZones": 0,
+    "unavailableZones": 0,
+    "noServiceZones": 0,
+    "probeBlockedZones": 0,
     "criticalPathKnownZones": 0,
+    "criticalPathContractZones": 20,
+    "verifiedHealthyZones": 0,
     "pagesMappedActiveZones": 10
   },
   "sourceNotes": [
-    "Zone and RUM states were read from the connected Cloudflare account on 2026-09-24.",
-    "Pages project/domain/deploy facts were read from the connected Cloudflare account where a custom-domain mapping was observed.",
-    "Availability and critical-path state remain unknown until production probes are connected; a successful deploy is not treated as uptime."
+    "Zone, RUM, and Pages facts come from the Cloudflare account inventory; they are refreshed by the collector when the token permits and otherwise carried forward and labelled by age.",
+    "Availability and critical-path state come only from scheduled production probes; a successful deploy is not treated as uptime.",
+    "Probe traffic is synthetic monitor traffic (see evidence.probe.syntheticTraffic) and must be excluded from audience classification.",
+    "Properties without an honest critical-path contract keep criticalPath: unknown."
   ],
   "properties": [
     {
       "propertyId": "globaldeets.com",
       "displayName": "GlobalDeets",
       "emphasisRank": 1,
+      "investorCritical": true,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -41,12 +126,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -62,6 +175,10 @@
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "Owned property; critical path verified against production on 2026-09-24."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -69,6 +186,7 @@
       "propertyId": "culturesherpa.org",
       "displayName": "Culture Sherpa",
       "emphasisRank": 2,
+      "investorCritical": true,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -83,12 +201,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -104,6 +250,10 @@
         "kind": null,
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
@@ -112,6 +262,7 @@
       "propertyId": "culturesherpa.com",
       "displayName": "culturesherpa.com",
       "emphasisRank": 3,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -126,12 +277,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Redirect-only alias: availability is probed, but there is no independent critical path.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -147,6 +326,10 @@
         "kind": null,
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probeExpectation": {
+        "expectation": "redirects",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
@@ -155,6 +338,7 @@
       "propertyId": "agentkagent.com",
       "displayName": "agentkagent.com",
       "emphasisRank": 4,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -169,12 +353,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -190,6 +402,10 @@
         "kind": null,
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
@@ -198,6 +414,7 @@
       "propertyId": "aiaimate.com",
       "displayName": "aiaimate.com",
       "emphasisRank": 5,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -212,12 +429,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -233,6 +478,10 @@
         "kind": null,
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
@@ -241,6 +490,7 @@
       "propertyId": "artificelligance.com",
       "displayName": "artificelligance.com",
       "emphasisRank": 6,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -255,12 +505,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -277,13 +555,18 @@
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
       },
-      "diagnosticState": "observability-gap",
+      "probeExpectation": {
+        "expectation": "unspecified",
+        "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
+      },
+      "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
     {
       "propertyId": "artificelligence.com",
       "displayName": "artificelligence.com",
       "emphasisRank": 7,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -298,12 +581,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -320,13 +631,18 @@
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
       },
-      "diagnosticState": "observability-gap",
+      "probeExpectation": {
+        "expectation": "unspecified",
+        "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
+      },
+      "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
     {
       "propertyId": "brettleeweaver.com",
       "displayName": "brettleeweaver.com",
       "emphasisRank": 8,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -341,12 +657,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -363,6 +707,10 @@
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -370,6 +718,7 @@
       "propertyId": "citizenapproved.org",
       "displayName": "citizenapproved.org",
       "emphasisRank": 9,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -384,12 +733,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -405,6 +782,10 @@
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -412,6 +793,7 @@
       "propertyId": "cyancanoe.com",
       "displayName": "cyancanoe.com",
       "emphasisRank": 10,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -426,12 +808,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -447,6 +857,10 @@
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -454,6 +868,7 @@
       "propertyId": "flipskillet.com",
       "displayName": "flipskillet.com",
       "emphasisRank": 11,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -468,12 +883,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -488,6 +931,10 @@
         "at": "2026-09-22T04:52:11.331067Z",
         "kind": "production-deploy",
         "evidenceState": "measured"
+      },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
@@ -496,6 +943,7 @@
       "propertyId": "flipskillit.com",
       "displayName": "flipskillit.com",
       "emphasisRank": 12,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -510,12 +958,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -531,6 +1007,10 @@
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -538,6 +1018,7 @@
       "propertyId": "foxyana.com",
       "displayName": "foxyana.com",
       "emphasisRank": 13,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -552,12 +1033,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -573,6 +1082,10 @@
         "kind": null,
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
@@ -581,6 +1094,7 @@
       "propertyId": "fwomps.com",
       "displayName": "fwomps.com",
       "emphasisRank": 14,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -595,12 +1109,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -617,13 +1159,18 @@
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
       },
-      "diagnosticState": "observability-gap",
+      "probeExpectation": {
+        "expectation": "unspecified",
+        "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
+      },
+      "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
     {
       "propertyId": "fwomp.us",
       "displayName": "fwomp.us",
       "emphasisRank": 15,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -638,12 +1185,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -660,13 +1235,18 @@
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
       },
-      "diagnosticState": "observability-gap",
+      "probeExpectation": {
+        "expectation": "unspecified",
+        "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
+      },
+      "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
     {
       "propertyId": "gflippinv.com",
       "displayName": "gflippinv.com",
       "emphasisRank": 16,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -681,12 +1261,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -702,6 +1310,10 @@
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -709,6 +1321,7 @@
       "propertyId": "goodflippindesign.com",
       "displayName": "goodflippindesign.com",
       "emphasisRank": 17,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -723,12 +1336,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -744,6 +1385,10 @@
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -751,6 +1396,7 @@
       "propertyId": "goodflippinluck.com",
       "displayName": "goodflippinluck.com",
       "emphasisRank": 18,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -765,12 +1411,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -786,6 +1460,10 @@
         "kind": null,
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
@@ -794,6 +1472,7 @@
       "propertyId": "goodflippinnews.com",
       "displayName": "goodflippinnews.com",
       "emphasisRank": 19,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -808,12 +1487,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -830,6 +1537,10 @@
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -837,6 +1548,7 @@
       "propertyId": "goodflippinvibes.com",
       "displayName": "goodflippinvibes.com",
       "emphasisRank": 20,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -851,12 +1563,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -872,6 +1612,10 @@
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -879,6 +1623,7 @@
       "propertyId": "goodflippinyikes.com",
       "displayName": "goodflippinyikes.com",
       "emphasisRank": 21,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -893,12 +1638,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -915,6 +1688,10 @@
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -922,6 +1699,7 @@
       "propertyId": "heavymoose.com",
       "displayName": "heavymoose.com",
       "emphasisRank": 22,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -936,12 +1714,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -957,6 +1763,10 @@
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -964,6 +1774,7 @@
       "propertyId": "lowertownstpaul.org",
       "displayName": "lowertownstpaul.org",
       "emphasisRank": 23,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -978,12 +1789,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -1000,6 +1839,10 @@
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -1007,6 +1850,7 @@
       "propertyId": "minnesotapeace.com",
       "displayName": "minnesotapeace.com",
       "emphasisRank": 24,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -1021,12 +1865,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -1042,6 +1914,10 @@
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+      },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
     },
@@ -1049,6 +1925,7 @@
       "propertyId": "redleopardofstpaul.com",
       "displayName": "redleopardofstpaul.com",
       "emphasisRank": 25,
+      "investorCritical": false,
       "zone": {
         "status": "active",
         "evidenceState": "measured",
@@ -1063,12 +1940,40 @@
       "availability": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No estate-wide production availability probe is connected to this GlobalDeets snapshot."
+        "blocked": false,
+        "observedAt": null,
+        "confidence": null,
+        "failureClass": null,
+        "reason": "No probe run has been collected for this property yet.",
+        "nextAction": "Run scheduled evidence collection; unknown is preserved until a valid probe observation exists.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        },
+        "recent": {
+          "windowDays": 7,
+          "runs": 0,
+          "conclusiveRuns": 0,
+          "availableRuns": 0,
+          "availabilityRatio": null
+        }
       },
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "reason": "No property-specific critical-path contract is connected to this GlobalDeets snapshot."
+        "level": null,
+        "basis": null,
+        "observedAt": null,
+        "checks": [],
+        "reason": "Critical-path contract is defined but no valid probe observation exists yet.",
+        "freshness": {
+          "state": "unknown",
+          "ageHours": null,
+          "freshUntil": null,
+          "expiresAt": null
+        }
       },
       "deployment": {
         "provider": "unknown",
@@ -1084,6 +1989,10 @@
         "kind": null,
         "evidenceState": "unavailable",
         "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probeExpectation": {
+        "expectation": "serves-content",
+        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
