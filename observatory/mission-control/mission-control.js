@@ -122,7 +122,7 @@
       ? 'Availability and critical-path state come from scheduled production probes (latest valid run ' + formatDate(probe.observedAt) + ', vantage ' + (probe.vantage || 'unknown') + ', ' + probeFreshness().state + ').'
       : 'No valid production probe run has been collected yet; availability and critical-path state are unknown.';
     return 'Snapshot ' + data.snapshotVersion + ', generated ' + formatDate(data.generatedAt) + '. ' + probeText +
-      ' Zone, RUM, and Pages deploy facts are Cloudflare inventory read ' + formatDate(state.estateHealth.evidence?.inventory?.asOf) + '. ' +
+      ' Cloudflare inventory: ' + inventoryDetail() + '. ' +
       'A successful deploy or an HTTP response is not treated as health; only the explicit health contract can mark a property verified. ' +
       'GlobalDeets edge traffic is operational telemetry, not certified human audience.';
   }
@@ -229,12 +229,21 @@
         ? 'Run ' + probe.runId + ' · observed ' + formatDate(probe.observedAt) + ' · ' + ageText(fresh.ageHours) + ' · vantage ' + (probe.vantage || 'unknown') + (probe.vantageCount === 1 ? ' (single vantage)' : '')
         : 'No valid probe run collected yet'),
       line('Historical snapshots', historyFresh, historyFresh.observedAt ? 'Newest scheduled snapshot ' + formatDate(historyFresh.observedAt) + ' · ' + ageText(historyFresh.ageHours) : 'No scheduled snapshot yet — only the seeded GD-029 observations exist'),
-      line('Cloudflare inventory', inventoryFresh, 'Zone, RUM, and Pages facts as of ' + formatDate(state.estateHealth.evidence?.inventory?.asOf) + (state.estateHealth.evidence?.inventory?.refreshed ? '' : ' · carried forward, not refreshed by the collector')),
+      line('Cloudflare inventory', inventoryFresh, inventoryDetail()),
     ]);
     const attempt = probe?.latestAttempt;
     if (attempt && attempt.validity && attempt.validity !== 'valid') {
       document.getElementById('evidence-status')?.append(warning('The latest probe attempt (' + attempt.runId + ') was invalid and discarded; the last valid run is shown and will age visibly.'));
     }
+  }
+
+  function inventoryDetail() {
+    const inventory = state.estateHealth.evidence?.inventory;
+    const facets = inventory?.facets || {};
+    const read = [facets.zones ? 'zone status' : null, facets.pages ? 'Pages deploy facts' : null].filter(Boolean);
+    const carried = [facets.zones ? null : 'zone status', facets.pages ? null : 'Pages deploy facts', facets.rum ? null : 'RUM settings'].filter(Boolean);
+    return (read.length ? 'Refreshed from Cloudflare: ' + read.join(' + ') + ' (oldest ' + formatDate(inventory?.asOf) + ')' : 'Nothing refreshed by the collector yet') +
+      (carried.length ? ' · carried forward from the ' + formatDate(inventory?.baselineAsOf || inventory?.asOf) + ' read: ' + carried.join(', ') : '');
   }
 
   function ageText(hours) {

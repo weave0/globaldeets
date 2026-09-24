@@ -25,14 +25,29 @@ test.beforeEach(async ({ page }) => {
  * Drives the REAL collector pipeline (probe engine + ledger + diagnostics) with a simulated estate and
  * serves its published files to the page, so browser tests exercise production-shaped evidence.
  */
-async function collectEvidence({ mutate, start = '2026-10-01T12:00:00Z' } = {}) {
+async function collectEvidence({ mutate, start = '2026-10-01T12:00:00Z', cloudflare = false } = {}) {
   const fakes = await import(pathToFileURL(path.join(ROOT, 'tests/helpers/mission-control-fakes.mjs')).href);
   const { runCollection } = await import(pathToFileURL(path.join(ROOT, 'tools/mission-control/lib/collect.mjs')).href);
   const clock = fakes.makeClock(Date.parse(start));
   const world = fakes.healthyWorld(fakes.registry(), clock);
   if (mutate) mutate(world);
   const dir = mkdtempSync(path.join(tmpdir(), 'mc-pw-'));
-  const result = await runCollection({ root: ROOT, evidenceDir: dir, deps: fakes.makeDeps(world), env: {}, runId: 'pw-run', confirmDelayMs: 1, skipInventory: true });
+  let deps = fakes.makeDeps(world);
+  if (cloudflare) {
+    // Simulated Cloudflare API: zones and Pages both read successfully, RUM is never read.
+    const web = world.fetchImpl;
+    const ok = (result, info = { total_pages: 1 }) => new Response(JSON.stringify({ success: true, result, result_info: info }), { status: 200, headers: { 'content-type': 'application/json' } });
+    deps = fakes.makeDeps(world, {
+      fetchImpl: async (input, init) => {
+        const url = String(input);
+        if (!url.startsWith('https://api.cloudflare.com/')) return web(input, init);
+        if (url.includes('/zones')) return ok(fakes.registry().properties.map(item => ({ name: item.propertyId, status: 'active' })));
+        if (url.includes('/domains')) return ok([{ name: 'globaldeets.com', status: 'active' }]);
+        return ok([{ name: 'globaldeets', canonical_deployment: { created_on: '2026-10-01T09:00:00Z' } }], { total_count: 1 });
+      },
+    });
+  }
+  const result = await runCollection({ root: ROOT, evidenceDir: dir, deps, env: cloudflare ? { CLOUDFLARE_API_TOKEN: 't', CLOUDFLARE_ACCOUNT_ID: 'a' } : {}, runId: 'pw-run', confirmDelayMs: 1, skipInventory: !cloudflare });
   return { dir, finishedAt: result.run.finishedAt };
 }
 
@@ -156,6 +171,8 @@ test('scheduled evidence: verified health requires the authoritative contract; 2
   await expect(page.locator('#estate-table-summary')).toContainText('1 verified healthy');
 
   await expect(page.locator('#evidence-status [data-freshness="fresh"]').first()).toContainText('Fresh');
+  await expect(page.locator('#evidence-status')).toContainText('carried forward');
+  await expect(page.locator('#evidence-status')).toContainText('RUM settings');
   await expect(page.locator('#history-availability-note')).toContainText('1 measured probe snapshot');
   await expect(page.locator('#gap-list')).toContainText('publish no web service');
   await expect(page.locator('#gap-list')).not.toContainText('is unavailable');
@@ -163,6 +180,20 @@ test('scheduled evidence: verified health requires the authoritative contract; 2
   await page.locator('#property-availability-filter').selectOption('no-service-published');
   await expect(rows).toHaveCount(4);
   await expect(rows.first()).toContainText('No Service Published');
+});
+
+test('scheduled evidence: refreshed Cloudflare facets are named as refreshed and RUM as carried forward, in the panel and the provenance note', async ({ page }) => {
+  const { dir, finishedAt } = await collectEvidence({ cloudflare: true });
+  await serveEvidence(page, dir);
+  await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
+  await page.goto('/observatory/mission-control/');
+  await ready(page);
+  await expect(page.locator('#evidence-status')).toContainText('Refreshed from Cloudflare: zone status + Pages deploy facts');
+  await expect(page.locator('#evidence-status')).toContainText('carried forward');
+  await expect(page.locator('#evidence-status')).toContainText('RUM settings');
+  await expect(page.locator('#provenance-note')).toContainText('Refreshed from Cloudflare: zone status + Pages deploy facts');
+  await expect(page.locator('#provenance-note')).not.toContainText('Zone, RUM, and Pages');
+  await expect(page.locator('#gap-list')).toContainText('Part of the Cloudflare inventory is carried forward');
 });
 
 test('scheduled evidence: outages are confirmed, classified, and escalated by investor criticality', async ({ page }) => {
