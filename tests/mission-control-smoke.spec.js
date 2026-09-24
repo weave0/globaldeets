@@ -52,7 +52,7 @@ test('Mission Control filters the escalation-aware operating queue', async ({ pa
   await page.locator('#status-filter').selectOption('all');
   await page.locator('#escalation-filter').selectOption('investor-blocking');
   await expect(page.locator('#gap-list .gap-card')).toHaveCount(1);
-  await expect(page.locator('#gap-list .gap-card')).toContainText('blocks audience traction claims'.replace('blocks audience traction claims', 'Certify human audience metrics'));
+  await expect(page.locator('#gap-list .gap-card')).toContainText('Certify human audience metrics');
 });
 
 test('Mission Control exposes estate observability gaps without implying outages', async ({ page }) => {
