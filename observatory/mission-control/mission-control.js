@@ -122,7 +122,7 @@
       ? 'Availability and critical-path state come from scheduled production probes (latest valid run ' + formatDate(probe.observedAt) + ', vantage ' + (probe.vantage || 'unknown') + ', ' + probeFreshness().state + ').'
       : 'No valid production probe run has been collected yet; availability and critical-path state are unknown.';
     return 'Snapshot ' + data.snapshotVersion + ', generated ' + formatDate(data.generatedAt) + '. ' + probeText +
-      ' Zone, RUM, and Pages deploy facts are Cloudflare inventory read ' + formatDate(state.estateHealth.evidence?.inventory?.asOf) + '. ' +
+      ' Cloudflare inventory: ' + inventoryDetail() + '. ' +
       'A successful deploy or an HTTP response is not treated as health; only the explicit health contract can mark a property verified. ' +
       'GlobalDeets edge traffic is operational telemetry, not certified human audience.';
   }
