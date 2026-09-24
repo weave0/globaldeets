@@ -97,12 +97,14 @@ test('GD-029 diagnostics are sortable and agent-consumable with escalation seman
 test('GD-029 live investor-adjacent surfaces reject portfolio-era analytics copy', () => {
   const categories = readText('categories.html');
   const missionHtml = readText('observatory/mission-control/index.html');
-  const missionJs = readText('observatory/mission-control/mission-control.js');
+  const executiveJs = readText('observatory/mission-control/mc-executive.js');
 
   assert.doesNotMatch(categories, /Data Platform Showcase/i);
   assert.match(categories, /Source-first world information/i);
-  assert.match(missionHtml, /Historical data plane/i);
-  assert.match(missionHtml, /Property health &amp; evidence/i);
-  assert.match(missionHtml, /Certified audience/i);
-  assert.match(missionJs, /No GA4\/RUM-quality human-audience series has passed the evidence gate yet/);
+  assert.match(missionHtml, />Executive</);
+  assert.match(missionHtml, />Operator</);
+  assert.match(missionHtml, /evidence behind every claim/i);
+  assert.match(executiveJs, /never as an audience/);
+  assert.match(executiveJs, /nothing here is estimated/);
+  for (const source of [missionHtml, executiveJs]) assert.doesNotMatch(source, /Data Platform Showcase|portfolio and research showcase/i);
 });

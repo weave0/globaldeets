@@ -1,299 +1,392 @@
-const { mkdtempSync, readFileSync } = require('fs');
-const { tmpdir } = require('os');
+const { readFileSync } = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
 const { expect, test } = require('@playwright/test');
 
 const ROOT = path.join(__dirname, '..');
 const SEED_NOW = new Date('2026-09-24T17:00:00Z');
+const FILES = ['history.json', 'estate-health.json', 'diagnostics.json', 'mission-control-data.json', 'probes.json', 'audience.json', 'business-events.json', 'executive.json'];
 
-const coverageFixture = {
-  observatoryId: 'coverage-evidence',
-  integrity: { valid: true, localReporting: { valid: true } },
-  newsCoverage: { totalSources: 21 },
-  evidenceCoverage: { dossierCount: 1 },
-  gaps: [{ id: 'coverage:fixture', severity: 'high' }],
-};
-
-test.beforeEach(async ({ page }) => {
-  await page.route('**/api/intelligence/observatory/coverage', async route => {
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(coverageFixture) });
-  });
-});
+const load = rel => import(pathToFileURL(path.join(ROOT, rel)).href);
 
 /**
- * Drives the REAL collector pipeline (probe engine + ledger + diagnostics) with a simulated estate and
- * serves its published files to the page, so browser tests exercise production-shaped evidence.
+ * Drives the REAL collector (probe engine, reconciliation, audience, events, findings, executive summary) with a
+ * simulated estate and serves its published files to the page. Governed audience/event sources are synthetic
+ * TEST documents in a temp directory; they are never part of the seed or the deploy.
  */
-async function collectEvidence({ mutate, start = '2026-10-01T12:00:00Z', cloudflare = false } = {}) {
-  const fakes = await import(pathToFileURL(path.join(ROOT, 'tests/helpers/mission-control-fakes.mjs')).href);
-  const { runCollection } = await import(pathToFileURL(path.join(ROOT, 'tools/mission-control/lib/collect.mjs')).href);
-  const clock = fakes.makeClock(Date.parse(start));
-  const world = fakes.healthyWorld(fakes.registry(), clock);
-  if (mutate) mutate(world);
-  const dir = mkdtempSync(path.join(tmpdir(), 'mc-pw-'));
-  let deps = fakes.makeDeps(world);
-  if (cloudflare) {
-    // Simulated Cloudflare API: zones and Pages both read successfully, RUM is never read.
-    const web = world.fetchImpl;
-    const ok = (result, info = { total_pages: 1 }) => new Response(JSON.stringify({ success: true, result, result_info: info }), { status: 200, headers: { 'content-type': 'application/json' } });
-    deps = fakes.makeDeps(world, {
-      fetchImpl: async (input, init) => {
-        const url = String(input);
-        if (!url.startsWith('https://api.cloudflare.com/')) return web(input, init);
-        if (url.includes('/zones')) return ok(fakes.registry().properties.map(item => ({ name: item.propertyId, status: 'active' })));
-        if (url.includes('/domains')) return ok([{ name: 'globaldeets.com', status: 'active' }]);
-        return ok([{ name: 'globaldeets', canonical_deployment: { created_on: '2026-10-01T09:00:00Z' } }], { total_count: 1 });
-      },
-    });
+async function collectEvidence({ mutate, start = '2026-10-01T12:00:00Z', governed = false, secondary = false } = {}) {
+  const plane = await load('tests/helpers/mission-control-plane.mjs');
+  const fx = await load('tests/helpers/mission-control-audience-fixtures.mjs');
+  const fakes = await load('tests/helpers/mission-control-fakes.mjs');
+  const ids = fakes.registry().properties.map(item => item.propertyId);
+  const dir = plane.newDir();
+  const options = { start, mutate };
+  if (secondary) options.secondary = [{ id: 'github-actions-macos', network: 'GitHub-hosted macOS' }];
+  if (governed) {
+    options.env = {
+      GOLD_SOURCE: plane.writeSource(dir, 'canonical-gold-m1.2.json', fx.syntheticGold({ propertyIds: ids })),
+      INSIGHTS_SOURCE: plane.writeSource(dir, 'traffic-insights-1.0.json', fx.syntheticInsights({ propertyIds: ids, growth: { 'aiaimate.com': 0.05, 'heavymoose.com': -0.04 } })),
+      EVENTS_SOURCE: plane.writeSource(dir, 'events.json', fx.syntheticEventsFeed({ instrumented: ['goodflippindesign.com', 'aiaimate.com'], records: [['goodflippindesign.com', 'lead', 28, 23], ['goodflippindesign.com', 'visit', 28, 1900], ['aiaimate.com', 'signup', 28, 61]] })),
+    };
   }
-  const result = await runCollection({ root: ROOT, evidenceDir: dir, deps, env: cloudflare ? { CLOUDFLARE_API_TOKEN: 't', CLOUDFLARE_ACCOUNT_ID: 'a' } : {}, runId: 'pw-run', confirmDelayMs: 1, skipInventory: !cloudflare });
-  return { dir, finishedAt: result.run.finishedAt };
+  const result = await plane.collect(dir, options);
+  return { dir, finishedAt: result.run.finishedAt, plane: result.plane };
 }
 
-async function serveEvidence(page, dir) {
+async function serveEvidence(page, dir, transform) {
   await page.route('**/observatory/mission-control/*.json', async route => {
     const name = new URL(route.request().url()).pathname.split('/').pop();
-    if (['history.json', 'estate-health.json', 'diagnostics.json', 'mission-control-data.json', 'probes.json'].includes(name)) {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: readFileSync(path.join(dir, 'latest', name), 'utf8') });
-      return;
-    }
-    await route.fallback();
+    if (!FILES.includes(name)) return route.fallback();
+    let body = readFileSync(path.join(dir, 'latest', name), 'utf8');
+    if (transform) body = transform(name, body);
+    return route.fulfill({ status: 200, contentType: 'application/json', body });
   });
 }
 
 const ready = page => expect(page.locator('body[data-mission-control-ready="true"]')).toBeVisible();
+const noOverflow = async page => {
+  const dimensions = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth }));
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1);
+};
 
-test('Mission Control renders investor-safe history, estate health, and business interpretation', async ({ page }) => {
-  await page.clock.setFixedTime(SEED_NOW);
-  await page.goto('/observatory/mission-control/');
-  await expect(page.getByRole('heading', { name: 'Mission Control' })).toBeVisible();
-  await ready(page);
-  await expect(page.locator('#investor-grid').getByText('21/25', { exact: true })).toBeVisible();
-  await expect(page.getByText('A governed world-information layer is already live')).toBeVisible();
-  await expect(page.getByText('Certify human audience metrics')).toBeVisible();
-  await expect(page.getByText(/Raw edge visits cannot be presented as audience/)).toBeVisible();
-  await expect(page.getByText('Investor-safe audience', { exact: true })).toBeVisible();
-  await expect(page.getByText('Not yet certified')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Truthful trends, including the gaps' })).toBeVisible();
-  await expect(page.getByText(/Certified audience history is unavailable/)).toBeVisible();
-  await expect(page.locator('#estate-table-body tr')).toHaveCount(25);
-  await expect(page.locator('#estate-table-body tr').nth(0)).toContainText('GlobalDeets');
-  await expect(page.locator('#estate-table-body tr').nth(1)).toContainText('Culture Sherpa');
-  await expect(page.locator('#mission-control-error')).toBeHidden();
-});
-
-test('seed state keeps every property unknown and says so: no evidence is not health', async ({ page }) => {
-  await page.clock.setFixedTime(SEED_NOW);
-  await page.goto('/observatory/mission-control/');
-  await ready(page);
-  await expect(page.locator('#estate-table-body tr[data-health="health-evidence-incomplete"]')).toHaveCount(25);
-  await expect(page.locator('#estate-table-body tr[data-availability="unknown"]')).toHaveCount(25);
-  await expect(page.locator('#investor-grid')).toContainText('Verified healthy');
-  await expect(page.locator('#investor-grid [data-state="limited"]').first()).toBeVisible();
-  await expect(page.locator('#evidence-status')).toContainText('No valid probe run collected yet');
-  await expect(page.getByText('Production probe evidence is missing', { exact: false }).or(page.getByText('No production probe evidence has been collected'))).toBeVisible();
-});
-
-test('Mission Control filters the escalation-aware operating queue', async ({ page }) => {
-  await page.clock.setFixedTime(SEED_NOW);
-  await page.goto('/observatory/mission-control/');
-  await ready(page);
-
-  await page.locator('#severity-filter').selectOption('critical');
-  await expect(page.locator('#gap-list .gap-card')).toHaveCount(1);
-  await expect(page.getByText('Certify human audience metrics')).toBeVisible();
-
-  await page.locator('#severity-filter').selectOption('all');
-  await page.locator('#gap-search').fill('Culture Sherpa');
-  await expect(page.locator('#gap-list .gap-card')).toHaveCount(1);
-  await expect(page.getByText('Quantify Culture Sherpa convergence opportunity')).toBeVisible();
-
-  await page.locator('#gap-search').fill('');
-  await page.locator('#status-filter').selectOption('in-progress');
-  await expect(page.locator('#gap-list .gap-card')).toHaveCount(2);
-
-  await page.locator('#status-filter').selectOption('all');
-  await page.locator('#escalation-filter').selectOption('investor-blocking');
-  await expect(page.locator('#gap-list .gap-card')).toHaveCount(1);
-  await expect(page.locator('#gap-list .gap-card')).toContainText('Certify human audience metrics');
-
-  await page.locator('#escalation-filter').selectOption('all');
-  await page.locator('#class-filter').selectOption('observability-gap');
-  await expect(page.locator('#gap-list .gap-card').first()).toHaveAttribute('data-class', 'observability-gap');
-});
-
-test('Mission Control exposes estate observability gaps without implying outages', async ({ page }) => {
-  await page.clock.setFixedTime(SEED_NOW);
-  await page.goto('/observatory/mission-control/');
-  await ready(page);
-
-  await page.locator('#property-observability-filter').selectOption('unobserved');
-  await expect(page.locator('#estate-table-body tr')).toHaveCount(4);
-  await expect(page.locator('#estate-table-body')).toContainText('fwomps.com');
-
-  await page.locator('#property-search').fill('fwomps.com');
-  await expect(page.locator('#estate-table-body tr')).toHaveCount(1);
-  await expect(page.locator('#estate-table-body tr')).toContainText('RUM off');
-  await expect(page.locator('#estate-table-body tr')).toContainText('Unknown');
-});
-
-test('Mission Control changes historical windows without fabricating a trend', async ({ page }) => {
-  await page.clock.setFixedTime(SEED_NOW);
-  await page.goto('/observatory/mission-control/');
-  await ready(page);
-  await page.locator('#trend-range').selectOption('90');
-  await expect(page.locator('#history-window-note')).toContainText('90-day view');
-  await expect(page.locator('#history-operational-note')).toContainText('1 comparable measured snapshot');
-  await page.locator('#trend-range').selectOption('7');
-  await expect(page.locator('#history-window-note')).toContainText('missing day');
-});
-
-test('scheduled evidence: verified health requires the authoritative contract; 200 alone is reachable-unverified', async ({ page }) => {
-  const { dir, finishedAt } = await collectEvidence();
-  await serveEvidence(page, dir);
-  await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
-  await page.goto('/observatory/mission-control/');
-  await ready(page);
-
-  const rows = page.locator('#estate-table-body tr');
-  await expect(rows).toHaveCount(25);
-  await expect(rows.nth(0)).toContainText('GlobalDeets');
-  await expect(rows.nth(0)).toContainText('Verified Healthy');
-  await expect(rows.nth(0)).toContainText('Authoritative contract');
-  await expect(rows.nth(1)).toContainText('Culture Sherpa');
-  await expect(rows.nth(1)).toContainText('Reachable Unverified');
-  await expect(rows.nth(1)).toContainText('Baseline contract');
-  await expect(page.locator('#estate-table-body tr[data-health="verified-healthy"]')).toHaveCount(1);
-  await expect(page.locator('#estate-table-body tr[data-health="no-service-published"]')).toHaveCount(4);
-  await expect(page.locator('#estate-table-body tr[data-health="outage"]')).toHaveCount(0);
-  await expect(page.locator('#estate-table-summary')).toContainText('25 availability-probed');
-  await expect(page.locator('#estate-table-summary')).toContainText('1 verified healthy');
-
-  await expect(page.locator('#evidence-status [data-freshness="fresh"]').first()).toContainText('Fresh');
-  await expect(page.locator('#evidence-status')).toContainText('carried forward');
-  await expect(page.locator('#evidence-status')).toContainText('RUM settings');
-  await expect(page.locator('#history-availability-note')).toContainText('1 measured probe snapshot');
-  await expect(page.locator('#gap-list')).toContainText('publish no web service');
-  await expect(page.locator('#gap-list')).not.toContainText('is unavailable');
-
-  await page.locator('#property-availability-filter').selectOption('no-service-published');
-  await expect(rows).toHaveCount(4);
-  await expect(rows.first()).toContainText('No Service Published');
-});
-
-test('scheduled evidence: refreshed Cloudflare facets are named as refreshed and RUM as carried forward, in the panel and the provenance note', async ({ page }) => {
-  const { dir, finishedAt } = await collectEvidence({ cloudflare: true });
-  await serveEvidence(page, dir);
-  await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
-  await page.goto('/observatory/mission-control/');
-  await ready(page);
-  await expect(page.locator('#evidence-status')).toContainText('Refreshed from Cloudflare: zone status + Pages deploy facts');
-  await expect(page.locator('#evidence-status')).toContainText('carried forward');
-  await expect(page.locator('#evidence-status')).toContainText('RUM settings');
-  await expect(page.locator('#provenance-note')).toContainText('Refreshed from Cloudflare: zone status + Pages deploy facts');
-  await expect(page.locator('#provenance-note')).not.toContainText('Zone, RUM, and Pages');
-  await expect(page.locator('#gap-list')).toContainText('Part of the Cloudflare inventory is carried forward');
-});
-
-test('scheduled evidence: outages are confirmed, classified, and escalated by investor criticality', async ({ page }) => {
-  const { dir, finishedAt } = await collectEvidence({
-    mutate: world => {
-      world.sites['agentkagent.com'] = { status: 502, title: 'x' };
-      world.sites['culturesherpa.org'] = { status: 500, title: 'x' };
-    },
+test.describe('committed baseline (no probe evidence, no governed sources)', () => {
+  test('is honest about what it does not know and never shows a number it cannot source', async ({ page }) => {
+    await page.clock.setFixedTime(SEED_NOW);
+    await page.goto('/observatory/mission-control/');
+    await expect(page.getByRole('heading', { name: 'Mission Control', level: 1 })).toBeVisible();
+    await ready(page);
+    await expect(page.locator('#evidence-banner')).toContainText('committed baseline');
+    const hero = page.locator('.hero');
+    await expect(hero).toContainText('Good Flippin Design operates 25 web properties');
+    await expect(hero).toContainText('No valid production probe evidence exists');
+    await expect(hero.locator('.kpi', { hasText: 'Responding now' })).toContainText('Unknown');
+    await expect(hero.locator('.kpi', { hasText: 'Edge traffic' })).toContainText('Not measured');
+    await expect(hero.locator('.kpi', { hasText: 'Business outcomes' })).toContainText('Not connected');
+    await expect(page.getByText('Usage isn’t measured yet, and nothing here is estimated')).toBeVisible();
+    await expect(page.locator('.requirement').first()).toContainText('MISSION_CONTROL_GOLD_TOKEN');
+    await expect(page.locator('.requirement').last()).toContainText('MISSION_CONTROL_EVENTS_SOURCE');
+    await expect(page.locator('.window-card')).toHaveCount(0);
+    await expect(page.locator('.linechart')).toHaveCount(0);
+    await expect(page.getByText('Not measured yet').first()).toBeVisible();
+    await expect(page.locator('.portfolio .tile')).toHaveCount(25);
+    await expect(page.locator('.matrix tbody tr')).toHaveCount(25);
+    await expect(page.locator('.tile .pill', { hasText: 'Verified healthy' })).toHaveCount(0);
+    await expect(page.locator('#mission-control-error')).toBeHidden();
   });
-  await serveEvidence(page, dir);
-  await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
-  await page.goto('/observatory/mission-control/');
-  await ready(page);
 
-  // culturesherpa.com is a redirect alias whose destination is down, so it is honestly an outage too.
-  await expect(page.locator('#estate-table-body tr[data-health="outage"]')).toHaveCount(3);
-  await expect(page.locator('#estate-table-body tr').nth(1)).toContainText('Outage');
-  await expect(page.locator('#estate-table-body tr').nth(1)).toContainText('Investor-critical');
-  await expect(page.locator('#investor-grid [data-state="attention"]').first()).toBeVisible();
-
-  await page.locator('#class-filter').selectOption('investor-impacting-outage');
-  await expect(page.locator('#gap-list .gap-card')).toHaveCount(1);
-  await expect(page.locator('#gap-list .gap-card')).toContainText('Culture Sherpa is unavailable');
-  await expect(page.locator('#gap-list .gap-card')).toContainText('Escalation: Page');
-
-  await page.locator('#class-filter').selectOption('outage');
-  await expect(page.locator('#gap-list .gap-card')).toHaveCount(2);
-  await expect(page.locator('#gap-list')).toContainText('agentkagent.com');
-  await expect(page.locator('#gap-list')).not.toContainText('Investor-Impacting Outage');
-});
-
-test('scheduled evidence ages visibly: stale then expired evidence is never shown as current health', async ({ page }) => {
-  const { dir, finishedAt } = await collectEvidence();
-  await serveEvidence(page, dir);
-  await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 30 * 3600000));
-  await page.goto('/observatory/mission-control/');
-  await ready(page);
-
-  await expect(page.locator('#estate-table-body tr[data-health="evidence-expired"]')).toHaveCount(25);
-  await expect(page.locator('#estate-table-body tr[data-health="verified-healthy"]')).toHaveCount(0);
-  await expect(page.locator('#evidence-status [data-freshness="expired"]').first()).toContainText('Expired');
-  await expect(page.locator('#investor-grid')).toContainText('Unknown');
-  await expect(page.locator('#gap-list')).toContainText('Production probe evidence is expired');
-  await page.locator('#class-filter').selectOption('stale-evidence');
-  await expect(page.locator('#gap-list .gap-card').first()).toHaveAttribute('data-class', 'stale-evidence');
-});
-
-test('scheduled evidence: an invalid probe attempt is disclosed and the last valid run keeps aging', async ({ page }) => {
-  const first = await collectEvidence({ start: '2026-10-01T06:00:00Z' });
-  const fakes = await import(pathToFileURL(path.join(ROOT, 'tests/helpers/mission-control-fakes.mjs')).href);
-  const { runCollection } = await import(pathToFileURL(path.join(ROOT, 'tools/mission-control/lib/collect.mjs')).href);
-  const clock = fakes.makeClock(Date.parse('2026-10-01T10:00:00Z'));
-  const world = fakes.healthyWorld(fakes.registry(), clock);
-  world.fetchImpl = fakes.makeFetch({}, clock);
-  await runCollection({ root: ROOT, evidenceDir: first.dir, deps: fakes.makeDeps(world), env: {}, runId: 'pw-bad', confirmDelayMs: 1, skipInventory: true });
-  await serveEvidence(page, first.dir);
-  await page.clock.setFixedTime(new Date('2026-10-01T11:00:00Z'));
-  await page.goto('/observatory/mission-control/');
-  await ready(page);
-  await expect(page.locator('#evidence-status')).toContainText('was invalid and discarded');
-  await expect(page.locator('#estate-table-body tr[data-health="outage"]')).toHaveCount(0);
-  await expect(page.locator('#gap-list')).toContainText('Latest probe run was invalid');
-});
-
-test.describe('Mission Control mobile surface', () => {
-  test.use({ viewport: { width: 390, height: 844 } });
-
-  test('remains readable without document-level horizontal overflow', async ({ page }) => {
+  test('unknown purpose stays unknown and declared facts carry their source', async ({ page }) => {
     await page.clock.setFixedTime(SEED_NOW);
     await page.goto('/observatory/mission-control/');
     await ready(page);
-    await expect(page.getByRole('heading', { name: 'Property health & evidence' })).toBeVisible();
-    const dimensions = await page.evaluate(() => ({
-      scrollWidth: document.documentElement.scrollWidth,
-      clientWidth: document.documentElement.clientWidth,
-    }));
-    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1);
+    const fwomps = page.locator('.tile', { hasText: 'fwomps.com' }).first();
+    await expect(fwomps).toContainText('Purpose not declared');
+    await expect(fwomps).toContainText('Status not declared');
+    const gfd = page.locator('.tile', { hasText: 'Good Flippin Design' }).first();
+    await expect(gfd).toContainText('Tier 1');
+    await gfd.locator('summary').click();
+    await expect(gfd).toContainText("the owner's brand registry");
   });
+});
 
-  test('live evidence, freshness panel, and reachability chart stay within the mobile viewport', async ({ page }) => {
-    const { dir, finishedAt } = await collectEvidence({
-      mutate: world => {
-        world.sites['agentkagent.com'] = { status: 502, title: 'x' };
-      },
-    });
+test.describe('live evidence, executive view', () => {
+  test('answers the investor questions in the first screen and every chart matches the governed data', async ({ page }) => {
+    const { dir, finishedAt, plane } = await collectEvidence({ governed: true, secondary: true });
     await serveEvidence(page, dir);
     await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
     await page.goto('/observatory/mission-control/');
     await ready(page);
-    await expect(page.locator('#evidence-status')).toBeVisible();
-    await expect(page.locator('#history-availability')).toBeVisible();
-    const dimensions = await page.evaluate(() => ({
-      scrollWidth: document.documentElement.scrollWidth,
-      clientWidth: document.documentElement.clientWidth,
-    }));
-    expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1);
-    // The wide table scrolls inside its own region instead of forcing page overflow.
-    const wrap = page.locator('.estate-table-wrap');
-    await expect(wrap).toBeVisible();
-    const box = await wrap.evaluate(node => ({ scroll: node.scrollWidth, client: node.clientWidth }));
+
+    await expect(page.locator('.hero .headline')).toContainText('20 of 20 properties that publish a site are responding; 4 are verified healthy end-to-end');
+    await expect(page.locator('.hero .headline')).toContainText('These are requests, not people');
+    await expect(page.locator('.hero .kpi', { hasText: 'Responding now' })).toContainText('20 / 20');
+    await expect(page.locator('.hero .kpi', { hasText: 'Edge traffic' })).toContainText('requests, not people');
+    await expect(page.locator('.hero .kpi', { hasText: 'Business outcomes' })).toContainText('2 / 20');
+
+    // Contribution chart: bars and the table view equal the audience contract exactly.
+    const bars = plane.audience.properties.filter(row => row.requests[28].evidenceState === 'measured').sort((a, b) => b.requests[28].value - a.requests[28].value);
+    const card = page.locator('.chart-card', { hasText: 'Which properties carry the traffic?' });
+    await card.locator('summary', { hasText: 'View as table' }).click();
+    const rows = card.locator('.mc-table-alt tbody tr');
+    await expect(rows).toHaveCount(bars.length);
+    await expect(rows.first().locator('td').first()).toHaveText(bars[0].requests[28].value.toLocaleString('en-US'));
+    const total = bars.reduce((sum, row) => sum + row.requests[28].value, 0);
+    expect(total).toBe(plane.audience.estate.requests[28].value);
+
+    // Trajectory: one dot per governed day, each with its exact value.
+    const dots = page.locator('.linechart .dot');
+    await expect(dots).toHaveCount(plane.audience.series.estateDaily.points.length);
+    await expect(dots.first()).toHaveAttribute('aria-label', /Sep 3 [\d,]+/);
+
+    // Composition segments sum to the estate.
+    const counts = await page.locator('.segment-chart .seg').allTextContents();
+    expect(counts.map(Number).reduce((a, b) => a + b, 0)).toBe(25);
+
+    await expect(page.locator('.window-card', { hasText: '28 days' })).toContainText(/2\.4M/);
+    await expect(page.getByText('Concentration: the top property carries')).toBeVisible();
+    await expect(page.locator('.matrix tbody tr')).toHaveCount(25);
+    await expect(page.locator('.empty-hero')).toHaveCount(0);
+  });
+
+  test('unknown, unverified and unmeasured stay distinct from zero on the page', async ({ page }) => {
+    const { dir, finishedAt } = await collectEvidence({
+      governed: true,
+      mutate: world => {
+        world.sites['aiaimate.com'] = { title: 'AIAIMate', body: '<html><title>AIAIMate</title><script src="https://www.googletagmanager.com/gtag/js?id=G-REAL123456"></script></html>', paths: { '/api/search': { status: 500, contentType: 'application/json', json: {} } } };
+      },
+    });
+    await serveEvidence(page, dir);
+    await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
+    await page.goto('/observatory/mission-control/#operator');
+    await ready(page);
+    const row = page.locator('.prop-row', { hasText: 'AIAIMate' });
+    await expect(row).toContainText('Failing');
+    await expect(row).toContainText('Tag shipped, unverified');
+    await expect(row).toContainText('Owner-declared');
+    await expect(row).not.toContainText('Verified healthy');
+    const parked = page.locator('.prop-row', { hasText: 'fwomps.com' });
+    await expect(parked).toContainText('Nothing published, intent not declared');
+    await expect(parked).not.toContainText('Failing');
+    await expect(page.locator('.prop-row', { hasText: 'Heavy Moose' })).toContainText('Not instrumented');
+  });
+
+  test('evidence expiry withdraws health claims instead of showing them as current', async ({ page }) => {
+    const { dir, finishedAt } = await collectEvidence();
+    await serveEvidence(page, dir);
+    await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 30 * 3600000));
+    await page.goto('/observatory/mission-control/');
+    await ready(page);
+    await expect(page.locator('#evidence-banner')).toContainText('has expired');
+    await expect(page.locator('.hero .kpi', { hasText: 'Responding now' })).toContainText('Unknown');
+    await expect(page.locator('.hero .headline')).toContainText('expired');
+    await expect(page.locator('.segment-chart')).toHaveCount(0);
+    await expect(page.locator('.tile .pill', { hasText: 'Verified healthy' })).toHaveCount(0);
+    await expect(page.locator('.tile .pill', { hasText: 'Unknown' }).first()).toBeVisible();
+  });
+});
+
+test.describe('operator view', () => {
+  test('the top actionable item is named, ranked with its reasons, and the queue filters answer "what next?"', async ({ page }) => {
+    const { dir, finishedAt } = await collectEvidence({
+      governed: true,
+      mutate: world => {
+        world.sites['aiaimate.com'] = { title: 'AIAIMate', paths: { '/api/search': { status: 500, contentType: 'application/json', json: { error: 'x' } } } };
+      },
+    });
+    await serveEvidence(page, dir);
+    await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
+    await page.goto('/observatory/mission-control/#operator');
+    await ready(page);
+
+    await expect(page.getByRole('heading', { name: 'What should I work on next, and why?' })).toBeVisible();
+    const next = page.locator('.next-up');
+    await expect(next).toContainText('AIAIMate responds, but its critical path is failing');
+    await expect(next).toContainText('highest-ranked item that can be worked on right now');
+
+    // The first card is opened and shows the score breakdown.
+    const top = page.locator('.finding', { hasText: 'critical path is failing' });
+    await expect(top.locator('.score-table')).toContainText('severity');
+    await expect(top.locator('.score-table')).toContainText('Can be worked on now');
+    await expect(top).toContainText('Evidence: fresh');
+
+    const summary = await page.locator('.result-count').textContent();
+    const total = Number(/of (\d+) items/.exec(summary)[1]);
+
+    await page.locator('#queue-actionability').selectOption('blocked-on-authority');
+    const blocked = page.locator('.finding');
+    await expect(blocked.first()).toContainText('Blocked on authority');
+    for (const text of await blocked.locator('.finding-chips').allTextContents()) expect(text).toContain('Blocked on authority');
+    await page.locator('#queue-actionability').selectOption('all');
+
+    await page.locator('#queue-severity').selectOption('critical');
+    await expect(page.locator('.finding')).toHaveCount(1);
+    await expect(page.locator('.finding')).toContainText('Certify human audience metrics');
+    await page.locator('#queue-severity').selectOption('all');
+
+    await page.locator('#queue-category').selectOption('critical-path');
+    await expect(page.locator('.finding').first()).toContainText('Critical path');
+    await page.locator('#queue-category').selectOption('all');
+
+    await page.locator('#queue-search').fill('zzzz-no-such-work');
+    await expect(page.locator('.finding')).toHaveCount(0);
+    await expect(page.getByText('No item matches these filters.')).toBeVisible();
+    await page.getByRole('button', { name: 'Reset filters' }).click();
+    await expect(page.locator('.finding').first()).toBeVisible();
+
+    await page.locator('#queue-search').fill('aiaimate');
+    await expect(page.locator('.finding').first()).toContainText('AIAIMate');
+    await page.locator('#queue-search').fill('');
+
+    await page.locator('#queue-status').selectOption('all');
+    await expect(page.locator('.result-count')).toContainText('of ' + total + ' items');
+
+    await page.locator('#queue-sort').selectOption('severity');
+    await expect(page.locator('.finding').first()).toContainText('Critical');
+  });
+
+  test('clicking a property chip filters to it, and executive links deep-link into the queue', async ({ page }) => {
+    const { dir, finishedAt } = await collectEvidence({ governed: true });
+    await serveEvidence(page, dir);
+    await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
+    await page.goto('/observatory/mission-control/#operator');
+    await ready(page);
+    const chip = page.locator('.finding .chip-button', { hasText: 'Cyan Canoe' }).first();
+    await chip.click();
+    await expect(page.locator('#queue-subject')).toHaveValue('cyancanoe.com');
+    const shown = Number(/Showing (\d+) of (\d+)/.exec(await page.locator('.result-count').textContent())[1]);
+    const all = Number(/of (\d+) items/.exec(await page.locator('.result-count').textContent())[1]);
+    expect(shown).toBeGreaterThan(0);
+    expect(shown).toBeLessThan(all);
+    await expect(page.locator('.finding').first()).toContainText(/Cyan Canoe|properties/);
+
+    await page.goto('/observatory/mission-control/#executive');
+    await expect(page.locator('#view-executive')).toBeVisible();
+    await page.locator('#view-executive .inline-link', { hasText: 'Open in queue' }).first().click();
+    await expect(page.locator('#view-operator')).toBeVisible();
+    await expect(page.locator('#queue-search')).not.toHaveValue('');
+  });
+
+  test('property table filters, sorts and discloses evidence', async ({ page }) => {
+    const { dir, finishedAt } = await collectEvidence({ governed: true, secondary: true });
+    await serveEvidence(page, dir);
+    await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
+    await page.goto('/observatory/mission-control/#operator');
+    await ready(page);
+    await expect(page.locator('.prop-row')).toHaveCount(25);
+    await page.locator('#prop-status').selectOption('nothing-published-intent-unknown');
+    await expect(page.locator('.prop-row')).toHaveCount(4);
+    await page.locator('#prop-status').selectOption('all');
+    await page.locator('#prop-search').fill('fwomps');
+    await expect(page.locator('.prop-row')).toHaveCount(1);
+    await page.locator('#prop-search').fill('globaldeets');
+    const row = page.locator('.prop-row').first();
+    await row.locator('summary', { hasText: 'Evidence' }).click();
+    await expect(row).toContainText('✓ home');
+    await expect(row).toContainText('Vantage github-actions:');
+    await expect(row).toContainText('Vantage github-actions-macos');
+    await page.locator('#prop-search').fill('');
+    await page.locator('#prop-lifecycle').selectOption('incubating');
+    await expect(page.locator('.prop-row')).toHaveCount(3);
+    await page.locator('#prop-lifecycle').selectOption('all');
+    await page.locator('#prop-sort').selectOption('name');
+    await expect(page.locator('.prop-row').first()).toContainText('AgentK');
+  });
+});
+
+test.describe('trust, sharing and accessibility', () => {
+  test('fail closed: a document that contradicts itself is withheld, not shown', async ({ page }) => {
+    const { dir, finishedAt } = await collectEvidence({ governed: true });
+    await serveEvidence(page, dir, (name, body) => {
+      if (name !== 'audience.json') return body;
+      const audience = JSON.parse(body);
+      audience.source.gold.fixture = true;
+      return JSON.stringify(audience);
+    });
+    await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
+    await page.goto('/observatory/mission-control/');
+    await expect(page.locator('body[data-mission-control-ready="error"]')).toBeVisible();
+    await expect(page.locator('#mission-control-error')).toContainText('withheld');
+    await expect(page.locator('.hero')).toHaveCount(0);
+  });
+
+  test('fail closed: forged numbers (a zero without instrumentation) are refused', async ({ page }) => {
+    const { dir, finishedAt } = await collectEvidence();
+    await serveEvidence(page, dir, (name, body) => {
+      if (name !== 'business-events.json') return body;
+      const events = JSON.parse(body);
+      const property = events.properties.find(item => item.propertyId === 'heavymoose.com');
+      property.events.push({ eventType: 'lead', label: 'Lead', readings: { 7: { evidenceState: 'measured', value: 0 }, 28: { evidenceState: 'measured', value: 0 }, 90: { evidenceState: 'measured', value: 0 } } });
+      return JSON.stringify(events);
+    });
+    await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
+    await page.goto('/observatory/mission-control/');
+    await expect(page.locator('body[data-mission-control-ready="error"]')).toBeVisible();
+    await expect(page.locator('#mission-control-error')).toContainText('zero without instrumentation');
+  });
+
+  test('copy summary puts an as-of stamped, evidence-derived summary on the clipboard', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    const { dir, finishedAt } = await collectEvidence({ governed: true });
+    await serveEvidence(page, dir);
+    await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
+    await page.goto('/observatory/mission-control/');
+    await ready(page);
+    await page.getByRole('button', { name: 'Copy summary' }).click();
+    await expect(page.locator('#copy-status')).toContainText('copied');
+    const text = await page.evaluate(() => navigator.clipboard.readText());
+    expect(text).toContain('GlobalDeets Mission Control — estate summary');
+    expect(text).toContain('production probes observed');
+    expect(text).toContain('These are requests, not people');
+    expect(text).toContain('Unknown is not zero, reachable is not healthy, and edge requests are not people.');
+  });
+
+  test('print layout is a clean light document: no chrome, no controls', async ({ page }) => {
+    const { dir, finishedAt } = await collectEvidence({ governed: true });
+    await serveEvidence(page, dir);
+    await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
+    await page.goto('/observatory/mission-control/');
+    await ready(page);
+    await page.emulateMedia({ media: 'print' });
+    await expect(page.locator('.actions')).toBeHidden();
+    await expect(page.locator('.footer-links')).toBeHidden();
+    await expect(page.locator('.hero')).toBeVisible();
+    const colors = await page.evaluate(() => ({ body: window.getComputedStyle(document.body).backgroundColor, text: window.getComputedStyle(document.body).color }));
+    expect(colors.body).toBe('rgb(255, 255, 255)');
+    expect(colors.text).toBe('rgb(17, 17, 17)');
+    await expect(page.locator('.chart-table').first()).toBeHidden();
+  });
+
+  test('semantics: tabs, landmarks, named charts and keyboard-reachable marks', async ({ page }) => {
+    const { dir, finishedAt } = await collectEvidence({ governed: true });
+    await serveEvidence(page, dir);
+    await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
+    await page.goto('/observatory/mission-control/');
+    await ready(page);
+    await expect(page.getByRole('tablist', { name: 'Choose a view' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Executive' })).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('main')).toBeVisible();
+    for (const chart of await page.locator('[role="img"]').all()) expect(await chart.getAttribute('aria-label')).toBeTruthy();
+    await expect(page.locator('.linechart')).toHaveAttribute('aria-label', /usage growing or shrinking/i);
+    await page.locator('.linechart .dot').first().focus();
+    await expect(page.locator('.mc-tooltip')).toBeVisible();
+    await expect(page.locator('.mc-tooltip')).toContainText('requests per day');
+    await page.getByRole('tab', { name: 'Executive' }).focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(page.getByRole('tab', { name: 'Operator' })).toHaveAttribute('aria-selected', 'true');
+    for (const control of await page.locator('#view-operator select, #view-operator input').all()) expect(await control.getAttribute('aria-label')).toBeTruthy();
+  });
+});
+
+test.describe('narrow screens', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test('executive view fits the viewport with no horizontal overflow', async ({ page }) => {
+    const { dir, finishedAt } = await collectEvidence({ governed: true, secondary: true });
+    await serveEvidence(page, dir);
+    await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
+    await page.goto('/observatory/mission-control/');
+    await ready(page);
+    await expect(page.locator('.hero .headline')).toBeVisible();
+    await noOverflow(page);
+    const box = await page.locator('.matrix-scroll').evaluate(node => ({ scroll: node.scrollWidth, client: node.clientWidth }));
     expect(box.scroll).toBeGreaterThan(box.client);
+  });
+
+  test('operator view stacks the property table into labelled cards and never overflows the page', async ({ page }) => {
+    const { dir, finishedAt } = await collectEvidence({ governed: true });
+    await serveEvidence(page, dir);
+    await page.clock.setFixedTime(new Date(Date.parse(finishedAt) + 3600000));
+    await page.goto('/observatory/mission-control/#operator');
+    await ready(page);
+    await expect(page.locator('.prop-row').first()).toBeVisible();
+    await noOverflow(page);
+    const label = await page.locator('.prop-row td').first().evaluate(node => window.getComputedStyle(node, '::before').content);
+    expect(label).toContain('Status');
+  });
+
+  test('the committed baseline also fits', async ({ page }) => {
+    await page.clock.setFixedTime(SEED_NOW);
+    await page.goto('/observatory/mission-control/');
+    await ready(page);
+    await noOverflow(page);
   });
 });

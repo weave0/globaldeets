@@ -247,26 +247,8 @@ export function evaluateExpectation(profile, availability) {
   return { lifecycle, expectedState: profile?.expectedState || 'unknown', observedMode: serving ? 'serving' : nothing ? 'nothing-published' : freshAvailability === 'unavailable' ? 'not-responding' : 'unknown', met, kind, note };
 }
 
-/** Human-facing operating status derived only from health + expectation. Never a new health claim. */
-export function operatingStatusFor(health, expectation) {
-  if (expectation.kind === 'expected-inactive') return { key: 'expected-inactive', tone: 'inactive' };
-  if (health === 'no-service-published') return { key: expectation.lifecycle === 'unknown' ? 'nothing-published-intent-unknown' : 'nothing-published', tone: 'unknown' };
-  const map = {
-    'verified-healthy': ['healthy', 'healthy'],
-    'reachable-unverified': ['reachable', 'reachable'],
-    outage: ['failing', 'failing'],
-    'critical-path-failed': ['failing', 'failing'],
-    degraded: ['degraded', 'watch'],
-    'vantage-conflict': ['conflicting-evidence', 'watch'],
-    'contract-drift': ['reachable', 'reachable'],
-    'probe-blocked': ['blocked', 'blocked'],
-    'evidence-stale': ['unknown', 'unknown'],
-    'evidence-expired': ['unknown', 'unknown'],
-    'health-evidence-incomplete': ['unknown', 'unknown'],
-  };
-  const [key, tone] = map[health] || ['unknown', 'unknown'];
-  return { key, tone };
-}
+/** Human-facing operating status. One implementation, shared with the browser, so the page never disagrees. */
+export const operatingStatusFor = semantics.operatingStatusFor;
 
 function hostOf(property) {
   return new URL(property.probe.origin).hostname;

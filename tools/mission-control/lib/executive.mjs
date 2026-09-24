@@ -224,7 +224,11 @@ function businessSection({ estate, events }) {
   const declaredOutcomes = Object.entries(byType).map(([type, list]) => ({ type, label: semantics.OUTCOME_VOCABULARY.find(item => item.id === type)?.label || type, properties: list })).sort((a, b) => b.properties.length - a.properties.length || a.type.localeCompare(b.type));
   const producers = events.properties.filter(row => row.instrumentation.state === 'not-connected').map(row => ({ propertyId: row.propertyId, name: nameOf(row.propertyId), types: row.instrumentation.candidateProducers.map(item => item.type) }));
 
-  const funnelTotals = Object.entries(events.estate.totals).map(([eventType, windows]) => ({ eventType, label: semantics.OUTCOME_VOCABULARY.find(item => item.id === eventType)?.label || eventType, reading: windows[28] || null })).filter(entry => entry.reading);
+  const vocabularyOrder = semantics.OUTCOME_VOCABULARY.map(item => item.id);
+  const funnelTotals = Object.entries(events.estate.totals)
+    .map(([eventType, windows]) => ({ eventType, label: semantics.OUTCOME_VOCABULARY.find(item => item.id === eventType)?.label || eventType, reading: windows[28] || null }))
+    .filter(entry => entry.reading)
+    .sort((a, b) => vocabularyOrder.indexOf(a.eventType) - vocabularyOrder.indexOf(b.eventType));
   const funnel = funnelTotals.length
     ? { id: 'outcome-funnel', title: 'What business actions are occurring?', question: 'How many meaningful actions happened, and where?', kind: 'bars', unit: 'events, 28 days', evidenceState: 'measured', asOf: events.source.observedAt, provenance: 'Business-event feed ' + (events.source.feed?.source?.label || ''), data: { stages: funnelTotals }, empty: null, caption: 'Sums cover only instrumented properties.' }
     : emptyChart({ id: 'outcome-funnel', title: 'What business actions are occurring?', question: 'How many meaningful actions happened, and where?', kind: 'bars', unit: 'events, 28 days', reason: events.source.reason, unblockedBy: events.source.requirement ? events.source.requirement.what + ' Secrets: ' + events.source.requirement.secrets.join(', ') + '.' : null });
@@ -295,7 +299,7 @@ function headline({ estate, audience, events, diagnostics }) {
   if (audienceUsable(audience) && audience.estate.requests[28].value != null) {
     const reading = audience.estate.requests[28];
     const trend = audience.estate.trend[28];
-    statements.push({ id: 'usage', tone: 'neutral', text: 'Estate traffic: ' + fmt(reading.value) + ' edge requests in the latest 28 days across ' + audience.estate.propertiesMeasured + ' of ' + total + ' properties' + (reading.evidenceState === 'partial' ? ' (a lower bound)' : '') + (trend.evidenceState === 'measured' ? ', ' + (trend.value >= 0 ? 'up ' : 'down ') + Math.abs(trend.value) + '% on the prior 28 days' : ', with no comparable prior period yet') + '. These are requests, not people: no source separates humans from automated traffic.' });
+    statements.push({ id: 'usage', tone: 'neutral', text: 'Estate traffic: ' + fmt(reading.value) + ' edge requests in the latest 28 days across ' + audience.estate.propertiesMeasured + ' of ' + total + ' properties' + (reading.evidenceState === 'partial' ? ' (a lower bound)' : '') + (trend.value != null ? ', ' + (trend.value >= 0 ? 'up ' : 'down ') + Math.abs(trend.value) + '% on the prior 28 days' + (trend.evidenceState === 'partial' ? ' (over the ' + trend.provenance.propertiesIncluded.length + ' properties with a comparable baseline)' : '') : ', with no comparable prior period yet') + '. These are requests, not people: no source separates humans from automated traffic.' });
   } else {
     statements.push({ id: 'usage', tone: 'unknown', text: 'Usage cannot be stated yet: the governed traffic source is ' + (audience.source.status === 'awaiting-authorized-source' ? 'awaiting authorization' : 'not readable') + ', so no request, growth or contribution figure is shown (and none is estimated).' });
   }
@@ -393,7 +397,7 @@ export function buildExecutive({ registry, estate, audience, events, diagnostics
       properties: estate.propertyCount,
       lifecycle: estate.summary.lifecycle,
       verifiedHealthy: estate.summary.verifiedHealthyZones,
-      responding: estate.properties.filter(row => ['healthy', 'reachable'].includes(row.profile.operatingStatus.key)).length,
+      responding: estate.properties.filter(row => row.probeExpectation.expectation === 'serves-content' && ['healthy', 'reachable'].includes(row.profile.operatingStatus.key)).length,
       servingExpected: estate.summary.servingExpectedZones,
       attention: estate.properties.filter(row => semantics.OPERATING_STATUS[row.profile.operatingStatus.key]?.group === 'attention').length,
       blocked: estate.summary.probeBlockedZones,

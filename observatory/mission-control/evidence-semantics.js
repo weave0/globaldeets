@@ -286,6 +286,27 @@
     unknown: Object.freeze({ label: 'Unknown', tone: 'muted', group: 'unknown' }),
   });
 
+  /** Human-facing operating status derived only from health + expectation. Never a new health claim. */
+  function operatingStatusFor(health, expectation) {
+    if (expectation && expectation.kind === 'expected-inactive') return { key: 'expected-inactive', tone: 'inactive' };
+    if (health === 'no-service-published') return { key: expectation && expectation.lifecycle !== 'unknown' ? 'nothing-published' : 'nothing-published-intent-unknown', tone: 'unknown' };
+    const map = {
+      'verified-healthy': ['healthy', 'healthy'],
+      'reachable-unverified': ['reachable', 'reachable'],
+      outage: ['failing', 'failing'],
+      'critical-path-failed': ['failing', 'failing'],
+      degraded: ['degraded', 'watch'],
+      'vantage-conflict': ['conflicting-evidence', 'watch'],
+      'contract-drift': ['reachable', 'reachable'],
+      'probe-blocked': ['blocked', 'blocked'],
+      'evidence-stale': ['unknown', 'unknown'],
+      'evidence-expired': ['unknown', 'unknown'],
+      'health-evidence-incomplete': ['unknown', 'unknown'],
+    };
+    const entry = map[health] || ['unknown', 'unknown'];
+    return { key: entry[0], tone: entry[1] };
+  }
+
   /**
    * Classifies one reading for display and for headline eligibility. Zero is only ever a MEASURED zero;
    * a null value can never become zero, and an aged reading never counts as current.
@@ -322,6 +343,7 @@
     FINDING_CATEGORIES,
     ACTIONABILITY_STATES,
     OPERATING_STATUS,
+    operatingStatusFor,
     classifyReading,
     toMs,
     utcDay,

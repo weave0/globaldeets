@@ -803,7 +803,7 @@ function governanceItems(estate, audience) {
         actionability: decision(),
         ownerLane: 'Property owner',
         title: plural(drift.length, 'property serves', 'properties serve') + ' public content the owner registry says is not live',
-        observed: drift.map(row => row.propertyId + ' (' + row.profile.expectation.note + ')').join(' ') + ' The owner registry may simply be out of date.',
+        observed: drift.map(row => row.propertyId + ': ' + row.profile.expectation.note.replace(/\.$/, '')).join('; ') + '. The owner registry may simply be out of date.',
         businessReason: 'Live pages the owner does not know are live, or a registry that lags production, are how brand and security surprises happen.',
         evidence: [{ type: 'owner-registry-vs-production', ref: 'estate-registry@' + estate.evidence.inventory.baselineAsOf, state: 'measured' }],
         nextAction: 'Update the owner registry to match production, or unpublish the property if it should not be live.',

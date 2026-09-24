@@ -20,6 +20,7 @@ function argValue(name) {
 const BASE = (argValue('--base=') || 'https://globaldeets.com').replace(/\/$/, '');
 const MIN_GENERATED_AT = argValue('--min-generated-at=') || null;
 const REQUIRE_PROBE = process.argv.includes('--require-probe-evidence');
+const MIN_VANTAGES = Number(argValue('--min-vantages=') || 1);
 const EXPECTED_PROPERTIES = REGISTERED_IDS.length;
 const TIMEOUT_MS = 15_000;
 
@@ -45,15 +46,25 @@ function requireCondition(condition, message) {
 
 (async () => {
   const base = '/observatory/mission-control';
-  const [summary, history, estate, diagnostics, probes, semanticsSource, page] = await Promise.all([
+  const [summary, history, estate, diagnostics, probes, audience, events, executive, semanticsSource, page, scripts] = await Promise.all([
     json(`${base}/mission-control-data.json`),
     json(`${base}/history.json`),
     json(`${base}/estate-health.json`),
     json(`${base}/diagnostics.json`),
     json(`${base}/probes.json`),
+    json(`${base}/audience.json`),
+    json(`${base}/business-events.json`),
+    json(`${base}/executive.json`),
     text(`${base}/evidence-semantics.js`),
     text(`${base}/`),
+    Promise.all(['mc-model.js', 'mc-charts.js', 'mc-executive.js', 'mc-operator.js', 'mission-control.js', 'mission-control.css'].map(name => text(`${base}/${name}`))),
   ]);
+  void scripts;
+
+  // GD-031: the exact validators the collector enforces are re-run against what production actually serves.
+  const { validateDataPlane, expectedPropertyIds } = await import('./mission-control/lib/contracts.mjs');
+  const planeErrors = validateDataPlane({ history, estate, diagnostics, summary, probes, audience, events, executive }, { expectPropertyCount: EXPECTED_PROPERTIES, expectPropertyIds: expectedPropertyIds(registry) });
+  requireCondition(planeErrors.length === 0, `production data plane fails validation: ${planeErrors.slice(0, 5).join('; ')}`);
 
   requireCondition(summary.missionControlId === 'globaldeets-estate', 'summary identity changed');
   requireCondition(summary.investorClaimsPolicy?.edgeTrafficIsHumanAudience === false, 'edge traffic must not be human audience');
@@ -83,6 +94,25 @@ function requireCondition(condition, message) {
     }
   }
 
+  // No fixture or invented number may reach production, and the executive summary must agree with its sources.
+  requireCondition(!/"fixture"\s*:\s*true/.test(JSON.stringify({ audience, events, executive })), 'a fixture document reached production');
+  requireCondition(audience.policy.edgeTrafficIsHumanAudience === false && audience.policy.missingIsZero === false, 'audience policy changed');
+  if (!['measured', 'partial'].includes(audience.source.status)) {
+    requireCondition(audience.properties.every(row => [7, 28, 90].every(days => row.requests[days].value === null)), 'audience numbers are published without a measured source');
+  } else {
+    requireCondition(audience.source.gold?.fixture === false, 'audience Gold provenance must be a non-fixture document');
+  }
+  requireCondition(events.properties.every(row => row.events.every(event => Object.values(event.readings).every(reading => reading.value === null || row.instrumentation.state === 'instrumented'))), 'business-event counts are published without instrumentation');
+  requireCondition(executive.snapshot.verifiedHealthy === estate.summary.verifiedHealthyZones, 'executive verified-healthy count disagrees with the estate');
+  requireCondition(executive.maturity.find(row => row.id === 'critical-path').numerator === estate.summary.criticalPathAuthoritativeZones, 'executive critical-path coverage disagrees with the estate');
+  const composition = executive.charts.operationalComposition;
+  if (composition.data) requireCondition(composition.data.total === EXPECTED_PROPERTIES, 'executive composition must cover the estate');
+  for (const name of ['mc-model.js', 'mc-charts.js', 'mc-executive.js', 'mc-operator.js']) requireCondition(page.includes(name), `page does not load ${name}`);
+  if (MIN_VANTAGES > 1) {
+    requireCondition(estate.evidence.probe.vantageCount >= MIN_VANTAGES, `expected at least ${MIN_VANTAGES} probe vantages, saw ${estate.evidence.probe.vantageCount}`);
+    requireCondition(estate.summary.conflictingZones === 0 || diagnostics.items.some(item => item.id.startsWith('availability:vantage-conflict')), 'vantage conflicts must be surfaced as findings');
+  }
+
   if (MIN_GENERATED_AT) {
     requireCondition(Date.parse(estate.generatedAt) >= Date.parse(MIN_GENERATED_AT), `production estate-health generatedAt ${estate.generatedAt} is older than ${MIN_GENERATED_AT}`);
   }
@@ -103,6 +133,11 @@ function requireCondition(condition, message) {
         generatedAt: estate.generatedAt,
         probeRun: estate.evidence.probe.runId,
         probeValidity: estate.evidence.probe.validity,
+        vantages: estate.evidence.probe.vantageCount,
+        audience: audience.source.status,
+        businessEvents: events.source.status,
+        instrumentation: estate.summary.instrumentation,
+        criticalPathAuthoritative: estate.summary.criticalPathAuthoritativeZones,
         availabilityKnown: estate.summary.availabilityKnownZones,
         verifiedHealthy: estate.summary.verifiedHealthyZones,
         outages: estate.summary.unavailableZones,
