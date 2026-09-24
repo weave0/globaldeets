@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.1.0",
   "contractName": "globaldeets-estate-health",
-  "generatedAt": "2026-09-24T17:38:03.248Z",
+  "generatedAt": "2026-09-24T17:48:21.886Z",
   "propertyCount": 25,
   "policy": {
     "unknownIsHealthy": false,
@@ -58,8 +58,8 @@
   },
   "evidence": {
     "probe": {
-      "runId": "run-36035646993-1",
-      "observedAt": "2026-09-24T17:38:03.248Z",
+      "runId": "run-36036835636-1",
+      "observedAt": "2026-09-24T17:48:21.886Z",
       "validity": "valid",
       "vantage": "github-actions",
       "vantageCount": 1,
@@ -83,24 +83,29 @@
       "freshness": {
         "state": "fresh",
         "ageHours": 0,
-        "freshUntil": "2026-09-25T01:38:03.248Z",
-        "expiresAt": "2026-09-25T17:38:03.248Z"
+        "freshUntil": "2026-09-25T01:48:21.886Z",
+        "expiresAt": "2026-09-25T17:48:21.886Z"
       },
       "latestAttempt": {
-        "runId": "run-36035646993-1",
-        "at": "2026-09-24T17:38:03.248Z",
+        "runId": "run-36036835636-1",
+        "at": "2026-09-24T17:48:21.886Z",
         "validity": "valid"
       }
     },
     "inventory": {
-      "asOf": "2026-09-24T17:38:03.878Z",
-      "source": "Cloudflare API (zones)",
+      "asOf": "2026-09-24T17:48:21.886Z",
+      "source": "Cloudflare API (zones + pages)",
       "refreshed": true,
+      "facets": {
+        "zones": "2026-09-24T17:48:21.886Z",
+        "pages": "2026-09-24T17:48:21.886Z",
+        "rum": null
+      },
       "freshness": {
         "state": "fresh",
         "ageHours": 0,
-        "freshUntil": "2026-09-26T17:38:03.878Z",
-        "expiresAt": "2026-10-01T17:38:03.878Z"
+        "freshUntil": "2026-09-26T17:48:21.886Z",
+        "expiresAt": "2026-10-01T17:48:21.886Z"
       }
     }
   },
@@ -117,7 +122,7 @@
     "criticalPathKnownZones": 19,
     "criticalPathContractZones": 20,
     "verifiedHealthyZones": 1,
-    "pagesMappedActiveZones": 10
+    "pagesMappedActiveZones": 15
   },
   "sourceNotes": [
     "Zone, RUM, and Pages facts come from the Cloudflare account inventory; they are refreshed by the collector when the token permits and otherwise carried forward and labelled by age.",
@@ -146,16 +151,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from globaldeets.com in 179 ms.",
+        "reason": "HTTP 200 from globaldeets.com in 91 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -168,7 +173,7 @@
             "status": 200,
             "finalUrl": "https://globaldeets.com/",
             "redirects": 0,
-            "durationMs": 179,
+            "durationMs": 91,
             "attempts": 1
           },
           "tls": {
@@ -179,9 +184,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -190,13 +195,13 @@
         "evidenceState": "measured",
         "level": "authoritative",
         "basis": "GlobalDeets owns and deploys this property; checks mirror the production verification the deploy workflow already enforces.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 179,
+            "durationMs": 91,
             "pass": true,
             "detail": "ok"
           },
@@ -204,7 +209,7 @@
             "id": "news-health",
             "path": "/api/news/health",
             "status": 200,
-            "durationMs": 49,
+            "durationMs": 314,
             "pass": true,
             "detail": "ok"
           },
@@ -212,7 +217,7 @@
             "id": "mission-control-data",
             "path": "/observatory/mission-control/mission-control-data.json",
             "status": 200,
-            "durationMs": 153,
+            "durationMs": 114,
             "pass": true,
             "detail": "ok"
           },
@@ -220,7 +225,7 @@
             "id": "coverage-observatory",
             "path": "/api/intelligence/observatory/coverage",
             "status": 200,
-            "durationMs": 64,
+            "durationMs": 36,
             "pass": true,
             "detail": "ok"
           }
@@ -229,8 +234,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "authoritative",
@@ -242,13 +247,13 @@
         "provider": "cloudflare-pages",
         "project": "globaldeets",
         "servingDomainState": "observed",
-        "sharedProject": false,
-        "latestProductionDeployAt": "2026-09-23T22:41:27.895511Z",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-09-24T17:38:37.170097Z",
         "evidenceState": "measured",
         "note": null
       },
       "lastMeaningfulActivity": {
-        "at": "2026-09-23T22:41:27.895511Z",
+        "at": "2026-09-24T17:38:37.170097Z",
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
@@ -257,7 +262,7 @@
         "basis": "Owned property; critical path verified against production on 2026-09-24."
       },
       "diagnosticState": "verified-healthy",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "culturesherpa.org",
@@ -279,16 +284,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from culturesherpa.org in 114 ms.",
+        "reason": "HTTP 200 from culturesherpa.org in 69 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -301,7 +306,7 @@
             "status": 200,
             "finalUrl": "https://culturesherpa.org/explore/",
             "redirects": 1,
-            "durationMs": 114,
+            "durationMs": 69,
             "attempts": 1
           },
           "tls": {
@@ -312,9 +317,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -323,13 +328,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 114,
+            "durationMs": 69,
             "pass": true,
             "detail": "ok"
           }
@@ -338,8 +343,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -367,7 +372,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "culturesherpa.com",
@@ -389,16 +394,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from culturesherpa.org in 146 ms.",
+        "reason": "HTTP 200 from culturesherpa.org in 138 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -411,7 +416,7 @@
             "status": 200,
             "finalUrl": "https://culturesherpa.org/explore/",
             "redirects": 2,
-            "durationMs": 146,
+            "durationMs": 138,
             "attempts": 1
           },
           "tls": {
@@ -422,9 +427,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -433,14 +438,14 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [],
         "reason": "Redirect-only alias: availability is probed, but there is no independent critical path.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": null
       },
@@ -464,7 +469,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "agentkagent.com",
@@ -486,16 +491,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from agentkagent.com in 78 ms.",
+        "reason": "HTTP 200 from agentkagent.com in 60 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -508,7 +513,7 @@
             "status": 200,
             "finalUrl": "https://agentkagent.com/",
             "redirects": 0,
-            "durationMs": 78,
+            "durationMs": 60,
             "attempts": 1
           },
           "tls": {
@@ -519,9 +524,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -530,13 +535,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 78,
+            "durationMs": 60,
             "pass": true,
             "detail": "ok"
           }
@@ -545,8 +550,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -574,7 +579,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "aiaimate.com",
@@ -596,16 +601,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from aiaimate.com in 106 ms.",
+        "reason": "HTTP 200 from aiaimate.com in 86 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -618,7 +623,7 @@
             "status": 200,
             "finalUrl": "https://aiaimate.com/",
             "redirects": 0,
-            "durationMs": 106,
+            "durationMs": 86,
             "attempts": 1
           },
           "tls": {
@@ -629,9 +634,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -640,13 +645,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 106,
+            "durationMs": 86,
             "pass": true,
             "detail": "ok"
           }
@@ -655,8 +660,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -684,7 +689,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "artificelligance.com",
@@ -706,7 +711,7 @@
         "state": "no-service-published",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": "dns-no-address-records",
         "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
@@ -714,8 +719,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -739,7 +744,7 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
+          "runs": 2,
           "conclusiveRuns": 0,
           "availableRuns": 0,
           "availabilityRatio": null
@@ -750,14 +755,14 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [],
         "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": null
       },
@@ -781,7 +786,7 @@
         "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
       },
       "diagnosticState": "no-service-published",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "artificelligence.com",
@@ -803,7 +808,7 @@
         "state": "no-service-published",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": "dns-no-address-records",
         "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
@@ -811,8 +816,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -836,7 +841,7 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
+          "runs": 2,
           "conclusiveRuns": 0,
           "availableRuns": 0,
           "availabilityRatio": null
@@ -847,14 +852,14 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [],
         "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": null
       },
@@ -878,7 +883,7 @@
         "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
       },
       "diagnosticState": "no-service-published",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "brettleeweaver.com",
@@ -900,16 +905,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from www.brettleeweaver.com in 271 ms.",
+        "reason": "HTTP 200 from www.brettleeweaver.com in 288 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -922,7 +927,7 @@
             "status": 200,
             "finalUrl": "https://www.brettleeweaver.com/",
             "redirects": 1,
-            "durationMs": 271,
+            "durationMs": 288,
             "attempts": 1
           },
           "tls": {
@@ -933,9 +938,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -944,13 +949,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 271,
+            "durationMs": 288,
             "pass": true,
             "detail": "ok"
           }
@@ -959,8 +964,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -972,7 +977,7 @@
         "provider": "cloudflare-pages",
         "project": "brettleeweaver",
         "servingDomainState": "no_active_domain",
-        "sharedProject": false,
+        "sharedProject": true,
         "latestProductionDeployAt": null,
         "evidenceState": "measured",
         "note": "Pages project exists, but mapped custom domains are deactivated; deploy freshness is not treated as serving freshness."
@@ -988,7 +993,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "citizenapproved.org",
@@ -1010,16 +1015,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from citizenapproved.org in 213 ms.",
+        "reason": "HTTP 200 from citizenapproved.org in 128 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -1032,7 +1037,7 @@
             "status": 200,
             "finalUrl": "https://citizenapproved.org/",
             "redirects": 0,
-            "durationMs": 213,
+            "durationMs": 128,
             "attempts": 1
           },
           "tls": {
@@ -1043,9 +1048,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -1054,13 +1059,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 213,
+            "durationMs": 128,
             "pass": true,
             "detail": "ok"
           }
@@ -1069,8 +1074,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -1082,13 +1087,13 @@
         "provider": "cloudflare-pages",
         "project": "citizenapproved",
         "servingDomainState": "observed",
-        "sharedProject": false,
-        "latestProductionDeployAt": "2026-08-30T15:13:03.25794Z",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-08-30T15:13:01.486793Z",
         "evidenceState": "measured",
         "note": null
       },
       "lastMeaningfulActivity": {
-        "at": "2026-08-30T15:13:03.25794Z",
+        "at": "2026-08-30T15:13:01.486793Z",
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
@@ -1097,7 +1102,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "cyancanoe.com",
@@ -1119,16 +1124,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from cyancanoe.com in 142 ms.",
+        "reason": "HTTP 200 from cyancanoe.com in 159 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -1141,7 +1146,7 @@
             "status": 200,
             "finalUrl": "https://cyancanoe.com/",
             "redirects": 0,
-            "durationMs": 142,
+            "durationMs": 159,
             "attempts": 1
           },
           "tls": {
@@ -1152,9 +1157,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -1163,13 +1168,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 142,
+            "durationMs": 159,
             "pass": true,
             "detail": "ok"
           }
@@ -1178,8 +1183,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -1192,12 +1197,12 @@
         "project": "cyan-canoe",
         "servingDomainState": "observed",
         "sharedProject": false,
-        "latestProductionDeployAt": "2026-08-27T00:55:08.751143Z",
+        "latestProductionDeployAt": "2026-08-27T00:55:07.403583Z",
         "evidenceState": "measured",
         "note": null
       },
       "lastMeaningfulActivity": {
-        "at": "2026-08-27T00:55:08.751143Z",
+        "at": "2026-08-27T00:55:07.403583Z",
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
@@ -1206,7 +1211,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "flipskillet.com",
@@ -1228,16 +1233,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from flipskillet.com in 148 ms.",
+        "reason": "HTTP 200 from flipskillet.com in 185 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -1250,7 +1255,7 @@
             "status": 200,
             "finalUrl": "https://flipskillet.com/",
             "redirects": 0,
-            "durationMs": 148,
+            "durationMs": 185,
             "attempts": 1
           },
           "tls": {
@@ -1261,9 +1266,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -1272,13 +1277,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 148,
+            "durationMs": 185,
             "pass": true,
             "detail": "ok"
           }
@@ -1287,8 +1292,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -1301,12 +1306,12 @@
         "project": "flipskillet",
         "servingDomainState": "observed",
         "sharedProject": true,
-        "latestProductionDeployAt": "2026-09-22T04:52:11.331067Z",
+        "latestProductionDeployAt": "2026-09-22T04:51:57.066881Z",
         "evidenceState": "measured",
         "note": null
       },
       "lastMeaningfulActivity": {
-        "at": "2026-09-22T04:52:11.331067Z",
+        "at": "2026-09-22T04:51:57.066881Z",
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
@@ -1315,7 +1320,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "flipskillit.com",
@@ -1337,16 +1342,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from flipskillit.com in 130 ms.",
+        "reason": "HTTP 200 from flipskillit.com in 153 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -1359,7 +1364,7 @@
             "status": 200,
             "finalUrl": "https://flipskillit.com/",
             "redirects": 0,
-            "durationMs": 130,
+            "durationMs": 153,
             "attempts": 1
           },
           "tls": {
@@ -1370,9 +1375,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -1381,13 +1386,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 130,
+            "durationMs": 153,
             "pass": true,
             "detail": "ok"
           }
@@ -1396,8 +1401,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -1410,12 +1415,12 @@
         "project": "flipskillet",
         "servingDomainState": "observed",
         "sharedProject": true,
-        "latestProductionDeployAt": "2026-09-22T04:52:11.331067Z",
+        "latestProductionDeployAt": "2026-09-22T04:51:57.066881Z",
         "evidenceState": "measured",
         "note": null
       },
       "lastMeaningfulActivity": {
-        "at": "2026-09-22T04:52:11.331067Z",
+        "at": "2026-09-22T04:51:57.066881Z",
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
@@ -1424,7 +1429,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "foxyana.com",
@@ -1446,16 +1451,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from foxyana.com in 134 ms.",
+        "reason": "HTTP 200 from foxyana.com in 56 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -1468,7 +1473,7 @@
             "status": 200,
             "finalUrl": "https://foxyana.com/",
             "redirects": 0,
-            "durationMs": 134,
+            "durationMs": 56,
             "attempts": 1
           },
           "tls": {
@@ -1479,9 +1484,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -1490,13 +1495,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 134,
+            "durationMs": 56,
             "pass": true,
             "detail": "ok"
           }
@@ -1505,8 +1510,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -1534,7 +1539,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "fwomps.com",
@@ -1556,7 +1561,7 @@
         "state": "no-service-published",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": "dns-no-address-records",
         "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
@@ -1564,8 +1569,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -1589,7 +1594,7 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
+          "runs": 2,
           "conclusiveRuns": 0,
           "availableRuns": 0,
           "availabilityRatio": null
@@ -1600,14 +1605,14 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [],
         "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": null
       },
@@ -1631,7 +1636,7 @@
         "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
       },
       "diagnosticState": "no-service-published",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "fwomp.us",
@@ -1653,7 +1658,7 @@
         "state": "no-service-published",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": "dns-no-address-records",
         "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
@@ -1661,8 +1666,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -1686,7 +1691,7 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
+          "runs": 2,
           "conclusiveRuns": 0,
           "availableRuns": 0,
           "availabilityRatio": null
@@ -1697,14 +1702,14 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [],
         "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": null
       },
@@ -1728,7 +1733,7 @@
         "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
       },
       "diagnosticState": "no-service-published",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "gflippinv.com",
@@ -1750,16 +1755,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from gflippinv.com in 133 ms.",
+        "reason": "HTTP 200 from gflippinv.com in 115 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -1772,7 +1777,7 @@
             "status": 200,
             "finalUrl": "https://gflippinv.com/",
             "redirects": 0,
-            "durationMs": 133,
+            "durationMs": 115,
             "attempts": 1
           },
           "tls": {
@@ -1783,9 +1788,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -1794,13 +1799,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 133,
+            "durationMs": 115,
             "pass": true,
             "detail": "ok"
           }
@@ -1809,8 +1814,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -1823,12 +1828,12 @@
         "project": "good-flippin-vibes",
         "servingDomainState": "observed",
         "sharedProject": true,
-        "latestProductionDeployAt": "2026-09-04T04:06:20.010853Z",
+        "latestProductionDeployAt": "2026-09-04T04:06:18.223548Z",
         "evidenceState": "measured",
         "note": null
       },
       "lastMeaningfulActivity": {
-        "at": "2026-09-04T04:06:20.010853Z",
+        "at": "2026-09-04T04:06:18.223548Z",
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
@@ -1837,7 +1842,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "goodflippindesign.com",
@@ -1859,7 +1864,7 @@
         "state": "unknown",
         "evidenceState": "measured",
         "blocked": true,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": null,
         "failureClass": "edge-challenge",
         "reason": "Probe was restricted by the target (edge-challenge); this vantage cannot establish availability.",
@@ -1867,8 +1872,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -1881,7 +1886,7 @@
             "status": 403,
             "finalUrl": "https://goodflippindesign.com/",
             "redirects": 0,
-            "durationMs": 57,
+            "durationMs": 52,
             "attempts": 1
           },
           "tls": {
@@ -1892,7 +1897,7 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
+          "runs": 2,
           "conclusiveRuns": 0,
           "availableRuns": 0,
           "availabilityRatio": null
@@ -1903,14 +1908,14 @@
         "evidenceState": "unavailable",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [],
         "reason": "Not evaluable while availability is blocked.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -1922,13 +1927,13 @@
         "provider": "cloudflare-pages",
         "project": "goodflippindesign",
         "servingDomainState": "observed",
-        "sharedProject": false,
-        "latestProductionDeployAt": "2026-09-23T01:49:40.10745Z",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-09-23T01:48:42.728189Z",
         "evidenceState": "measured",
         "note": null
       },
       "lastMeaningfulActivity": {
-        "at": "2026-09-23T01:49:40.10745Z",
+        "at": "2026-09-23T01:48:42.728189Z",
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
@@ -1937,7 +1942,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "probe-blocked",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "goodflippinluck.com",
@@ -1959,16 +1964,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinluck.com in 131 ms.",
+        "reason": "HTTP 200 from goodflippinluck.com in 135 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -1981,7 +1986,7 @@
             "status": 200,
             "finalUrl": "https://goodflippinluck.com/",
             "redirects": 0,
-            "durationMs": 131,
+            "durationMs": 135,
             "attempts": 1
           },
           "tls": {
@@ -1992,9 +1997,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -2003,13 +2008,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 131,
+            "durationMs": 135,
             "pass": true,
             "detail": "ok"
           }
@@ -2018,8 +2023,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -2028,26 +2033,25 @@
         }
       },
       "deployment": {
-        "provider": "unknown",
-        "project": null,
-        "servingDomainState": "unavailable",
-        "sharedProject": false,
-        "latestProductionDeployAt": null,
-        "evidenceState": "unavailable",
-        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+        "provider": "cloudflare-pages",
+        "project": "goodflippinluck",
+        "servingDomainState": "observed",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-06-08T01:13:42.636428Z",
+        "evidenceState": "measured",
+        "note": null
       },
       "lastMeaningfulActivity": {
-        "at": null,
-        "kind": null,
-        "evidenceState": "unavailable",
-        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+        "at": "2026-06-08T01:13:42.636428Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
       },
       "probeExpectation": {
         "expectation": "serves-content",
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "goodflippinnews.com",
@@ -2069,16 +2073,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinnews.com in 134 ms.",
+        "reason": "HTTP 200 from goodflippinnews.com in 239 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -2091,7 +2095,7 @@
             "status": 200,
             "finalUrl": "https://goodflippinnews.com/",
             "redirects": 0,
-            "durationMs": 134,
+            "durationMs": 239,
             "attempts": 1
           },
           "tls": {
@@ -2102,9 +2106,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -2113,13 +2117,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 134,
+            "durationMs": 239,
             "pass": true,
             "detail": "ok"
           }
@@ -2128,8 +2132,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -2138,26 +2142,25 @@
         }
       },
       "deployment": {
-        "provider": "unknown",
-        "project": null,
-        "servingDomainState": "unavailable",
-        "sharedProject": false,
-        "latestProductionDeployAt": null,
-        "evidenceState": "unavailable",
-        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+        "provider": "cloudflare-pages",
+        "project": "goodflippinnews",
+        "servingDomainState": "observed",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-06-08T01:13:23.330486Z",
+        "evidenceState": "measured",
+        "note": null
       },
       "lastMeaningfulActivity": {
-        "at": null,
-        "kind": null,
-        "evidenceState": "unavailable",
-        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+        "at": "2026-06-08T01:13:23.330486Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
       },
       "probeExpectation": {
         "expectation": "serves-content",
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "goodflippinvibes.com",
@@ -2179,16 +2182,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinvibes.com in 105 ms.",
+        "reason": "HTTP 200 from goodflippinvibes.com in 95 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -2201,7 +2204,7 @@
             "status": 200,
             "finalUrl": "https://goodflippinvibes.com/",
             "redirects": 0,
-            "durationMs": 105,
+            "durationMs": 95,
             "attempts": 1
           },
           "tls": {
@@ -2212,9 +2215,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -2223,13 +2226,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 105,
+            "durationMs": 95,
             "pass": true,
             "detail": "ok"
           }
@@ -2238,8 +2241,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -2252,12 +2255,12 @@
         "project": "good-flippin-vibes",
         "servingDomainState": "observed",
         "sharedProject": true,
-        "latestProductionDeployAt": "2026-09-04T04:06:20.010853Z",
+        "latestProductionDeployAt": "2026-09-04T04:06:18.223548Z",
         "evidenceState": "measured",
         "note": null
       },
       "lastMeaningfulActivity": {
-        "at": "2026-09-04T04:06:20.010853Z",
+        "at": "2026-09-04T04:06:18.223548Z",
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
@@ -2266,7 +2269,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "goodflippinyikes.com",
@@ -2288,16 +2291,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinyikes.com in 200 ms.",
+        "reason": "HTTP 200 from goodflippinyikes.com in 139 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -2310,7 +2313,7 @@
             "status": 200,
             "finalUrl": "https://goodflippinyikes.com/",
             "redirects": 0,
-            "durationMs": 200,
+            "durationMs": 139,
             "attempts": 1
           },
           "tls": {
@@ -2321,9 +2324,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -2332,13 +2335,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 200,
+            "durationMs": 139,
             "pass": true,
             "detail": "ok"
           }
@@ -2347,8 +2350,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -2357,26 +2360,25 @@
         }
       },
       "deployment": {
-        "provider": "unknown",
-        "project": null,
-        "servingDomainState": "unavailable",
-        "sharedProject": false,
-        "latestProductionDeployAt": null,
-        "evidenceState": "unavailable",
-        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+        "provider": "cloudflare-pages",
+        "project": "goodflippinyikes",
+        "servingDomainState": "observed",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-06-24T23:15:15.415401Z",
+        "evidenceState": "measured",
+        "note": null
       },
       "lastMeaningfulActivity": {
-        "at": null,
-        "kind": null,
-        "evidenceState": "unavailable",
-        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+        "at": "2026-06-24T23:15:15.415401Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
       },
       "probeExpectation": {
         "expectation": "serves-content",
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "heavymoose.com",
@@ -2398,16 +2400,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from heavymoose.com in 180 ms.",
+        "reason": "HTTP 200 from heavymoose.com in 158 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -2420,7 +2422,7 @@
             "status": 200,
             "finalUrl": "https://heavymoose.com/",
             "redirects": 0,
-            "durationMs": 180,
+            "durationMs": 158,
             "attempts": 1
           },
           "tls": {
@@ -2431,9 +2433,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -2442,13 +2444,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 180,
+            "durationMs": 158,
             "pass": true,
             "detail": "ok"
           }
@@ -2457,8 +2459,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -2470,13 +2472,13 @@
         "provider": "cloudflare-pages",
         "project": "heavymoose",
         "servingDomainState": "observed",
-        "sharedProject": false,
-        "latestProductionDeployAt": "2026-09-09T23:26:32.961221Z",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-09-09T23:26:31.550493Z",
         "evidenceState": "measured",
         "note": null
       },
       "lastMeaningfulActivity": {
-        "at": "2026-09-09T23:26:32.961221Z",
+        "at": "2026-09-09T23:26:31.550493Z",
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
@@ -2485,7 +2487,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "lowertownstpaul.org",
@@ -2507,16 +2509,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from lowertownstpaul.org in 173 ms.",
+        "reason": "HTTP 200 from lowertownstpaul.org in 116 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -2529,7 +2531,7 @@
             "status": 200,
             "finalUrl": "https://lowertownstpaul.org/",
             "redirects": 0,
-            "durationMs": 173,
+            "durationMs": 116,
             "attempts": 1
           },
           "tls": {
@@ -2540,9 +2542,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -2551,13 +2553,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 173,
+            "durationMs": 116,
             "pass": true,
             "detail": "ok"
           }
@@ -2566,8 +2568,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -2576,26 +2578,25 @@
         }
       },
       "deployment": {
-        "provider": "unknown",
-        "project": null,
-        "servingDomainState": "unavailable",
-        "sharedProject": false,
-        "latestProductionDeployAt": null,
-        "evidenceState": "unavailable",
-        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+        "provider": "cloudflare-pages",
+        "project": "lowertownstpaul",
+        "servingDomainState": "observed",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-05-05T22:56:38.343304Z",
+        "evidenceState": "measured",
+        "note": null
       },
       "lastMeaningfulActivity": {
-        "at": null,
-        "kind": null,
-        "evidenceState": "unavailable",
-        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+        "at": "2026-05-05T22:56:38.343304Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
       },
       "probeExpectation": {
         "expectation": "serves-content",
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "minnesotapeace.com",
@@ -2617,16 +2618,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from minnesotapeace.com in 174 ms.",
+        "reason": "HTTP 200 from minnesotapeace.com in 191 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -2639,7 +2640,7 @@
             "status": 200,
             "finalUrl": "https://minnesotapeace.com/",
             "redirects": 0,
-            "durationMs": 174,
+            "durationMs": 191,
             "attempts": 1
           },
           "tls": {
@@ -2650,9 +2651,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -2661,13 +2662,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 174,
+            "durationMs": 191,
             "pass": true,
             "detail": "ok"
           }
@@ -2676,8 +2677,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -2689,13 +2690,13 @@
         "provider": "cloudflare-pages",
         "project": "minnesotapeace",
         "servingDomainState": "observed",
-        "sharedProject": false,
-        "latestProductionDeployAt": "2026-09-10T02:32:11.851568Z",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-09-10T02:32:10.350766Z",
         "evidenceState": "measured",
         "note": null
       },
       "lastMeaningfulActivity": {
-        "at": "2026-09-10T02:32:11.851568Z",
+        "at": "2026-09-10T02:32:10.350766Z",
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
@@ -2704,7 +2705,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     },
     {
       "propertyId": "redleopardofstpaul.com",
@@ -2726,16 +2727,16 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from redleopardofstpaul.com in 130 ms.",
+        "reason": "HTTP 200 from redleopardofstpaul.com in 111 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "evidence": {
           "dns": {
@@ -2748,7 +2749,7 @@
             "status": 200,
             "finalUrl": "https://redleopardofstpaul.com/",
             "redirects": 0,
-            "durationMs": 130,
+            "durationMs": 111,
             "attempts": 1
           },
           "tls": {
@@ -2759,9 +2760,9 @@
         },
         "recent": {
           "windowDays": 7,
-          "runs": 1,
-          "conclusiveRuns": 1,
-          "availableRuns": 1,
+          "runs": 2,
+          "conclusiveRuns": 2,
+          "availableRuns": 2,
           "availabilityRatio": 1
         }
       },
@@ -2770,13 +2771,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T17:38:03.248Z",
+        "observedAt": "2026-09-24T17:48:21.886Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 130,
+            "durationMs": 111,
             "pass": true,
             "detail": "ok"
           }
@@ -2785,8 +2786,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T01:38:03.248Z",
-          "expiresAt": "2026-09-25T17:38:03.248Z"
+          "freshUntil": "2026-09-25T01:48:21.886Z",
+          "expiresAt": "2026-09-25T17:48:21.886Z"
         },
         "contract": {
           "level": "baseline",
@@ -2795,26 +2796,25 @@
         }
       },
       "deployment": {
-        "provider": "unknown",
-        "project": null,
-        "servingDomainState": "unavailable",
-        "sharedProject": false,
-        "latestProductionDeployAt": null,
-        "evidenceState": "unavailable",
-        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+        "provider": "cloudflare-pages",
+        "project": "redleopardofstpaul",
+        "servingDomainState": "observed",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-05-02T06:05:03.384195Z",
+        "evidenceState": "measured",
+        "note": null
       },
       "lastMeaningfulActivity": {
-        "at": null,
-        "kind": null,
-        "evidenceState": "unavailable",
-        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+        "at": "2026-05-02T06:05:03.384195Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
       },
       "probeExpectation": {
         "expectation": "serves-content",
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T17:38:03.248Z"
+      "evidenceAsOf": "2026-09-24T17:48:21.886Z"
     }
   ]
 }

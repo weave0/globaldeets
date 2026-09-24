@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.1.0",
   "contractName": "globaldeets-diagnostics-queue",
-  "generatedAt": "2026-09-24T17:38:03.248Z",
+  "generatedAt": "2026-09-24T17:48:21.886Z",
   "agentContract": {
     "sortableFields": [
       "priority",
@@ -74,6 +74,7 @@
       "audience-certification",
       "critical-path-contracts",
       "history-density",
+      "inventory-incomplete",
       "no-service-published",
       "probe-blocked",
       "rum-coverage",
@@ -259,7 +260,7 @@
       "evidence": [
         {
           "type": "cloudflare-rum-inventory",
-          "ref": "2026-09-24T17:38:03.878Z",
+          "ref": "2026-09-24T17:48:21.886Z",
           "state": "measured"
         }
       ],
@@ -284,7 +285,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-24T17:38:03.248Z",
+          "ref": "globaldeets-estate-health@2026-09-24T17:48:21.886Z",
           "state": "measured"
         }
       ],
@@ -355,7 +356,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-24T17:38:03.248Z",
+          "ref": "globaldeets-estate-health@2026-09-24T17:48:21.886Z",
           "state": "measured"
         }
       ],
@@ -383,6 +384,37 @@
     {
       "source": "derived",
       "status": "open",
+      "id": "evidence:inventory-stale",
+      "rule": "inventory-incomplete",
+      "severity": "low",
+      "domain": "observability",
+      "businessImpact": "low",
+      "ownerLane": "Platform",
+      "title": "Part of the Cloudflare inventory is carried forward, not refreshed",
+      "observed": "RUM settings are carried forward from the 2026-09-24 read and are not refreshed by the collector. RUM coverage is therefore never plotted as a fresh measurement.",
+      "businessReason": "Zone counts, RUM coverage, and deploy freshness are only as current as the inventory read behind them.",
+      "evidence": [
+        {
+          "type": "inventory",
+          "ref": "2026-09-24T17:48:21.886Z",
+          "state": "partial"
+        }
+      ],
+      "nextAction": "Grant the collector token the missing read scopes (Zone:Read, Pages:Read) for zone and Pages facts. RUM settings additionally need a RUM read added to the collector (it does not read them yet), so they stay carried forward until that is built.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "low",
+        "class": "stale-evidence",
+        "escalateWhen": "Inventory expires (over 7 days) or a carried-forward fact is used in investor material as current.",
+        "targetLane": "Platform"
+      },
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "priority": 10
+    },
+    {
+      "source": "derived",
+      "status": "open",
       "id": "observability:single-probe-vantage",
       "rule": "single-vantage",
       "severity": "low",
@@ -395,7 +427,7 @@
       "evidence": [
         {
           "type": "probe-run",
-          "ref": "run-36035646993-1",
+          "ref": "run-36036835636-1",
           "state": "measured"
         }
       ],
@@ -409,7 +441,7 @@
       },
       "openedAt": "2026-09-24",
       "ageDays": 0,
-      "priority": 10
+      "priority": 11
     },
     {
       "source": "manual",
@@ -439,7 +471,7 @@
         "targetLane": "Frontend / product"
       },
       "ageDays": 1,
-      "priority": 11
+      "priority": 12
     }
   ]
 }
