@@ -34,6 +34,7 @@ export function applyInventory(registry, inventory) {
   const facetTimes = [inventory?.zones ? inventory.zonesObservedAt || inventory.observedAt : null, inventory?.pagesProjects ? inventory.pagesObservedAt || inventory.observedAt : null].filter(Boolean).sort();
   const inventoryMeta = {
     asOf: facetTimes[0] || registry.inventory.asOf,
+    baselineAsOf: registry.inventory.asOf,
     source: inventory?.source || registry.inventory.source,
     refreshed: Boolean(inventory?.observedAt),
     // Facets actually read from Cloudflare in the latest refresh. RUM settings are not read by the collector yet,

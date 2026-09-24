@@ -156,6 +156,8 @@ test('scheduled evidence: verified health requires the authoritative contract; 2
   await expect(page.locator('#estate-table-summary')).toContainText('1 verified healthy');
 
   await expect(page.locator('#evidence-status [data-freshness="fresh"]').first()).toContainText('Fresh');
+  await expect(page.locator('#evidence-status')).toContainText('carried forward');
+  await expect(page.locator('#evidence-status')).toContainText('RUM settings');
   await expect(page.locator('#history-availability-note')).toContainText('1 measured probe snapshot');
   await expect(page.locator('#gap-list')).toContainText('publish no web service');
   await expect(page.locator('#gap-list')).not.toContainText('is unavailable');
