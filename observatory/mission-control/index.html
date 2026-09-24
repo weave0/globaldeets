@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="GlobalDeets Mission Control — investor evidence, estate observability, and prioritized operating intelligence.">
+  <meta name="description" content="GlobalDeets Mission Control — historical evidence, estate health, investor diagnostics, and prioritized operating intelligence.">
   <title>Mission Control | GlobalDeets</title>
   <link rel="icon" href="/assets/favicon.png">
   <link rel="stylesheet" href="/shared/ecosystem-nav.css">
@@ -16,10 +16,10 @@
       <div class="hero-copy">
         <p class="eyebrow">GlobalDeets investor + operator intelligence</p>
         <h1>Mission Control</h1>
-        <p class="lede">One evidence-backed view of momentum, measurement quality, estate health, and the work that most changes the business next.</p>
+        <p class="lede">One evidence-backed view of momentum, measurement quality, estate health, historical change, and the work that most changes the business next.</p>
       </div>
       <div class="contract-strip" aria-label="Mission Control evidence contract">
-        <span>Certified facts first</span><span>Human traffic ≠ edge traffic</span><span>Missing measurement ≠ zero</span><span>Gaps stay visible until closed</span>
+        <span>Certified facts first</span><span>Human traffic ≠ edge traffic</span><span>Missing measurement ≠ zero</span><span>Unknown health ≠ healthy</span><span>Gaps stay visible until closed</span>
       </div>
     </header>
 
@@ -36,6 +36,39 @@
       <div id="investment-thesis" class="thesis-grid"></div>
     </section>
 
+    <section aria-labelledby="history-heading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Historical data plane</p>
+          <h2 id="history-heading">Truthful trends, including the gaps</h2>
+          <p id="history-window-note" class="section-note"></p>
+        </div>
+        <label class="range-control">Window
+          <select id="trend-range" aria-label="Trend window">
+            <option value="7">7 days</option>
+            <option value="28" selected>28 days</option>
+            <option value="90">90 days</option>
+          </select>
+        </label>
+      </div>
+      <div class="chart-grid">
+        <article class="panel chart-card">
+          <div class="panel-heading"><p class="eyebrow">Estate evidence</p><h3>Browser observability</h3></div>
+          <div id="history-estate"></div>
+          <p id="history-estate-note" class="section-note"></p>
+        </article>
+        <article class="panel chart-card">
+          <div class="panel-heading"><p class="eyebrow">Operational telemetry</p><h3>GlobalDeets edge requests</h3></div>
+          <div id="history-operational"></div>
+          <p id="history-operational-note" class="section-note"></p>
+        </article>
+        <article class="panel chart-card audience-card">
+          <div class="panel-heading"><p class="eyebrow">Certified audience</p><h3>Human audience trend</h3></div>
+          <div id="history-audience"></div>
+        </article>
+      </div>
+    </section>
+
     <section aria-labelledby="diagnostics-heading">
       <div class="section-heading"><div><p class="eyebrow">Visual diagnostics</p><h2 id="diagnostics-heading">Signal, coverage, and exposure</h2></div></div>
       <div class="visual-grid">
@@ -45,19 +78,53 @@
       </div>
     </section>
 
+    <section aria-labelledby="estate-health-heading">
+      <div class="section-heading queue-heading">
+        <div>
+          <p class="eyebrow">Whole-estate visibility</p>
+          <h2 id="estate-health-heading">Property health &amp; evidence</h2>
+          <p id="estate-table-summary" class="section-note"></p>
+        </div>
+        <div class="controls property-controls">
+          <label>Find<input id="property-search" type="search" placeholder="Search property"></label>
+          <label>Observability<select id="property-observability-filter"><option value="all">All</option><option value="observed">Observed</option><option value="unobserved">Unobserved</option></select></label>
+          <label>Diagnostic<select id="property-diagnostic-filter"><option value="all">All</option><option value="health-evidence-incomplete">Health evidence incomplete</option><option value="observability-gap">Observability gap</option></select></label>
+          <label>Sort<select id="property-sort"><option value="emphasis">Strategic emphasis</option><option value="property">Property</option><option value="observability">Observability</option><option value="deploy">Deploy freshness</option><option value="activity">Last activity</option></select></label>
+        </div>
+      </div>
+      <div class="estate-table-wrap" tabindex="0" role="region" aria-label="Estate-wide property health table">
+        <table class="estate-table">
+          <thead>
+            <tr>
+              <th scope="col">Property</th>
+              <th scope="col">Observability</th>
+              <th scope="col">Availability</th>
+              <th scope="col">Critical path</th>
+              <th scope="col">Deploy freshness</th>
+              <th scope="col">Last meaningful activity</th>
+              <th scope="col">Diagnostic</th>
+            </tr>
+          </thead>
+          <tbody id="estate-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
     <section aria-labelledby="gaps-heading">
       <div class="section-heading queue-heading">
         <div>
           <p class="eyebrow">Prioritized operating queue</p>
           <h2 id="gaps-heading">Gaps, risks, and opportunities</h2>
           <p id="queue-summary" class="section-note"></p>
+          <p class="section-note"><a href="/observatory/mission-control/diagnostics.json">Open agent-consumable diagnostics JSON →</a></p>
         </div>
         <div class="controls">
           <label>Find<input id="gap-search" type="search" placeholder="Search work"></label>
           <label>Severity<select id="severity-filter"><option value="all">All</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></label>
-          <label>Status<select id="status-filter"><option value="all">All</option><option value="open">Open</option><option value="in-progress">In progress</option><option value="blocked">Blocked</option><option value="closed">Closed</option></select></label>
+          <label>Status<select id="status-filter"><option value="all">All</option><option value="open">Open</option><option value="in-progress">In progress</option><option value="blocked">Blocked</option><option value="closed">Closed</option><option value="accepted-risk">Accepted risk</option></select></label>
           <label>Domain<select id="domain-filter"><option value="all">All</option></select></label>
-          <label>Sort<select id="sort-order"><option value="priority">Priority</option><option value="severity">Severity</option><option value="impact">Business impact</option><option value="age">Age</option><option value="domain">Domain</option></select></label>
+          <label>Escalation<select id="escalation-filter"><option value="all">All</option><option value="investor-blocking">Investor blocking</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option><option value="none">None</option></select></label>
+          <label>Sort<select id="sort-order"><option value="priority">Priority</option><option value="severity">Severity</option><option value="impact">Business impact</option><option value="age">Age</option><option value="domain">Domain</option><option value="escalation">Escalation</option></select></label>
         </div>
       </div>
       <div id="gap-list" class="gap-list"></div>
@@ -74,6 +141,7 @@
         <p id="provenance-note">Loading provenance…</p>
       </article>
     </section>
+
     <div id="mission-control-error" class="error-panel" hidden>Mission Control data could not be validated and has been withheld.</div>
   </main>
   <script src="/shared/ecosystem-nav.js"></script>

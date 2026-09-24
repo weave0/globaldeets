@@ -1,0 +1,268 @@
+{
+  "schemaVersion": "1.0.0",
+  "contractName": "globaldeets-diagnostics-queue",
+  "generatedAt": "2026-09-24T16:29:00Z",
+  "agentContract": {
+    "sortableFields": [
+      "priority",
+      "severity",
+      "businessImpact",
+      "status",
+      "ownerLane",
+      "ageDays",
+      "domain",
+      "escalation.level"
+    ],
+    "actionableStatuses": [
+      "open",
+      "in-progress",
+      "blocked"
+    ],
+    "terminalStatuses": [
+      "closed",
+      "accepted-risk"
+    ],
+    "requiredForAction": [
+      "id",
+      "severity",
+      "businessImpact",
+      "status",
+      "ownerLane",
+      "ageDays",
+      "evidence",
+      "nextAction",
+      "escalation"
+    ]
+  },
+  "items": [
+    {
+      "id": "measurement:audience-certification",
+      "priority": 1,
+      "severity": "critical",
+      "domain": "measurement",
+      "status": "in-progress",
+      "businessImpact": "existential",
+      "ownerLane": "Data / analytics",
+      "openedAt": "2026-09-23",
+      "ageDays": 1,
+      "title": "Certify human audience metrics",
+      "observed": "The latest 28-day edge snapshot contains 36,391 raw visits, including 31,681 attached to /_stcore/health.",
+      "businessReason": "Operational edge telemetry cannot responsibly stand in for human traction.",
+      "evidence": [
+        {
+          "type": "mission-control-snapshot",
+          "ref": "2026-09-23.2",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Connect certified GA4/RUM-quality audience ingestion with explicit bot, monitor, API, and asset exclusions.",
+      "escalation": {
+        "level": "investor-blocking",
+        "blocksInvestorClaim": true,
+        "escalateWhen": "Any investor material attempts to present raw edge visits or requests as human audience before certification.",
+        "targetLane": "Data / analytics + Product narrative"
+      }
+    },
+    {
+      "id": "estate:service-health",
+      "priority": 2,
+      "severity": "high",
+      "domain": "reliability",
+      "status": "open",
+      "businessImpact": "high",
+      "ownerLane": "Platform",
+      "openedAt": "2026-09-23",
+      "ageDays": 1,
+      "title": "Connect estate-wide availability and critical-path probes",
+      "observed": "All 25 active zones are inventoried, but availability and critical-path status are still unknown in the GlobalDeets data plane.",
+      "businessReason": "A broad estate can silently fail unless actual production behavior is measured independently of deploy success.",
+      "evidence": [
+        {
+          "type": "estate-health",
+          "ref": "globaldeets-estate-health@2026-09-24T16:29:00Z",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Ingest production probes for every active property and property-specific critical-path contracts; preserve unknown until evidence arrives.",
+      "escalation": {
+        "level": "high",
+        "blocksInvestorClaim": false,
+        "escalateWhen": "Any priority property has a confirmed outage, or health remains unknown for a property classified as investor-critical for more than 7 days.",
+        "targetLane": "Platform"
+      }
+    },
+    {
+      "id": "business:conversion-measurement",
+      "priority": 3,
+      "severity": "high",
+      "domain": "business",
+      "status": "open",
+      "businessImpact": "high",
+      "ownerLane": "Growth / business",
+      "openedAt": "2026-09-23",
+      "ageDays": 1,
+      "title": "Instrument meaningful business conversion events",
+      "observed": "No certified investor-facing funnel for subscriber, partner, donor, sponsor, licensing, or investor-intent conversion is connected.",
+      "businessReason": "Traffic without conversion or retention evidence does not explain economic potential.",
+      "evidence": [
+        {
+          "type": "mission-control",
+          "ref": "business-event-ingestion-seam",
+          "state": "unavailable"
+        }
+      ],
+      "nextAction": "Define the business-event taxonomy and connect first-party or GA4 event telemetry with source, window, and attribution limits.",
+      "escalation": {
+        "level": "high",
+        "blocksInvestorClaim": false,
+        "escalateWhen": "Investor materials require funnel or retention claims that cannot be sourced.",
+        "targetLane": "Growth / business"
+      }
+    },
+    {
+      "id": "observability:rum-coverage",
+      "priority": 4,
+      "severity": "medium",
+      "domain": "observability",
+      "status": "open",
+      "businessImpact": "medium",
+      "ownerLane": "Platform",
+      "openedAt": "2026-09-23",
+      "ageDays": 1,
+      "title": "Resolve four browser-observability gaps",
+      "observed": "RUM is off for artificelligance.com, artificelligence.com, fwomps.com, and fwomp.us; 21 of 25 zones are observed.",
+      "businessReason": "Unobserved properties are harder to diagnose and cannot contribute comparable browser evidence.",
+      "evidence": [
+        {
+          "type": "cloudflare-rum-inventory",
+          "ref": "2026-09-24T16:29:00Z",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Enable RUM where appropriate or explicitly record an exemption with rationale.",
+      "escalation": {
+        "level": "medium",
+        "blocksInvestorClaim": false,
+        "escalateWhen": "A currently unobserved property becomes business-critical or receives a production incident.",
+        "targetLane": "Platform"
+      }
+    },
+    {
+      "id": "data:history-density",
+      "priority": 5,
+      "severity": "medium",
+      "domain": "measurement",
+      "status": "in-progress",
+      "businessImpact": "medium",
+      "ownerLane": "Data / analytics",
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "title": "Accumulate enough certified history for 7/28/90-day trends",
+      "observed": "The historical contract exists, but only two dated infrastructure snapshots and one comparable operational-traffic snapshot are currently retained.",
+      "businessReason": "Trend charts become decision-grade only when they contain comparable observations rather than decorative lines.",
+      "evidence": [
+        {
+          "type": "history-contract",
+          "ref": "globaldeets-mission-control-history@1.0.0",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Persist scheduled snapshots from certified ingestion seams and require comparable metric definitions before calculating deltas.",
+      "escalation": {
+        "level": "medium",
+        "blocksInvestorClaim": false,
+        "escalateWhen": "A chart attempts to calculate a trend from fewer than two comparable measured observations.",
+        "targetLane": "Data / analytics"
+      }
+    },
+    {
+      "id": "product:culture-convergence",
+      "priority": 6,
+      "severity": "medium",
+      "domain": "opportunity",
+      "status": "open",
+      "businessImpact": "medium",
+      "ownerLane": "Product strategy",
+      "openedAt": "2026-09-23",
+      "ageDays": 1,
+      "title": "Quantify Culture Sherpa convergence opportunity",
+      "observed": "Culture Sherpa remains prominent in the estate and conceptually aligned with GlobalDeets place context, but shared usage evidence is not yet connected.",
+      "businessReason": "The integration thesis could improve differentiation and depth, but should be supported by actual overlap and utility evidence.",
+      "evidence": [
+        {
+          "type": "estate-health",
+          "ref": "culturesherpa.org",
+          "state": "measured"
+        },
+        {
+          "type": "product-plan",
+          "ref": "GLOBALDEETS_2030_PRODUCT_PLAN.md",
+          "state": "documented"
+        }
+      ],
+      "nextAction": "Measure cross-navigation, overlap, unique utility, search demand, and content reuse before making convergence claims.",
+      "escalation": {
+        "level": "medium",
+        "blocksInvestorClaim": false,
+        "escalateWhen": "Integration is presented as realized value before shared usage evidence exists.",
+        "targetLane": "Product strategy"
+      }
+    },
+    {
+      "id": "narrative:repository-metadata",
+      "priority": 7,
+      "severity": "medium",
+      "domain": "provenance",
+      "status": "open",
+      "businessImpact": "medium",
+      "ownerLane": "Product narrative",
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "title": "Replace stale GitHub repository description",
+      "observed": "GitHub still describes GlobalDeets as a portfolio and research intelligence showcase even though README, STATUS, and the live product have moved on.",
+      "businessReason": "Repository metadata is visible during diligence and can reintroduce the obsolete product story.",
+      "evidence": [
+        {
+          "type": "github-repository-metadata",
+          "ref": "weave0/globaldeets",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Update the repository description to the source-first world-information product narrative.",
+      "escalation": {
+        "level": "medium",
+        "blocksInvestorClaim": false,
+        "escalateWhen": "Repository metadata remains inconsistent with the live product during external diligence.",
+        "targetLane": "Product narrative"
+      }
+    },
+    {
+      "id": "narrative:live-copy-cleanup",
+      "priority": 8,
+      "severity": "low",
+      "domain": "product-quality",
+      "status": "closed",
+      "businessImpact": "low",
+      "ownerLane": "Frontend / product",
+      "openedAt": "2026-09-23",
+      "ageDays": 1,
+      "title": "Remove remaining portfolio-era live copy",
+      "observed": "GD-029 removes the remaining Data Platform Showcase language from categories.html.",
+      "businessReason": "Live product surfaces should tell one coherent story.",
+      "evidence": [
+        {
+          "type": "source-change",
+          "ref": "categories.html",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Keep CI drift checks active.",
+      "escalation": {
+        "level": "none",
+        "blocksInvestorClaim": false,
+        "escalateWhen": "Portfolio-showcase language reappears on investor-adjacent live surfaces.",
+        "targetLane": "Frontend / product"
+      }
+    }
+  ]
+}

@@ -41,7 +41,7 @@ Mission Control currently combines:
 - Web Analytics/RUM coverage inventory;
 - GlobalDeets edge telemetry;
 - live governed-source and evidence counts from the Coverage Observatory;
-- an explicit prioritized gap queue with severity, business impact, owner lane, status, and next action.
+- a versioned historical data plane for truthful 7/28/90-day views;\n- an estate-wide property health contract across all active zones;\n- an agent-consumable diagnostics queue with severity, business impact, status, owner lane, age, evidence, next action, and escalation semantics.
 
 ### Investor-claims contract
 
@@ -78,7 +78,7 @@ The current codebase includes:
 - Mission Control smoke coverage;
 - CI-gated work-item delivery.
 
-The work-item sequence is tracked as `GD-###`. Investor/diagnostic modernization begins with **GD-027** and **GD-028**.
+The work-item sequence is tracked as `GD-###`. **GD-027** and **GD-028** established investor-safe Mission Control; **GD-029** adds the versioned history, estate-health, and agent-diagnostics data plane.
 
 ## Development
 
