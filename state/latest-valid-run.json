@@ -1,0 +1,1220 @@
+{
+  "contractName": "globaldeets-probe-run",
+  "schemaVersion": "1.0.0",
+  "runId": "run-36035646993-1",
+  "startedAt": "2026-09-24T17:38:01.869Z",
+  "finishedAt": "2026-09-24T17:38:03.248Z",
+  "vantage": "github-actions",
+  "vantageCount": 1,
+  "validity": "valid",
+  "canaries": [
+    {
+      "id": "cloudflare-trace",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "id": "example",
+      "ok": true,
+      "status": 200
+    }
+  ],
+  "syntheticTraffic": {
+    "userAgent": "GlobalDeets-MissionControl-Probe/1.0 (+https://globaldeets.com/observatory/mission-control/)",
+    "header": "X-GlobalDeets-Probe: mission-control",
+    "note": "Probe requests are synthetic monitor traffic and must be excluded from certified human-audience classification."
+  },
+  "confirmation": null,
+  "properties": [
+    {
+      "propertyId": "globaldeets.com",
+      "probedAt": "2026-09-24T17:38:02.017Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 90
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://globaldeets.com/",
+        "redirects": [],
+        "durationMs": 179,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 42593,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 51,
+        "validTo": "2026-11-15T09:26:19.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "authoritative",
+        "basis": "GlobalDeets owns and deploys this property; checks mirror the production verification the deploy workflow already enforces.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 179,
+            "pass": true,
+            "detail": "ok"
+          },
+          {
+            "id": "news-health",
+            "path": "/api/news/health",
+            "status": 200,
+            "durationMs": 49,
+            "pass": true,
+            "detail": "ok"
+          },
+          {
+            "id": "mission-control-data",
+            "path": "/observatory/mission-control/mission-control-data.json",
+            "status": 200,
+            "durationMs": 153,
+            "pass": true,
+            "detail": "ok"
+          },
+          {
+            "id": "coverage-observatory",
+            "path": "/api/intelligence/observatory/coverage",
+            "status": 200,
+            "durationMs": 64,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from globaldeets.com in 179 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "culturesherpa.org",
+      "probedAt": "2026-09-24T17:38:02.018Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 12,
+        "errorCode": null,
+        "durationMs": 36
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://culturesherpa.org/explore/",
+        "redirects": [
+          {
+            "from": "https://culturesherpa.org/",
+            "to": "https://culturesherpa.org/explore/",
+            "status": 301
+          }
+        ],
+        "durationMs": 114,
+        "contentType": "text/html",
+        "bytes": 202651,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 177,
+        "validTo": "2027-03-20T23:59:59.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 114,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from culturesherpa.org in 114 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "culturesherpa.com",
+      "probedAt": "2026-09-24T17:38:02.018Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 94
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://culturesherpa.org/explore/",
+        "redirects": [
+          {
+            "from": "https://culturesherpa.com/",
+            "to": "https://culturesherpa.org/",
+            "status": 301
+          },
+          {
+            "from": "https://culturesherpa.org/",
+            "to": "https://culturesherpa.org/explore/",
+            "status": 301
+          }
+        ],
+        "durationMs": 146,
+        "contentType": "text/html",
+        "bytes": 202651,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 42,
+        "validTo": "2026-11-06T00:28:55.000Z"
+      },
+      "criticalPath": {
+        "state": "unknown",
+        "level": null,
+        "basis": null,
+        "checks": [],
+        "reason": "Redirect-only alias: availability is probed, but there is no independent critical path."
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from culturesherpa.org in 146 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "agentkagent.com",
+      "probedAt": "2026-09-24T17:38:02.018Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 44
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://agentkagent.com/",
+        "redirects": [],
+        "durationMs": 78,
+        "contentType": "text/html",
+        "bytes": 19028,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 69,
+        "validTo": "2026-12-02T21:58:12.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 78,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from agentkagent.com in 78 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "aiaimate.com",
+      "probedAt": "2026-09-24T17:38:02.018Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 1,
+        "errorCode": null,
+        "durationMs": 93
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://aiaimate.com/",
+        "redirects": [],
+        "durationMs": 106,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 96075,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 85,
+        "validTo": "2026-12-19T10:25:18.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 106,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from aiaimate.com in 106 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "artificelligance.com",
+      "probedAt": "2026-09-24T17:38:02.166Z",
+      "dns": {
+        "state": "no-address-records",
+        "addresses": 0,
+        "errorCode": "ENODATA,ENODATA",
+        "durationMs": 97
+      },
+      "http": {
+        "state": "not-attempted",
+        "attempts": 0
+      },
+      "tls": {
+        "state": "unknown",
+        "daysRemaining": null,
+        "validTo": null
+      },
+      "criticalPath": {
+        "state": "unknown",
+        "level": null,
+        "basis": null,
+        "checks": [],
+        "reason": "No honest critical-path contract exists for this property yet; only availability is probed."
+      },
+      "observation": {
+        "state": "no-service-published",
+        "blocked": false,
+        "failureClass": "dns-no-address-records",
+        "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
+        "nextAction": "Zone resolves but publishes no A/AAAA/CNAME for the web host. Decide: publish a placeholder, redirect, or record the property as intentionally parked in the registry."
+      }
+    },
+    {
+      "propertyId": "artificelligence.com",
+      "probedAt": "2026-09-24T17:38:02.190Z",
+      "dns": {
+        "state": "no-address-records",
+        "addresses": 0,
+        "errorCode": "ENODATA,ENODATA",
+        "durationMs": 106
+      },
+      "http": {
+        "state": "not-attempted",
+        "attempts": 0
+      },
+      "tls": {
+        "state": "unknown",
+        "daysRemaining": null,
+        "validTo": null
+      },
+      "criticalPath": {
+        "state": "unknown",
+        "level": null,
+        "basis": null,
+        "checks": [],
+        "reason": "No honest critical-path contract exists for this property yet; only availability is probed."
+      },
+      "observation": {
+        "state": "no-service-published",
+        "blocked": false,
+        "failureClass": "dns-no-address-records",
+        "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
+        "nextAction": "Zone resolves but publishes no A/AAAA/CNAME for the web host. Decide: publish a placeholder, redirect, or record the property as intentionally parked in the registry."
+      }
+    },
+    {
+      "propertyId": "brettleeweaver.com",
+      "probedAt": "2026-09-24T17:38:02.263Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 42
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://www.brettleeweaver.com/",
+        "redirects": [
+          {
+            "from": "https://brettleeweaver.com/",
+            "to": "https://www.brettleeweaver.com/",
+            "status": 308
+          }
+        ],
+        "durationMs": 271,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 42188,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 83,
+        "validTo": "2026-12-17T04:13:10.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 271,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from www.brettleeweaver.com in 271 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "citizenapproved.org",
+      "probedAt": "2026-09-24T17:38:02.283Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 41
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://citizenapproved.org/",
+        "redirects": [],
+        "durationMs": 213,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 67869,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 40,
+        "validTo": "2026-11-04T02:35:31.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 213,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from citizenapproved.org in 213 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "cyancanoe.com",
+      "probedAt": "2026-09-24T17:38:02.296Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 27
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://cyancanoe.com/",
+        "redirects": [],
+        "durationMs": 142,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 11984,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 58,
+        "validTo": "2026-11-22T02:39:01.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 142,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from cyancanoe.com in 142 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "flipskillet.com",
+      "probedAt": "2026-09-24T17:38:02.339Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 46
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://flipskillet.com/",
+        "redirects": [],
+        "durationMs": 148,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 9137,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 66,
+        "validTo": "2026-11-30T00:21:45.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 148,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from flipskillet.com in 148 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "flipskillit.com",
+      "probedAt": "2026-09-24T17:38:02.530Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 42
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://flipskillit.com/",
+        "redirects": [],
+        "durationMs": 130,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 9137,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 65,
+        "validTo": "2026-11-29T00:45:08.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 130,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from flipskillit.com in 130 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "foxyana.com",
+      "probedAt": "2026-09-24T17:38:02.579Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 92
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://foxyana.com/",
+        "redirects": [],
+        "durationMs": 134,
+        "contentType": "text/html",
+        "bytes": 127381,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 43,
+        "validTo": "2026-11-07T04:34:14.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 134,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from foxyana.com in 134 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "fwomps.com",
+      "probedAt": "2026-09-24T17:38:02.596Z",
+      "dns": {
+        "state": "no-address-records",
+        "addresses": 0,
+        "errorCode": "ENODATA,ENODATA",
+        "durationMs": 93
+      },
+      "http": {
+        "state": "not-attempted",
+        "attempts": 0
+      },
+      "tls": {
+        "state": "unknown",
+        "daysRemaining": null,
+        "validTo": null
+      },
+      "criticalPath": {
+        "state": "unknown",
+        "level": null,
+        "basis": null,
+        "checks": [],
+        "reason": "No honest critical-path contract exists for this property yet; only availability is probed."
+      },
+      "observation": {
+        "state": "no-service-published",
+        "blocked": false,
+        "failureClass": "dns-no-address-records",
+        "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
+        "nextAction": "Zone resolves but publishes no A/AAAA/CNAME for the web host. Decide: publish a placeholder, redirect, or record the property as intentionally parked in the registry."
+      }
+    },
+    {
+      "propertyId": "fwomp.us",
+      "probedAt": "2026-09-24T17:38:02.601Z",
+      "dns": {
+        "state": "no-address-records",
+        "addresses": 0,
+        "errorCode": "ENODATA,ENODATA",
+        "durationMs": 41
+      },
+      "http": {
+        "state": "not-attempted",
+        "attempts": 0
+      },
+      "tls": {
+        "state": "unknown",
+        "daysRemaining": null,
+        "validTo": null
+      },
+      "criticalPath": {
+        "state": "unknown",
+        "level": null,
+        "basis": null,
+        "checks": [],
+        "reason": "No honest critical-path contract exists for this property yet; only availability is probed."
+      },
+      "observation": {
+        "state": "no-service-published",
+        "blocked": false,
+        "failureClass": "dns-no-address-records",
+        "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
+        "nextAction": "Zone resolves but publishes no A/AAAA/CNAME for the web host. Decide: publish a placeholder, redirect, or record the property as intentionally parked in the registry."
+      }
+    },
+    {
+      "propertyId": "gflippinv.com",
+      "probedAt": "2026-09-24T17:38:02.641Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 27
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://gflippinv.com/",
+        "redirects": [],
+        "durationMs": 133,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 100118,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 86,
+        "validTo": "2026-12-20T05:57:53.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 133,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from gflippinv.com in 133 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "goodflippindesign.com",
+      "probedAt": "2026-09-24T17:38:02.642Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 56
+      },
+      "http": {
+        "state": "blocked",
+        "status": 403,
+        "finalUrl": "https://goodflippindesign.com/",
+        "redirects": [],
+        "durationMs": 57,
+        "contentType": "text/html; charset=UTF-8",
+        "bytes": 5561,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 37,
+        "validTo": "2026-11-01T01:43:52.000Z"
+      },
+      "criticalPath": {
+        "state": "unknown",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [],
+        "reason": "Not evaluable while availability is blocked."
+      },
+      "observation": {
+        "state": "unknown",
+        "blocked": true,
+        "failureClass": "edge-challenge",
+        "reason": "Probe was restricted by the target (edge-challenge); this vantage cannot establish availability.",
+        "nextAction": "The edge served a bot challenge to the probe. This is insufficient evidence, not an outage: allow-list the probe user agent/header or add a second vantage."
+      }
+    },
+    {
+      "propertyId": "goodflippinluck.com",
+      "probedAt": "2026-09-24T17:38:02.689Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 96
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://goodflippinluck.com/",
+        "redirects": [],
+        "durationMs": 131,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 5037,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 40,
+        "validTo": "2026-11-04T06:34:45.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 131,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from goodflippinluck.com in 131 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "goodflippinnews.com",
+      "probedAt": "2026-09-24T17:38:02.731Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 40
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://goodflippinnews.com/",
+        "redirects": [],
+        "durationMs": 134,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 5525,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 40,
+        "validTo": "2026-11-04T01:47:15.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 134,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from goodflippinnews.com in 134 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "goodflippinvibes.com",
+      "probedAt": "2026-09-24T17:38:02.784Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 48
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://goodflippinvibes.com/",
+        "redirects": [],
+        "durationMs": 105,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 99541,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 40,
+        "validTo": "2026-11-04T13:25:27.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 105,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from goodflippinvibes.com in 105 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "goodflippinyikes.com",
+      "probedAt": "2026-09-24T17:38:02.829Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 41
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://goodflippinyikes.com/",
+        "redirects": [],
+        "durationMs": 200,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 18089,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 48,
+        "validTo": "2026-11-12T05:53:51.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 200,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from goodflippinyikes.com in 200 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "heavymoose.com",
+      "probedAt": "2026-09-24T17:38:02.843Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 102
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://heavymoose.com/",
+        "redirects": [],
+        "durationMs": 180,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 133669,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 59,
+        "validTo": "2026-11-23T05:48:25.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 180,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from heavymoose.com in 180 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "lowertownstpaul.org",
+      "probedAt": "2026-09-24T17:38:02.942Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 18
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://lowertownstpaul.org/",
+        "redirects": [],
+        "durationMs": 173,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 106538,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 60,
+        "validTo": "2026-11-24T16:52:05.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 173,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from lowertownstpaul.org in 173 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "minnesotapeace.com",
+      "probedAt": "2026-09-24T17:38:02.950Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 97
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://minnesotapeace.com/",
+        "redirects": [],
+        "durationMs": 174,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 29266,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 71,
+        "validTo": "2026-12-05T01:45:35.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 174,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from minnesotapeace.com in 174 ms.",
+        "nextAction": null
+      }
+    },
+    {
+      "propertyId": "redleopardofstpaul.com",
+      "probedAt": "2026-09-24T17:38:02.972Z",
+      "dns": {
+        "state": "resolved",
+        "addresses": 4,
+        "errorCode": null,
+        "durationMs": 37
+      },
+      "http": {
+        "state": "available",
+        "status": 200,
+        "finalUrl": "https://redleopardofstpaul.com/",
+        "redirects": [],
+        "durationMs": 130,
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 49241,
+        "attempts": 1,
+        "errorCode": null
+      },
+      "tls": {
+        "state": "valid",
+        "daysRemaining": 63,
+        "validTo": "2026-11-26T18:43:08.000Z"
+      },
+      "criticalPath": {
+        "state": "pass",
+        "level": "baseline",
+        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+        "checks": [
+          {
+            "id": "home",
+            "path": "/",
+            "status": 200,
+            "durationMs": 130,
+            "pass": true,
+            "detail": "ok"
+          }
+        ],
+        "reason": null
+      },
+      "observation": {
+        "state": "available",
+        "blocked": false,
+        "failureClass": null,
+        "reason": "HTTP 200 from redleopardofstpaul.com in 130 ms.",
+        "nextAction": null
+      }
+    }
+  ]
+}
