@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('Mission Control renders investor-safe evidence, visuals, and business interpretation', async ({ page }) => {
+test('Mission Control renders investor-safe history, estate health, and business interpretation', async ({ page }) => {
   await page.goto('/observatory/mission-control/');
   await expect(page.getByRole('heading', { name: 'Mission Control' })).toBeVisible();
   await expect(page.locator('body[data-mission-control-ready="true"]')).toBeVisible();
@@ -24,11 +24,15 @@ test('Mission Control renders investor-safe evidence, visuals, and business inte
   await expect(page.getByText(/Raw edge visits cannot be presented as audience/)).toBeVisible();
   await expect(page.getByText('Investor-safe audience', { exact: true })).toBeVisible();
   await expect(page.getByText('Not yet certified')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Open work by severity' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Truthful trends, including the gaps' })).toBeVisible();
+  await expect(page.getByText(/Certified audience history is unavailable/)).toBeVisible();
+  await expect(page.locator('#estate-table-body tr')).toHaveCount(25);
+  await expect(page.locator('#estate-table-body tr').nth(0)).toContainText('GlobalDeets');
+  await expect(page.locator('#estate-table-body tr').nth(1)).toContainText('Culture Sherpa');
   await expect(page.locator('#mission-control-error')).toBeHidden();
 });
 
-test('Mission Control filters and searches the operating queue', async ({ page }) => {
+test('Mission Control filters the escalation-aware operating queue', async ({ page }) => {
   await page.goto('/observatory/mission-control/');
   await expect(page.locator('body[data-mission-control-ready="true"]')).toBeVisible();
 
@@ -43,17 +47,47 @@ test('Mission Control filters and searches the operating queue', async ({ page }
 
   await page.locator('#gap-search').fill('');
   await page.locator('#status-filter').selectOption('in-progress');
-  await expect(page.locator('#gap-list .gap-card')).toHaveCount(3);
+  await expect(page.locator('#gap-list .gap-card')).toHaveCount(2);
+
+  await page.locator('#status-filter').selectOption('all');
+  await page.locator('#escalation-filter').selectOption('investor-blocking');
+  await expect(page.locator('#gap-list .gap-card')).toHaveCount(1);
+  await expect(page.locator('#gap-list .gap-card')).toContainText('blocks audience traction claims'.replace('blocks audience traction claims', 'Certify human audience metrics'));
+});
+
+test('Mission Control exposes estate observability gaps without implying outages', async ({ page }) => {
+  await page.goto('/observatory/mission-control/');
+  await expect(page.locator('body[data-mission-control-ready="true"]')).toBeVisible();
+
+  await page.locator('#property-observability-filter').selectOption('unobserved');
+  await expect(page.locator('#estate-table-body tr')).toHaveCount(4);
+  await expect(page.locator('#estate-table-body')).toContainText('fwomps.com');
+
+  await page.locator('#property-search').fill('fwomps.com');
+  await expect(page.locator('#estate-table-body tr')).toHaveCount(1);
+  await expect(page.locator('#estate-table-body tr')).toContainText('RUM off');
+  await expect(page.locator('#estate-table-body tr')).toContainText('Unknown');
+});
+
+test('Mission Control changes historical windows without fabricating a trend', async ({ page }) => {
+  await page.goto('/observatory/mission-control/');
+  await expect(page.locator('body[data-mission-control-ready="true"]')).toBeVisible();
+  await page.locator('#trend-range').selectOption('90');
+  await expect(page.locator('#history-window-note')).toContainText('90-day view');
+  await expect(page.locator('#history-operational-note')).toContainText('1 comparable measured snapshot');
 });
 
 test.describe('Mission Control mobile surface', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test('remains readable without horizontal overflow', async ({ page }) => {
+  test('remains readable without document-level horizontal overflow', async ({ page }) => {
     await page.goto('/observatory/mission-control/');
     await expect(page.locator('body[data-mission-control-ready="true"]')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Gaps, risks, and opportunities' })).toBeVisible();
-    const dimensions = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth }));
+    await expect(page.getByRole('heading', { name: 'Property health & evidence' })).toBeVisible();
+    const dimensions = await page.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+    }));
     expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1);
   });
 });
