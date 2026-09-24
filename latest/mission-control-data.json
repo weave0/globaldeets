@@ -1,7 +1,7 @@
 {
   "missionControlId": "globaldeets-estate",
   "snapshotVersion": "2026-09-24.scheduled",
-  "generatedAt": "2026-09-24T18:32:06.348Z",
+  "generatedAt": "2026-09-24T19:47:48.528Z",
   "investorClaimsPolicy": {
     "humanAudienceRequiresCertifiedMeasurement": true,
     "edgeTrafficIsHumanAudience": false,
@@ -11,20 +11,42 @@
     "history": "/observatory/mission-control/history.json",
     "estateHealth": "/observatory/mission-control/estate-health.json",
     "diagnostics": "/observatory/mission-control/diagnostics.json",
-    "probes": "/observatory/mission-control/probes.json"
+    "probes": "/observatory/mission-control/probes.json",
+    "audience": "/observatory/mission-control/audience.json",
+    "businessEvents": "/observatory/mission-control/business-events.json",
+    "executive": "/observatory/mission-control/executive.json"
   },
   "estate": {
     "activeZones": 25,
-    "rumObservedZones": 21,
-    "rumCoveragePct": 84,
-    "missingRumZones": [
+    "rumSettingOnZones": 21,
+    "rumSettingCoveragePct": 84,
+    "rumSettingOffZones": [
       "artificelligance.com",
       "artificelligence.com",
       "fwomps.com",
       "fwomp.us"
     ],
+    "instrumentation": {
+      "applicable": 20,
+      "activeVerified": 6,
+      "configuredUnverified": 13,
+      "configuredInvalid": 0,
+      "absent": 0,
+      "inaccessible": 1,
+      "unknown": 0
+    },
     "source": "Cloudflare API (zones + pages)",
-    "inventoryAsOf": "2026-09-24T18:32:06.349Z"
+    "inventoryAsOf": "2026-09-24T19:47:48.530Z"
+  },
+  "audience": {
+    "status": "awaiting-authorized-source",
+    "propertiesMeasured": 0,
+    "edgeRequests28d": null,
+    "observedAt": null
+  },
+  "businessEvents": {
+    "status": "not-connected",
+    "instrumented": 0
   },
   "globaldeetsTraffic": {
     "sourceSnapshotId": "2026-09-23.2",
@@ -51,15 +73,15 @@
     },
     {
       "label": "Platform",
-      "title": "The estate is now visible as an operating system, not a logo wall",
-      "statement": "Every active zone is represented in one health contract, GlobalDeets first and Culture Sherpa prominent. The contract carries scheduled availability and critical-path evidence when it exists and otherwise exposes unknown, blocked, and stale states instead of implying health.",
-      "proof": "Estate-health contract + scheduled production probes (see the evidence freshness panel for what is currently proven)."
+      "title": "The estate is visible as an operating system, not a logo wall",
+      "statement": "Every web property in the estate is registered with its purpose and owner-declared status, probed on a schedule from more than one network, and judged by an explicit health contract that never treats a reachable page as a healthy one.",
+      "proof": "Estate-health contract + scheduled multi-vantage production probes."
     },
     {
-      "label": "Execution",
-      "title": "The diagnostic layer is consumable by both humans and agents",
-      "statement": "Mission Control derives its diagnostics queue from evidence and exposes priority, severity, business impact, ownership, age, escalation class, and next action for humans and agents.",
-      "proof": "Diagnostics contract derived from probe, history, and inventory evidence + sortable Mission Control queue."
+      "label": "Discipline",
+      "title": "What is known and what is not are both first-class",
+      "statement": "Audience, business outcomes and browser telemetry each carry a state (measured, not connected, awaiting authorization, unavailable). Unknown is never shown as zero, and edge requests are never presented as people.",
+      "proof": "Governed audience, business-event and instrumentation contracts."
     }
   ]
 }

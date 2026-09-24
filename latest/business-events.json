@@ -1,0 +1,1158 @@
+{
+  "contractName": "globaldeets-business-events",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-09-24T19:47:48.528Z",
+  "policy": {
+    "missingIsZero": false,
+    "zeroRequiresInstrumentation": true,
+    "ratesRequireComparableDenominator": true,
+    "fixturesAreProduction": false,
+    "forceCommerceSemantics": false
+  },
+  "vocabulary": [
+    {
+      "id": "visit",
+      "label": "Visit",
+      "commerce": false
+    },
+    {
+      "id": "engagement",
+      "label": "Meaningful engagement",
+      "commerce": false
+    },
+    {
+      "id": "cta",
+      "label": "Call-to-action interaction",
+      "commerce": false
+    },
+    {
+      "id": "lead",
+      "label": "Lead or contact",
+      "commerce": false
+    },
+    {
+      "id": "signup",
+      "label": "Sign-up",
+      "commerce": false
+    },
+    {
+      "id": "application",
+      "label": "Application",
+      "commerce": false
+    },
+    {
+      "id": "purchase",
+      "label": "Purchase or payment",
+      "commerce": true
+    },
+    {
+      "id": "download",
+      "label": "Download or content acquisition",
+      "commerce": false
+    },
+    {
+      "id": "primary-outcome",
+      "label": "Other declared primary outcome",
+      "commerce": false
+    }
+  ],
+  "source": {
+    "status": "not-connected",
+    "reason": "No governed business-event feed is connected. Event-producing routes may exist in source, but none reports counts to Mission Control.",
+    "requirement": {
+      "what": "A governed first-party business-event feed (counts per property, event type and window) with explicit instrumentation status.",
+      "secrets": [
+        "MISSION_CONTROL_EVENTS_SOURCE",
+        "MISSION_CONTROL_EVENTS_TOKEN"
+      ],
+      "owner": "Each property owner declares an outcome; a producer publishes counts to the feed contract."
+    },
+    "feed": null,
+    "observedAt": null,
+    "freshness": {
+      "state": "unknown",
+      "ageHours": null,
+      "freshUntil": null,
+      "expiresAt": null
+    }
+  },
+  "coverage": {
+    "propertiesApplicable": 20,
+    "withDeclaredOutcome": 6,
+    "withCandidateProducers": 3,
+    "instrumented": 0
+  },
+  "estate": {
+    "totals": {}
+  },
+  "properties": [
+    {
+      "propertyId": "globaldeets.com",
+      "primaryOutcome": null,
+      "earningPath": "Commissioned briefs and data sponsors",
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "culturesherpa.org",
+      "primaryOutcome": {
+        "type": "engagement",
+        "label": "Explore the cultural atlas"
+      },
+      "earningPath": "Grants, learning sponsors and modules",
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [
+        {
+          "eventType": "engagement",
+          "label": "Meaningful engagement",
+          "readings": {
+            "7": {
+              "evidenceState": "uninstrumented",
+              "value": null,
+              "unit": "events",
+              "reason": "No countable outcome is declared."
+            },
+            "28": {
+              "evidenceState": "uninstrumented",
+              "value": null,
+              "unit": "events",
+              "reason": "No countable outcome is declared."
+            },
+            "90": {
+              "evidenceState": "uninstrumented",
+              "value": null,
+              "unit": "events",
+              "reason": "No countable outcome is declared."
+            }
+          }
+        }
+      ],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "culturesherpa.com",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "not-applicable",
+        "reason": "Redirect alias: outcomes belong to the destination property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        },
+        "28": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        },
+        "90": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        }
+      }
+    },
+    {
+      "propertyId": "agentkagent.com",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "aiaimate.com",
+      "primaryOutcome": {
+        "type": "engagement",
+        "label": "Start learning AI by doing"
+      },
+      "earningPath": "Subscriptions, premium kits and sponsors",
+      "instrumentation": {
+        "state": "not-connected",
+        "reason": "Event-producing routes exist in source (signup, purchase) but no governed feed carries their counts.",
+        "candidateProducers": [
+          {
+            "type": "signup",
+            "producer": "portal/app/api/newsletter/subscribe",
+            "repository": "weave0/aiaimate"
+          },
+          {
+            "type": "purchase",
+            "producer": "portal/app/api/stripe/create-checkout and create-subscription",
+            "repository": "weave0/aiaimate"
+          }
+        ]
+      },
+      "events": [
+        {
+          "eventType": "engagement",
+          "label": "Meaningful engagement",
+          "readings": {
+            "7": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            },
+            "28": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            },
+            "90": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            }
+          }
+        },
+        {
+          "eventType": "purchase",
+          "label": "Purchase or payment",
+          "readings": {
+            "7": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            },
+            "28": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            },
+            "90": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            }
+          }
+        },
+        {
+          "eventType": "signup",
+          "label": "Sign-up",
+          "readings": {
+            "7": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            },
+            "28": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            },
+            "90": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            }
+          }
+        }
+      ],
+      "conversion": {
+        "7": {
+          "evidenceState": "not-connected",
+          "value": null,
+          "unit": "percent",
+          "reason": "No governed feed carries this producer."
+        },
+        "28": {
+          "evidenceState": "not-connected",
+          "value": null,
+          "unit": "percent",
+          "reason": "No governed feed carries this producer."
+        },
+        "90": {
+          "evidenceState": "not-connected",
+          "value": null,
+          "unit": "percent",
+          "reason": "No governed feed carries this producer."
+        }
+      }
+    },
+    {
+      "propertyId": "artificelligance.com",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "not-applicable",
+        "reason": "No web service is published.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        },
+        "28": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        },
+        "90": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        }
+      }
+    },
+    {
+      "propertyId": "artificelligence.com",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "not-applicable",
+        "reason": "No web service is published.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        },
+        "28": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        },
+        "90": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        }
+      }
+    },
+    {
+      "propertyId": "brettleeweaver.com",
+      "primaryOutcome": null,
+      "earningPath": "Credibility, speaking and partner trust",
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "citizenapproved.org",
+      "primaryOutcome": null,
+      "earningPath": "Civic sponsors, grants and email list",
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "cyancanoe.com",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "not-connected",
+        "reason": "Event-producing routes exist in source (lead) but no governed feed carries their counts.",
+        "candidateProducers": [
+          {
+            "type": "lead",
+            "producer": "site/landing/functions/inquiry.js",
+            "repository": "weave0/cyan-canoe"
+          }
+        ]
+      },
+      "events": [
+        {
+          "eventType": "lead",
+          "label": "Lead or contact",
+          "readings": {
+            "7": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            },
+            "28": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            },
+            "90": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            }
+          }
+        }
+      ],
+      "conversion": {
+        "7": {
+          "evidenceState": "not-connected",
+          "value": null,
+          "unit": "percent",
+          "reason": "No governed feed carries this producer."
+        },
+        "28": {
+          "evidenceState": "not-connected",
+          "value": null,
+          "unit": "percent",
+          "reason": "No governed feed carries this producer."
+        },
+        "90": {
+          "evidenceState": "not-connected",
+          "value": null,
+          "unit": "percent",
+          "reason": "No governed feed carries this producer."
+        }
+      }
+    },
+    {
+      "propertyId": "flipskillet.com",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "flipskillit.com",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "foxyana.com",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "fwomps.com",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "not-applicable",
+        "reason": "No web service is published.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        },
+        "28": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        },
+        "90": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        }
+      }
+    },
+    {
+      "propertyId": "fwomp.us",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "not-applicable",
+        "reason": "No web service is published.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        },
+        "28": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        },
+        "90": {
+          "evidenceState": "unknown",
+          "value": null,
+          "unit": "percent",
+          "reason": "Not applicable."
+        }
+      }
+    },
+    {
+      "propertyId": "gflippinv.com",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "goodflippindesign.com",
+      "primaryOutcome": {
+        "type": "lead",
+        "label": "Start a project inquiry"
+      },
+      "earningPath": "Patrons, ads, sponsor intake and commissioned work",
+      "instrumentation": {
+        "state": "not-connected",
+        "reason": "Event-producing routes exist in source (lead, purchase) but no governed feed carries their counts.",
+        "candidateProducers": [
+          {
+            "type": "lead",
+            "producer": "functions/api/contact.js and functions/api/legal-forms.js",
+            "repository": "weave0/goodflippindesign"
+          },
+          {
+            "type": "purchase",
+            "producer": "functions/create-checkout.js (Stripe checkout)",
+            "repository": "weave0/goodflippindesign"
+          }
+        ]
+      },
+      "events": [
+        {
+          "eventType": "lead",
+          "label": "Lead or contact",
+          "readings": {
+            "7": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            },
+            "28": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            },
+            "90": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            }
+          }
+        },
+        {
+          "eventType": "purchase",
+          "label": "Purchase or payment",
+          "readings": {
+            "7": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            },
+            "28": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            },
+            "90": {
+              "evidenceState": "not-connected",
+              "value": null,
+              "unit": "events",
+              "reason": "No governed feed carries this producer."
+            }
+          }
+        }
+      ],
+      "conversion": {
+        "7": {
+          "evidenceState": "not-connected",
+          "value": null,
+          "unit": "percent",
+          "reason": "No governed feed carries this producer."
+        },
+        "28": {
+          "evidenceState": "not-connected",
+          "value": null,
+          "unit": "percent",
+          "reason": "No governed feed carries this producer."
+        },
+        "90": {
+          "evidenceState": "not-connected",
+          "value": null,
+          "unit": "percent",
+          "reason": "No governed feed carries this producer."
+        }
+      }
+    },
+    {
+      "propertyId": "goodflippinluck.com",
+      "primaryOutcome": {
+        "type": "engagement",
+        "label": "Play, share and join the supporter list"
+      },
+      "earningPath": null,
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [
+        {
+          "eventType": "engagement",
+          "label": "Meaningful engagement",
+          "readings": {
+            "7": {
+              "evidenceState": "uninstrumented",
+              "value": null,
+              "unit": "events",
+              "reason": "No countable outcome is declared."
+            },
+            "28": {
+              "evidenceState": "uninstrumented",
+              "value": null,
+              "unit": "events",
+              "reason": "No countable outcome is declared."
+            },
+            "90": {
+              "evidenceState": "uninstrumented",
+              "value": null,
+              "unit": "events",
+              "reason": "No countable outcome is declared."
+            }
+          }
+        }
+      ],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "goodflippinnews.com",
+      "primaryOutcome": {
+        "type": "signup",
+        "label": "Subscribe or follow ecosystem dispatches"
+      },
+      "earningPath": null,
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [
+        {
+          "eventType": "signup",
+          "label": "Sign-up",
+          "readings": {
+            "7": {
+              "evidenceState": "uninstrumented",
+              "value": null,
+              "unit": "events",
+              "reason": "No countable outcome is declared."
+            },
+            "28": {
+              "evidenceState": "uninstrumented",
+              "value": null,
+              "unit": "events",
+              "reason": "No countable outcome is declared."
+            },
+            "90": {
+              "evidenceState": "uninstrumented",
+              "value": null,
+              "unit": "events",
+              "reason": "No countable outcome is declared."
+            }
+          }
+        }
+      ],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "goodflippinvibes.com",
+      "primaryOutcome": {
+        "type": "signup",
+        "label": "Join or support the community"
+      },
+      "earningPath": "Patrons and community features",
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [
+        {
+          "eventType": "signup",
+          "label": "Sign-up",
+          "readings": {
+            "7": {
+              "evidenceState": "uninstrumented",
+              "value": null,
+              "unit": "events",
+              "reason": "No countable outcome is declared."
+            },
+            "28": {
+              "evidenceState": "uninstrumented",
+              "value": null,
+              "unit": "events",
+              "reason": "No countable outcome is declared."
+            },
+            "90": {
+              "evidenceState": "uninstrumented",
+              "value": null,
+              "unit": "events",
+              "reason": "No countable outcome is declared."
+            }
+          }
+        }
+      ],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "goodflippinyikes.com",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "heavymoose.com",
+      "primaryOutcome": null,
+      "earningPath": "Patron support, streaming and merch",
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "lowertownstpaul.org",
+      "primaryOutcome": null,
+      "earningPath": "Local sponsors and quarterly briefings",
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "minnesotapeace.com",
+      "primaryOutcome": null,
+      "earningPath": "Civic services and local partnerships",
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    },
+    {
+      "propertyId": "redleopardofstpaul.com",
+      "primaryOutcome": null,
+      "earningPath": null,
+      "instrumentation": {
+        "state": "uninstrumented",
+        "reason": "No event-producing route has been declared for this property.",
+        "candidateProducers": []
+      },
+      "events": [],
+      "conversion": {
+        "7": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "28": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        },
+        "90": {
+          "evidenceState": "uninstrumented",
+          "value": null,
+          "unit": "percent",
+          "reason": "No countable outcome is declared."
+        }
+      }
+    }
+  ]
+}

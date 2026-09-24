@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "contractName": "globaldeets-estate-health",
-  "generatedAt": "2026-09-24T18:32:06.348Z",
+  "generatedAt": "2026-09-24T19:47:48.528Z",
   "propertyCount": 25,
   "policy": {
     "unknownIsHealthy": false,
@@ -10,10 +10,13 @@
     "zoneEqualsIndependentAudience": false,
     "httpReachabilityEqualsHealth": false,
     "providerTopologyIsUnhealthy": false,
-    "expiredEvidenceIsCurrent": false
+    "expiredEvidenceIsCurrent": false,
+    "intentionallyInactiveIsOutage": false,
+    "cloudflareRumSettingIsTelemetry": false,
+    "tagPresenceIsReception": false
   },
   "healthContract": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "states": [
       "verified-healthy",
       "reachable-unverified",
@@ -23,6 +26,7 @@
       "no-service-published",
       "probe-blocked",
       "contract-drift",
+      "vantage-conflict",
       "evidence-stale",
       "evidence-expired",
       "health-evidence-incomplete"
@@ -32,7 +36,10 @@
       "HTTP 2xx alone yields reachable-unverified, never verified-healthy.",
       "A successful deploy is not availability evidence.",
       "A blocked probe (edge challenge, 401/403, 429) is insufficient evidence, not an outage.",
+      "A blocked vantage is set aside when another vantage is conclusive; the blocked vantage stays visible as evidence.",
+      "Vantages that conclusively disagree yield vantage-conflict; neither answer is silently chosen.",
       "A zone that publishes no web address and declares no service is no-service-published, not an outage.",
+      "A declared-inactive or unknown-intent property that publishes nothing is never an outage.",
       "Provider topology (Pages, Workers, external hosts) never by itself makes a property unhealthy.",
       "Baseline (non-authoritative) contract mismatches are contract-drift for review, never outages.",
       "Expired evidence is presented as unknown; a confirmed outage keeps its alarm while it ages.",
@@ -54,15 +61,55 @@
       "cadenceHours": 24,
       "freshWithinHours": 48,
       "expiredAfterHours": 168
+    },
+    "audience": {
+      "cadenceHours": 24,
+      "freshWithinHours": 36,
+      "expiredAfterHours": 96
+    },
+    "businessEvents": {
+      "cadenceHours": 24,
+      "freshWithinHours": 36,
+      "expiredAfterHours": 96
     }
   },
   "evidence": {
     "probe": {
-      "runId": "run-36041879939-1",
-      "observedAt": "2026-09-24T18:32:06.348Z",
+      "runId": "run-36050496073-1",
+      "observedAt": "2026-09-24T19:47:48.528Z",
       "validity": "valid",
       "vantage": "github-actions",
-      "vantageCount": 1,
+      "vantageCount": 2,
+      "vantages": [
+        {
+          "id": "github-actions",
+          "network": null,
+          "role": "primary",
+          "runId": "run-36050496073-1",
+          "observedAt": "2026-09-24T19:47:48.528Z",
+          "validity": "valid",
+          "freshness": {
+            "state": "fresh",
+            "ageHours": 0,
+            "freshUntil": "2026-09-25T03:47:48.528Z",
+            "expiresAt": "2026-09-25T19:47:48.528Z"
+          }
+        },
+        {
+          "id": "github-actions-macos",
+          "network": "GitHub-hosted macOS",
+          "role": "secondary",
+          "runId": "vantage-github-actions-macos-36050496073",
+          "observedAt": "2026-09-24T19:47:32.802Z",
+          "validity": "valid",
+          "freshness": {
+            "state": "fresh",
+            "ageHours": 0,
+            "freshUntil": "2026-09-25T03:47:32.802Z",
+            "expiresAt": "2026-09-25T19:47:32.802Z"
+          }
+        }
+      ],
       "canaries": [
         {
           "id": "cloudflare-trace",
@@ -83,31 +130,37 @@
       "freshness": {
         "state": "fresh",
         "ageHours": 0,
-        "freshUntil": "2026-09-25T02:32:06.348Z",
-        "expiresAt": "2026-09-25T18:32:06.348Z"
+        "freshUntil": "2026-09-25T03:47:48.528Z",
+        "expiresAt": "2026-09-25T19:47:48.528Z"
       },
       "latestAttempt": {
-        "runId": "run-36041879939-1",
-        "at": "2026-09-24T18:32:06.348Z",
+        "runId": "run-36050496073-1",
+        "at": "2026-09-24T19:47:48.528Z",
         "validity": "valid"
       }
     },
     "inventory": {
-      "asOf": "2026-09-24T18:32:06.349Z",
+      "asOf": "2026-09-24T19:47:48.530Z",
       "baselineAsOf": "2026-09-24T16:29:00Z",
       "source": "Cloudflare API (zones + pages)",
       "refreshed": true,
       "facets": {
-        "zones": "2026-09-24T18:32:06.349Z",
-        "pages": "2026-09-24T18:32:06.349Z",
+        "zones": "2026-09-24T19:47:48.530Z",
+        "pages": "2026-09-24T19:47:48.530Z",
         "rum": null
       },
       "freshness": {
         "state": "fresh",
         "ageHours": 0,
-        "freshUntil": "2026-09-26T18:32:06.349Z",
-        "expiresAt": "2026-10-01T18:32:06.349Z"
+        "freshUntil": "2026-09-26T19:47:48.530Z",
+        "expiresAt": "2026-10-01T19:47:48.530Z"
       }
+    },
+    "rumReception": {
+      "status": "measured",
+      "reason": null,
+      "windowHours": 24,
+      "observedAt": "2026-09-24T19:48:00.544Z"
     }
   },
   "summary": {
@@ -120,16 +173,129 @@
     "unavailableZones": 0,
     "noServiceZones": 4,
     "probeBlockedZones": 1,
+    "conflictingZones": 0,
     "criticalPathKnownZones": 19,
     "criticalPathContractZones": 20,
-    "verifiedHealthyZones": 1,
-    "pagesMappedActiveZones": 15
+    "criticalPathAuthoritativeZones": 4,
+    "criticalPathBaselineZones": 16,
+    "criticalPathNeedsDeclarationZones": 16,
+    "servingExpectedZones": 20,
+    "verifiedHealthyZones": 2,
+    "pagesMappedActiveZones": 15,
+    "instrumentation": {
+      "applicable": 20,
+      "activeVerified": 6,
+      "configuredUnverified": 13,
+      "configuredInvalid": 0,
+      "absent": 0,
+      "inaccessible": 1,
+      "unknown": 0
+    },
+    "vantages": {
+      "valid": 2,
+      "agree": 24,
+      "partial": 0,
+      "conflict": 0,
+      "single": 0,
+      "inconclusive": 1
+    },
+    "lifecycle": {
+      "active": 10,
+      "incubating": 3,
+      "experimental": 0,
+      "dormant": 0,
+      "intentionally-unpublished": 0,
+      "deprecated": 0,
+      "alias": 3,
+      "unknown": 9
+    },
+    "ownerDeclared": {
+      "lifecycle": 16,
+      "purpose": 18,
+      "primaryOutcome": 6
+    },
+    "expectationUnmetZones": [
+      "goodflippinluck.com",
+      "goodflippinnews.com"
+    ]
+  },
+  "infrastructure": {
+    "evidenceState": "measured",
+    "reason": null,
+    "observedAt": "2026-09-24T19:47:48.530Z",
+    "projectCount": 24,
+    "unregisteredSurfaces": [
+      {
+        "hostname": "culturesherpa.globaldeets.com",
+        "project": "culturesherpa-maps",
+        "status": "active",
+        "parentProperty": "globaldeets.com",
+        "registered": false,
+        "latestProductionDeployAt": "2025-11-30T01:01:26.838082Z"
+      },
+      {
+        "hostname": "gfv.globaldeets.com",
+        "project": "good-flippin-vibes",
+        "status": "deactivated",
+        "parentProperty": "globaldeets.com",
+        "registered": false,
+        "latestProductionDeployAt": "2026-09-04T04:06:18.223548Z"
+      },
+      {
+        "hostname": "saintpaul.globaldeets.com",
+        "project": "saintpaul",
+        "status": "active",
+        "parentProperty": "globaldeets.com",
+        "registered": false,
+        "latestProductionDeployAt": "2025-11-25T04:10:18.628458Z"
+      },
+      {
+        "hostname": "traffic.goodflippindesign.com",
+        "project": "gfd-traffic-intelligence",
+        "status": "active",
+        "parentProperty": "goodflippindesign.com",
+        "registered": false,
+        "latestProductionDeployAt": "2026-09-24T06:09:59.375417Z"
+      }
+    ],
+    "orphanProjects": [
+      {
+        "project": "community-health-intelligence",
+        "latestProductionDeployAt": "2025-11-18T23:54:35.291556Z"
+      },
+      {
+        "project": "communityhealth",
+        "latestProductionDeployAt": "2025-11-19T03:25:58.732028Z"
+      },
+      {
+        "project": "culturesherpa",
+        "latestProductionDeployAt": "2025-12-31T17:59:06.659975Z"
+      },
+      {
+        "project": "foxyana",
+        "latestProductionDeployAt": null
+      },
+      {
+        "project": "goodflippinvibes",
+        "latestProductionDeployAt": null
+      },
+      {
+        "project": "saintpaul-portal",
+        "latestProductionDeployAt": "2025-11-25T03:57:57.705719Z"
+      },
+      {
+        "project": "weaver",
+        "latestProductionDeployAt": "2026-02-09T21:55:46.025498Z"
+      }
+    ]
   },
   "sourceNotes": [
-    "Zone, RUM, and Pages facts come from the Cloudflare account inventory; they are refreshed by the collector when the token permits and otherwise carried forward and labelled by age.",
+    "Zone and Pages facts come from the Cloudflare account inventory; they are refreshed by the collector when the token permits and otherwise carried forward and labelled by age.",
+    "The Cloudflare RUM flag is a carried-forward setting. Browser instrumentation is judged from the analytics tags production actually serves; only reception evidence proves telemetry arrives.",
     "Availability and critical-path state come only from scheduled production probes; a successful deploy is not treated as uptime.",
     "Probe traffic is synthetic monitor traffic (see evidence.probe.syntheticTraffic) and must be excluded from audience classification.",
-    "Properties without an honest critical-path contract keep criticalPath: unknown."
+    "Properties without an honest critical-path contract keep criticalPath: unknown and are counted as needing an owner declaration.",
+    "Purpose, lifecycle and outcome come from owner declarations where they exist; each field carries its provenance and unknown stays unknown."
   ],
   "properties": [
     {
@@ -137,32 +303,116 @@
       "displayName": "GlobalDeets",
       "emphasisRank": 1,
       "investorCritical": true,
+      "profile": {
+        "name": "GlobalDeets",
+        "purpose": "Live world news pinned to a 3D globe, with source links, culture context, webcams and public knowledge resources.",
+        "category": "platform",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 2,
+        "audience": null,
+        "earningPath": "Commissioned briefs and data sponsors",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": true,
+          "kind": "active-and-serving",
+          "note": "Declared active and serving."
+        },
+        "operatingStatus": {
+          "key": "healthy",
+          "tone": "healthy"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "active-verified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "ga4",
+            "measurementId": "G-WM6Q66W9W0",
+            "placeholder": false
+          },
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "24d186a132894667ae6bf3c2a501d7d2",
+            "placeholder": false
+          }
+        ],
+        "reason": "Cloudflare Web Analytics received 137 page loads for this host in the last 24 hours.",
+        "confidence": "high",
+        "reception": {
+          "state": "received",
+          "events": 137,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from globaldeets.com in 194 ms.",
+        "reason": "HTTP 200 from globaldeets.com in 178 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 178
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 87
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -174,20 +424,22 @@
             "status": 200,
             "finalUrl": "https://globaldeets.com/",
             "redirects": 0,
-            "durationMs": 194,
+            "durationMs": 178,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 51,
             "validTo": "2026-11-15T09:26:19.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -196,13 +448,13 @@
         "evidenceState": "measured",
         "level": "authoritative",
         "basis": "GlobalDeets owns and deploys this property; checks mirror the production verification the deploy workflow already enforces.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 194,
+            "durationMs": 178,
             "pass": true,
             "detail": "ok"
           },
@@ -210,7 +462,7 @@
             "id": "news-health",
             "path": "/api/news/health",
             "status": 200,
-            "durationMs": 174,
+            "durationMs": 87,
             "pass": true,
             "detail": "ok"
           },
@@ -218,7 +470,7 @@
             "id": "mission-control-data",
             "path": "/observatory/mission-control/mission-control-data.json",
             "status": 200,
-            "durationMs": 47,
+            "durationMs": 44,
             "pass": true,
             "detail": "ok"
           },
@@ -226,7 +478,7 @@
             "id": "coverage-observatory",
             "path": "/api/intelligence/observatory/coverage",
             "status": 200,
-            "durationMs": 89,
+            "durationMs": 45,
             "pass": true,
             "detail": "ok"
           }
@@ -235,26 +487,38 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "authoritative",
           "checkCount": 4,
-          "basis": "GlobalDeets owns and deploys this property; checks mirror the production verification the deploy workflow already enforces."
-        }
+          "basis": "GlobalDeets owns and deploys this property; checks mirror the production verification the deploy workflow already enforces.",
+          "basisSource": "owner-deploy-verification",
+          "status": "authoritative"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
         "project": "globaldeets",
         "servingDomainState": "observed",
         "sharedProject": true,
-        "latestProductionDeployAt": "2026-09-24T18:03:19.760713Z",
+        "latestProductionDeployAt": "2026-09-24T18:32:56.751872Z",
         "evidenceState": "measured",
         "note": null
       },
       "lastMeaningfulActivity": {
-        "at": "2026-09-24T18:03:19.760713Z",
+        "at": "2026-09-24T18:32:56.751872Z",
         "kind": "production-deploy",
         "evidenceState": "measured"
       },
@@ -263,39 +527,128 @@
         "basis": "Owned property; critical path verified against production on 2026-09-24."
       },
       "diagnosticState": "verified-healthy",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "culturesherpa.org",
       "displayName": "Culture Sherpa",
       "emphasisRank": 2,
       "investorCritical": true,
+      "profile": {
+        "name": "Culture Sherpa",
+        "purpose": "Interactive cultural atlas for exploring the world's cultures.",
+        "category": "learning",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 2,
+        "audience": "Learners, educators, travelers, culture-curious visitors and institutional partners",
+        "earningPath": "Grants, learning sponsors and modules",
+        "primaryOutcome": {
+          "type": "engagement",
+          "label": "Explore the cultural atlas"
+        },
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": true,
+          "kind": "active-and-serving",
+          "note": "Declared active and serving."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "ga4",
+            "measurementId": "G-EDHFZ472P7",
+            "placeholder": false
+          },
+          {
+            "id": "ga4",
+            "measurementId": "G-WM6Q66W9W0",
+            "placeholder": false
+          }
+        ],
+        "reason": "A ga4 + ga4 tag is shipped in the homepage HTML, but no evidence shows events are being received.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from culturesherpa.org in 267 ms.",
+        "reason": "HTTP 200 from culturesherpa.org in 108 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 108
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 418
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -307,20 +660,22 @@
             "status": 200,
             "finalUrl": "https://culturesherpa.org/explore/",
             "redirects": 1,
-            "durationMs": 267,
+            "durationMs": 108,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 177,
             "validTo": "2027-03-20T23:59:59.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -329,13 +684,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 267,
+            "durationMs": 108,
             "pass": true,
             "detail": "ok"
           }
@@ -344,14 +699,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "unknown",
@@ -373,39 +740,104 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "culturesherpa.com",
       "displayName": "culturesherpa.com",
       "emphasisRank": 3,
       "investorCritical": false,
+      "profile": {
+        "name": "Culture Sherpa (alias)",
+        "purpose": null,
+        "category": "learning",
+        "lifecycle": "alias",
+        "aliasOf": "culturesherpa.org",
+        "strategicTier": 2,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "observed-behaviour",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "alias",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": null,
+          "kind": "alias",
+          "note": "An additional address for culturesherpa.org."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "not-applicable",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "This address only redirects; the destination property carries the instrumentation.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from culturesherpa.org in 520 ms.",
+        "reason": "HTTP 200 from culturesherpa.org in 165 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 165
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 379
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -417,20 +849,22 @@
             "status": 200,
             "finalUrl": "https://culturesherpa.org/explore/",
             "redirects": 2,
-            "durationMs": 520,
+            "durationMs": 165,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 42,
             "validTo": "2026-11-06T00:28:55.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -439,16 +873,32 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [],
         "reason": "Redirect-only alias: availability is probed, but there is no independent critical path.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
-        "contract": null
+        "contract": {
+          "level": null,
+          "checkCount": 0,
+          "basis": null,
+          "basisSource": null,
+          "status": "not-applicable"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "unknown"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "unknown"
+          }
+        ]
       },
       "deployment": {
         "provider": "unknown",
@@ -470,39 +920,115 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "agentkagent.com",
       "displayName": "agentkagent.com",
       "emphasisRank": 4,
       "investorCritical": false,
+      "profile": {
+        "name": "AgentK",
+        "purpose": "Effect-integrity layer between AI-agent intent and consequential real-world tool actions.",
+        "category": "research",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "844e7afa15404459a0125c34818ee740",
+            "placeholder": false
+          }
+        ],
+        "reason": "The Cloudflare Web Analytics tag is shipped but reported zero page loads for this host in the last 24 hours.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from agentkagent.com in 177 ms.",
+        "reason": "HTTP 200 from agentkagent.com in 82 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 82
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 65
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -514,20 +1040,22 @@
             "status": 200,
             "finalUrl": "https://agentkagent.com/",
             "redirects": 0,
-            "durationMs": 177,
+            "durationMs": 82,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 69,
             "validTo": "2026-12-02T21:58:12.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -536,13 +1064,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 177,
+            "durationMs": 82,
             "pass": true,
             "detail": "ok"
           }
@@ -551,14 +1079,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "unknown",
@@ -580,39 +1120,123 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "aiaimate.com",
       "displayName": "aiaimate.com",
       "emphasisRank": 5,
       "investorCritical": false,
+      "profile": {
+        "name": "AIAIMate",
+        "purpose": "Free, visual AI-literacy lessons, interactive tools and guided learning paths.",
+        "category": "learning",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 2,
+        "audience": "AI learners, professionals, students and partners looking for practical AI education",
+        "earningPath": "Subscriptions, premium kits and sponsors",
+        "primaryOutcome": {
+          "type": "engagement",
+          "label": "Start learning AI by doing"
+        },
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "observed-homepage",
+          "audience": "owner-brand-registry",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": true,
+          "kind": "active-and-serving",
+          "note": "Declared active and serving."
+        },
+        "operatingStatus": {
+          "key": "failing",
+          "tone": "failing"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "ga4",
+            "measurementId": "G-WM6Q66W9W0",
+            "placeholder": false
+          }
+        ],
+        "reason": "A ga4 tag is shipped in the homepage HTML, but no evidence shows events are being received.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from aiaimate.com in 148 ms.",
+        "reason": "HTTP 200 from aiaimate.com in 156 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 156
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 91
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -624,51 +1248,73 @@
             "status": 200,
             "finalUrl": "https://aiaimate.com/",
             "redirects": 0,
-            "durationMs": 148,
+            "durationMs": 156,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 85,
             "validTo": "2026-12-19T10:25:18.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
       "criticalPath": {
-        "state": "pass",
+        "state": "fail",
         "evidenceState": "measured",
-        "level": "baseline",
-        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "level": "authoritative",
+        "basis": "The AIAIMate portal implements and documents a search API (portal/app/api/search) that the learning experience depends on; the contract is defined in source (ok: true, results array).",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 148,
+            "durationMs": 156,
             "pass": true,
             "detail": "ok"
+          },
+          {
+            "id": "search-api",
+            "path": "/api/search?q=ai",
+            "status": 500,
+            "durationMs": 105,
+            "pass": false,
+            "detail": "status-500"
           }
         ],
-        "reason": null,
+        "reason": "search-api:status-500",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
-          "level": "baseline",
-          "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "level": "authoritative",
+          "checkCount": 2,
+          "basis": "The AIAIMate portal implements and documents a search API (portal/app/api/search) that the learning experience depends on; the contract is defined in source (ok: true, results array).",
+          "basisSource": "owner-source-route",
+          "status": "authoritative"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "fail"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "fail"
+          }
+        ]
       },
       "deployment": {
         "provider": "unknown",
@@ -687,32 +1333,70 @@
       },
       "probeExpectation": {
         "expectation": "serves-content",
-        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+        "basis": "Owner-documented search API route (source) plus homepage identity."
       },
-      "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "diagnosticState": "critical-path-failed",
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "artificelligance.com",
       "displayName": "artificelligance.com",
       "emphasisRank": 6,
       "investorCritical": false,
+      "profile": {
+        "name": "artificelligance.com",
+        "purpose": null,
+        "category": "reserved",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "category": "observed-behaviour"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "nothing-published",
+          "met": null,
+          "kind": "nothing-published-intent-unknown",
+          "note": "Nothing is published and the owner has not said whether that is intended."
+        },
+        "operatingStatus": {
+          "key": "nothing-published-intent-unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "unobserved",
+        "state": "not-applicable",
         "rum": "off",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "off",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No web service is published, so there is nothing to instrument.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "no-service-published",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": "dns-no-address-records",
         "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
@@ -720,9 +1404,34 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "no-service-published",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": "dns-no-address-records",
+            "httpStatus": null,
+            "durationMs": null
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "no-service-published",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": "dns-no-address-records",
+            "httpStatus": null,
+            "durationMs": null
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "no-address-records",
@@ -735,17 +1444,19 @@
             "finalUrl": null,
             "redirects": 0,
             "durationMs": null,
+            "cfMitigated": null,
             "attempts": 0
           },
           "tls": {
             "state": "unknown",
             "daysRemaining": null,
             "validTo": null
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
+          "runs": 4,
           "conclusiveRuns": 0,
           "availableRuns": 0,
           "availabilityRatio": null
@@ -756,16 +1467,32 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [],
         "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
-        "contract": null
+        "contract": {
+          "level": null,
+          "checkCount": 0,
+          "basis": null,
+          "basisSource": null,
+          "status": "not-applicable"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "unknown"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "unknown"
+          }
+        ]
       },
       "deployment": {
         "provider": "unknown",
@@ -787,29 +1514,67 @@
         "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
       },
       "diagnosticState": "no-service-published",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "artificelligence.com",
       "displayName": "artificelligence.com",
       "emphasisRank": 7,
       "investorCritical": false,
+      "profile": {
+        "name": "artificelligence.com",
+        "purpose": null,
+        "category": "reserved",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "category": "observed-behaviour"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "nothing-published",
+          "met": null,
+          "kind": "nothing-published-intent-unknown",
+          "note": "Nothing is published and the owner has not said whether that is intended."
+        },
+        "operatingStatus": {
+          "key": "nothing-published-intent-unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "unobserved",
+        "state": "not-applicable",
         "rum": "off",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "off",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No web service is published, so there is nothing to instrument.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "no-service-published",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": "dns-no-address-records",
         "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
@@ -817,9 +1582,34 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "no-service-published",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": "dns-no-address-records",
+            "httpStatus": null,
+            "durationMs": null
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "no-service-published",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": "dns-no-address-records",
+            "httpStatus": null,
+            "durationMs": null
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "no-address-records",
@@ -832,17 +1622,19 @@
             "finalUrl": null,
             "redirects": 0,
             "durationMs": null,
+            "cfMitigated": null,
             "attempts": 0
           },
           "tls": {
             "state": "unknown",
             "daysRemaining": null,
             "validTo": null
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
+          "runs": 4,
           "conclusiveRuns": 0,
           "availableRuns": 0,
           "availabilityRatio": null
@@ -853,16 +1645,32 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [],
         "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
-        "contract": null
+        "contract": {
+          "level": null,
+          "checkCount": 0,
+          "basis": null,
+          "basisSource": null,
+          "status": "not-applicable"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "unknown"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "unknown"
+          }
+        ]
       },
       "deployment": {
         "provider": "unknown",
@@ -884,39 +1692,123 @@
         "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
       },
       "diagnosticState": "no-service-published",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "brettleeweaver.com",
       "displayName": "brettleeweaver.com",
       "emphasisRank": 8,
       "investorCritical": false,
+      "profile": {
+        "name": "Brett Lee Weaver",
+        "purpose": "Personal site of a commercial leader, systems thinker and AI-native builder.",
+        "category": "personal",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 3,
+        "audience": null,
+        "earningPath": "Credibility, speaking and partner trust",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": true,
+          "kind": "active-and-serving",
+          "note": "Declared active and serving."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "active-verified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "ga4",
+            "measurementId": "G-WM6Q66W9W0",
+            "placeholder": false
+          },
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "0068634a9a50466e8600f90c3f2241d2",
+            "placeholder": false
+          }
+        ],
+        "reason": "Cloudflare Web Analytics received 4 page loads for this host in the last 24 hours.",
+        "confidence": "high",
+        "reception": {
+          "state": "received",
+          "events": 4,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from www.brettleeweaver.com in 351 ms.",
+        "reason": "HTTP 200 from www.brettleeweaver.com in 381 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 381
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 263
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -928,20 +1820,22 @@
             "status": 200,
             "finalUrl": "https://www.brettleeweaver.com/",
             "redirects": 1,
-            "durationMs": 351,
+            "durationMs": 381,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 83,
             "validTo": "2026-12-17T04:13:10.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -950,13 +1844,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 351,
+            "durationMs": 381,
             "pass": true,
             "detail": "ok"
           }
@@ -965,14 +1859,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -994,39 +1900,123 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "citizenapproved.org",
       "displayName": "citizenapproved.org",
       "emphasisRank": 9,
       "investorCritical": false,
+      "profile": {
+        "name": "CitizenApproved",
+        "purpose": "Source-first guide to current U.S. citizenship and naturalization law and policy.",
+        "category": "civic",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 2,
+        "audience": null,
+        "earningPath": "Civic sponsors, grants and email list",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": true,
+          "kind": "active-and-serving",
+          "note": "Declared active and serving."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "active-verified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "ga4",
+            "measurementId": "G-WM6Q66W9W0",
+            "placeholder": false
+          },
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "9fb36d0ac00d4aa5b55874bf2a381f3c",
+            "placeholder": false
+          }
+        ],
+        "reason": "Cloudflare Web Analytics received 28 page loads for this host in the last 24 hours.",
+        "confidence": "high",
+        "reception": {
+          "state": "received",
+          "events": 28,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from citizenapproved.org in 252 ms.",
+        "reason": "HTTP 200 from citizenapproved.org in 264 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 264
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 101
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -1038,20 +2028,22 @@
             "status": 200,
             "finalUrl": "https://citizenapproved.org/",
             "redirects": 0,
-            "durationMs": 252,
+            "durationMs": 264,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 40,
             "validTo": "2026-11-04T02:35:31.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -1060,13 +2052,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 252,
+            "durationMs": 264,
             "pass": true,
             "detail": "ok"
           }
@@ -1075,14 +2067,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -1103,39 +2107,115 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "cyancanoe.com",
       "displayName": "cyancanoe.com",
       "emphasisRank": 10,
       "investorCritical": false,
+      "profile": {
+        "name": "Cyan Canoe",
+        "purpose": "Helps schools, churches and mission-led organizations see where generosity goes and discuss impact without overstating evidence.",
+        "category": "civic",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "63758bbb60f64ace9afeda5d41515cdf",
+            "placeholder": false
+          }
+        ],
+        "reason": "The Cloudflare Web Analytics tag is shipped but reported zero page loads for this host in the last 24 hours.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from cyancanoe.com in 163 ms.",
+        "reason": "HTTP 200 from cyancanoe.com in 213 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 213
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 101
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -1147,20 +2227,22 @@
             "status": 200,
             "finalUrl": "https://cyancanoe.com/",
             "redirects": 0,
-            "durationMs": 163,
+            "durationMs": 213,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 58,
             "validTo": "2026-11-22T02:39:01.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -1169,13 +2251,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 163,
+            "durationMs": 213,
             "pass": true,
             "detail": "ok"
           }
@@ -1184,14 +2266,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -1212,39 +2306,115 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "flipskillet.com",
       "displayName": "flipskillet.com",
       "emphasisRank": 11,
       "investorCritical": false,
+      "profile": {
+        "name": "Flipskillet",
+        "purpose": "Evidence-driven atlas of global media ownership, control and geographic presence.",
+        "category": "research",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "owner-repository",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "ff3e65fc2aa64ef8b108cd9274406d28",
+            "placeholder": false
+          }
+        ],
+        "reason": "The Cloudflare Web Analytics tag is shipped but reported zero page loads for this host in the last 24 hours.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from flipskillet.com in 163 ms.",
+        "reason": "HTTP 200 from flipskillet.com in 144 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 144
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 192
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -1256,20 +2426,22 @@
             "status": 200,
             "finalUrl": "https://flipskillet.com/",
             "redirects": 0,
-            "durationMs": 163,
+            "durationMs": 144,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 66,
             "validTo": "2026-11-30T00:21:45.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -1278,13 +2450,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 163,
+            "durationMs": 144,
             "pass": true,
             "detail": "ok"
           }
@@ -1293,14 +2465,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -1321,39 +2505,115 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "flipskillit.com",
       "displayName": "flipskillit.com",
       "emphasisRank": 12,
       "investorCritical": false,
+      "profile": {
+        "name": "Flipskillet (alias)",
+        "purpose": null,
+        "category": "research",
+        "lifecycle": "alias",
+        "aliasOf": "flipskillet.com",
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "observed-behaviour",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "alias",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": null,
+          "kind": "alias",
+          "note": "An additional address for flipskillet.com."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "9abe02682bb7490b87d9ce38994ae356",
+            "placeholder": false
+          }
+        ],
+        "reason": "The Cloudflare Web Analytics tag is shipped but reported zero page loads for this host in the last 24 hours.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from flipskillit.com in 158 ms.",
+        "reason": "HTTP 200 from flipskillit.com in 170 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 170
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 120
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -1365,20 +2625,22 @@
             "status": 200,
             "finalUrl": "https://flipskillit.com/",
             "redirects": 0,
-            "durationMs": 158,
+            "durationMs": 170,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 65,
             "validTo": "2026-11-29T00:45:08.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -1387,13 +2649,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 158,
+            "durationMs": 170,
             "pass": true,
             "detail": "ok"
           }
@@ -1402,14 +2664,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -1430,39 +2704,115 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "foxyana.com",
       "displayName": "foxyana.com",
       "emphasisRank": 13,
       "investorCritical": false,
+      "profile": {
+        "name": "Foxyana",
+        "purpose": "Ukrainian cultural project translating Carpathian heritage through dance, music, story and image.",
+        "category": "creative",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "active-verified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "3dfe946c4e50460a859d7bcdae17ccab",
+            "placeholder": false
+          }
+        ],
+        "reason": "Cloudflare Web Analytics received 1 page loads for this host in the last 24 hours.",
+        "confidence": "high",
+        "reception": {
+          "state": "received",
+          "events": 1,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from foxyana.com in 122 ms.",
+        "reason": "HTTP 200 from foxyana.com in 104 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 104
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 62
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -1474,20 +2824,22 @@
             "status": 200,
             "finalUrl": "https://foxyana.com/",
             "redirects": 0,
-            "durationMs": 122,
+            "durationMs": 104,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 43,
             "validTo": "2026-11-07T04:34:14.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -1496,13 +2848,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 122,
+            "durationMs": 104,
             "pass": true,
             "detail": "ok"
           }
@@ -1511,14 +2863,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "unknown",
@@ -1540,29 +2904,67 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "fwomps.com",
       "displayName": "fwomps.com",
       "emphasisRank": 14,
       "investorCritical": false,
+      "profile": {
+        "name": "fwomps.com",
+        "purpose": null,
+        "category": "reserved",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "category": "observed-behaviour"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "nothing-published",
+          "met": null,
+          "kind": "nothing-published-intent-unknown",
+          "note": "Nothing is published and the owner has not said whether that is intended."
+        },
+        "operatingStatus": {
+          "key": "nothing-published-intent-unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "unobserved",
+        "state": "not-applicable",
         "rum": "off",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "off",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No web service is published, so there is nothing to instrument.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "no-service-published",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": "dns-no-address-records",
         "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
@@ -1570,9 +2972,34 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "no-service-published",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": "dns-no-address-records",
+            "httpStatus": null,
+            "durationMs": null
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "no-service-published",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": "dns-no-address-records",
+            "httpStatus": null,
+            "durationMs": null
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "no-address-records",
@@ -1585,17 +3012,19 @@
             "finalUrl": null,
             "redirects": 0,
             "durationMs": null,
+            "cfMitigated": null,
             "attempts": 0
           },
           "tls": {
             "state": "unknown",
             "daysRemaining": null,
             "validTo": null
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
+          "runs": 4,
           "conclusiveRuns": 0,
           "availableRuns": 0,
           "availabilityRatio": null
@@ -1606,16 +3035,32 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [],
         "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
-        "contract": null
+        "contract": {
+          "level": null,
+          "checkCount": 0,
+          "basis": null,
+          "basisSource": null,
+          "status": "not-applicable"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "unknown"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "unknown"
+          }
+        ]
       },
       "deployment": {
         "provider": "unknown",
@@ -1637,29 +3082,67 @@
         "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
       },
       "diagnosticState": "no-service-published",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "fwomp.us",
       "displayName": "fwomp.us",
       "emphasisRank": 15,
       "investorCritical": false,
+      "profile": {
+        "name": "fwomp.us",
+        "purpose": null,
+        "category": "reserved",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "category": "observed-behaviour"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "nothing-published",
+          "met": null,
+          "kind": "nothing-published-intent-unknown",
+          "note": "Nothing is published and the owner has not said whether that is intended."
+        },
+        "operatingStatus": {
+          "key": "nothing-published-intent-unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "unobserved",
+        "state": "not-applicable",
         "rum": "off",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "off",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No web service is published, so there is nothing to instrument.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "no-service-published",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": "dns-no-address-records",
         "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
@@ -1667,9 +3150,34 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "no-service-published",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": "dns-no-address-records",
+            "httpStatus": null,
+            "durationMs": null
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "no-service-published",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": "dns-no-address-records",
+            "httpStatus": null,
+            "durationMs": null
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "no-address-records",
@@ -1682,17 +3190,19 @@
             "finalUrl": null,
             "redirects": 0,
             "durationMs": null,
+            "cfMitigated": null,
             "attempts": 0
           },
           "tls": {
             "state": "unknown",
             "daysRemaining": null,
             "validTo": null
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
+          "runs": 4,
           "conclusiveRuns": 0,
           "availableRuns": 0,
           "availabilityRatio": null
@@ -1703,16 +3213,32 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [],
         "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
-        "contract": null
+        "contract": {
+          "level": null,
+          "checkCount": 0,
+          "basis": null,
+          "basisSource": null,
+          "status": "not-applicable"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "unknown"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "unknown"
+          }
+        ]
       },
       "deployment": {
         "provider": "unknown",
@@ -1734,39 +3260,119 @@
         "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
       },
       "diagnosticState": "no-service-published",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "gflippinv.com",
       "displayName": "gflippinv.com",
       "emphasisRank": 16,
       "investorCritical": false,
+      "profile": {
+        "name": "Good Flippin Vibes (alias)",
+        "purpose": null,
+        "category": "community",
+        "lifecycle": "alias",
+        "aliasOf": "goodflippinvibes.com",
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "observed-behaviour",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "alias",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": null,
+          "kind": "alias",
+          "note": "An additional address for goodflippinvibes.com."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "026813c6be244db18e24756767b5c95e",
+            "placeholder": false
+          },
+          {
+            "id": "plausible",
+            "placeholder": false
+          }
+        ],
+        "reason": "The Cloudflare Web Analytics tag is shipped but reported zero page loads for this host in the last 24 hours.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from gflippinv.com in 193 ms.",
+        "reason": "HTTP 200 from gflippinv.com in 118 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 118
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 163
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -1778,20 +3384,22 @@
             "status": 200,
             "finalUrl": "https://gflippinv.com/",
             "redirects": 0,
-            "durationMs": 193,
+            "durationMs": 118,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 86,
             "validTo": "2026-12-20T05:57:53.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -1800,13 +3408,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 193,
+            "durationMs": 118,
             "pass": true,
             "detail": "ok"
           }
@@ -1815,14 +3423,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -1843,29 +3463,76 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "goodflippindesign.com",
       "displayName": "goodflippindesign.com",
       "emphasisRank": 17,
       "investorCritical": false,
+      "profile": {
+        "name": "Good Flippin Design",
+        "purpose": "Web development and AI-integration studio; portfolio and trust hub for the ecosystem.",
+        "category": "platform",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 1,
+        "audience": "Prospects, sponsors, partners, supporters and ecosystem operators",
+        "earningPath": "Patrons, ads, sponsor intake and commissioned work",
+        "primaryOutcome": {
+          "type": "lead",
+          "label": "Start a project inquiry"
+        },
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "blocked",
+          "tone": "blocked"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "inaccessible",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "The page could not be read from any vantage (blocked), so its instrumentation is unknown.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
         "evidenceState": "measured",
         "blocked": true,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": null,
         "failureClass": "edge-challenge",
         "reason": "Probe was restricted by the target (edge-challenge); this vantage cannot establish availability.",
@@ -1873,9 +3540,34 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "inconclusive",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "unknown",
+            "blocked": true,
+            "conclusive": false,
+            "failureClass": "edge-challenge",
+            "httpStatus": 403,
+            "durationMs": 95
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "unknown",
+            "blocked": true,
+            "conclusive": false,
+            "failureClass": "edge-challenge",
+            "httpStatus": 403,
+            "durationMs": 40
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -1887,18 +3579,20 @@
             "status": 403,
             "finalUrl": "https://goodflippindesign.com/",
             "redirects": 0,
-            "durationMs": 86,
+            "durationMs": 95,
+            "cfMitigated": "challenge",
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 37,
             "validTo": "2026-11-01T01:43:52.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
+          "runs": 4,
           "conclusiveRuns": 0,
           "availableRuns": 0,
           "availabilityRatio": null
@@ -1907,22 +3601,34 @@
       "criticalPath": {
         "state": "unknown",
         "evidenceState": "unavailable",
-        "level": "baseline",
-        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "level": "authoritative",
+        "basis": "Routes the owner already treats as production-critical in their own monitoring (config/health-targets.json: home, /donate, /community-portal are marked critical) plus the documented /api/health endpoint.",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [],
         "reason": "Not evaluable while availability is blocked.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
-          "level": "baseline",
-          "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "level": "authoritative",
+          "checkCount": 4,
+          "basis": "Routes the owner already treats as production-critical in their own monitoring (config/health-targets.json: home, /donate, /community-portal are marked critical) plus the documented /api/health endpoint.",
+          "basisSource": "owner-health-targets",
+          "status": "authoritative"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "unknown"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "unknown"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -1940,42 +3646,126 @@
       },
       "probeExpectation": {
         "expectation": "serves-content",
-        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+        "basis": "Owner-declared production-critical routes (owner health targets)."
       },
       "diagnosticState": "probe-blocked",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "goodflippinluck.com",
       "displayName": "goodflippinluck.com",
       "emphasisRank": 18,
       "investorCritical": false,
+      "profile": {
+        "name": "Good Flippin Luck",
+        "purpose": "Playable charm, promo and creative-commerce surface for the Good Flippin Vibes universe.",
+        "category": "creative",
+        "lifecycle": "incubating",
+        "aliasOf": null,
+        "strategicTier": 4,
+        "audience": "Supporters, fans, casual visitors and music/art followers",
+        "earningPath": null,
+        "primaryOutcome": {
+          "type": "engagement",
+          "label": "Play, share and join the supporter list"
+        },
+        "expectedState": "not-live",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "expectedState": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        },
+        "expectation": {
+          "lifecycle": "incubating",
+          "expectedState": "not-live",
+          "observedMode": "serving",
+          "met": false,
+          "kind": "serving-but-declared-not-live",
+          "note": "The owner registry says this property is not live, but production serves public content."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "404b8676bae64af494f8801b5fe28dc1",
+            "placeholder": false
+          }
+        ],
+        "reason": "The Cloudflare Web Analytics tag is shipped but reported zero page loads for this host in the last 24 hours.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinluck.com in 171 ms.",
+        "reason": "HTTP 200 from goodflippinluck.com in 158 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 158
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 124
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -1987,20 +3777,22 @@
             "status": 200,
             "finalUrl": "https://goodflippinluck.com/",
             "redirects": 0,
-            "durationMs": 171,
+            "durationMs": 158,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 40,
             "validTo": "2026-11-04T06:34:45.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -2009,13 +3801,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 171,
+            "durationMs": 158,
             "pass": true,
             "detail": "ok"
           }
@@ -2024,14 +3816,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -2052,39 +3856,123 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "goodflippinnews.com",
       "displayName": "goodflippinnews.com",
       "emphasisRank": 19,
       "investorCritical": false,
+      "profile": {
+        "name": "Good Flippin News",
+        "purpose": "Joy-forward dispatches from the Good Flippin Vibes creative and civic ecosystem.",
+        "category": "community",
+        "lifecycle": "incubating",
+        "aliasOf": null,
+        "strategicTier": 4,
+        "audience": "Supporters, partners and local, civic and creative readers",
+        "earningPath": null,
+        "primaryOutcome": {
+          "type": "signup",
+          "label": "Subscribe or follow ecosystem dispatches"
+        },
+        "expectedState": "not-live",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "expectedState": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        },
+        "expectation": {
+          "lifecycle": "incubating",
+          "expectedState": "not-live",
+          "observedMode": "serving",
+          "met": false,
+          "kind": "serving-but-declared-not-live",
+          "note": "The owner registry says this property is not live, but production serves public content."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "396ab3670e0247058ac0ab03b10149be",
+            "placeholder": false
+          }
+        ],
+        "reason": "The Cloudflare Web Analytics tag is shipped but reported zero page loads for this host in the last 24 hours.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinnews.com in 176 ms.",
+        "reason": "HTTP 200 from goodflippinnews.com in 205 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 205
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 104
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -2096,20 +3984,22 @@
             "status": 200,
             "finalUrl": "https://goodflippinnews.com/",
             "redirects": 0,
-            "durationMs": 176,
+            "durationMs": 205,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 40,
             "validTo": "2026-11-04T01:47:15.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -2118,13 +4008,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 176,
+            "durationMs": 205,
             "pass": true,
             "detail": "ok"
           }
@@ -2133,14 +4023,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -2161,39 +4063,122 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "goodflippinvibes.com",
       "displayName": "goodflippinvibes.com",
       "emphasisRank": 20,
       "investorCritical": false,
+      "profile": {
+        "name": "Good Flippin Vibes",
+        "purpose": "Wellness, art and community: the origin brand of the ecosystem.",
+        "category": "community",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 1,
+        "audience": "Community members, supporters and art/music followers",
+        "earningPath": "Patrons and community features",
+        "primaryOutcome": {
+          "type": "signup",
+          "label": "Join or support the community"
+        },
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": true,
+          "kind": "active-and-serving",
+          "note": "Declared active and serving."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "plausible",
+            "placeholder": false
+          }
+        ],
+        "reason": "A plausible tag is shipped in the homepage HTML, but no evidence shows events are being received.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinvibes.com in 124 ms.",
+        "reason": "HTTP 200 from goodflippinvibes.com in 82 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 82
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 112
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -2205,20 +4190,22 @@
             "status": 200,
             "finalUrl": "https://goodflippinvibes.com/",
             "redirects": 0,
-            "durationMs": 124,
+            "durationMs": 82,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 40,
             "validTo": "2026-11-04T13:25:27.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -2227,13 +4214,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 124,
+            "durationMs": 82,
             "pass": true,
             "detail": "ok"
           }
@@ -2242,14 +4229,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -2270,39 +4269,115 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "goodflippinyikes.com",
       "displayName": "goodflippinyikes.com",
       "emphasisRank": 21,
       "investorCritical": false,
+      "profile": {
+        "name": "Good Flippin Yikes",
+        "purpose": "Publishing shell for evolving posts, topics and curated links.",
+        "category": "community",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "010003b7c7b4477687f1f061400b4cf6",
+            "placeholder": false
+          }
+        ],
+        "reason": "The Cloudflare Web Analytics tag is shipped but reported zero page loads for this host in the last 24 hours.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinyikes.com in 147 ms.",
+        "reason": "HTTP 200 from goodflippinyikes.com in 143 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 143
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 102
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -2314,20 +4389,22 @@
             "status": 200,
             "finalUrl": "https://goodflippinyikes.com/",
             "redirects": 0,
-            "durationMs": 147,
+            "durationMs": 143,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 48,
             "validTo": "2026-11-12T05:53:51.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -2336,13 +4413,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 147,
+            "durationMs": 143,
             "pass": true,
             "detail": "ok"
           }
@@ -2351,14 +4428,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -2379,39 +4468,123 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "heavymoose.com",
       "displayName": "heavymoose.com",
       "emphasisRank": 22,
       "investorCritical": false,
+      "profile": {
+        "name": "Heavy Moose",
+        "purpose": "Official artist site for Heavy Moose: industrial, dark ambient and experimental music, releases and videos.",
+        "category": "creative",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 3,
+        "audience": null,
+        "earningPath": "Patron support, streaming and merch",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": true,
+          "kind": "active-and-serving",
+          "note": "Declared active and serving."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "active-verified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "ga4",
+            "measurementId": "G-XXXXXXXXXX",
+            "placeholder": true
+          },
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "bd498e6f21a542268b1e478827d3f91d",
+            "placeholder": false
+          }
+        ],
+        "reason": "Cloudflare Web Analytics received 2 page loads for this host in the last 24 hours.",
+        "confidence": "high",
+        "reception": {
+          "state": "received",
+          "events": 2,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from heavymoose.com in 208 ms.",
+        "reason": "HTTP 200 from heavymoose.com in 175 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 175
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 146
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -2423,20 +4596,22 @@
             "status": 200,
             "finalUrl": "https://heavymoose.com/",
             "redirects": 0,
-            "durationMs": 208,
+            "durationMs": 175,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 59,
             "validTo": "2026-11-23T05:48:25.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -2445,13 +4620,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 208,
+            "durationMs": 175,
             "pass": true,
             "detail": "ok"
           }
@@ -2460,14 +4635,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -2488,39 +4675,118 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "lowertownstpaul.org",
       "displayName": "lowertownstpaul.org",
       "emphasisRank": 23,
       "investorCritical": false,
+      "profile": {
+        "name": "Lowertown St. Paul",
+        "purpose": "Portrait of Lowertown, a Saint Paul National Historic District.",
+        "category": "civic",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 3,
+        "audience": null,
+        "earningPath": "Local sponsors and quarterly briefings",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": true,
+          "kind": "active-and-serving",
+          "note": "Declared active and serving."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "865d6b839f4e4e3e85862686875fc65c",
+            "placeholder": false
+          }
+        ],
+        "reason": "The Cloudflare Web Analytics tag is shipped but reported zero page loads for this host in the last 24 hours.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from lowertownstpaul.org in 241 ms.",
+        "reason": "HTTP 200 from lowertownstpaul.org in 175 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 175
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 262
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -2532,20 +4798,22 @@
             "status": 200,
             "finalUrl": "https://lowertownstpaul.org/",
             "redirects": 0,
-            "durationMs": 241,
+            "durationMs": 175,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 60,
             "validTo": "2026-11-24T16:52:05.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -2554,13 +4822,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 241,
+            "durationMs": 175,
             "pass": true,
             "detail": "ok"
           }
@@ -2569,14 +4837,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -2597,39 +4877,118 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "minnesotapeace.com",
       "displayName": "minnesotapeace.com",
       "emphasisRank": 24,
       "investorCritical": false,
+      "profile": {
+        "name": "MN Peace",
+        "purpose": "Plain-language guide to Minnesota's public-program fraud cases, oversight failures and reforms, with primary records.",
+        "category": "civic",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 3,
+        "audience": null,
+        "earningPath": "Civic services and local partnerships",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": true,
+          "kind": "active-and-serving",
+          "note": "Declared active and serving."
+        },
+        "operatingStatus": {
+          "key": "healthy",
+          "tone": "healthy"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "active-verified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "06bf4fc62c2d4cee841cff77e966682c",
+            "placeholder": false
+          }
+        ],
+        "reason": "Cloudflare Web Analytics received 8 page loads for this host in the last 24 hours.",
+        "confidence": "high",
+        "reception": {
+          "state": "received",
+          "events": 8,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from minnesotapeace.com in 202 ms.",
+        "reason": "HTTP 200 from minnesotapeace.com in 235 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 235
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 144
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -2641,35 +5000,93 @@
             "status": 200,
             "finalUrl": "https://minnesotapeace.com/",
             "redirects": 0,
-            "durationMs": 202,
+            "durationMs": 235,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
             "daysRemaining": 71,
             "validTo": "2026-12-05T01:45:35.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
       "criticalPath": {
         "state": "pass",
         "evidenceState": "measured",
-        "level": "baseline",
-        "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "level": "authoritative",
+        "basis": "The publication sections the owner already verifies after every deploy (deploy workflow: Verify exact public URLs serve the publication build). Only route availability and page substance are checked, not volatile copy.",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 202,
+            "durationMs": 235,
+            "pass": true,
+            "detail": "ok"
+          },
+          {
+            "id": "record",
+            "path": "/record/",
+            "status": 200,
+            "durationMs": 73,
+            "pass": true,
+            "detail": "ok"
+          },
+          {
+            "id": "status",
+            "path": "/status/",
+            "status": 200,
+            "durationMs": 74,
+            "pass": true,
+            "detail": "ok"
+          },
+          {
+            "id": "guide",
+            "path": "/guide/",
+            "status": 200,
+            "durationMs": 73,
+            "pass": true,
+            "detail": "ok"
+          },
+          {
+            "id": "oversight",
+            "path": "/oversight/",
+            "status": 200,
+            "durationMs": 75,
+            "pass": true,
+            "detail": "ok"
+          },
+          {
+            "id": "programs",
+            "path": "/programs/",
+            "status": 200,
+            "durationMs": 69,
+            "pass": true,
+            "detail": "ok"
+          },
+          {
+            "id": "money",
+            "path": "/money/",
+            "status": 200,
+            "durationMs": 68,
+            "pass": true,
+            "detail": "ok"
+          },
+          {
+            "id": "authority",
+            "path": "/authority/",
+            "status": 200,
+            "durationMs": 60,
             "pass": true,
             "detail": "ok"
           }
@@ -2678,14 +5095,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
-          "level": "baseline",
-          "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "level": "authoritative",
+          "checkCount": 8,
+          "basis": "The publication sections the owner already verifies after every deploy (deploy workflow: Verify exact public URLs serve the publication build). Only route availability and page substance are checked, not volatile copy.",
+          "basisSource": "owner-deploy-verification",
+          "status": "authoritative"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -2703,42 +5132,120 @@
       },
       "probeExpectation": {
         "expectation": "serves-content",
-        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+        "basis": "Owner deploy verification enforces these publication routes."
       },
-      "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "diagnosticState": "verified-healthy",
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     },
     {
       "propertyId": "redleopardofstpaul.com",
       "displayName": "redleopardofstpaul.com",
       "emphasisRank": 25,
       "investorCritical": false,
+      "profile": {
+        "name": "Red Leopard of St. Paul",
+        "purpose": "Home for Nine Lives on the Strip: Lowertown-born hair metal, cover art and the developing Melanie release.",
+        "category": "creative",
+        "lifecycle": "incubating",
+        "aliasOf": null,
+        "strategicTier": 4,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "incubating",
+          "expectedState": "unknown",
+          "observedMode": "serving",
+          "met": null,
+          "kind": "incubating-and-serving",
+          "note": "Incubating and already serving public content."
+        },
+        "operatingStatus": {
+          "key": "reachable",
+          "tone": "reachable"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "configured-unverified",
         "rum": "on",
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
         "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [
+          {
+            "id": "cloudflare-web-analytics",
+            "siteTag": "14e2f0c01add4a21977c614089b8485b",
+            "placeholder": false
+          }
+        ],
+        "reason": "The Cloudflare Web Analytics tag is shipped but reported zero page loads for this host in the last 24 hours.",
+        "confidence": "medium",
+        "reception": {
+          "state": "none-received",
+          "events": 0,
+          "windowHours": 24,
+          "observedAt": "2026-09-24T19:48:00.544Z",
+          "reason": null
+        },
+        "discrepancy": null
       },
       "availability": {
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from redleopardofstpaul.com in 161 ms.",
+        "reason": "HTTP 200 from redleopardofstpaul.com in 150 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
+        "agreement": "agree",
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "network": null,
+            "observedAt": "2026-09-24T19:47:48.528Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 150
+          },
+          {
+            "vantage": "github-actions-macos",
+            "network": "GitHub-hosted macOS",
+            "observedAt": "2026-09-24T19:47:32.802Z",
+            "state": "available",
+            "blocked": false,
+            "conclusive": true,
+            "failureClass": null,
+            "httpStatus": 200,
+            "durationMs": 150
+          }
+        ],
         "evidence": {
           "dns": {
             "state": "resolved",
@@ -2750,20 +5257,22 @@
             "status": 200,
             "finalUrl": "https://redleopardofstpaul.com/",
             "redirects": 0,
-            "durationMs": 161,
+            "durationMs": 150,
+            "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
-            "daysRemaining": 63,
+            "daysRemaining": 62,
             "validTo": "2026-11-26T18:43:08.000Z"
-          }
+          },
+          "vantage": "github-actions"
         },
         "recent": {
           "windowDays": 7,
-          "runs": 3,
-          "conclusiveRuns": 3,
-          "availableRuns": 3,
+          "runs": 4,
+          "conclusiveRuns": 4,
+          "availableRuns": 4,
           "availabilityRatio": 1
         }
       },
@@ -2772,13 +5281,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-09-24T18:32:06.348Z",
+        "observedAt": "2026-09-24T19:47:48.528Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 161,
+            "durationMs": 150,
             "pass": true,
             "detail": "ok"
           }
@@ -2787,14 +5296,26 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-09-25T02:32:06.348Z",
-          "expiresAt": "2026-09-25T18:32:06.348Z"
+          "freshUntil": "2026-09-25T03:47:48.528Z",
+          "expiresAt": "2026-09-25T19:47:48.528Z"
         },
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": [
+          {
+            "vantage": "github-actions",
+            "state": "pass"
+          },
+          {
+            "vantage": "github-actions-macos",
+            "state": "pass"
+          }
+        ]
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -2815,7 +5336,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-09-24T18:32:06.348Z"
+      "evidenceAsOf": "2026-09-24T19:47:48.528Z"
     }
   ]
 }

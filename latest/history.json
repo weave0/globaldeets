@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "1.2.0",
   "contractName": "globaldeets-mission-control-history",
-  "generatedAt": "2026-09-24T18:32:06.348Z",
+  "generatedAt": "2026-09-24T19:47:48.528Z",
   "supportedWindowsDays": [
     7,
     28,
@@ -73,23 +73,23 @@
     },
     {
       "snapshotId": "2026-09-24.scheduled",
-      "observedAt": "2026-09-24T18:32:06.348Z",
+      "observedAt": "2026-09-24T19:47:48.528Z",
       "collector": {
         "kind": "scheduled",
-        "runId": "run-36041879939-1"
+        "runId": "run-36050496073-1"
       },
       "estate": {
         "activeZones": 25,
         "rumObservedZones": 21,
         "rumCoveragePct": 84,
         "evidenceState": "carried-forward",
-        "inventoryObservedAt": "2026-09-24T18:32:06.349Z",
+        "inventoryObservedAt": "2026-09-24T19:47:48.530Z",
         "comparabilityKey": "estate-rum|v1"
       },
       "availability": {
         "evidenceState": "measured",
-        "probeRunId": "run-36041879939-1",
-        "probeObservedAt": "2026-09-24T18:32:06.348Z",
+        "probeRunId": "run-36050496073-1",
+        "probeObservedAt": "2026-09-24T19:47:48.528Z",
         "comparabilityKey": "estate-availability|v1|properties=25",
         "propertyCount": 25,
         "conclusiveServiceZones": 20,
@@ -99,10 +99,10 @@
         "noServiceZones": 4,
         "blockedZones": 1,
         "unknownZones": 0,
-        "verifiedHealthyZones": 1,
+        "verifiedHealthyZones": 2,
         "availableRatioPct": 100,
         "dayRollup": {
-          "runs": 3,
+          "runs": 4,
           "worstAvailableZones": 20,
           "worstUnavailableZones": 0
         }
@@ -115,7 +115,7 @@
         "residualUnclassifiedVisits": null,
         "evidenceState": "unavailable",
         "investorSafe": false,
-        "reason": "No GOLD_SOURCE configured."
+        "reason": "No Canonical Gold source configured."
       },
       "certifiedAudience": {
         "evidenceState": "unavailable",
@@ -124,9 +124,28 @@
         "certified": false,
         "reason": "No certified audience source is connected; edge and probe traffic are not human audience."
       },
+      "instrumentation": {
+        "evidenceState": "measured",
+        "probeRunId": "run-36050496073-1",
+        "comparabilityKey": "instrumentation|v1|properties=25",
+        "applicable": 20,
+        "activeVerified": 6,
+        "configuredUnverified": 13,
+        "configuredInvalid": 0,
+        "absent": 0,
+        "inaccessible": 1,
+        "unknown": 0
+      },
+      "audience": {
+        "evidenceState": "unavailable",
+        "sourceStatus": "awaiting-authorized-source",
+        "comparabilityKey": "audience|gold-1.2|properties=25",
+        "reason": "No Canonical Gold source configured."
+      },
       "businessEvents": {
         "evidenceState": "unavailable",
-        "reason": "No business-event taxonomy or source is connected."
+        "sourceStatus": "not-connected",
+        "reason": "No governed business-event feed is connected. Event-producing routes may exist in source, but none reports counts to Mission Control."
       }
     }
   ],
@@ -173,6 +192,25 @@
       "note": "Consumed from Canonical Gold 1.2 via registry goldBindings when a non-fixture source is configured; fixtures are rejected."
     },
     {
+      "seam": "governed-audience",
+      "accepts": [
+        "GFD Canonical Gold 1.2 per-zone Cloudflare metrics",
+        "GFD Traffic Insights 1.x"
+      ],
+      "requiredFields": [
+        "observedAt",
+        "window",
+        "metric",
+        "value",
+        "unit",
+        "evidenceState",
+        "source",
+        "comparabilityKey"
+      ],
+      "status": "reader-built-awaiting-authorized-source",
+      "note": "Per-property 7/28/90-day edge requests, trends and daily series are read from the governed Traffic Intelligence documents. Edge requests are not people; fixtures are rejected."
+    },
+    {
       "seam": "estate-availability",
       "accepts": [
         "production probes"
@@ -203,8 +241,8 @@
         "attribution",
         "source"
       ],
-      "status": "awaiting-taxonomy",
-      "note": "No taxonomy or source is connected. No funnel or conversion figure may be fabricated."
+      "status": "contract-defined-awaiting-feed",
+      "note": "The common vocabulary and feed contract (globaldeets-business-events-feed) are defined; no feed is connected. No funnel or conversion figure may be fabricated, and a zero requires declared instrumentation."
     }
   ]
 }

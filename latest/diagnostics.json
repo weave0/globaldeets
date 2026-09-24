@@ -1,13 +1,17 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "contractName": "globaldeets-diagnostics-queue",
-  "generatedAt": "2026-09-24T18:32:06.348Z",
+  "generatedAt": "2026-09-24T19:47:48.528Z",
   "agentContract": {
     "sortableFields": [
       "priority",
+      "priorityScore",
       "severity",
       "businessImpact",
       "status",
+      "category",
+      "actionability.state",
+      "confidence",
       "ownerLane",
       "ageDays",
       "domain",
@@ -28,11 +32,18 @@
       "severity",
       "businessImpact",
       "status",
+      "category",
       "ownerLane",
       "ageDays",
       "evidence",
       "nextAction",
-      "escalation"
+      "escalation",
+      "confidence",
+      "freshness",
+      "actionability",
+      "subjects",
+      "priorityScore",
+      "priorityBreakdown"
     ],
     "escalationLevels": [
       "investor-blocking",
@@ -55,12 +66,30 @@
       "narrative-provenance",
       "none"
     ],
+    "categories": [
+      "availability",
+      "critical-path",
+      "evidence-quality",
+      "instrumentation",
+      "audience",
+      "business-outcomes",
+      "governance",
+      "infrastructure",
+      "product"
+    ],
+    "actionabilityStates": [
+      "actionable-now",
+      "blocked-on-authority",
+      "decision-needed",
+      "monitor",
+      "closed"
+    ],
     "classGuide": {
       "investor-impacting-outage": "An investor-critical property is confirmed down or failing its authoritative critical path. Page immediately.",
       "outage": "A non-investor-critical property is confirmed unavailable. Ordinary incident.",
       "degradation": "Reachable but slow, intermittent, or failing a non-critical check.",
       "maintenance": "Routine platform hygiene: expiring certificates, parked zones needing a topology decision, contract drift.",
-      "observability-gap": "We cannot see the property well enough to know its state (RUM off, single probe vantage).",
+      "observability-gap": "We cannot see the property well enough to know its state (no live instrumentation, single probe vantage).",
       "stale-evidence": "Evidence exists but has aged past its freshness policy; automation may be failing.",
       "insufficient-evidence": "The probe could not establish state (blocked/challenged, no contract). Not an outage.",
       "measurement-claim-block": "An investor-facing claim cannot be made until the measurement is certified.",
@@ -68,25 +97,97 @@
       "narrative-provenance": "External or public narrative is inconsistent with the product."
     }
   },
+  "priorityModel": {
+    "version": "1.0.0",
+    "summary": "Score = severity + investor-critical + strategic tier + business impact + escalation + actionability + confidence + age. Higher is more urgent. Every item publishes the exact points behind its score.",
+    "points": {
+      "severity": {
+        "critical": 100,
+        "high": 70,
+        "medium": 40,
+        "low": 15,
+        "info": 5
+      },
+      "businessImpact": {
+        "existential": 20,
+        "high": 12,
+        "medium": 6,
+        "low": 0
+      },
+      "escalation": {
+        "investor-blocking": 15,
+        "page": 12,
+        "high": 6,
+        "medium": 2,
+        "low": 0,
+        "none": 0
+      },
+      "strategicTier": {
+        "1": 12,
+        "2": 8,
+        "3": 4,
+        "4": 0
+      },
+      "actionability": {
+        "actionable-now": 20,
+        "decision-needed": 0,
+        "monitor": -5,
+        "blocked-on-authority": -20,
+        "closed": -100
+      },
+      "confidence": {
+        "high": 0,
+        "medium": -4,
+        "low": -10
+      },
+      "investorCritical": 25,
+      "estateWide": 15,
+      "estateWideAboveSubjects": 5,
+      "agePerTwoDays": 1,
+      "maxAgeDays": 14
+    },
+    "tieBreak": "Equal scores are ordered by item id, so ranking is deterministic."
+  },
   "derivation": {
-    "note": "Items with source \"derived\" are computed from probe, history, and inventory evidence on every collection run; source \"manual\" items are hand-authored judgments with no derivable evidence.",
+    "note": "Items with source \"derived\" are computed from probe, history, inventory, audience and business-event evidence on every collection run; source \"manual\" items are hand-authored judgments with no derivable evidence.",
     "derivedRules": [
       "audience-certification",
+      "audience-source",
+      "business-outcome-coverage",
       "critical-path-contracts",
+      "critical-path-failed",
+      "expectation-drift",
       "history-density",
-      "inventory-incomplete",
+      "infrastructure-without-use",
+      "instrumentation-placeholder",
+      "instrumentation-unverified",
+      "lifecycle-undeclared",
+      "new-production-surface",
       "no-service-published",
-      "probe-blocked",
-      "rum-coverage",
-      "single-vantage"
+      "outcome-declaration-gap",
+      "probe-blocked"
     ]
+  },
+  "summary": {
+    "open": 16,
+    "actionableNow": 3,
+    "blockedOnAuthority": 4,
+    "decisionNeeded": 8,
+    "nextUp": "criticalpath:failed:aiaimate.com"
   },
   "items": [
     {
       "source": "derived",
       "status": "in-progress",
+      "polarity": "risk",
+      "confidence": "high",
+      "actionability": {
+        "state": "blocked-on-authority",
+        "blockedBy": "A human-audience source with bot/agent classification (GA4 Data API or first-party browser telemetry with verified reception)"
+      },
       "id": "measurement:audience-certification",
       "rule": "audience-certification",
+      "category": "audience",
       "severity": "critical",
       "domain": "measurement",
       "businessImpact": "existential",
@@ -94,7 +195,7 @@
       "openedAt": "2026-09-23",
       "title": "Certify human audience metrics",
       "observed": "The latest measured operational edge snapshot (2026-09-23.2) contains 36,391 raw visits, including 31,681 attached to a synthetic health path. Mission Control probes add tagged synthetic traffic that must also be excluded.",
-      "businessReason": "Operational edge telemetry cannot responsibly stand in for human traction.",
+      "businessReason": "Operational edge telemetry cannot responsibly stand in for human traction. Investors will ask how many real people use this.",
       "evidence": [
         {
           "type": "mission-control-snapshot",
@@ -110,73 +211,215 @@
         "escalateWhen": "Any investor material attempts to present raw edge visits or requests as human audience before certification.",
         "targetLane": "Data / analytics + Product narrative"
       },
+      "subjects": [],
       "ageDays": 1,
+      "freshness": {
+        "state": "unknown",
+        "observedAt": null,
+        "basis": "Governed audience source"
+      },
+      "priorityScore": 115,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 100,
+          "why": "Severity is critical."
+        },
+        {
+          "factor": "business-impact",
+          "points": 20,
+          "why": "Business impact is existential."
+        },
+        {
+          "factor": "escalation",
+          "points": 15,
+          "why": "Escalation level is investor-blocking."
+        },
+        {
+          "factor": "actionability",
+          "points": -20,
+          "why": "Blocked on authority that is not available yet."
+        }
+      ],
       "priority": 1
     },
     {
-      "source": "manual",
+      "source": "derived",
       "status": "open",
-      "id": "business:conversion-measurement",
+      "polarity": "risk",
+      "confidence": "high",
+      "actionability": {
+        "state": "actionable-now",
+        "blockedBy": null
+      },
+      "id": "criticalpath:failed:aiaimate.com",
+      "subject": "aiaimate.com",
+      "subjects": [
+        "aiaimate.com"
+      ],
+      "rule": "critical-path-failed",
+      "category": "critical-path",
       "severity": "high",
-      "domain": "business",
-      "businessImpact": "high",
-      "ownerLane": "Growth / business",
-      "openedAt": "2026-09-23",
-      "title": "Instrument meaningful business conversion events",
-      "observed": "No certified investor-facing funnel for subscriber, partner, donor, sponsor, licensing, or investor-intent conversion is connected.",
-      "businessReason": "Traffic without conversion or retention evidence does not explain economic potential.",
+      "domain": "reliability",
+      "businessImpact": "medium",
+      "ownerLane": "Platform",
+      "title": "AIAIMate responds, but its critical path is failing",
+      "observed": "The authoritative critical-path contract (owner-source-route) failed: search-api (status-500). The homepage may look fine while the function users depend on is broken.",
+      "businessReason": "The homepage may respond while the product function investors and users depend on is broken.",
       "evidence": [
         {
-          "type": "mission-control",
-          "ref": "business-event-ingestion-seam",
-          "state": "unavailable"
+          "type": "critical-path-probe",
+          "ref": "aiaimate.com@2026-09-24T19:47:48.528Z",
+          "state": "measured"
         }
       ],
-      "nextAction": "Define the business-event taxonomy and connect first-party or GA4 event telemetry with source, window, and attribution limits.",
+      "nextAction": "Inspect the failing check(s) against production and the latest deploy; fix the route or correct the contract if the product intentionally changed.",
       "escalation": {
         "blocksInvestorClaim": false,
-        "class": "measurement-claim-block",
         "level": "high",
-        "escalateWhen": "Investor materials require funnel or retention claims that cannot be sourced.",
-        "targetLane": "Growth / business"
+        "class": "degradation",
+        "escalateWhen": "Failure persists for two consecutive runs.",
+        "targetLane": "Platform"
       },
-      "ageDays": 1,
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-09-24T19:47:48.528Z",
+        "basis": "Production probes"
+      },
+      "priorityScore": 110,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 70,
+          "why": "Severity is high."
+        },
+        {
+          "factor": "strategic-tier",
+          "points": 8,
+          "why": "Affects a tier 2 property in the owner strategy."
+        },
+        {
+          "factor": "business-impact",
+          "points": 6,
+          "why": "Business impact is medium."
+        },
+        {
+          "factor": "escalation",
+          "points": 6,
+          "why": "Escalation level is high."
+        },
+        {
+          "factor": "actionability",
+          "points": 20,
+          "why": "Can be worked on now."
+        }
+      ],
       "priority": 2
     },
     {
       "source": "derived",
-      "status": "in-progress",
-      "id": "data:history-density",
-      "rule": "history-density",
+      "status": "open",
+      "polarity": "risk",
+      "confidence": "high",
+      "actionability": {
+        "state": "actionable-now",
+        "blockedBy": null
+      },
+      "id": "business-outcomes:coverage",
+      "rule": "business-outcome-coverage",
+      "category": "business-outcomes",
+      "subjects": [
+        "globaldeets.com",
+        "culturesherpa.org",
+        "agentkagent.com",
+        "aiaimate.com",
+        "brettleeweaver.com",
+        "citizenapproved.org",
+        "cyancanoe.com",
+        "flipskillet.com",
+        "flipskillit.com",
+        "foxyana.com",
+        "gflippinv.com",
+        "goodflippindesign.com",
+        "goodflippinluck.com",
+        "goodflippinnews.com",
+        "goodflippinvibes.com",
+        "goodflippinyikes.com",
+        "heavymoose.com",
+        "lowertownstpaul.org",
+        "minnesotapeace.com",
+        "redleopardofstpaul.com"
+      ],
       "severity": "medium",
-      "domain": "measurement",
-      "businessImpact": "medium",
-      "ownerLane": "Data / analytics",
+      "domain": "business",
+      "businessImpact": "high",
+      "ownerLane": "Product + Data",
       "openedAt": "2026-09-24",
-      "title": "Accumulate enough comparable history for 7/28/90-day trends",
-      "observed": "1 scheduled daily snapshot retained (1/90 days of a full 90-day view); 1 measured operational-traffic snapshot; certified audience history: none.",
-      "businessReason": "Trend charts become decision-grade only when they contain comparable observations rather than decorative lines.",
+      "title": "0 of 20 properties report business outcomes",
+      "observed": "Event-producing routes exist in source for aiaimate.com (signup, purchase); cyancanoe.com (lead); goodflippindesign.com (lead, purchase), but no governed feed connects them. The rest declare no countable outcome.",
+      "businessReason": "Traffic without outcomes cannot show that the estate produces value: leads, sign-ups, purchases and downloads are what an investor asks about after audience.",
       "evidence": [
         {
-          "type": "history-contract",
-          "ref": "globaldeets-mission-control-history@1.1.0",
-          "state": "measured"
+          "type": "business-event-contract",
+          "ref": "globaldeets-business-events@2026-09-24T19:47:48.528Z",
+          "state": "not-connected"
         }
       ],
-      "nextAction": "Scheduled collection accumulates snapshots automatically; connect a governed Canonical Gold source (goldBindings) to add comparable operational-edge points.",
+      "nextAction": "Start with the properties whose producers already exist in source: publish counts to the globaldeets-business-events-feed contract (per property, event type and window) and set the events feed secrets.",
       "escalation": {
-        "blocksInvestorClaim": false,
-        "level": "medium",
+        "blocksInvestorClaim": true,
+        "level": "high",
         "class": "measurement-claim-block",
-        "escalateWhen": "A chart attempts to calculate a trend from fewer than two comparable measured observations.",
-        "targetLane": "Data / analytics"
+        "escalateWhen": "Any investor material states conversion or outcome figures.",
+        "targetLane": "Product + Data"
       },
       "ageDays": 0,
+      "freshness": {
+        "state": "unknown",
+        "observedAt": null,
+        "basis": "Business-event feed"
+      },
+      "priorityScore": 93,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 40,
+          "why": "Severity is medium."
+        },
+        {
+          "factor": "estate-wide",
+          "points": 15,
+          "why": "Affects 20 properties across the estate."
+        },
+        {
+          "factor": "business-impact",
+          "points": 12,
+          "why": "Business impact is high."
+        },
+        {
+          "factor": "escalation",
+          "points": 6,
+          "why": "Escalation level is high."
+        },
+        {
+          "factor": "actionability",
+          "points": 20,
+          "why": "Can be worked on now."
+        }
+      ],
       "priority": 3
     },
     {
       "source": "manual",
       "status": "open",
+      "polarity": "opportunity",
+      "confidence": "medium",
+      "actionability": {
+        "state": "decision-needed",
+        "blockedBy": null
+      },
       "id": "product:culture-convergence",
       "severity": "medium",
       "domain": "opportunity",
@@ -206,124 +449,441 @@
         "escalateWhen": "Integration is presented as realized value before shared usage evidence exists.",
         "targetLane": "Product strategy"
       },
+      "category": "product",
+      "subjects": [
+        "culturesherpa.org",
+        "globaldeets.com"
+      ],
       "ageDays": 1,
+      "freshness": {
+        "state": "static",
+        "observedAt": null,
+        "basis": "Registry configuration"
+      },
+      "priorityScore": 77,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 40,
+          "why": "Severity is medium."
+        },
+        {
+          "factor": "investor-critical",
+          "points": 25,
+          "why": "Affects an investor-critical property."
+        },
+        {
+          "factor": "strategic-tier",
+          "points": 8,
+          "why": "Affects a tier 2 property in the owner strategy."
+        },
+        {
+          "factor": "business-impact",
+          "points": 6,
+          "why": "Business impact is medium."
+        },
+        {
+          "factor": "escalation",
+          "points": 2,
+          "why": "Escalation level is medium."
+        },
+        {
+          "factor": "confidence",
+          "points": -4,
+          "why": "Evidence confidence is medium."
+        }
+      ],
       "priority": 4
     },
     {
-      "source": "manual",
+      "source": "derived",
       "status": "open",
-      "id": "narrative:repository-metadata",
+      "polarity": "risk",
+      "confidence": "high",
+      "actionability": {
+        "state": "actionable-now",
+        "blockedBy": null
+      },
+      "id": "instrumentation:placeholder-tag",
+      "rule": "instrumentation-placeholder",
+      "category": "instrumentation",
+      "subjects": [
+        "heavymoose.com"
+      ],
       "severity": "medium",
-      "domain": "provenance",
+      "domain": "observability",
       "businessImpact": "medium",
-      "ownerLane": "Product narrative",
-      "openedAt": "2026-09-24",
-      "title": "Replace stale GitHub repository description",
-      "observed": "GitHub still describes GlobalDeets as a portfolio and research intelligence showcase even though README, STATUS, and the live product have moved on.",
-      "businessReason": "Repository metadata is visible during diligence and can reintroduce the obsolete product story.",
+      "ownerLane": "Property owner",
+      "title": "1 property ships an analytics tag with a placeholder ID",
+      "observed": "heavymoose.com (G-XXXXXXXXXX) load an analytics script configured with a placeholder measurement ID. That tag cannot be collecting real data (another, real tag is also present on some of these).",
+      "businessReason": "The page looks instrumented while measuring nothing, which would silently hide its audience.",
       "evidence": [
         {
-          "type": "github-repository-metadata",
-          "ref": "weave0/globaldeets",
+          "type": "served-html",
+          "ref": "production probe run-36050496073-1",
           "state": "measured"
         }
       ],
-      "nextAction": "Update the repository description to the source-first world-information product narrative.",
+      "nextAction": "Replace the placeholder with the real GA4 measurement ID (or remove the tag) and redeploy.",
       "escalation": {
         "blocksInvestorClaim": false,
-        "class": "narrative-provenance",
         "level": "medium",
-        "escalateWhen": "Repository metadata remains inconsistent with the live product during external diligence.",
-        "targetLane": "Product narrative"
+        "class": "observability-gap",
+        "escalateWhen": "The property becomes part of investor material.",
+        "targetLane": "Property owner"
       },
+      "openedAt": "2026-09-24",
       "ageDays": 0,
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-09-24T19:47:48.528Z",
+        "basis": "Production probes"
+      },
+      "priorityScore": 72,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 40,
+          "why": "Severity is medium."
+        },
+        {
+          "factor": "strategic-tier",
+          "points": 4,
+          "why": "Affects a tier 3 property in the owner strategy."
+        },
+        {
+          "factor": "business-impact",
+          "points": 6,
+          "why": "Business impact is medium."
+        },
+        {
+          "factor": "escalation",
+          "points": 2,
+          "why": "Escalation level is medium."
+        },
+        {
+          "factor": "actionability",
+          "points": 20,
+          "why": "Can be worked on now."
+        }
+      ],
       "priority": 5
     },
     {
       "source": "derived",
       "status": "open",
-      "id": "observability:rum-coverage",
-      "rule": "rum-coverage",
-      "subjects": [
-        "artificelligance.com",
-        "artificelligence.com",
-        "fwomps.com",
-        "fwomp.us"
-      ],
-      "severity": "medium",
-      "domain": "observability",
-      "businessImpact": "medium",
-      "ownerLane": "Platform",
-      "title": "Resolve 4 browser-observability gaps",
-      "observed": "RUM is off for artificelligance.com, artificelligence.com, fwomps.com, fwomp.us; 21 of 25 zones are observed.",
-      "businessReason": "Unobserved properties are harder to diagnose and cannot contribute comparable browser evidence.",
+      "polarity": "risk",
+      "confidence": "high",
+      "actionability": {
+        "state": "blocked-on-authority",
+        "blockedBy": "A read credential for the governed Canonical Gold and Traffic Insights documents."
+      },
+      "id": "audience:governed-source",
+      "rule": "audience-source",
+      "category": "audience",
+      "severity": "high",
+      "domain": "measurement",
+      "businessImpact": "high",
+      "ownerLane": "Data / analytics",
+      "openedAt": "2026-09-24",
+      "title": "Connect the governed audience source (awaiting authorization)",
+      "observed": "No Canonical Gold source configured. Mission Control reads Canonical Gold 1.2 and Traffic Insights; the reader is built and tested, so per-property 7/28/90-day traffic, trends, contribution and concentration appear as soon as a valid, non-fixture document is readable.",
+      "businessReason": "Without a governed traffic source, usage, growth and each property's contribution cannot be stated at all. Nothing is estimated or shown as zero.",
       "evidence": [
         {
-          "type": "cloudflare-rum-inventory",
-          "ref": "2026-09-24T18:32:06.349Z",
-          "state": "measured"
+          "type": "audience-contract",
+          "ref": "globaldeets-audience",
+          "state": "awaiting-authorized-source"
         }
       ],
-      "nextAction": "Enable RUM where appropriate or explicitly record an exemption with rationale.",
+      "nextAction": "Grant Mission Control read access: A read credential for the governed Canonical Gold and Traffic Insights documents. Then set the repository secrets MISSION_CONTROL_GOLD_SOURCE and MISSION_CONTROL_GOLD_TOKEN.",
       "escalation": {
-        "blocksInvestorClaim": false,
-        "level": "medium",
-        "class": "observability-gap",
-        "escalateWhen": "A currently unobserved property becomes business-critical or has a production incident.",
-        "targetLane": "Platform"
+        "blocksInvestorClaim": true,
+        "level": "high",
+        "class": "measurement-claim-block",
+        "escalateWhen": "Any investor material states usage, growth or contribution figures.",
+        "targetLane": "Data / analytics"
       },
-      "openedAt": "2026-09-24",
+      "subjects": [],
       "ageDays": 0,
+      "freshness": {
+        "state": "unknown",
+        "observedAt": null,
+        "basis": "Governed audience source"
+      },
+      "priorityScore": 68,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 70,
+          "why": "Severity is high."
+        },
+        {
+          "factor": "business-impact",
+          "points": 12,
+          "why": "Business impact is high."
+        },
+        {
+          "factor": "escalation",
+          "points": 6,
+          "why": "Escalation level is high."
+        },
+        {
+          "factor": "actionability",
+          "points": -20,
+          "why": "Blocked on authority that is not available yet."
+        }
+      ],
       "priority": 6
     },
     {
       "source": "derived",
       "status": "open",
+      "polarity": "risk",
+      "confidence": "medium",
+      "actionability": {
+        "state": "decision-needed",
+        "blockedBy": null
+      },
+      "id": "infrastructure:unregistered-surfaces",
+      "rule": "new-production-surface",
+      "category": "infrastructure",
       "subjects": [
+        "globaldeets.com",
         "goodflippindesign.com"
       ],
+      "severity": "low",
+      "domain": "governance",
+      "businessImpact": "low",
+      "ownerLane": "Platform",
+      "title": "3 production surfaces outside the governed registry",
+      "observed": "culturesherpa.globaldeets.com (Pages project culturesherpa-maps); saintpaul.globaldeets.com (Pages project saintpaul); traffic.goodflippindesign.com (Pages project gfd-traffic-intelligence) serve from Cloudflare Pages custom domains that are not in the estate registry, so they are neither probed nor measured.",
+      "businessReason": "A live surface nobody registered has no owner, no health evidence and no audience accounting.",
       "evidence": [
         {
-          "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-24T18:32:06.348Z",
+          "type": "cloudflare-pages-inventory",
+          "ref": "2026-09-24T19:47:48.530Z",
           "state": "measured"
         }
       ],
-      "id": "availability:probe-blocked",
-      "rule": "probe-blocked",
-      "severity": "medium",
-      "domain": "reliability",
-      "businessImpact": "low",
-      "ownerLane": "Platform",
-      "title": "1 property could not be assessed (probe blocked)",
-      "observed": "goodflippindesign.com challenged, rate-limited, or gated the probe. Availability is unknown, not failed.",
-      "businessReason": "Blocked probes leave real outages invisible.",
-      "nextAction": "Allow-list the probe user agent / X-GlobalDeets-Probe header for these hosts or register an authenticated health path.",
+      "nextAction": "Register each surface (and its purpose) in the estate registry, or retire it.",
       "escalation": {
         "blocksInvestorClaim": false,
-        "level": "medium",
-        "class": "insufficient-evidence",
-        "escalateWhen": "A blocked property is also investor-critical.",
+        "level": "low",
+        "class": "maintenance",
+        "escalateWhen": "A surface is linked from public or investor material.",
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
       "ageDays": 0,
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-09-24T19:47:48.530Z",
+        "basis": "Cloudflare inventory"
+      },
+      "priorityScore": 48,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 15,
+          "why": "Severity is low."
+        },
+        {
+          "factor": "investor-critical",
+          "points": 25,
+          "why": "Affects an investor-critical property."
+        },
+        {
+          "factor": "strategic-tier",
+          "points": 12,
+          "why": "Affects a tier 1 property in the owner strategy."
+        },
+        {
+          "factor": "confidence",
+          "points": -4,
+          "why": "Evidence confidence is medium."
+        }
+      ],
       "priority": 7
     },
     {
       "source": "derived",
+      "status": "in-progress",
+      "polarity": "gap",
+      "confidence": "high",
+      "actionability": {
+        "state": "monitor",
+        "blockedBy": null
+      },
+      "id": "data:history-density",
+      "rule": "history-density",
+      "category": "evidence-quality",
+      "severity": "medium",
+      "domain": "measurement",
+      "businessImpact": "medium",
+      "ownerLane": "Data / analytics",
+      "openedAt": "2026-09-24",
+      "title": "Accumulate enough comparable history for 7/28/90-day trends",
+      "observed": "1 scheduled daily snapshot retained (1/90 days of a full 90-day view); 1 measured operational-traffic snapshot; certified audience history: none.",
+      "businessReason": "Trend charts become decision-grade only when they contain comparable observations rather than decorative lines.",
+      "evidence": [
+        {
+          "type": "history-contract",
+          "ref": "globaldeets-mission-control-history@1.2.0",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "medium",
+        "class": "measurement-claim-block",
+        "escalateWhen": "A chart attempts to calculate a trend from fewer than two comparable measured observations.",
+        "targetLane": "Data / analytics"
+      },
+      "subjects": [],
+      "ageDays": 0,
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-09-24T19:47:48.528Z",
+        "basis": "Historical snapshots"
+      },
+      "priorityScore": 43,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 40,
+          "why": "Severity is medium."
+        },
+        {
+          "factor": "business-impact",
+          "points": 6,
+          "why": "Business impact is medium."
+        },
+        {
+          "factor": "escalation",
+          "points": 2,
+          "why": "Escalation level is medium."
+        },
+        {
+          "factor": "actionability",
+          "points": -5,
+          "why": "Nothing to fix; watch it."
+        }
+      ],
+      "priority": 8
+    },
+    {
+      "source": "derived",
       "status": "open",
+      "polarity": "gap",
+      "confidence": "high",
+      "actionability": {
+        "state": "decision-needed",
+        "blockedBy": null
+      },
+      "id": "business-outcomes:declare",
+      "rule": "outcome-declaration-gap",
+      "category": "business-outcomes",
+      "subjects": [
+        "globaldeets.com",
+        "agentkagent.com",
+        "brettleeweaver.com",
+        "citizenapproved.org",
+        "cyancanoe.com",
+        "flipskillet.com",
+        "foxyana.com",
+        "goodflippinyikes.com",
+        "heavymoose.com",
+        "lowertownstpaul.org",
+        "minnesotapeace.com",
+        "redleopardofstpaul.com"
+      ],
+      "severity": "low",
+      "domain": "business",
+      "businessImpact": "medium",
+      "ownerLane": "Property owner",
+      "title": "12 of 20 properties have no declared primary outcome",
+      "observed": "6 properties declare what a successful visit is; 12 do not, so nothing about them can be measured against an intent.",
+      "businessReason": "A property with no declared outcome cannot be judged useful, whatever its traffic.",
+      "evidence": [
+        {
+          "type": "estate-registry",
+          "ref": "tools/mission-control/config/estate-registry.json",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Owners declare one primary outcome per property from the common vocabulary (visit, engagement, CTA, lead, sign-up, application, purchase, download, or another declared outcome).",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "low",
+        "class": "business-opportunity",
+        "escalateWhen": "A property is presented to investors as revenue-generating.",
+        "targetLane": "Property owner"
+      },
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "freshness": {
+        "state": "static",
+        "observedAt": null,
+        "basis": "Registry configuration"
+      },
+      "priorityScore": 36,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 15,
+          "why": "Severity is low."
+        },
+        {
+          "factor": "estate-wide",
+          "points": 15,
+          "why": "Affects 12 properties across the estate."
+        },
+        {
+          "factor": "business-impact",
+          "points": 6,
+          "why": "Business impact is medium."
+        }
+      ],
+      "priority": 9
+    },
+    {
+      "source": "derived",
+      "status": "open",
+      "polarity": "gap",
+      "confidence": "high",
+      "actionability": {
+        "state": "decision-needed",
+        "blockedBy": null
+      },
       "id": "observability:critical-path-contracts",
       "rule": "critical-path-contracts",
+      "category": "critical-path",
       "subjects": [
-        "culturesherpa.com"
+        "culturesherpa.org",
+        "agentkagent.com",
+        "brettleeweaver.com",
+        "citizenapproved.org",
+        "cyancanoe.com",
+        "flipskillet.com",
+        "flipskillit.com",
+        "foxyana.com",
+        "gflippinv.com",
+        "goodflippinluck.com",
+        "goodflippinnews.com",
+        "goodflippinvibes.com",
+        "goodflippinyikes.com",
+        "heavymoose.com",
+        "lowertownstpaul.org",
+        "redleopardofstpaul.com"
       ],
       "severity": "low",
       "domain": "observability",
       "businessImpact": "medium",
-      "ownerLane": "Platform",
-      "title": "Most properties lack an authoritative critical-path contract",
-      "observed": "1 of 25 properties have an authoritative critical-path contract; 19 have only a homepage identity baseline; 1 have no contract (redirect aliases and undeclared parked zones are counted here or in the no-service finding).",
+      "ownerLane": "Platform + property owner",
+      "title": "16 of 20 serving properties still need an owner-declared critical path",
+      "observed": "4 of 20 serving properties have an authoritative critical-path contract (globaldeets.com, aiaimate.com, goodflippindesign.com, minnesotapeace.com); the rest are checked only against a homepage identity baseline, which cannot prove the product works.",
       "businessReason": "Reachable-unverified is not verified health; only owned, contracted paths can prove the product works.",
       "evidence": [
         {
@@ -332,7 +892,7 @@
           "state": "measured"
         }
       ],
-      "nextAction": "Owners of each property declare a stable critical path (API endpoint, key page, or function) and add it to the registry.",
+      "nextAction": "Each property owner names the one route or function that proves the product works (API endpoint, key page, search) and Mission Control adds it to the registry.",
       "escalation": {
         "blocksInvestorClaim": false,
         "level": "low",
@@ -342,34 +902,133 @@
       },
       "openedAt": "2026-09-24",
       "ageDays": 0,
-      "priority": 8
+      "freshness": {
+        "state": "static",
+        "observedAt": null,
+        "basis": "Registry configuration"
+      },
+      "priorityScore": 36,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 15,
+          "why": "Severity is low."
+        },
+        {
+          "factor": "estate-wide",
+          "points": 15,
+          "why": "Affects 16 properties across the estate."
+        },
+        {
+          "factor": "business-impact",
+          "points": 6,
+          "why": "Business impact is medium."
+        }
+      ],
+      "priority": 10
     },
     {
       "source": "derived",
       "status": "open",
+      "polarity": "gap",
+      "confidence": "high",
+      "actionability": {
+        "state": "blocked-on-authority",
+        "blockedBy": "Cloudflare WAF authority on the affected zone (zone owner)"
+      },
+      "subjects": [
+        "goodflippindesign.com"
+      ],
+      "evidence": [
+        {
+          "type": "production-probe",
+          "ref": "globaldeets-estate-health@2026-09-24T19:47:48.528Z",
+          "state": "measured"
+        }
+      ],
+      "id": "availability:probe-blocked",
+      "rule": "probe-blocked",
+      "category": "availability",
+      "severity": "medium",
+      "domain": "reliability",
+      "businessImpact": "low",
+      "ownerLane": "Platform",
+      "title": "1 property could not be assessed from any vantage (probe blocked)",
+      "observed": "goodflippindesign.com challenged, rate-limited, or gated every probe vantage. Availability is unknown, not failed.",
+      "businessReason": "Blocked probes leave real outages invisible.",
+      "nextAction": "Allow-list the probe user agent / X-GlobalDeets-Probe header for these hosts (Cloudflare WAF, zone owner) or register an authenticated health path.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "medium",
+        "class": "insufficient-evidence",
+        "escalateWhen": "A blocked property is also investor-critical.",
+        "targetLane": "Platform"
+      },
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-09-24T19:47:48.528Z",
+        "basis": "Production probes"
+      },
+      "priorityScore": 34,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 40,
+          "why": "Severity is medium."
+        },
+        {
+          "factor": "strategic-tier",
+          "points": 12,
+          "why": "Affects a tier 1 property in the owner strategy."
+        },
+        {
+          "factor": "escalation",
+          "points": 2,
+          "why": "Escalation level is medium."
+        },
+        {
+          "factor": "actionability",
+          "points": -20,
+          "why": "Blocked on authority that is not available yet."
+        }
+      ],
+      "priority": 11
+    },
+    {
+      "source": "derived",
+      "status": "open",
+      "polarity": "gap",
+      "confidence": "high",
+      "actionability": {
+        "state": "decision-needed",
+        "blockedBy": null
+      },
+      "id": "availability:no-service-published",
+      "rule": "no-service-published",
+      "category": "governance",
       "subjects": [
         "artificelligance.com",
         "artificelligence.com",
         "fwomps.com",
         "fwomp.us"
       ],
-      "evidence": [
-        {
-          "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-24T18:32:06.348Z",
-          "state": "measured"
-        }
-      ],
-      "id": "availability:no-service-published",
-      "rule": "no-service-published",
       "severity": "low",
       "domain": "reliability",
       "businessImpact": "low",
       "ownerLane": "Platform",
-      "title": "4 active zones publish no web service",
-      "observed": "artificelligance.com, artificelligence.com, fwomps.com, fwomp.us resolve without address records and no service is declared. This is not an outage.",
-      "businessReason": "Owned domains that publish nothing waste brand surface and cannot be assessed for health.",
-      "nextAction": "Decide per domain: publish a placeholder, redirect to a primary property, or record it as intentionally parked in the registry.",
+      "title": "4 domains publish nothing and their intent is not declared",
+      "observed": "artificelligance.com, artificelligence.com, fwomps.com, fwomp.us resolve without address records and no service or intent is declared. This is not an outage.",
+      "businessReason": "Owned domains that publish nothing waste brand surface, and without a declared intent no one can tell a deliberate reservation from an abandoned project.",
+      "evidence": [
+        {
+          "type": "production-probe",
+          "ref": "globaldeets-estate-health@2026-09-24T19:47:48.528Z",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Decide per domain: reserve it (record it as intentionally unpublished), publish a placeholder, redirect to a primary property, or release it.",
       "escalation": {
         "blocksInvestorClaim": false,
         "level": "low",
@@ -379,73 +1038,358 @@
       },
       "openedAt": "2026-09-24",
       "ageDays": 0,
-      "priority": 9
-    },
-    {
-      "source": "derived",
-      "status": "open",
-      "id": "evidence:inventory-stale",
-      "rule": "inventory-incomplete",
-      "severity": "low",
-      "domain": "observability",
-      "businessImpact": "low",
-      "ownerLane": "Platform",
-      "title": "Part of the Cloudflare inventory is carried forward, not refreshed",
-      "observed": "RUM settings are carried forward from the 2026-09-24 read and are not refreshed by the collector. RUM coverage is therefore never plotted as a fresh measurement.",
-      "businessReason": "Zone counts, RUM coverage, and deploy freshness are only as current as the inventory read behind them.",
-      "evidence": [
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-09-24T19:47:48.528Z",
+        "basis": "Production probes"
+      },
+      "priorityScore": 15,
+      "priorityBreakdown": [
         {
-          "type": "inventory",
-          "ref": "2026-09-24T18:32:06.349Z",
-          "state": "partial"
+          "factor": "severity",
+          "points": 15,
+          "why": "Severity is low."
         }
       ],
-      "nextAction": "Grant the collector token the missing read scopes (Zone:Read, Pages:Read) for zone and Pages facts. RUM settings additionally need a RUM read added to the collector (it does not read them yet), so they stay carried forward until that is built.",
-      "escalation": {
-        "blocksInvestorClaim": false,
-        "level": "low",
-        "class": "stale-evidence",
-        "escalateWhen": "Inventory expires (over 7 days) or a carried-forward fact is used in investor material as current.",
-        "targetLane": "Platform"
-      },
-      "openedAt": "2026-09-24",
-      "ageDays": 0,
-      "priority": 10
+      "priority": 12
     },
     {
       "source": "derived",
       "status": "open",
-      "id": "observability:single-probe-vantage",
-      "rule": "single-vantage",
+      "polarity": "gap",
+      "confidence": "high",
+      "actionability": {
+        "state": "decision-needed",
+        "blockedBy": null
+      },
+      "id": "governance:lifecycle-undeclared",
+      "rule": "lifecycle-undeclared",
+      "category": "governance",
+      "subjects": [
+        "agentkagent.com",
+        "cyancanoe.com",
+        "flipskillet.com",
+        "foxyana.com",
+        "goodflippinyikes.com"
+      ],
       "severity": "low",
-      "domain": "observability",
+      "domain": "governance",
       "businessImpact": "low",
-      "ownerLane": "Platform",
-      "title": "Availability evidence comes from a single vantage",
-      "observed": "All probes originate from github-actions. Regional or runner-specific routing problems cannot be distinguished from property failures beyond canary checks and confirmation re-probes.",
-      "businessReason": "One vantage limits confidence in confirmed outages and cannot see regional failures.",
+      "ownerLane": "Property owner",
+      "title": "5 properties have no owner-declared lifecycle",
+      "observed": "The owner has not declared whether agentkagent.com, cyancanoe.com, flipskillet.com, foxyana.com, goodflippinyikes.com are active, incubating, dormant or deprecated. Mission Control shows what production does and leaves the intent unknown.",
+      "businessReason": "Without a declared lifecycle an expected pause looks the same as neglect, and real outages cannot be told from intended silence.",
       "evidence": [
         {
-          "type": "probe-run",
-          "ref": "run-36041879939-1",
+          "type": "estate-registry",
+          "ref": "tools/mission-control/config/estate-registry.json",
           "state": "measured"
         }
       ],
-      "nextAction": "Add a second independent vantage (for example a Cloudflare Worker cron probe) and require agreement before paging.",
+      "nextAction": "Owners declare each property's lifecycle and purpose in the estate registry.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "low",
+        "class": "narrative-provenance",
+        "escalateWhen": "A property is described to investors without a declared lifecycle.",
+        "targetLane": "Property owner"
+      },
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "freshness": {
+        "state": "static",
+        "observedAt": null,
+        "basis": "Registry configuration"
+      },
+      "priorityScore": 15,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 15,
+          "why": "Severity is low."
+        }
+      ],
+      "priority": 13
+    },
+    {
+      "source": "derived",
+      "status": "open",
+      "polarity": "gap",
+      "confidence": "medium",
+      "actionability": {
+        "state": "blocked-on-authority",
+        "blockedBy": "GA4 Data API read access or Cloudflare token with Account Analytics: Read"
+      },
+      "id": "instrumentation:reception-unverified",
+      "rule": "instrumentation-unverified",
+      "category": "instrumentation",
+      "subjects": [
+        "culturesherpa.org",
+        "agentkagent.com",
+        "aiaimate.com",
+        "cyancanoe.com",
+        "flipskillet.com",
+        "flipskillit.com",
+        "gflippinv.com",
+        "goodflippinluck.com",
+        "goodflippinnews.com",
+        "goodflippinvibes.com",
+        "goodflippinyikes.com",
+        "lowertownstpaul.org",
+        "redleopardofstpaul.com"
+      ],
+      "severity": "low",
+      "domain": "observability",
+      "businessImpact": "medium",
+      "ownerLane": "Data / analytics",
+      "title": "13 properties ship an analytics tag whose data reception is unverified",
+      "observed": "culturesherpa.org, agentkagent.com, aiaimate.com, cyancanoe.com, flipskillet.com, flipskillit.com, gflippinv.com, goodflippinluck.com, goodflippinnews.com, goodflippinvibes.com, goodflippinyikes.com, lowertownstpaul.org, redleopardofstpaul.com ship a real analytics tag, but nothing proves events are received. Cloudflare Web Analytics reception was checked.",
+      "businessReason": "A shipped tag is configuration, not measurement; audience claims need proof that events arrive.",
+      "evidence": [
+        {
+          "type": "served-html",
+          "ref": "production probe run-36050496073-1",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Provide read access to the analytics property (GA4 Data API) or Cloudflare Web Analytics so reception can be verified per property.",
       "escalation": {
         "blocksInvestorClaim": false,
         "level": "low",
         "class": "observability-gap",
-        "escalateWhen": "A confirmed outage is disputed by an external report.",
+        "escalateWhen": "Reception-based coverage is quoted in investor material.",
+        "targetLane": "Data / analytics"
+      },
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-09-24T19:47:48.528Z",
+        "basis": "Production probes"
+      },
+      "priorityScore": 12,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 15,
+          "why": "Severity is low."
+        },
+        {
+          "factor": "estate-wide",
+          "points": 15,
+          "why": "Affects 13 properties across the estate."
+        },
+        {
+          "factor": "business-impact",
+          "points": 6,
+          "why": "Business impact is medium."
+        },
+        {
+          "factor": "actionability",
+          "points": -20,
+          "why": "Blocked on authority that is not available yet."
+        },
+        {
+          "factor": "confidence",
+          "points": -4,
+          "why": "Evidence confidence is medium."
+        }
+      ],
+      "priority": 14
+    },
+    {
+      "source": "derived",
+      "status": "open",
+      "polarity": "risk",
+      "confidence": "medium",
+      "actionability": {
+        "state": "decision-needed",
+        "blockedBy": null
+      },
+      "id": "governance:expectation-drift",
+      "rule": "expectation-drift",
+      "category": "governance",
+      "subjects": [
+        "goodflippinluck.com",
+        "goodflippinnews.com"
+      ],
+      "severity": "low",
+      "domain": "governance",
+      "businessImpact": "low",
+      "ownerLane": "Property owner",
+      "title": "2 properties serve public content the owner registry says is not live",
+      "observed": "goodflippinluck.com: The owner registry says this property is not live, but production serves public content; goodflippinnews.com: The owner registry says this property is not live, but production serves public content. The owner registry may simply be out of date.",
+      "businessReason": "Live pages the owner does not know are live, or a registry that lags production, are how brand and security surprises happen.",
+      "evidence": [
+        {
+          "type": "owner-registry-vs-production",
+          "ref": "estate-registry@2026-09-24T16:29:00Z",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Update the owner registry to match production, or unpublish the property if it should not be live.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "low",
+        "class": "narrative-provenance",
+        "escalateWhen": "The property is linked from investor or public material as upcoming.",
+        "targetLane": "Property owner"
+      },
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "freshness": {
+        "state": "static",
+        "observedAt": null,
+        "basis": "Registry configuration"
+      },
+      "priorityScore": 11,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 15,
+          "why": "Severity is low."
+        },
+        {
+          "factor": "confidence",
+          "points": -4,
+          "why": "Evidence confidence is medium."
+        }
+      ],
+      "priority": 15
+    },
+    {
+      "source": "derived",
+      "status": "open",
+      "polarity": "risk",
+      "confidence": "medium",
+      "actionability": {
+        "state": "decision-needed",
+        "blockedBy": null
+      },
+      "id": "infrastructure:pages-projects-without-domain",
+      "rule": "infrastructure-without-use",
+      "category": "infrastructure",
+      "subjects": [],
+      "severity": "low",
+      "domain": "governance",
+      "businessImpact": "low",
+      "ownerLane": "Platform",
+      "title": "7 Pages projects with no custom domain",
+      "observed": "community-health-intelligence, communityhealth, culturesherpa, foxyana, goodflippinvibes, saintpaul-portal, weaver exist on Cloudflare Pages with no custom domain mapped, so they serve no governed property. They may still answer on a pages.dev address that is not monitored.",
+      "businessReason": "Deployed projects nobody reaches through a governed domain consume the platform without observable use, and their pages.dev addresses stay public and unmonitored.",
+      "evidence": [
+        {
+          "type": "cloudflare-pages-inventory",
+          "ref": "2026-09-24T19:47:48.530Z",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "For each project decide: map a domain, archive, or delete.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "low",
+        "class": "maintenance",
+        "escalateWhen": "A project contains content that should not be public.",
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
       "ageDays": 0,
-      "priority": 11
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-09-24T19:47:48.530Z",
+        "basis": "Cloudflare inventory"
+      },
+      "priorityScore": 11,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 15,
+          "why": "Severity is low."
+        },
+        {
+          "factor": "confidence",
+          "points": -4,
+          "why": "Evidence confidence is medium."
+        }
+      ],
+      "priority": 16
     },
     {
       "source": "manual",
       "status": "closed",
+      "polarity": "risk",
+      "confidence": "medium",
+      "actionability": {
+        "state": "closed",
+        "blockedBy": null
+      },
+      "id": "narrative:repository-metadata",
+      "severity": "medium",
+      "domain": "provenance",
+      "businessImpact": "medium",
+      "ownerLane": "Product narrative",
+      "openedAt": "2026-09-24",
+      "title": "Replace stale GitHub repository description",
+      "observed": "GD-031 replaced the public description, which still called GlobalDeets a portfolio and research showcase, with the current source-first world-atlas and Mission Control narrative.",
+      "businessReason": "Repository metadata is visible during diligence and can reintroduce the obsolete product story.",
+      "evidence": [
+        {
+          "type": "github-repository-metadata",
+          "ref": "weave0/globaldeets",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Keep repository metadata aligned with the product narrative.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "class": "none",
+        "level": "none",
+        "escalateWhen": "Repository metadata becomes inconsistent with the live product again during external diligence.",
+        "targetLane": "Product narrative"
+      },
+      "category": "governance",
+      "closedAt": "2026-09-24",
+      "subjects": [],
+      "ageDays": 0,
+      "freshness": {
+        "state": "static",
+        "observedAt": null,
+        "basis": "Registry configuration"
+      },
+      "priorityScore": -58,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 40,
+          "why": "Severity is medium."
+        },
+        {
+          "factor": "business-impact",
+          "points": 6,
+          "why": "Business impact is medium."
+        },
+        {
+          "factor": "actionability",
+          "points": -100,
+          "why": "Needs a decision."
+        },
+        {
+          "factor": "confidence",
+          "points": -4,
+          "why": "Evidence confidence is medium."
+        }
+      ],
+      "priority": 17
+    },
+    {
+      "source": "manual",
+      "status": "closed",
+      "polarity": "risk",
+      "confidence": "medium",
+      "actionability": {
+        "state": "closed",
+        "blockedBy": null
+      },
       "id": "narrative:live-copy-cleanup",
       "severity": "low",
       "domain": "product-quality",
@@ -470,8 +1414,33 @@
         "escalateWhen": "Portfolio-showcase language reappears on investor-adjacent live surfaces.",
         "targetLane": "Frontend / product"
       },
+      "category": "product",
+      "subjects": [],
       "ageDays": 1,
-      "priority": 12
+      "freshness": {
+        "state": "static",
+        "observedAt": null,
+        "basis": "Registry configuration"
+      },
+      "priorityScore": -89,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 15,
+          "why": "Severity is low."
+        },
+        {
+          "factor": "actionability",
+          "points": -100,
+          "why": "Needs a decision."
+        },
+        {
+          "factor": "confidence",
+          "points": -4,
+          "why": "Evidence confidence is medium."
+        }
+      ],
+      "priority": 18
     }
   ]
 }
