@@ -8,9 +8,8 @@ import { confirmFailures, probeEstate } from './probe.mjs';
 import { extractOperational, loadGoldSource } from './gold.mjs';
 import { refreshInventory } from './cloudflare-inventory.mjs';
 import { assemblePlane, compactRun } from './plane.mjs';
-import { validateDataPlane, validateRegistry } from './contracts.mjs';
-import { validateHistory } from './ledger.mjs';
-import { loadEvidence, persistEvidence } from './evidence.mjs';
+import { expectedPropertyIds, validateDataPlane, validateRegistry } from './contracts.mjs';
+import { PUBLISHED_FILES, loadEvidence, persistEvidence } from './evidence.mjs';
 
 export class CollectionError extends Error {
   constructor(message, errors = []) {
@@ -37,9 +36,14 @@ export async function runCollection({ root, evidenceDir, deps, env = {}, runId, 
 
   // Fail closed on unreadable/invalid existing evidence.
   const evidence = loadEvidence(evidenceDir);
-  if (evidence.history) {
-    const historyErrors = validateHistory(evidence.history);
-    if (historyErrors.length) throw new CollectionError('Existing history is invalid; refusing to overwrite', historyErrors);
+  const present = PUBLISHED_FILES.filter(name => evidence.published[name]);
+  if (present.length && present.length !== PUBLISHED_FILES.length) {
+    throw new CollectionError('Existing published evidence set is incomplete; refusing to overwrite', PUBLISHED_FILES.filter(name => !evidence.published[name]).map(name => 'missing ' + name));
+  }
+  if (present.length) {
+    const existing = evidence.published;
+    const existingErrors = validateDataPlane({ history: existing['history.json'], estate: existing['estate-health.json'], diagnostics: existing['diagnostics.json'], summary: existing['mission-control-data.json'], probes: existing['probes.json'] });
+    if (existingErrors.length) throw new CollectionError('Existing published evidence is invalid; refusing to overwrite', existingErrors);
   }
 
   let run = await probeEstate(config.registry, deps, { runId });
@@ -80,7 +84,7 @@ export async function runCollection({ root, evidenceDir, deps, env = {}, runId, 
     scheduleSnapshot: true,
   });
 
-  const errors = validateDataPlane(plane, { expectPropertyCount: config.registry.properties.length });
+  const errors = validateDataPlane(plane, { expectPropertyCount: config.registry.properties.length, expectPropertyIds: expectedPropertyIds(config.registry) });
   if (errors.length) throw new CollectionError('Assembled data plane failed validation; last valid evidence preserved', errors);
 
   const collectionLog = {

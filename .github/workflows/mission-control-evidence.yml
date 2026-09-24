@@ -44,7 +44,7 @@ jobs:
           fi
 
       - name: Run mission-control contract tests
-        run: node --test tests/mission-control-probe.test.mjs tests/mission-control-collector.test.mjs tests/mission-control-evidence.test.mjs tests/mission-control-scheduler.test.mjs
+        run: node --test tests/mission-control-probe.test.mjs tests/mission-control-collector.test.mjs tests/mission-control-evidence.test.mjs tests/mission-control-scheduler.test.mjs tests/mission-control-hardening.test.mjs
 
       - name: Collect probes and ingest snapshot
         id: collect

@@ -9,7 +9,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadConfig } from './lib/collect.mjs';
 import { assemblePlane } from './lib/plane.mjs';
-import { validateDataPlane, validateRegistry } from './lib/contracts.mjs';
+import { expectedPropertyIds, validateDataPlane, validateRegistry } from './lib/contracts.mjs';
 import { PUBLISHED_FILES } from './lib/evidence.mjs';
 
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
@@ -23,7 +23,7 @@ if (registryErrors.length) {
   process.exit(1);
 }
 const plane = assemblePlane({ ...config, now: config.registry.inventory.asOf, scheduleSnapshot: false });
-const errors = validateDataPlane(plane, { expectPropertyCount: config.registry.properties.length });
+const errors = validateDataPlane(plane, { expectPropertyCount: config.registry.properties.length, expectPropertyIds: expectedPropertyIds(config.registry) });
 if (errors.length) {
   console.error(errors.join('\n'));
   process.exit(1);

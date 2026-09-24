@@ -114,6 +114,7 @@ jobs:
           node --check tests/mission-control-collector.test.mjs
           node --check tests/mission-control-evidence.test.mjs
           node --check tests/mission-control-scheduler.test.mjs
+          node --check tests/mission-control-hardening.test.mjs
       - name: Reject stale investor-facing copy
         run: |
           if grep -qi "Data Platform Showcase" categories.html; then echo "STALE: portfolio-era categories copy" && exit 1; fi

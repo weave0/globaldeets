@@ -36,7 +36,11 @@ export function validateRegistry(registry) {
   return errors;
 }
 
-export function validateEstate(estate, { expectPropertyCount } = {}) {
+export function expectedPropertyIds(registry) {
+  return [...registry.properties].sort((a, b) => a.emphasisRank - b.emphasisRank).map(item => item.propertyId);
+}
+
+export function validateEstate(estate, { expectPropertyCount, expectPropertyIds } = {}) {
   const errors = [];
   if (estate?.contractName !== 'globaldeets-estate-health') return ['estate: contractName'];
   if (!Array.isArray(estate.properties)) return ['estate: properties'];
@@ -44,6 +48,7 @@ export function validateEstate(estate, { expectPropertyCount } = {}) {
   if (expectPropertyCount != null && estate.propertyCount !== expectPropertyCount) errors.push('estate: expected ' + expectPropertyCount + ' properties');
   const ids = new Set(estate.properties.map(item => item.propertyId));
   if (ids.size !== estate.properties.length) errors.push('estate: duplicate propertyId');
+  if (expectPropertyIds && estate.properties.map(item => item.propertyId).join('|') !== expectPropertyIds.join('|')) errors.push('estate: properties are not exactly the registered properties in emphasis order');
   if (estate.properties[0]?.propertyId !== 'globaldeets.com') errors.push('estate: GlobalDeets must be first');
   if (estate.properties[1]?.propertyId !== 'culturesherpa.org') errors.push('estate: Culture Sherpa must be second');
   for (const [key, expected] of Object.entries({ unknownIsHealthy: false, missingIsZero: false, deploySuccessEqualsAvailability: false, httpReachabilityEqualsHealth: false, providerTopologyIsUnhealthy: false, expiredEvidenceIsCurrent: false })) {
@@ -107,11 +112,15 @@ export function validateSummary(summary) {
   return errors;
 }
 
-export function validateProbes(probes) {
+export function validateProbes(probes, { expectPropertyIds } = {}) {
   const errors = [];
   if (probes?.contractName !== 'globaldeets-probes') return ['probes: contractName'];
   if (probes.latest !== null && !Array.isArray(probes.latest?.properties)) errors.push('probes: latest.properties');
   if (!Array.isArray(probes.recentRuns)) errors.push('probes: recentRuns');
+  if (probes.latest && expectPropertyIds) {
+    const seen = probes.latest.properties.map(item => item.propertyId);
+    if (new Set(seen).size !== seen.length || [...seen].sort().join('|') !== [...expectPropertyIds].sort().join('|')) errors.push('probes: latest run must contain each registered property exactly once');
+  }
   for (const record of probes.latest?.properties || []) {
     if (!record.observation?.state) errors.push('probes: ' + record.propertyId + ' observation');
     if (['unavailable', 'degraded'].includes(record.observation?.state) && !record.observation.failureClass) errors.push('probes: ' + record.propertyId + ' failure needs class');
@@ -125,6 +134,6 @@ export function validateDataPlane({ history, estate, diagnostics, summary, probe
     ...validateEstate(estate, options),
     ...validateDiagnostics(diagnostics),
     ...validateSummary(summary),
-    ...(probes ? validateProbes(probes) : []),
+    ...(probes ? validateProbes(probes, options) : []),
   ];
 }

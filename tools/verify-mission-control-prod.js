@@ -8,6 +8,9 @@
  * the health contract, or (when requested) do not carry fresh production-probe evidence.
  */
 const semantics = require('../observatory/mission-control/evidence-semantics.js');
+const registry = require('./mission-control/config/estate-registry.json');
+
+const REGISTERED_IDS = [...registry.properties].sort((a, b) => a.emphasisRank - b.emphasisRank).map(item => item.propertyId);
 
 function argValue(name) {
   const arg = process.argv.find(value => value.startsWith(name));
@@ -17,7 +20,7 @@ function argValue(name) {
 const BASE = (argValue('--base=') || 'https://globaldeets.com').replace(/\/$/, '');
 const MIN_GENERATED_AT = argValue('--min-generated-at=') || null;
 const REQUIRE_PROBE = process.argv.includes('--require-probe-evidence');
-const EXPECTED_PROPERTIES = 25;
+const EXPECTED_PROPERTIES = REGISTERED_IDS.length;
 const TIMEOUT_MS = 15_000;
 
 async function json(path) {
@@ -60,6 +63,7 @@ function requireCondition(condition, message) {
   requireCondition(history.snapshots.length >= 2, 'history lost its seeded snapshots');
   requireCondition(estate.contractName === 'globaldeets-estate-health', 'estate contract changed');
   requireCondition(estate.propertyCount === EXPECTED_PROPERTIES && estate.properties.length === EXPECTED_PROPERTIES, `estate must cover ${EXPECTED_PROPERTIES} properties`);
+  requireCondition(estate.properties.map(item => item.propertyId).join('|') === REGISTERED_IDS.join('|'), 'estate must contain exactly the registered properties in emphasis order');
   requireCondition(estate.properties[0].propertyId === 'globaldeets.com', 'GlobalDeets must be first');
   requireCondition(estate.properties[1].propertyId === 'culturesherpa.org', 'Culture Sherpa must be second');
   requireCondition(estate.policy?.deploySuccessEqualsAvailability === false && estate.policy?.httpReachabilityEqualsHealth === false, 'health shortcuts must stay disabled');
@@ -86,7 +90,8 @@ function requireCondition(condition, message) {
   if (REQUIRE_PROBE) {
     requireCondition(estate.evidence.probe.validity === 'valid', 'no valid production probe run is published');
     requireCondition(estate.summary.availabilityKnownZones > 0, 'no property has probe-established availability');
-    requireCondition(probes.latest?.properties?.length === EXPECTED_PROPERTIES, 'latest probe run does not cover every property');
+    const probed = (probes.latest?.properties || []).map(item => item.propertyId);
+    requireCondition(new Set(probed).size === probed.length && [...probed].sort().join('|') === [...REGISTERED_IDS].sort().join('|'), 'latest probe run must cover each registered property exactly once');
     const freshness = semantics.evaluateFreshness(estate.evidence.probe.observedAt, estate.freshnessPolicy.probe, Date.now());
     requireCondition(freshness.state !== 'expired', `probe evidence is expired (${freshness.ageHours}h old)`);
     requireCondition(history.snapshots.some(item => item.collector?.kind === 'scheduled'), 'no scheduled snapshot has been ingested');

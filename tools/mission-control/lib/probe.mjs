@@ -54,12 +54,16 @@ async function readLimited(response, maxBytes) {
     for (;;) {
       const { done, value } = await reader.read();
       if (done) break;
-      bytes += value.byteLength;
-      chunks.push(value);
-      if (bytes >= maxBytes) {
+      const remaining = maxBytes - bytes;
+      if (value.byteLength >= remaining) {
+        // Never retain more than the cap, even when a single chunk crosses it.
+        chunks.push(value.subarray(0, remaining));
+        bytes += remaining;
         truncated = true;
         break;
       }
+      bytes += value.byteLength;
+      chunks.push(value);
     }
   } finally {
     try {
@@ -108,9 +112,10 @@ export async function resolveHost(host, resolver, clock = Date.now) {
   if (addresses > 0) return { state: 'resolved', addresses, errorCode: null, durationMs };
   const codes = [a.code, aaaa.code].filter(Boolean);
   if (codes.every(code => code === 'ENOTFOUND' || code === 'ENODATA')) {
-    // Both types answered with "nothing": NXDOMAIN if either says so, otherwise the name exists without addresses.
+    // Both types answered with "nothing".
     return {
-      state: codes.includes('ENOTFOUND') && !codes.includes('ENODATA') ? 'nxdomain' : 'no-address-records',
+      // An NXDOMAIN on either query means the name is not delegated at all; only all-ENODATA is a name without addresses.
+      state: codes.includes('ENOTFOUND') ? 'nxdomain' : 'no-address-records',
       addresses: 0,
       errorCode: codes.join(','),
       durationMs,
@@ -494,7 +499,7 @@ export async function probeEstate(registry, ctx, runMeta = {}) {
  */
 export async function confirmFailures(registry, run, ctx) {
   if (run.validity !== 'valid') return run;
-  const failed = run.properties.filter(item => item.observation.state === 'unavailable' && !String(item.observation.failureClass).startsWith('dns-'));
+  const failed = run.properties.filter(item => item.observation.state === 'unavailable');
   if (!failed.length) return run;
   const contract = registry.probeContract;
   const full = { ...ctx, contract };

@@ -309,28 +309,26 @@ function coverageItems(estate) {
       })
     );
   }
-  const noContract = estate.properties.filter(property => property.criticalPath.state === 'unknown' && property.criticalPath.level === null && property.availability.state !== 'no-service-published').map(property => property.propertyId);
-  const baselineOnly = estate.properties.filter(property => property.criticalPath.level === 'baseline').length;
-  if (estate.properties.length) {
-    const authoritative = estate.properties.filter(property => property.criticalPath.level === 'authoritative').length;
-    items.push(
-      item({
-        id: 'observability:critical-path-contracts',
-        rule: 'critical-path-contracts',
-        subjects: noContract,
-        severity: 'low',
-        domain: 'observability',
-        businessImpact: 'medium',
-        ownerLane: 'Platform',
-        title: 'Most properties lack an authoritative critical-path contract',
-        observed: authoritative + ' of ' + estate.propertyCount + ' properties have an authoritative critical-path contract; ' + baselineOnly + ' have only a homepage identity baseline; ' + noContract.length + ' have no contract.',
-        businessReason: 'Reachable-unverified is not verified health; only owned, contracted paths can prove the product works.',
-        evidence: [{ type: 'estate-registry', ref: 'tools/mission-control/config/estate-registry.json', state: 'measured' }],
-        nextAction: 'Owners of each property declare a stable critical path (API endpoint, key page, or function) and add it to the registry.',
-        escalation: { level: 'low', class: 'insufficient-evidence', escalateWhen: 'A property is described to investors as production-grade without an authoritative contract.', targetLane: 'Platform + property owner' },
-      })
-    );
-  }
+  const noContract = estate.properties.filter(property => !property.criticalPath.contract && property.availability.state !== 'no-service-published').map(property => property.propertyId);
+  const authoritative = estate.properties.filter(property => property.criticalPath.contract?.level === 'authoritative').length;
+  const baselineOnly = estate.properties.filter(property => property.criticalPath.contract?.level === 'baseline').length;
+  items.push(
+    item({
+      id: 'observability:critical-path-contracts',
+      rule: 'critical-path-contracts',
+      subjects: noContract,
+      severity: 'low',
+      domain: 'observability',
+      businessImpact: 'medium',
+      ownerLane: 'Platform',
+      title: 'Most properties lack an authoritative critical-path contract',
+      observed: authoritative + ' of ' + estate.propertyCount + ' properties have an authoritative critical-path contract; ' + baselineOnly + ' have only a homepage identity baseline; ' + noContract.length + ' have no contract (redirect aliases and undeclared parked zones are counted here or in the no-service finding).',
+      businessReason: 'Reachable-unverified is not verified health; only owned, contracted paths can prove the product works.',
+      evidence: [{ type: 'estate-registry', ref: 'tools/mission-control/config/estate-registry.json', state: 'measured' }],
+      nextAction: 'Owners of each property declare a stable critical path (API endpoint, key page, or function) and add it to the registry.',
+      escalation: { level: 'low', class: 'insufficient-evidence', escalateWhen: 'A property is described to investors as production-grade without an authoritative contract.', targetLane: 'Platform + property owner' },
+    })
+  );
   return items;
 }
 
@@ -341,7 +339,8 @@ function measurementItems(history) {
   const op = measured?.globaldeetsOperational;
   const synthetic = op && typeof op.syntheticHealthVisits === 'number' ? op.syntheticHealthVisits : null;
   const observed = op
-    ? 'The latest measured operational edge snapshot (' + measured.snapshotId + ') contains ' + Number(op.edgeVisits).toLocaleString('en-US') + ' raw visits' +
+    ? 'The latest measured operational edge snapshot (' + measured.snapshotId + ') ' +
+      (typeof op.edgeVisits === 'number' ? 'contains ' + op.edgeVisits.toLocaleString('en-US') + ' raw visits' : 'reports no edge-visit count (unavailable, not zero)') +
       (synthetic != null ? ', including ' + synthetic.toLocaleString('en-US') + ' attached to a synthetic health path' : '') +
       '. Mission Control probes add tagged synthetic traffic that must also be excluded.'
     : 'No measured operational edge snapshot is retained, and no certified audience dataset exists.';

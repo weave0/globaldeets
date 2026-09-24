@@ -22,7 +22,18 @@ function optional(path) {
   return existsSync(path) ? readJsonStrict(path) : null;
 }
 
+/** Recovers from a crash that interrupted a directory swap, then clears leftovers. */
+function settleLatest(dir) {
+  const latest = join(dir, 'latest');
+  const prev = join(dir, 'latest.prev');
+  const next = join(dir, 'latest.next');
+  if (!existsSync(latest) && existsSync(prev)) renameSync(prev, latest);
+  rmSync(prev, { recursive: true, force: true });
+  rmSync(next, { recursive: true, force: true });
+}
+
 export function loadEvidence(dir) {
+  settleLatest(dir);
   const latest = join(dir, 'latest');
   const state = join(dir, 'state');
   const runsDir = join(state, 'probe-runs');
@@ -34,9 +45,11 @@ export function loadEvidence(dir) {
       compactRuns.push(...doc.runs);
     }
   }
+  const published = Object.fromEntries(PUBLISHED_FILES.map(name => [name, optional(join(latest, name))]));
   return {
-    history: optional(join(latest, 'history.json')),
-    previousDiagnostics: optional(join(latest, 'diagnostics.json')),
+    published,
+    history: published['history.json'],
+    previousDiagnostics: published['diagnostics.json'],
     latestValidRun: optional(join(state, 'latest-valid-run.json')),
     inventory: optional(join(state, 'inventory.json')),
     collectionLog: optional(join(state, 'collection-log.json')) || { entries: [] },
@@ -73,10 +86,16 @@ export function persistEvidence(dir, { plane, latestValidRun, inventory, compact
   }
   for (const [date, runs] of byDate) atomicWrite(join(runsDir, date + '.json'), pretty({ date, runs }));
 
+  // The published set is written whole into latest.next and swapped in with directory renames, so a crash can
+  // never leave a mix of old and new files; latest.prev is kept until the swap succeeds and recovered on load.
   const latest = join(dir, 'latest');
-  atomicWrite(join(latest, 'history.json'), pretty(plane.history));
-  atomicWrite(join(latest, 'estate-health.json'), pretty(plane.estate));
-  atomicWrite(join(latest, 'diagnostics.json'), pretty(plane.diagnostics));
-  atomicWrite(join(latest, 'mission-control-data.json'), pretty(plane.summary));
-  atomicWrite(join(latest, 'probes.json'), pretty(plane.probes));
+  const next = join(dir, 'latest.next');
+  const prev = join(dir, 'latest.prev');
+  rmSync(next, { recursive: true, force: true });
+  rmSync(prev, { recursive: true, force: true });
+  const documents = { 'history.json': plane.history, 'estate-health.json': plane.estate, 'diagnostics.json': plane.diagnostics, 'mission-control-data.json': plane.summary, 'probes.json': plane.probes };
+  for (const name of PUBLISHED_FILES) atomicWrite(join(next, name), pretty(documents[name]));
+  if (existsSync(latest)) renameSync(latest, prev);
+  renameSync(next, latest);
+  rmSync(prev, { recursive: true, force: true });
 }

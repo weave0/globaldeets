@@ -111,11 +111,10 @@ function availabilityFor(property, observation, probeObservedAt, freshness) {
       freshness,
     };
   }
-  const isDns = String(observation.failureClass || '').startsWith('dns-');
   let state = observation.state;
   let confidence = null;
   if (state === 'unavailable') {
-    const confirmed = observation.confirmed === true || isDns;
+    const confirmed = observation.confirmed === true;
     confidence = confirmed ? 'confirmed' : 'single-observation';
     // An unconfirmed failure is never declared an outage.
     if (!confirmed) state = 'degraded';
@@ -195,6 +194,11 @@ export function buildEstateHealth({ registry, inventory = null, probeRun = null,
             : property.probe.criticalPathReason || 'No honest critical-path contract exists for this property yet; only availability is probed.',
           freshness: probeFreshness,
         };
+    // The registered contract is reported even before any probe evaluates it, so agents and copy never
+    // confuse "no contract" with "contract not yet evaluated".
+    criticalPath.contract = property.probe.criticalPath
+      ? { level: property.probe.criticalPath.level, checkCount: property.probe.criticalPath.checks.length, basis: property.probe.criticalPath.basis }
+      : null;
     const health = semantics.classifyHealth({ availability, criticalPath, freshness: probeFreshness });
     const rumOn = property.rum === 'on';
     return {

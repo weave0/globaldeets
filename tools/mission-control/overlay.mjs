@@ -8,7 +8,7 @@ import { copyFileSync, existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadConfig } from './lib/collect.mjs';
-import { validateDataPlane } from './lib/contracts.mjs';
+import { expectedPropertyIds, validateDataPlane } from './lib/contracts.mjs';
 import { PUBLISHED_FILES } from './lib/evidence.mjs';
 
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
@@ -34,7 +34,7 @@ try {
   skip('evidence unreadable: ' + error.message);
 }
 const config = loadConfig(root);
-const errors = validateDataPlane(plane, { expectPropertyCount: config.registry.properties.length });
+const errors = validateDataPlane(plane, { expectPropertyCount: config.registry.properties.length, expectPropertyIds: expectedPropertyIds(config.registry) });
 if (errors.length) skip('evidence failed validation: ' + errors.slice(0, 5).join('; '));
 
 const target = join(dist, 'observatory', 'mission-control');

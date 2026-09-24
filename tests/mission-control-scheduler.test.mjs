@@ -62,7 +62,7 @@ test('CI protects the data plane: drift check, contract tests, and syntax checks
   assert.match(ciWorkflow, /node --check observatory\/mission-control\/evidence-semantics\.js/);
   assert.match(ciWorkflow, /node --check tools\/verify-mission-control-prod\.js/);
   const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
-  for (const file of ['probe', 'collector', 'evidence', 'scheduler']) assert.match(pkg.scripts['test:functions'], new RegExp(`mission-control-${file}\\.test\\.mjs`));
+  for (const file of ['probe', 'collector', 'evidence', 'scheduler', 'hardening']) assert.match(pkg.scripts['test:functions'], new RegExp(`mission-control-${file}\\.test\\.mjs`));
 });
 
 async function makeEvidence() {
