@@ -302,3 +302,13 @@ test('the validator catches tampering: altered totals, a fixture flag, negative 
   zeroFromNull.properties[2].requests[28] = { evidenceState: 'unavailable', value: 0, reason: 'x' };
   assert.ok(validateAudience(zeroFromNull, opts).some(error => /must not carry a value/.test(error)));
 });
+
+test('duplicate series or trend comparisons in insights are rejected rather than resolved by picking one', () => {
+  const good = syntheticInsights({ propertyIds: ids });
+  const dupSeries = structuredClone(good);
+  dupSeries.series.push(structuredClone(dupSeries.series[0]));
+  assert.match(validateInsightsEnvelope(dupSeries).error, /repeats the requests series/);
+  const dupComparison = structuredClone(good);
+  dupComparison.trend_comparisons.push(structuredClone(dupComparison.trend_comparisons[0]));
+  assert.match(validateInsightsEnvelope(dupComparison).error, /repeats the 7-day requests comparison/);
+});

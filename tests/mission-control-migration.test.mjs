@@ -187,3 +187,25 @@ test('the overlay refuses legacy (pre-GD-031) evidence and keeps the seed; a com
   assert.equal(refused.status, 1);
   assert.match(refused.stderr, /failed validation/);
 });
+
+test('a partially published GD-031 set (legacy files plus only some new ones) is never overwritten', async () => {
+  const dir = newDir();
+  await collect(dir, { runId: 'full' });
+  rmSync(join(dir, 'latest', 'executive.json'));
+  await assert.rejects(() => collect(dir, { runId: 'partial' }), error => error instanceof CollectionError && /incomplete/.test(error.message) && /executive\.json/.test(error.errors.join(' ')));
+  rmSync(join(dir, 'latest', 'audience.json'));
+  await assert.rejects(() => collect(dir, { runId: 'partial-2' }), /incomplete/);
+});
+
+test('a legacy set with a corrupted summary or probes document fails closed', async () => {
+  for (const [file, mutate] of [['mission-control-data.json', doc => { doc.missionControlId = 'other'; }], ['probes.json', doc => { doc.contractName = 'other'; }]]) {
+    const dir = newDir();
+    await collect(dir, { runId: 'full' });
+    downgradeToGd030(dir);
+    const path = join(dir, 'latest', file);
+    const doc = JSON.parse(readFileSync(path, 'utf8'));
+    mutate(doc);
+    writeFileSync(path, JSON.stringify(doc));
+    await assert.rejects(() => collect(dir, { runId: 'migrate' }), error => error instanceof CollectionError && /invalid/.test(error.message));
+  }
+});

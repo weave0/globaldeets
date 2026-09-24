@@ -187,6 +187,19 @@ export function validateInsightsEnvelope(doc) {
   if (doc.fixture !== false) return { error: 'Insights document is a fixture (fixture !== false).' };
   if (!Number.isFinite(Date.parse(doc.generated_at))) return { error: 'Insights document has an invalid generated_at.' };
   for (const list of ['series', 'trend_comparisons']) if (doc[list] !== undefined && !Array.isArray(doc[list])) return { error: 'Insights ' + list + ' is not an array.' };
+  // A corrupt document must not be resolved by silently picking one of two conflicting records.
+  const seriesKeys = new Set();
+  for (const series of doc.series || []) {
+    const key = series.property_id + '|' + series.metric_name;
+    if (seriesKeys.has(key)) return { error: 'Insights document repeats the ' + series.metric_name + ' series for ' + series.property_id + '; refusing to choose between them.' };
+    seriesKeys.add(key);
+  }
+  const comparisonKeys = new Set();
+  for (const comparison of doc.trend_comparisons || []) {
+    const key = comparison.property_id + '|' + comparison.metric_name + '|' + comparison.period_days;
+    if (comparisonKeys.has(key)) return { error: 'Insights document repeats the ' + comparison.period_days + '-day ' + comparison.metric_name + ' comparison for ' + comparison.property_id + '; refusing to choose between them.' };
+    comparisonKeys.add(key);
+  }
   for (const series of doc.series || []) {
     const dates = new Set();
     for (const point of series.points || []) {

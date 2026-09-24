@@ -10,7 +10,33 @@
   <link rel="stylesheet" href="/observatory/mission-control/mission-control.css">
 </head>
 <body data-mission-control-ready="false" data-view="executive">
-  <div id="ecosystem-nav"></div>
+  <nav class="gfd-ecosystem-nav" aria-label="Ecosystem navigation">
+    <div class="ecosystem-nav-container">
+      <div class="ecosystem-brand">
+        <img src="/assets/logo-mark.png" alt="GlobalDeets" class="ecosystem-logo">
+        <a class="ecosystem-title" href="/">GlobalDeets</a>
+      </div>
+      <button class="ecosystem-toggle" aria-label="Open ecosystem menu" aria-expanded="false" aria-controls="ecosystem-dropdown">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="ecosystem-dropdown" id="ecosystem-dropdown" role="menu" aria-hidden="true">
+      <div class="dropdown-content">
+        <div class="nav-section">
+          <h3 class="nav-section-title">GlobalDeets</h3>
+          <a href="/" class="nav-link" role="menuitem"><div class="nav-link-content"><strong class="nav-link-title">Home</strong><small class="nav-link-subtitle">Live world atlas</small></div></a>
+          <a href="/observatory/coverage/" class="nav-link" role="menuitem"><div class="nav-link-content"><strong class="nav-link-title">Coverage &amp; Evidence Observatory</strong><small class="nav-link-subtitle">Source and evidence coverage</small></div></a>
+          <a href="/observatory/mission-control/" class="nav-link" role="menuitem" aria-current="page"><div class="nav-link-content"><strong class="nav-link-title">Mission Control</strong><small class="nav-link-subtitle">Estate health and intelligence</small></div></a>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-section-title">The GFD estate</h3>
+          <a href="https://goodflippindesign.com" class="nav-link" role="menuitem" target="_blank" rel="noopener"><div class="nav-link-content"><strong class="nav-link-title">Good Flippin Design</strong><small class="nav-link-subtitle">Studio and trust hub</small></div></a>
+          <a href="https://culturesherpa.org" class="nav-link" role="menuitem" target="_blank" rel="noopener"><div class="nav-link-content"><strong class="nav-link-title">Culture Sherpa</strong><small class="nav-link-subtitle">Cultural atlas</small></div></a>
+          <a href="https://aiaimate.com" class="nav-link" role="menuitem" target="_blank" rel="noopener"><div class="nav-link-content"><strong class="nav-link-title">AIAIMate</strong><small class="nav-link-subtitle">AI literacy</small></div></a>
+        </div>
+      </div>
+    </div>
+  </nav>
   <a class="skip-link" href="#main">Skip to content</a>
   <main class="shell" id="main">
     <header class="topbar">

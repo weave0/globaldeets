@@ -48,6 +48,8 @@ export function loadSecondaryRuns(dir, { expectPropertyIds, primary }) {
       continue;
     }
     const errors = validateSecondaryRun(run, { expectPropertyIds, primary });
+    // Two files claiming one vantage are one witness, not two.
+    if (!errors.length && accepted.some(item => item.vantage === run.vantage)) errors.push('duplicate vantage id ' + run.vantage);
     if (errors.length) notes.push({ file, vantage: run?.vantage || null, accepted: false, reason: errors.slice(0, 3).join('; ') });
     else {
       accepted.push(run);
@@ -68,8 +70,11 @@ export async function runCollection({ root, evidenceDir, secondaryDir = null, dr
   const evidence = loadEvidence(evidenceDir);
   const present = PUBLISHED_FILES.filter(name => evidence.published[name]);
   const legacyPresent = LEGACY_PUBLISHED_FILES.filter(name => evidence.published[name]);
-  if (present.length && legacyPresent.length !== LEGACY_PUBLISHED_FILES.length) {
-    throw new CollectionError('Existing published evidence set is incomplete; refusing to overwrite', LEGACY_PUBLISHED_FILES.filter(name => !evidence.published[name]).map(name => 'missing ' + name));
+  // The only acceptable existing sets are the exact GD-030 legacy set (migration) or the complete GD-031 set.
+  // Anything in between is a partially published or damaged plane and is never overwritten.
+  const exactLegacy = present.length === LEGACY_PUBLISHED_FILES.length && legacyPresent.length === LEGACY_PUBLISHED_FILES.length;
+  if (present.length && !exactLegacy && present.length !== PUBLISHED_FILES.length) {
+    throw new CollectionError('Existing published evidence set is incomplete; refusing to overwrite', PUBLISHED_FILES.filter(name => !evidence.published[name]).map(name => 'missing ' + name));
   }
   if (present.length) {
     const existing = evidence.published;

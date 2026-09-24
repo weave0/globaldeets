@@ -145,3 +145,14 @@ test('the vocabulary is small, common, and does not force commerce semantics ont
   assert.deepEqual([...outcomes].sort(), ['engagement', 'lead', 'signup']);
   assert.ok(![...outcomes].includes('purchase'), 'no property is forced into a purchase outcome');
 });
+
+test('an expired feed is withheld: its counts are never shown as current business outcomes', () => {
+  const stale = syntheticEventsFeed({ instrumented: ['aiaimate.com'], records: [['aiaimate.com', 'signup', 28, 61]], generatedAt: '2026-09-20T06:00:00Z' });
+  const events = build(asSource(stale));
+  assert.equal(events.source.status, 'unavailable');
+  assert.match(events.source.reason, /withheld as not current/);
+  assert.equal(events.source.freshness.state, 'expired');
+  assert.equal(events.coverage.instrumented, 0);
+  for (const property of events.properties) assert.ok(readings(property).every(reading => reading.value === null));
+  assert.deepEqual(validateBusinessEvents(events, opts), []);
+});

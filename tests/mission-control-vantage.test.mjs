@@ -153,3 +153,11 @@ test('a corrupted secondary file is ignored with a note and never breaks collect
   assert.equal(result.plane.estate.evidence.probe.vantageCount, 1);
   assert.deepEqual(validateDataPlane(result.plane, { expectPropertyIds: expectedPropertyIds(registry()) }), []);
 });
+
+test('two secondary files claiming the same vantage id count as one witness, not two', async () => {
+  const dir = newDir();
+  const { plane, secondary } = await collect(dir, { secondary: [{ id: 'macos' }, { id: 'macos-copy', tamper: item => { item.vantage = 'macos'; } }] });
+  assert.equal(secondary.notes.filter(note => !note.accepted).length, 1);
+  assert.match(secondary.notes.find(note => !note.accepted).reason, /duplicate vantage id/);
+  assert.equal(plane.estate.evidence.probe.vantageCount, 2);
+});

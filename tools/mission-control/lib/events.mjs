@@ -94,7 +94,14 @@ export function buildBusinessEvents({ registry, now, feed, availabilityById = ne
     }
   }
 
-  const freshness = doc ? semantics.evaluateFreshness(doc.generatedAt, semantics.FRESHNESS_POLICY.businessEvents, now) : { state: 'unknown', ageHours: null, freshUntil: null, expiresAt: null };
+  let freshness = doc ? semantics.evaluateFreshness(doc.generatedAt, semantics.FRESHNESS_POLICY.businessEvents, now) : { state: 'unknown', ageHours: null, freshUntil: null, expiresAt: null };
+  // An expired feed is never presented as current outcomes: its counts are withheld, not aged in place.
+  if (doc && freshness.state === 'expired') {
+    sourceStatus = 'unavailable';
+    sourceReason = 'The business-event feed was generated ' + freshness.ageHours + ' hours ago, past the ' + semantics.FRESHNESS_POLICY.businessEvents.expiredAfterHours + '-hour limit; its counts are withheld as not current.';
+    doc = null;
+    freshness = { ...freshness, state: 'expired' };
+  }
   const instrumentedIds = new Set(doc?.instrumentedProperties || []);
   const records = new Map((doc?.records || []).map(record => [[record.propertyId, record.eventType, record.window.days].join('|'), record]));
   const unavailableState = sourceStatus === 'awaiting-authorized-source' ? 'awaiting-authorized-source' : 'unavailable';

@@ -207,8 +207,10 @@ export function validateProbes(probes, { expectPropertyIds } = {}) {
  * closed on corruption: history integrity, structure, unique ids and the health contract must all hold, so a
  * damaged evidence branch is never overwritten by the migration run.
  */
-export function validateLegacyDataPlane({ history, estate, diagnostics }) {
+export function validateLegacyDataPlane({ history, estate, diagnostics, summary, probes }) {
   const errors = [...validateHistory(history)];
+  if (summary?.missionControlId !== 'globaldeets-estate' || !Array.isArray(summary?.investmentThesis)) errors.push('legacy summary: contract');
+  if (probes?.contractName !== 'globaldeets-probes' || !Array.isArray(probes?.recentRuns) || (probes.latest !== null && !Array.isArray(probes.latest?.properties))) errors.push('legacy probes: contract');
   if (estate?.contractName !== 'globaldeets-estate-health' || !Array.isArray(estate.properties)) return [...errors, 'legacy estate: contract'];
   if (estate.properties.length !== estate.propertyCount) errors.push('legacy estate: propertyCount mismatch');
   if (new Set(estate.properties.map(item => item.propertyId)).size !== estate.properties.length) errors.push('legacy estate: duplicate propertyId');
