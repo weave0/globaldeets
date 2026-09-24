@@ -1,83 +1,49 @@
 # GlobalDeets — Current Status
 
-**Status date:** 2026-09-23  
+**Status date:** 2026-09-24  
 **Product state:** Live source-first world information platform  
 **Canonical operating surface:** `/observatory/mission-control/`
 
 ## Current product
 
-GlobalDeets is live as a world-information product, not the former password-gated portfolio showcase described by older documentation.
+GlobalDeets is live as a world-information product, not the former password-gated portfolio showcase described by older archival material.
 
-The active product includes:
+The active product includes live world news and original-source routing, globe/place discovery, public knowledge and webcam surfaces, governed source admission, coverage/evidence integrity tooling, published evidence dossiers, the Coverage & Evidence Observatory, and investor/operator Mission Control.
 
-- live world news and original-source routing;
-- globe/place discovery;
-- public knowledge and webcam surfaces;
-- governed source admission;
-- coverage/evidence integrity tooling;
-- published evidence dossiers;
-- a Coverage & Evidence Observatory;
-- investor/operator Mission Control.
+## GD-029 state
 
-## What is strong
+GD-029 moves Mission Control from a strong point-in-time dashboard to a versioned operating data plane.
 
-### Product
-The north-star product is coherent: organize current information, public sources, and context around place. The product plan also creates a credible path to blend Culture Sherpa context and Good Flippin Vibes progress stories into the same world model.
+It now has three directly consumable contracts:
 
-### Engineering
-The repository now has meaningful governance around source rights, evidence integrity, production verification, mobile behavior, and fail-closed diagnostics.
+- `history.json` — dated snapshots and ingestion seams for 7/28/90-day views;
+- `estate-health.json` — all 25 active zones, with GlobalDeets first and Culture Sherpa prominent, including observability, deploy evidence where available, last meaningful activity, and explicit unknown availability/critical-path state;
+- `diagnostics.json` — the sortable human/agent work queue with severity, business impact, status, owner lane, age, evidence, next action, and escalation rules.
 
-### Observability
-Mission Control can already represent the estate and explicitly distinguish measured facts from unknowns. That is the foundation for a self-diagnostic web estate rather than a collection of individually maintained sites.
+Mission Control renders those contracts directly rather than maintaining a second decorative analytics truth.
 
-## What is not yet investor-ready
+## Evidence state
 
-The product should not yet present raw edge traffic as human traction. The current GlobalDeets edge-visit count is materially contaminated by synthetic health traffic.
+The connected Cloudflare inventory on September 24, 2026 shows 25 active zones and 21 with RUM enabled. The four explicit browser-observability gaps are `artificelligance.com`, `artificelligence.com`, `fwomps.com`, and `fwomp.us`.
 
-The main unresolved investor-readiness gaps are tracked directly in Mission Control:
+The latest comparable GlobalDeets operational traffic snapshot remains the 28-day window ending September 23, 2026: 157,486 edge requests and 36,391 raw edge visits, of which 31,681 are attached to `/_stcore/health`. Those values are operational telemetry and are not certified human audience.
 
-- audience certification;
-- full-estate browser observability;
-- stale narrative cleanup;
-- business-conversion instrumentation;
-- estate-wide service health;
-- Culture Sherpa convergence evidence;
-- retirement of legacy analytics surfaces.
+No estate-wide production-availability or critical-path probe is yet connected to the GlobalDeets data plane. Those states therefore remain **unknown**, not healthy and not zero.
 
-## GD-028 direction
+## Investor-readiness gaps
 
-GD-028 upgrades Mission Control from an engineering evidence page into an investor + operator intelligence product.
+The canonical queue in Mission Control is authoritative. The material unresolved lanes are:
 
-The target experience includes:
-
-- certified-vs-operational metric labeling;
-- business-language interpretation;
-- visual traffic/coverage/risk diagnostics;
-- sortable and searchable priority queues;
-- explicit business impact and ownership lanes;
-- durable provenance;
-- one canonical analytics surface;
-- eventual historical trends, alerts, and automated ingestion.
-
-## Next system-level work
-
-After GD-028 lands, the highest-value work is to automate the data plane:
-
-1. ingest RUM/GA4-quality human audience and engagement metrics;
-2. ingest per-property availability, latency, critical-path, and deploy-freshness signals;
-3. define and ingest first-party business conversion/retention events;
-4. persist historical snapshots so Mission Control can show trends rather than only point-in-time state;
-5. add alerting/escalation rules for critical gaps and regressions;
-6. expand the estate table so neglected properties become visible automatically.
+- certify human audience metrics;
+- connect production availability and critical-path evidence across the estate;
+- instrument meaningful business conversion/retention events;
+- accumulate comparable historical observations for decision-grade trend deltas;
+- resolve or explicitly exempt four RUM gaps;
+- quantify Culture Sherpa convergence with real overlap/utility evidence;
+- align stale external GitHub repository metadata with the current product story.
 
 ## Evidence standard
 
-Any investor-facing claim must be:
+Any investor-facing claim must be tied to a source and time window, explicit about what the metric measures and its limitations, and withheld when the evidence is unavailable.
 
-- tied to a source;
-- tied to a time window;
-- explicit about what the metric measures;
-- explicit about known contamination or blind spots;
-- withheld when the underlying evidence is unavailable.
-
-The goal is not a prettier dashboard. The goal is a trustworthy diagnostic and business-intelligence layer that can explain the product, expose risk, and direct the next unit of work.
+The goal is not a prettier dashboard. The goal is a trustworthy diagnostic and business-intelligence layer that can explain the product, expose risk, preserve uncertainty, and direct the next unit of work.
