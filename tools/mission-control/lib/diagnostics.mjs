@@ -268,7 +268,7 @@ function evidenceItems(estate, history, now, latestAttempt) {
           'RUM coverage is therefore never plotted as a fresh measurement.',
         businessReason: 'Zone counts, RUM coverage, and deploy freshness are only as current as the inventory read behind them.',
         evidence: [{ type: 'inventory', ref: inventory.asOf, state: aged ? inventory.freshness.state : 'partial' }],
-        nextAction: 'Grant the collector token the missing read scopes (Zone:Read, Pages:Read, Account Analytics/Web Analytics read) so each facet refreshes automatically.',
+        nextAction: 'Grant the collector token the missing read scopes (Zone:Read, Pages:Read) for zone and Pages facts. RUM settings additionally need a RUM read added to the collector (it does not read them yet), so they stay carried forward until that is built.',
         escalation: { level: aged ? 'medium' : 'low', class: 'stale-evidence', escalateWhen: 'Inventory expires (over 7 days) or a carried-forward fact is used in investor material as current.', targetLane: 'Platform' },
       })
     );

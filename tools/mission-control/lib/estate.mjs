@@ -30,16 +30,18 @@ const RECENT_WINDOW_DAYS = 7;
 
 /** Merges refreshed Cloudflare inventory facts (if any) over the registry's carried-forward facts. */
 export function applyInventory(registry, inventory) {
+  // The inventory is as old as its OLDEST refreshed facet; carried-forward facets are as old as the registry read.
+  const facetTimes = [inventory?.zones ? inventory.zonesObservedAt || inventory.observedAt : null, inventory?.pagesProjects ? inventory.pagesObservedAt || inventory.observedAt : null].filter(Boolean).sort();
   const inventoryMeta = {
-    asOf: inventory?.observedAt || registry.inventory.asOf,
+    asOf: facetTimes[0] || registry.inventory.asOf,
     source: inventory?.source || registry.inventory.source,
     refreshed: Boolean(inventory?.observedAt),
     // Facets actually read from Cloudflare in the latest refresh. RUM settings are not read by the collector yet,
     // so RUM coverage is always a carried-forward fact and is never labelled a fresh measurement.
     facets: {
-      zones: Boolean(inventory?.zones),
-      pages: Boolean(inventory?.pagesProjects),
-      rum: false,
+      zones: inventory?.zones ? inventory.zonesObservedAt || inventory.observedAt : null,
+      pages: inventory?.pagesProjects ? inventory.pagesObservedAt || inventory.observedAt : null,
+      rum: null,
     },
   };
   if (!inventory) return { properties: registry.properties, inventoryMeta };

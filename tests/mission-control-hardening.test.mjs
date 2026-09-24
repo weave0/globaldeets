@@ -179,10 +179,30 @@ test('inventory: Pages listing never sends per_page (Cloudflare rejects it); zon
   assert.ok(seen.filter(url => url.includes('/pages/projects?')).every(url => !url.includes('per_page')));
   assert.ok(seen.some(url => url.includes('page=2')), 'follows the server pagination');
   const inventory = result.plane.estate.evidence.inventory;
-  assert.deepEqual(inventory.facets, { zones: true, pages: true, rum: false });
+  assert.deepEqual(Object.fromEntries(Object.entries(inventory.facets).map(([key, value]) => [key, Boolean(value)])), { zones: true, pages: true, rum: false });
   const snapshot = result.plane.history.snapshots.at(-1);
   assert.equal(snapshot.estate.evidenceState, 'carried-forward', 'RUM coverage is never a fresh measurement until RUM is read');
   const item = result.plane.diagnostics.items.find(entry => entry.id === 'evidence:inventory-stale');
   assert.match(item.observed, /RUM settings are carried forward/);
   assert.equal(item.severity, 'low');
+});
+
+test('inventory: a later partial refresh keeps earlier facets with their own observation time, and a truncated listing fails its facet', async () => {
+  const { mergeInventory, refreshInventory } = await import('../tools/mission-control/lib/cloudflare-inventory.mjs');
+  const full = { observedAt: '2026-10-01T00:00:00Z', source: 's', zones: [{ name: 'a.com', status: 'active' }], zonesObservedAt: '2026-10-01T00:00:00Z', pagesProjects: [{ name: 'p', domains: [], latestProductionDeployAt: null }], pagesObservedAt: '2026-10-01T00:00:00Z' };
+  const zonesOnly = { observedAt: '2026-10-02T00:00:00Z', source: 's2', zones: [{ name: 'a.com', status: 'active' }], zonesObservedAt: '2026-10-02T00:00:00Z', pagesProjects: null, pagesObservedAt: null };
+  const merged = mergeInventory(full, zonesOnly);
+  assert.equal(merged.zonesObservedAt, '2026-10-02T00:00:00Z');
+  assert.equal(merged.pagesObservedAt, '2026-10-01T00:00:00Z', 'the Pages facet keeps its own, older observation time');
+  assert.equal(merged.pagesProjects.length, 1);
+  assert.equal(mergeInventory(full, null), full);
+
+  const estate = buildEstateHealth({ registry: registry(), inventory: merged, now: '2026-10-02T06:00:00Z' });
+  assert.equal(estate.evidence.inventory.asOf, '2026-10-01T00:00:00Z', 'inventory age is that of its oldest refreshed facet');
+
+  // A listing that never proves completion is a failed facet, not a silently truncated success.
+  const endless = async () => new Response(JSON.stringify({ success: true, result: [{ name: 'z.com', status: 'active' }], result_info: { total_pages: 999 } }), { status: 200, headers: { 'content-type': 'application/json' } });
+  const truncated = await refreshInventory({ token: 't', accountId: 'a', fetchImpl: endless, now: () => Date.parse('2026-10-02T00:00:00Z') });
+  assert.equal(truncated.inventory, null);
+  assert.match(truncated.reason, /pagination limit/);
 });

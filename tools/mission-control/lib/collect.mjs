@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { confirmFailures, probeEstate } from './probe.mjs';
 import { extractOperational, loadGoldSource } from './gold.mjs';
-import { refreshInventory } from './cloudflare-inventory.mjs';
+import { mergeInventory, refreshInventory } from './cloudflare-inventory.mjs';
 import { assemblePlane, compactRun } from './plane.mjs';
 import { expectedPropertyIds, validateDataPlane, validateRegistry } from './contracts.mjs';
 import { PUBLISHED_FILES, loadEvidence, persistEvidence } from './evidence.mjs';
@@ -58,7 +58,7 @@ export async function runCollection({ root, evidenceDir, deps, env = {}, runId, 
   let inventoryNote = 'skipped';
   if (!skipInventory) {
     const refreshed = await refreshInventory({ token: env.CLOUDFLARE_API_TOKEN, accountId: env.CLOUDFLARE_ACCOUNT_ID, fetchImpl: deps.fetchImpl, now: deps.now });
-    if (refreshed.inventory) inventory = refreshed.inventory;
+    if (refreshed.inventory) inventory = mergeInventory(evidence.inventory, refreshed.inventory);
     inventoryNote = refreshed.reason || 'refreshed';
   }
 

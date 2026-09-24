@@ -4,6 +4,7 @@
  * forward and labels them by age. Read-only: only GET requests are issued.
  */
 const API = 'https://api.cloudflare.com/client/v4';
+const MAX_PAGES = 20;
 
 async function getJson(url, token, fetchImpl) {
   const response = await fetchImpl(url, { headers: { authorization: 'Bearer ' + token, accept: 'application/json' }, signal: AbortSignal.timeout(20000) });
@@ -20,21 +21,24 @@ async function getJson(url, token, fetchImpl) {
 // The Pages list endpoint rejects a caller-chosen per_page, so pagination follows the server's page size.
 async function listAll(path, token, fetchImpl, { perPage = null } = {}) {
   const results = [];
-  for (let page = 1; page <= 20; page += 1) {
+  for (let page = 1; page <= MAX_PAGES; page += 1) {
     const separator = path.includes('?') ? '&' : '?';
     const query = (perPage ? 'per_page=' + perPage + '&' : '') + 'page=' + page;
     const body = await getJson(API + path + separator + query, token, fetchImpl);
     const batch = body.result || [];
     results.push(...batch);
-    const totalPages = body.result_info?.total_pages;
-    if (totalPages ? page >= totalPages : batch.length === 0 || (body.result_info?.per_page ? batch.length < body.result_info.per_page : true)) break;
+    const info = body.result_info || {};
+    // Completion must be proven by the server's own metadata (page count, total count, or a short/empty page).
+    if (info.total_pages ? page >= info.total_pages : Number.isFinite(info.total_count) ? results.length >= info.total_count : batch.length === 0 || (info.per_page ? batch.length < info.per_page : true)) return results;
   }
-  return results;
+  // Never report a truncated listing as a successful refresh.
+  throw new Error('pagination limit of ' + MAX_PAGES + ' pages reached for ' + path.split('?')[0]);
 }
 
 export async function refreshInventory({ token, accountId, fetchImpl, now }) {
   if (!token || !accountId) return { inventory: null, reason: 'CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID not provided.' };
   const notes = [];
+  const observedAt = new Date(now()).toISOString();
   let zones = null;
   let pagesProjects = null;
   try {
@@ -61,11 +65,33 @@ export async function refreshInventory({ token, accountId, fetchImpl, now }) {
   if (!zones && !pagesProjects) return { inventory: null, reason: 'Cloudflare token could not read inventory (' + notes.join('; ') + ').' };
   return {
     inventory: {
-      observedAt: new Date(now()).toISOString(),
+      observedAt,
       source: 'Cloudflare API (' + [zones ? 'zones' : null, pagesProjects ? 'pages' : null].filter(Boolean).join(' + ') + ')',
       zones,
+      zonesObservedAt: zones ? observedAt : null,
       pagesProjects,
+      pagesObservedAt: pagesProjects ? observedAt : null,
     },
     reason: notes.length ? 'Partial inventory refresh: ' + notes.join('; ') : null,
+  };
+}
+
+/**
+ * Merges a (possibly partial) refresh into the previously persisted inventory per facet, so a later zones-only
+ * run never drops Pages facts that were observed earlier; each facet keeps its own observation time.
+ */
+export function mergeInventory(previous, refreshed) {
+  if (!refreshed) return previous || null;
+  const facet = (name, stamp) => {
+    if (refreshed[name]) return { [name]: refreshed[name], [stamp]: refreshed[stamp] };
+    if (previous?.[name]) return { [name]: previous[name], [stamp]: previous[stamp] || previous.observedAt };
+    return {};
+  };
+  const merged = { ...facet('zones', 'zonesObservedAt'), ...facet('pagesProjects', 'pagesObservedAt') };
+  const stamps = [merged.zonesObservedAt, merged.pagesObservedAt].filter(Boolean).sort();
+  return {
+    observedAt: stamps[stamps.length - 1] || refreshed.observedAt,
+    source: 'Cloudflare API (' + [merged.zones ? 'zones' : null, merged.pagesProjects ? 'pages' : null].filter(Boolean).join(' + ') + ')',
+    ...merged,
   };
 }
