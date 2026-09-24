@@ -34,6 +34,13 @@ export function applyInventory(registry, inventory) {
     asOf: inventory?.observedAt || registry.inventory.asOf,
     source: inventory?.source || registry.inventory.source,
     refreshed: Boolean(inventory?.observedAt),
+    // Facets actually read from Cloudflare in the latest refresh. RUM settings are not read by the collector yet,
+    // so RUM coverage is always a carried-forward fact and is never labelled a fresh measurement.
+    facets: {
+      zones: Boolean(inventory?.zones),
+      pages: Boolean(inventory?.pagesProjects),
+      rum: false,
+    },
   };
   if (!inventory) return { properties: registry.properties, inventoryMeta };
 

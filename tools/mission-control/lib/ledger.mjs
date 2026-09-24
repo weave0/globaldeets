@@ -67,7 +67,8 @@ export function buildScheduledSnapshot({ estate, operational, observedAt, runId,
   const summary = estate.summary;
   const inventory = estate.evidence.inventory;
   const probe = estate.evidence.probe;
-  const inventoryCurrent = inventory.refreshed && inventory.freshness.state === 'fresh';
+  // RUM coverage is only a fresh measurement when the RUM facet itself was read in a fresh refresh.
+  const inventoryCurrent = inventory.facets?.rum === true && inventory.freshness.state === 'fresh';
   const conclusive = summary.availableZones + summary.degradedZones + summary.unavailableZones;
   const probeUsable = probe.validity === 'valid' && probe.freshness.state !== 'expired';
   const date = observedAt.slice(0, 10);

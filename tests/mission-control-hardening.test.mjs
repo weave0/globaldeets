@@ -155,3 +155,34 @@ test('bounded body reads never retain more than the configured cap even when one
   assert.equal(record.observation.state, 'available');
   assert.ok(record.http.bytes <= 1024, 'kept ' + record.http.bytes + ' bytes');
 });
+
+test('inventory: Pages listing never sends per_page (Cloudflare rejects it); zones-only refresh is labelled partial and RUM stays carried forward', async () => {
+  const dir = newDir();
+  const clock = makeClock(Date.parse('2026-10-01T12:00:00Z'));
+  const world = healthyWorld(registry(), clock);
+  const seen = [];
+  const cfFetch = async (input, init) => {
+    const url = String(input);
+    if (!url.startsWith('https://api.cloudflare.com/')) return world.fetchImpl(input, init);
+    seen.push(url);
+    const ok = (result, info) => new Response(JSON.stringify({ success: true, result, result_info: info }), { status: 200, headers: { 'content-type': 'application/json' } });
+    if (url.includes('/pages/projects') && url.includes('per_page')) return new Response('{"success":false,"errors":[{"message":"Invalid list options provided."}]}', { status: 400 });
+    if (url.includes('/zones')) return ok([{ name: 'globaldeets.com', status: 'active' }], { total_pages: 1 });
+    if (url.includes('/domains')) return ok([{ name: 'globaldeets.com', status: 'active' }]);
+    if (url.includes('/pages/projects')) {
+      const page = Number(new URL(url).searchParams.get('page'));
+      return page === 1 ? ok([{ name: 'globaldeets', canonical_deployment: { created_on: '2026-10-01T09:00:00Z' } }], { page: 1, per_page: 1, total_count: 2 }) : ok([{ name: 'other', canonical_deployment: { created_on: '2026-09-01T09:00:00Z' } }], { page: 2, per_page: 1, total_count: 2 });
+    }
+    return new Response('{}', { status: 404 });
+  };
+  const result = await runCollection({ root: ROOT, evidenceDir: dir, deps: makeDeps(world, { fetchImpl: cfFetch }), env: { CLOUDFLARE_API_TOKEN: 't', CLOUDFLARE_ACCOUNT_ID: 'a' }, runId: 'inv', confirmDelayMs: 1 });
+  assert.ok(seen.filter(url => url.includes('/pages/projects?')).every(url => !url.includes('per_page')));
+  assert.ok(seen.some(url => url.includes('page=2')), 'follows the server pagination');
+  const inventory = result.plane.estate.evidence.inventory;
+  assert.deepEqual(inventory.facets, { zones: true, pages: true, rum: false });
+  const snapshot = result.plane.history.snapshots.at(-1);
+  assert.equal(snapshot.estate.evidenceState, 'carried-forward', 'RUM coverage is never a fresh measurement until RUM is read');
+  const item = result.plane.diagnostics.items.find(entry => entry.id === 'evidence:inventory-stale');
+  assert.match(item.observed, /RUM settings are carried forward/);
+  assert.equal(item.severity, 'low');
+});

@@ -17,13 +17,17 @@ async function getJson(url, token, fetchImpl) {
   return body;
 }
 
-async function listAll(path, token, fetchImpl) {
+// The Pages list endpoint rejects a caller-chosen per_page, so pagination follows the server's page size.
+async function listAll(path, token, fetchImpl, { perPage = null } = {}) {
   const results = [];
-  for (let page = 1; page <= 10; page += 1) {
+  for (let page = 1; page <= 20; page += 1) {
     const separator = path.includes('?') ? '&' : '?';
-    const body = await getJson(API + path + separator + 'per_page=50&page=' + page, token, fetchImpl);
-    results.push(...(body.result || []));
-    if (!body.result_info || page >= (body.result_info.total_pages || 1)) break;
+    const query = (perPage ? 'per_page=' + perPage + '&' : '') + 'page=' + page;
+    const body = await getJson(API + path + separator + query, token, fetchImpl);
+    const batch = body.result || [];
+    results.push(...batch);
+    const totalPages = body.result_info?.total_pages;
+    if (totalPages ? page >= totalPages : batch.length === 0 || (body.result_info?.per_page ? batch.length < body.result_info.per_page : true)) break;
   }
   return results;
 }
@@ -34,7 +38,7 @@ export async function refreshInventory({ token, accountId, fetchImpl, now }) {
   let zones = null;
   let pagesProjects = null;
   try {
-    const list = await listAll('/zones?account.id=' + encodeURIComponent(accountId), token, fetchImpl);
+    const list = await listAll('/zones?account.id=' + encodeURIComponent(accountId), token, fetchImpl, { perPage: 50 });
     zones = list.map(zone => ({ name: zone.name, status: zone.status }));
   } catch (error) {
     notes.push('zones: ' + error.message);
