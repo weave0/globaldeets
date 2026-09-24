@@ -370,6 +370,14 @@ export async function probeProperty(property, ctx) {
   let blocked = false;
   let failureClass = interpreted.failureClass;
   let reason;
+  if (interpreted.failureClass === 'dns-failure' && property.probe.expectation === 'unspecified') {
+    // The resolver could not classify the miss, but the OS resolver confirms the name does not resolve and no
+    // service is declared: a topology decision, not an outage.
+    state = 'no-service-published';
+    reason = 'Zone is active but the hostname does not resolve, and no service is declared for it. This is a topology decision, not an outage.';
+    record.observation = { state, blocked, failureClass: 'dns-nxdomain', reason, nextAction: FAILURE_NEXT_ACTIONS['dns-nxdomain'] };
+    return record;
+  }
   if (interpreted.observed === 'available') {
     state = 'available';
     reason = 'HTTP ' + result.status + ' from ' + new URL(result.finalUrl).hostname + ' in ' + result.durationMs + ' ms.';

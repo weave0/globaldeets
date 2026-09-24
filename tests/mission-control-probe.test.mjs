@@ -221,3 +221,23 @@ test('check evaluator handles page, json, content-type, and latency contracts', 
   assert.equal(evaluateCheck({ id: 'j', kind: 'json', maxLatencyMs: 10, jsonRequires: [] }, json).detail, 'latency:50');
   assert.equal(evaluateCheck({ id: 'x', kind: 'page' }, { status: 404, contentType: 'text/html', text: '' }).detail, 'status-404');
 });
+
+test('resolver-level DNS errors never masquerade as outages: the OS-resolver miss still classifies parked zones correctly', async () => {
+  const { reg, deps, byId } = setup();
+  const broken = { resolve4: () => Promise.reject(Object.assign(new Error('refused'), { code: 'ECONNREFUSED' })), resolve6: () => Promise.reject(Object.assign(new Error('refused'), { code: 'ECONNREFUSED' })) };
+  const parked = await probeProperty(byId('fwomps.com'), ctxFor(reg, { ...deps, resolver: broken }));
+  assert.equal(parked.dns.state, 'error');
+  assert.equal(parked.observation.state, 'no-service-published');
+  assert.match(parked.observation.reason, /not an outage/);
+
+  // A property that declares a service and does not resolve is still a real, confirmed-by-class outage.
+  const declared = structuredClone(byId('fwomps.com'));
+  declared.probe.expectation = 'serves-content';
+  const outage = await probeProperty(declared, ctxFor(reg, { ...deps, resolver: broken }));
+  assert.equal(outage.observation.state, 'unavailable');
+  assert.equal(outage.observation.failureClass, 'dns-failure');
+
+  // A working property is unaffected by a broken stub resolver because the HTTP evidence stands on its own.
+  const fine = await probeProperty(byId('aiaimate.com'), ctxFor(reg, { ...deps, resolver: broken }));
+  assert.equal(fine.observation.state, 'available');
+});
