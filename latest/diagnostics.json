@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0.0",
   "contractName": "globaldeets-diagnostics-queue",
-  "generatedAt": "2026-09-24T19:47:48.528Z",
+  "generatedAt": "2026-09-24T22:48:58.746Z",
   "agentContract": {
     "sortableFields": [
       "priority",
@@ -169,11 +169,11 @@
     ]
   },
   "summary": {
-    "open": 16,
-    "actionableNow": 3,
+    "open": 15,
+    "actionableNow": 2,
     "blockedOnAuthority": 4,
     "decisionNeeded": 8,
-    "nextUp": "criticalpath:failed:aiaimate.com"
+    "nextUp": "business-outcomes:coverage"
   },
   "items": [
     {
@@ -252,81 +252,6 @@
         "state": "actionable-now",
         "blockedBy": null
       },
-      "id": "criticalpath:failed:aiaimate.com",
-      "subject": "aiaimate.com",
-      "subjects": [
-        "aiaimate.com"
-      ],
-      "rule": "critical-path-failed",
-      "category": "critical-path",
-      "severity": "high",
-      "domain": "reliability",
-      "businessImpact": "medium",
-      "ownerLane": "Platform",
-      "title": "AIAIMate responds, but its critical path is failing",
-      "observed": "The authoritative critical-path contract (owner-source-route) failed: search-api (status-500). The homepage may look fine while the function users depend on is broken.",
-      "businessReason": "The homepage may respond while the product function investors and users depend on is broken.",
-      "evidence": [
-        {
-          "type": "critical-path-probe",
-          "ref": "aiaimate.com@2026-09-24T19:47:48.528Z",
-          "state": "measured"
-        }
-      ],
-      "nextAction": "Inspect the failing check(s) against production and the latest deploy; fix the route or correct the contract if the product intentionally changed.",
-      "escalation": {
-        "blocksInvestorClaim": false,
-        "level": "high",
-        "class": "degradation",
-        "escalateWhen": "Failure persists for two consecutive runs.",
-        "targetLane": "Platform"
-      },
-      "openedAt": "2026-09-24",
-      "ageDays": 0,
-      "freshness": {
-        "state": "fresh",
-        "observedAt": "2026-09-24T19:47:48.528Z",
-        "basis": "Production probes"
-      },
-      "priorityScore": 110,
-      "priorityBreakdown": [
-        {
-          "factor": "severity",
-          "points": 70,
-          "why": "Severity is high."
-        },
-        {
-          "factor": "strategic-tier",
-          "points": 8,
-          "why": "Affects a tier 2 property in the owner strategy."
-        },
-        {
-          "factor": "business-impact",
-          "points": 6,
-          "why": "Business impact is medium."
-        },
-        {
-          "factor": "escalation",
-          "points": 6,
-          "why": "Escalation level is high."
-        },
-        {
-          "factor": "actionability",
-          "points": 20,
-          "why": "Can be worked on now."
-        }
-      ],
-      "priority": 2
-    },
-    {
-      "source": "derived",
-      "status": "open",
-      "polarity": "risk",
-      "confidence": "high",
-      "actionability": {
-        "state": "actionable-now",
-        "blockedBy": null
-      },
       "id": "business-outcomes:coverage",
       "rule": "business-outcome-coverage",
       "category": "business-outcomes",
@@ -363,7 +288,7 @@
       "evidence": [
         {
           "type": "business-event-contract",
-          "ref": "globaldeets-business-events@2026-09-24T19:47:48.528Z",
+          "ref": "globaldeets-business-events@2026-09-24T22:48:58.746Z",
           "state": "not-connected"
         }
       ],
@@ -409,7 +334,7 @@
           "why": "Can be worked on now."
         }
       ],
-      "priority": 3
+      "priority": 2
     },
     {
       "source": "manual",
@@ -493,7 +418,7 @@
           "why": "Evidence confidence is medium."
         }
       ],
-      "priority": 4
+      "priority": 3
     },
     {
       "source": "derived",
@@ -520,7 +445,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36050496073-1",
+          "ref": "production probe run-36069459865-1",
           "state": "measured"
         }
       ],
@@ -536,7 +461,7 @@
       "ageDays": 0,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T19:47:48.528Z",
+        "observedAt": "2026-09-24T22:48:58.746Z",
         "basis": "Production probes"
       },
       "priorityScore": 72,
@@ -567,7 +492,7 @@
           "why": "Can be worked on now."
         }
       ],
-      "priority": 5
+      "priority": 4
     },
     {
       "source": "derived",
@@ -634,7 +559,7 @@
           "why": "Blocked on authority that is not available yet."
         }
       ],
-      "priority": 6
+      "priority": 5
     },
     {
       "source": "derived",
@@ -662,7 +587,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-24T19:47:48.530Z",
+          "ref": "2026-09-24T22:48:58.747Z",
           "state": "measured"
         }
       ],
@@ -678,7 +603,7 @@
       "ageDays": 0,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T19:47:48.530Z",
+        "observedAt": "2026-09-24T22:48:58.747Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 48,
@@ -704,7 +629,7 @@
           "why": "Evidence confidence is medium."
         }
       ],
-      "priority": 7
+      "priority": 6
     },
     {
       "source": "derived",
@@ -745,7 +670,7 @@
       "ageDays": 0,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T19:47:48.528Z",
+        "observedAt": "2026-09-24T22:48:58.746Z",
         "basis": "Historical snapshots"
       },
       "priorityScore": 43,
@@ -771,7 +696,7 @@
           "why": "Nothing to fix; watch it."
         }
       ],
-      "priority": 8
+      "priority": 7
     },
     {
       "source": "derived",
@@ -846,7 +771,7 @@
           "why": "Business impact is medium."
         }
       ],
-      "priority": 9
+      "priority": 8
     },
     {
       "source": "derived",
@@ -925,7 +850,7 @@
           "why": "Business impact is medium."
         }
       ],
-      "priority": 10
+      "priority": 9
     },
     {
       "source": "derived",
@@ -942,7 +867,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-24T19:47:48.528Z",
+          "ref": "globaldeets-estate-health@2026-09-24T22:48:58.746Z",
           "state": "measured"
         }
       ],
@@ -968,7 +893,7 @@
       "ageDays": 0,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T19:47:48.528Z",
+        "observedAt": "2026-09-24T22:48:58.746Z",
         "basis": "Production probes"
       },
       "priorityScore": 34,
@@ -994,7 +919,7 @@
           "why": "Blocked on authority that is not available yet."
         }
       ],
-      "priority": 11
+      "priority": 10
     },
     {
       "source": "derived",
@@ -1024,7 +949,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-24T19:47:48.528Z",
+          "ref": "globaldeets-estate-health@2026-09-24T22:48:58.746Z",
           "state": "measured"
         }
       ],
@@ -1040,7 +965,7 @@
       "ageDays": 0,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T19:47:48.528Z",
+        "observedAt": "2026-09-24T22:48:58.746Z",
         "basis": "Production probes"
       },
       "priorityScore": 15,
@@ -1051,7 +976,7 @@
           "why": "Severity is low."
         }
       ],
-      "priority": 12
+      "priority": 11
     },
     {
       "source": "derived",
@@ -1109,7 +1034,7 @@
           "why": "Severity is low."
         }
       ],
-      "priority": 13
+      "priority": 12
     },
     {
       "source": "derived",
@@ -1148,7 +1073,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36050496073-1",
+          "ref": "production probe run-36069459865-1",
           "state": "measured"
         }
       ],
@@ -1164,7 +1089,7 @@
       "ageDays": 0,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T19:47:48.528Z",
+        "observedAt": "2026-09-24T22:48:58.746Z",
         "basis": "Production probes"
       },
       "priorityScore": 12,
@@ -1195,7 +1120,7 @@
           "why": "Evidence confidence is medium."
         }
       ],
-      "priority": 14
+      "priority": 13
     },
     {
       "source": "derived",
@@ -1255,7 +1180,7 @@
           "why": "Evidence confidence is medium."
         }
       ],
-      "priority": 15
+      "priority": 14
     },
     {
       "source": "derived",
@@ -1280,7 +1205,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-24T19:47:48.530Z",
+          "ref": "2026-09-24T22:48:58.747Z",
           "state": "measured"
         }
       ],
@@ -1296,7 +1221,7 @@
       "ageDays": 0,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T19:47:48.530Z",
+        "observedAt": "2026-09-24T22:48:58.747Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 11,
@@ -1312,7 +1237,83 @@
           "why": "Evidence confidence is medium."
         }
       ],
-      "priority": 16
+      "priority": 15
+    },
+    {
+      "category": "critical-path",
+      "confidence": "high",
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-09-24T19:47:48.528Z",
+        "basis": "Production probes"
+      },
+      "source": "derived",
+      "status": "closed",
+      "polarity": "risk",
+      "actionability": {
+        "state": "closed",
+        "blockedBy": null
+      },
+      "id": "criticalpath:failed:aiaimate.com",
+      "subject": "aiaimate.com",
+      "subjects": [
+        "aiaimate.com"
+      ],
+      "rule": "critical-path-failed",
+      "severity": "high",
+      "domain": "reliability",
+      "businessImpact": "medium",
+      "ownerLane": "Platform",
+      "title": "AIAIMate responds, but its critical path is failing",
+      "observed": "The authoritative critical-path contract (owner-source-route) failed: search-api (status-500). The homepage may look fine while the function users depend on is broken.",
+      "businessReason": "The homepage may respond while the product function investors and users depend on is broken.",
+      "evidence": [
+        {
+          "type": "critical-path-probe",
+          "ref": "aiaimate.com@2026-09-24T19:47:48.528Z",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Recovered; monitor. This item is retained for 7 days.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "high",
+        "class": "degradation",
+        "escalateWhen": "Failure persists for two consecutive runs.",
+        "targetLane": "Platform"
+      },
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "priorityScore": -10,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 70,
+          "why": "Severity is high."
+        },
+        {
+          "factor": "strategic-tier",
+          "points": 8,
+          "why": "Affects a tier 2 property in the owner strategy."
+        },
+        {
+          "factor": "business-impact",
+          "points": 6,
+          "why": "Business impact is medium."
+        },
+        {
+          "factor": "escalation",
+          "points": 6,
+          "why": "Escalation level is high."
+        },
+        {
+          "factor": "actionability",
+          "points": -100,
+          "why": "Needs a decision."
+        }
+      ],
+      "priority": 16,
+      "closedAt": "2026-09-24T22:48:58.746Z"
     },
     {
       "source": "manual",

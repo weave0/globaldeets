@@ -1,7 +1,7 @@
 {
   "contractName": "globaldeets-executive",
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-09-24T19:47:48.528Z",
+  "generatedAt": "2026-09-24T22:48:58.746Z",
   "policy": {
     "fixturesAreProduction": false,
     "unknownIsFailure": false,
@@ -11,8 +11,8 @@
     "derivedOnly": true
   },
   "asOf": {
-    "probe": "2026-09-24T19:47:48.528Z",
-    "inventory": "2026-09-24T19:47:48.530Z",
+    "probe": "2026-09-24T22:48:58.746Z",
+    "inventory": "2026-09-24T22:48:58.747Z",
     "audience": null,
     "businessEvents": null
   },
@@ -22,17 +22,17 @@
         "id": "availability",
         "label": "Availability probes",
         "state": "live",
-        "asOf": "2026-09-24T19:47:48.528Z",
+        "asOf": "2026-09-24T22:48:58.746Z",
         "detail": "2 vantages",
-        "now": "2026-09-24T19:47:48.528Z"
+        "now": "2026-09-24T22:48:58.746Z"
       },
       {
         "id": "inventory",
         "label": "Cloudflare inventory",
         "state": "live",
-        "asOf": "2026-09-24T19:47:48.530Z",
+        "asOf": "2026-09-24T22:48:58.747Z",
         "detail": "refreshed",
-        "now": "2026-09-24T19:47:48.528Z"
+        "now": "2026-09-24T22:48:58.746Z"
       },
       {
         "id": "audience",
@@ -40,7 +40,7 @@
         "state": "absent",
         "asOf": null,
         "detail": "awaiting-authorized-source",
-        "now": "2026-09-24T19:47:48.528Z"
+        "now": "2026-09-24T22:48:58.746Z"
       },
       {
         "id": "business-events",
@@ -48,23 +48,23 @@
         "state": "absent",
         "asOf": null,
         "detail": "not-connected",
-        "now": "2026-09-24T19:47:48.528Z"
+        "now": "2026-09-24T22:48:58.746Z"
       },
       {
         "id": "history",
         "label": "Historical snapshots",
         "state": "aging",
-        "asOf": "2026-09-24T19:47:48.528Z",
+        "asOf": "2026-09-24T22:48:58.746Z",
         "detail": "1 day retained",
-        "now": "2026-09-24T19:47:48.528Z"
+        "now": "2026-09-24T22:48:58.746Z"
       },
       {
         "id": "instrumentation-reception",
         "label": "Telemetry reception",
         "state": "live",
-        "asOf": "2026-09-24T19:48:00.544Z",
+        "asOf": "2026-09-24T22:49:11.539Z",
         "detail": "checked",
-        "now": "2026-09-24T19:47:48.528Z"
+        "now": "2026-09-24T22:48:58.746Z"
       }
     ],
     "liveClasses": 3,
@@ -79,8 +79,8 @@
       },
       {
         "id": "health",
-        "tone": "bad",
-        "text": "18 of 20 properties that publish a site are responding; 2 are verified healthy end-to-end. 1 property needs attention. 1 property is blocked from view (not counted as failing). 4 domains publish nothing."
+        "tone": "good",
+        "text": "19 of 20 properties that publish a site are responding; 3 are verified healthy end-to-end. None is failing. 1 property is blocked from view (not counted as failing). 4 domains publish nothing."
       },
       {
         "id": "usage",
@@ -95,7 +95,7 @@
       {
         "id": "attention",
         "tone": "neutral",
-        "text": "16 open items: 3 actionable now, 4 blocked on missing authority, 8 need a decision. First: AIAIMate responds, but its critical path is failing."
+        "text": "15 open items: 2 actionable now, 4 blocked on missing authority, 8 need a decision. First: 0 of 20 properties report business outcomes."
       }
     ]
   },
@@ -111,10 +111,10 @@
       "alias": 3,
       "unknown": 9
     },
-    "verifiedHealthy": 2,
-    "responding": 18,
+    "verifiedHealthy": 3,
+    "responding": 19,
     "servingExpected": 20,
-    "attention": 1,
+    "attention": 0,
     "blocked": 1,
     "nothingPublished": 4
   },
@@ -351,8 +351,8 @@
               "label": "Start learning AI by doing"
             },
             "operatingStatus": {
-              "key": "failing",
-              "tone": "failing"
+              "key": "healthy",
+              "tone": "healthy"
             },
             "expectation": {
               "lifecycle": "active",
@@ -1114,8 +1114,8 @@
           },
           {
             "column": "critical-path",
-            "state": "issue",
-            "label": "Failing"
+            "state": "known",
+            "label": "Verified"
           },
           {
             "column": "telemetry",
@@ -1902,25 +1902,44 @@
   },
   "findings": {
     "nextUp": {
-      "id": "criticalpath:failed:aiaimate.com",
-      "title": "AIAIMate responds, but its critical path is failing",
-      "severity": "high",
-      "category": "critical-path",
+      "id": "business-outcomes:coverage",
+      "title": "0 of 20 properties report business outcomes",
+      "severity": "medium",
+      "category": "business-outcomes",
       "subjects": [
-        "aiaimate.com"
+        "globaldeets.com",
+        "culturesherpa.org",
+        "agentkagent.com",
+        "aiaimate.com",
+        "brettleeweaver.com",
+        "citizenapproved.org",
+        "cyancanoe.com",
+        "flipskillet.com",
+        "flipskillit.com",
+        "foxyana.com",
+        "gflippinv.com",
+        "goodflippindesign.com",
+        "goodflippinluck.com",
+        "goodflippinnews.com",
+        "goodflippinvibes.com",
+        "goodflippinyikes.com",
+        "heavymoose.com",
+        "lowertownstpaul.org",
+        "minnesotapeace.com",
+        "redleopardofstpaul.com"
       ],
-      "why": "The homepage may respond while the product function investors and users depend on is broken.",
-      "action": "Inspect the failing check(s) against production and the latest deploy; fix the route or correct the contract if the product intentionally changed.",
+      "why": "Traffic without outcomes cannot show that the estate produces value: leads, sign-ups, purchases and downloads are what an investor asks about after audience.",
+      "action": "Start with the properties whose producers already exist in source: publish counts to the globaldeets-business-events-feed contract (per property, event type and window) and set the events feed secrets.",
       "actionability": "actionable-now",
       "confidence": "high",
-      "priorityScore": 110
+      "priorityScore": 93
     },
     "counts": {
-      "open": 16,
-      "actionableNow": 3,
+      "open": 15,
+      "actionableNow": 2,
       "blockedOnAuthority": 4,
       "decisionNeeded": 8,
-      "nextUp": "criticalpath:failed:aiaimate.com"
+      "nextUp": "business-outcomes:coverage"
     },
     "risks": [
       {
@@ -1934,20 +1953,6 @@
         "actionability": "blocked-on-authority",
         "confidence": "high",
         "priorityScore": 115
-      },
-      {
-        "id": "criticalpath:failed:aiaimate.com",
-        "title": "AIAIMate responds, but its critical path is failing",
-        "severity": "high",
-        "category": "critical-path",
-        "subjects": [
-          "aiaimate.com"
-        ],
-        "why": "The homepage may respond while the product function investors and users depend on is broken.",
-        "action": "Inspect the failing check(s) against production and the latest deploy; fix the route or correct the contract if the product intentionally changed.",
-        "actionability": "actionable-now",
-        "confidence": "high",
-        "priorityScore": 110
       },
       {
         "id": "business-outcomes:coverage",
@@ -2153,7 +2158,7 @@
     "wins": [
       {
         "id": "win:responding",
-        "title": "18 of 20 serving properties are responding",
+        "title": "19 of 20 serving properties are responding",
         "detail": "Measured from 2 probe vantages; responding is not the same as verified healthy.",
         "evidence": "estate-health"
       },
@@ -2217,7 +2222,7 @@
       "kind": "segments",
       "unit": "properties",
       "evidenceState": "measured",
-      "asOf": "2026-09-24T19:47:48.528Z",
+      "asOf": "2026-09-24T22:48:58.746Z",
       "provenance": "Production probes from 2 vantages; health contract 1.1.0",
       "data": {
         "total": 25,
@@ -2226,9 +2231,10 @@
             "key": "healthy",
             "label": "Verified healthy",
             "tone": "good",
-            "count": 2,
+            "count": 3,
             "properties": [
               "globaldeets.com",
+              "aiaimate.com",
               "minnesotapeace.com"
             ]
           },
@@ -2261,10 +2267,8 @@
             "key": "attention",
             "label": "Degraded, failing or conflicting",
             "tone": "bad",
-            "count": 1,
-            "properties": [
-              "aiaimate.com"
-            ]
+            "count": 0,
+            "properties": []
           },
           {
             "key": "unknown",
@@ -2385,6 +2389,6 @@
       "caption": null
     }
   },
-  "shareText": "GlobalDeets Mission Control — estate summary\nGenerated 2026-09-24T19:47:48.528Z from governed evidence (probe run run-36050496073-1, observed 2026-09-24T19:47:48.528Z).\n\n• Good Flippin Design operates 25 web properties. 16 have an owner-declared status (10 active, 3 incubating, 3 aliases); 9 have none, so their intent is shown as unknown.\n• 18 of 20 properties that publish a site are responding; 2 are verified healthy end-to-end. 1 property needs attention. 1 property is blocked from view (not counted as failing). 4 domains publish nothing.\n• Usage cannot be stated yet: the governed traffic source is awaiting authorization, so no request, growth or contribution figure is shown (and none is estimated).\n• No property reports business outcomes yet: 6 declare an intended outcome and 3 have event-producing routes that are not connected. \"Zero conversions\" cannot be stated for any of them.\n• 16 open items: 3 actionable now, 4 blocked on missing authority, 8 need a decision. First: AIAIMate responds, but its critical path is failing.\n\nMeasurement coverage:\n  - Availability probed: 24 of 25 (96%)\n  - Independent second witness: 19 of 20 (95%)\n  - Authoritative critical path: 4 of 20 (20%)\n  - Analytics tag shipped: 19 of 20 (95%)\n  - Telemetry reception verified: 6 of 20 (30%)\n  - Audience measured: 0 of 25 (0%)\n  - Business outcomes measured: 0 of 20 (0%)\n  - Owner-declared lifecycle: 16 of 25 (64%)\n  - Owner-declared outcome: 6 of 25 (24%)\n\nAudience source: awaiting authorized source. Business-outcome feed: not connected.\nUnknown is not zero, reachable is not healthy, and edge requests are not people.",
+  "shareText": "GlobalDeets Mission Control — estate summary\nGenerated 2026-09-24T22:48:58.746Z from governed evidence (probe run run-36069459865-1, observed 2026-09-24T22:48:58.746Z).\n\n• Good Flippin Design operates 25 web properties. 16 have an owner-declared status (10 active, 3 incubating, 3 aliases); 9 have none, so their intent is shown as unknown.\n• 19 of 20 properties that publish a site are responding; 3 are verified healthy end-to-end. None is failing. 1 property is blocked from view (not counted as failing). 4 domains publish nothing.\n• Usage cannot be stated yet: the governed traffic source is awaiting authorization, so no request, growth or contribution figure is shown (and none is estimated).\n• No property reports business outcomes yet: 6 declare an intended outcome and 3 have event-producing routes that are not connected. \"Zero conversions\" cannot be stated for any of them.\n• 15 open items: 2 actionable now, 4 blocked on missing authority, 8 need a decision. First: 0 of 20 properties report business outcomes.\n\nMeasurement coverage:\n  - Availability probed: 24 of 25 (96%)\n  - Independent second witness: 19 of 20 (95%)\n  - Authoritative critical path: 4 of 20 (20%)\n  - Analytics tag shipped: 19 of 20 (95%)\n  - Telemetry reception verified: 6 of 20 (30%)\n  - Audience measured: 0 of 25 (0%)\n  - Business outcomes measured: 0 of 20 (0%)\n  - Owner-declared lifecycle: 16 of 25 (64%)\n  - Owner-declared outcome: 6 of 25 (24%)\n\nAudience source: awaiting authorized source. Business-outcome feed: not connected.\nUnknown is not zero, reachable is not healthy, and edge requests are not people.",
   "evidenceSummary": "3 of 6 evidence classes are live"
 }
