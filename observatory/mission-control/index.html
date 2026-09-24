@@ -19,7 +19,7 @@
         <p class="lede">One evidence-backed view of momentum, measurement quality, estate health, historical change, and the work that most changes the business next.</p>
       </div>
       <div class="contract-strip" aria-label="Mission Control evidence contract">
-        <span>Certified facts first</span><span>Human traffic ≠ edge traffic</span><span>Missing measurement ≠ zero</span><span>Unknown health ≠ healthy</span><span>Gaps stay visible until closed</span>
+        <span>Certified facts first</span><span>Human traffic ≠ edge traffic</span><span>Missing measurement ≠ zero</span><span>Unknown health ≠ healthy</span><span>HTTP 200 ≠ verified health</span><span>Stale evidence ≠ current</span><span>Gaps stay visible until closed</span>
       </div>
     </header>
 
@@ -29,6 +29,12 @@
         <p class="section-note">Operational telemetry is shown separately from investor-safe audience claims.</p>
       </div>
       <div id="investor-grid" class="metric-grid"></div>
+    </section>
+
+    <section class="panel evidence-panel" aria-labelledby="evidence-heading">
+      <div class="panel-heading"><p class="eyebrow">Evidence freshness</p><h2 id="evidence-heading">How current is this evidence?</h2></div>
+      <div id="evidence-status" class="evidence-status"></div>
+      <p class="section-note"><a href="/observatory/mission-control/probes.json">Open raw probe evidence JSON →</a> · <a href="/observatory/mission-control/estate-health.json">Estate health JSON →</a> · <a href="/observatory/mission-control/history.json">History JSON →</a></p>
     </section>
 
     <section class="panel thesis-panel" aria-labelledby="thesis-heading">
@@ -56,6 +62,11 @@
           <div class="panel-heading"><p class="eyebrow">Estate evidence</p><h3>Browser observability</h3></div>
           <div id="history-estate"></div>
           <p id="history-estate-note" class="section-note"></p>
+        </article>
+        <article class="panel chart-card">
+          <div class="panel-heading"><p class="eyebrow">Production probes</p><h3>Estate reachability</h3></div>
+          <div id="history-availability"></div>
+          <p id="history-availability-note" class="section-note"></p>
         </article>
         <article class="panel chart-card">
           <div class="panel-heading"><p class="eyebrow">Operational telemetry</p><h3>GlobalDeets edge requests</h3></div>
@@ -88,8 +99,9 @@
         <div class="controls property-controls">
           <label>Find<input id="property-search" type="search" placeholder="Search property"></label>
           <label>Observability<select id="property-observability-filter"><option value="all">All</option><option value="observed">Observed</option><option value="unobserved">Unobserved</option></select></label>
-          <label>Diagnostic<select id="property-diagnostic-filter"><option value="all">All</option><option value="health-evidence-incomplete">Health evidence incomplete</option><option value="observability-gap">Observability gap</option></select></label>
-          <label>Sort<select id="property-sort"><option value="emphasis">Strategic emphasis</option><option value="property">Property</option><option value="observability">Observability</option><option value="deploy">Deploy freshness</option><option value="activity">Last activity</option></select></label>
+          <label>Availability<select id="property-availability-filter"><option value="all">All</option><option value="available">Available</option><option value="degraded">Degraded</option><option value="unavailable">Unavailable</option><option value="no-service-published">No service published</option><option value="unknown">Unknown</option></select></label>
+          <label>Health<select id="property-diagnostic-filter"><option value="all">All</option><option value="verified-healthy">Verified healthy</option><option value="reachable-unverified">Reachable, unverified</option><option value="outage">Outage</option><option value="critical-path-failed">Critical path failed</option><option value="degraded">Degraded</option><option value="probe-blocked">Probe blocked</option><option value="contract-drift">Contract drift</option><option value="no-service-published">No service published</option><option value="evidence-stale">Evidence stale</option><option value="evidence-expired">Evidence expired</option><option value="health-evidence-incomplete">Health evidence incomplete</option></select></label>
+          <label>Sort<select id="property-sort"><option value="emphasis">Strategic emphasis</option><option value="property">Property</option><option value="health">Health (worst first)</option><option value="observability">Observability</option><option value="deploy">Deploy freshness</option><option value="activity">Last activity</option></select></label>
         </div>
       </div>
       <div class="estate-table-wrap" tabindex="0" role="region" aria-label="Estate-wide property health table">
@@ -102,7 +114,7 @@
               <th scope="col">Critical path</th>
               <th scope="col">Deploy freshness</th>
               <th scope="col">Last meaningful activity</th>
-              <th scope="col">Diagnostic</th>
+              <th scope="col">Health</th>
             </tr>
           </thead>
           <tbody id="estate-table-body"></tbody>
@@ -123,7 +135,8 @@
           <label>Severity<select id="severity-filter"><option value="all">All</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></label>
           <label>Status<select id="status-filter"><option value="all">All</option><option value="open">Open</option><option value="in-progress">In progress</option><option value="blocked">Blocked</option><option value="closed">Closed</option><option value="accepted-risk">Accepted risk</option></select></label>
           <label>Domain<select id="domain-filter"><option value="all">All</option></select></label>
-          <label>Escalation<select id="escalation-filter"><option value="all">All</option><option value="investor-blocking">Investor blocking</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option><option value="none">None</option></select></label>
+          <label>Class<select id="class-filter"><option value="all">All</option></select></label>
+          <label>Escalation<select id="escalation-filter"><option value="all">All</option><option value="investor-blocking">Investor blocking</option><option value="page">Page</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option><option value="none">None</option></select></label>
           <label>Sort<select id="sort-order"><option value="priority">Priority</option><option value="severity">Severity</option><option value="impact">Business impact</option><option value="age">Age</option><option value="domain">Domain</option><option value="escalation">Escalation</option></select></label>
         </div>
       </div>
@@ -145,6 +158,7 @@
     <div id="mission-control-error" class="error-panel" hidden>Mission Control data could not be validated and has been withheld.</div>
   </main>
   <script src="/shared/ecosystem-nav.js"></script>
+  <script src="/observatory/mission-control/evidence-semantics.js"></script>
   <script src="/observatory/mission-control/mission-control.js"></script>
 </body>
 </html>

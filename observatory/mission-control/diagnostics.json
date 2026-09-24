@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "contractName": "globaldeets-diagnostics-queue",
   "generatedAt": "2026-09-24T16:29:00Z",
   "agentContract": {
@@ -11,7 +11,8 @@
       "ownerLane",
       "ageDays",
       "domain",
-      "escalation.level"
+      "escalation.level",
+      "escalation.class"
     ],
     "actionableStatuses": [
       "open",
@@ -32,21 +33,64 @@
       "evidence",
       "nextAction",
       "escalation"
+    ],
+    "escalationLevels": [
+      "investor-blocking",
+      "page",
+      "high",
+      "medium",
+      "low",
+      "none"
+    ],
+    "escalationClasses": [
+      "investor-impacting-outage",
+      "outage",
+      "degradation",
+      "maintenance",
+      "observability-gap",
+      "stale-evidence",
+      "insufficient-evidence",
+      "measurement-claim-block",
+      "business-opportunity",
+      "narrative-provenance",
+      "none"
+    ],
+    "classGuide": {
+      "investor-impacting-outage": "An investor-critical property is confirmed down or failing its authoritative critical path. Page immediately.",
+      "outage": "A non-investor-critical property is confirmed unavailable. Ordinary incident.",
+      "degradation": "Reachable but slow, intermittent, or failing a non-critical check.",
+      "maintenance": "Routine platform hygiene: expiring certificates, parked zones needing a topology decision, contract drift.",
+      "observability-gap": "We cannot see the property well enough to know its state (RUM off, single probe vantage).",
+      "stale-evidence": "Evidence exists but has aged past its freshness policy; automation may be failing.",
+      "insufficient-evidence": "The probe could not establish state (blocked/challenged, no contract). Not an outage.",
+      "measurement-claim-block": "An investor-facing claim cannot be made until the measurement is certified.",
+      "business-opportunity": "Upside that needs evidence before it is claimed.",
+      "narrative-provenance": "External or public narrative is inconsistent with the product."
+    }
+  },
+  "derivation": {
+    "note": "Items with source \"derived\" are computed from probe, history, and inventory evidence on every collection run; source \"manual\" items are hand-authored judgments with no derivable evidence.",
+    "derivedRules": [
+      "audience-certification",
+      "critical-path-contracts",
+      "history-density",
+      "probe-missing",
+      "rum-coverage"
     ]
   },
   "items": [
     {
+      "source": "derived",
+      "status": "in-progress",
       "id": "measurement:audience-certification",
-      "priority": 1,
+      "rule": "audience-certification",
       "severity": "critical",
       "domain": "measurement",
-      "status": "in-progress",
       "businessImpact": "existential",
       "ownerLane": "Data / analytics",
       "openedAt": "2026-09-23",
-      "ageDays": 1,
       "title": "Certify human audience metrics",
-      "observed": "The latest 28-day edge snapshot contains 36,391 raw visits, including 31,681 attached to /_stcore/health.",
+      "observed": "The latest measured operational edge snapshot (2026-09-23.2) contains 36,391 raw visits, including 31,681 attached to a synthetic health path. Mission Control probes add tagged synthetic traffic that must also be excluded.",
       "businessReason": "Operational edge telemetry cannot responsibly stand in for human traction.",
       "evidence": [
         {
@@ -55,52 +99,26 @@
           "state": "measured"
         }
       ],
-      "nextAction": "Connect certified GA4/RUM-quality audience ingestion with explicit bot, monitor, API, and asset exclusions.",
+      "nextAction": "Connect certified GA4/RUM-quality audience ingestion (history ingestion seam: certified-audience) with explicit bot, monitor, API, asset, and Mission Control probe exclusions.",
       "escalation": {
-        "level": "investor-blocking",
         "blocksInvestorClaim": true,
+        "level": "investor-blocking",
+        "class": "measurement-claim-block",
         "escalateWhen": "Any investor material attempts to present raw edge visits or requests as human audience before certification.",
         "targetLane": "Data / analytics + Product narrative"
-      }
-    },
-    {
-      "id": "estate:service-health",
-      "priority": 2,
-      "severity": "high",
-      "domain": "reliability",
-      "status": "open",
-      "businessImpact": "high",
-      "ownerLane": "Platform",
-      "openedAt": "2026-09-23",
+      },
       "ageDays": 1,
-      "title": "Connect estate-wide availability and critical-path probes",
-      "observed": "All 25 active zones are inventoried, but availability and critical-path status are still unknown in the GlobalDeets data plane.",
-      "businessReason": "A broad estate can silently fail unless actual production behavior is measured independently of deploy success.",
-      "evidence": [
-        {
-          "type": "estate-health",
-          "ref": "globaldeets-estate-health@2026-09-24T16:29:00Z",
-          "state": "measured"
-        }
-      ],
-      "nextAction": "Ingest production probes for every active property and property-specific critical-path contracts; preserve unknown until evidence arrives.",
-      "escalation": {
-        "level": "high",
-        "blocksInvestorClaim": false,
-        "escalateWhen": "Any priority property has a confirmed outage, or health remains unknown for a property classified as investor-critical for more than 7 days.",
-        "targetLane": "Platform"
-      }
+      "priority": 1
     },
     {
+      "source": "manual",
+      "status": "open",
       "id": "business:conversion-measurement",
-      "priority": 3,
       "severity": "high",
       "domain": "business",
-      "status": "open",
       "businessImpact": "high",
       "ownerLane": "Growth / business",
       "openedAt": "2026-09-23",
-      "ageDays": 1,
       "title": "Instrument meaningful business conversion events",
       "observed": "No certified investor-facing funnel for subscriber, partner, donor, sponsor, licensing, or investor-intent conversion is connected.",
       "businessReason": "Traffic without conversion or retention evidence does not explain economic potential.",
@@ -113,78 +131,86 @@
       ],
       "nextAction": "Define the business-event taxonomy and connect first-party or GA4 event telemetry with source, window, and attribution limits.",
       "escalation": {
-        "level": "high",
         "blocksInvestorClaim": false,
+        "class": "measurement-claim-block",
+        "level": "high",
         "escalateWhen": "Investor materials require funnel or retention claims that cannot be sourced.",
         "targetLane": "Growth / business"
-      }
+      },
+      "ageDays": 1,
+      "priority": 2
     },
     {
-      "id": "observability:rum-coverage",
-      "priority": 4,
-      "severity": "medium",
-      "domain": "observability",
+      "source": "derived",
       "status": "open",
-      "businessImpact": "medium",
+      "id": "evidence:probe-missing",
+      "rule": "probe-missing",
+      "severity": "high",
+      "domain": "reliability",
+      "businessImpact": "high",
       "ownerLane": "Platform",
-      "openedAt": "2026-09-23",
-      "ageDays": 1,
-      "title": "Resolve four browser-observability gaps",
-      "observed": "RUM is off for artificelligance.com, artificelligence.com, fwomps.com, and fwomp.us; 21 of 25 zones are observed.",
-      "businessReason": "Unobserved properties are harder to diagnose and cannot contribute comparable browser evidence.",
+      "title": "No production probe evidence has been collected",
+      "observed": "The scheduled collector has not yet produced a valid probe run; every property availability is unknown.",
+      "businessReason": "Without probes the estate can fail silently.",
       "evidence": [
         {
-          "type": "cloudflare-rum-inventory",
-          "ref": "2026-09-24T16:29:00Z",
-          "state": "measured"
+          "type": "probe-run",
+          "ref": "none",
+          "state": "unavailable"
         }
       ],
-      "nextAction": "Enable RUM where appropriate or explicitly record an exemption with rationale.",
+      "nextAction": "Run the mission-control-evidence workflow (workflow_dispatch) and confirm it commits to the evidence branch.",
       "escalation": {
-        "level": "medium",
         "blocksInvestorClaim": false,
-        "escalateWhen": "A currently unobserved property becomes business-critical or receives a production incident.",
+        "level": "high",
+        "class": "stale-evidence",
+        "escalateWhen": "Still missing 24 hours after the collector was enabled.",
         "targetLane": "Platform"
-      }
+      },
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "priority": 3
     },
     {
+      "source": "derived",
+      "status": "in-progress",
       "id": "data:history-density",
-      "priority": 5,
+      "rule": "history-density",
       "severity": "medium",
       "domain": "measurement",
-      "status": "in-progress",
       "businessImpact": "medium",
       "ownerLane": "Data / analytics",
       "openedAt": "2026-09-24",
-      "ageDays": 0,
-      "title": "Accumulate enough certified history for 7/28/90-day trends",
-      "observed": "The historical contract exists, but only two dated infrastructure snapshots and one comparable operational-traffic snapshot are currently retained.",
+      "title": "Accumulate enough comparable history for 7/28/90-day trends",
+      "observed": "0 scheduled daily snapshots retained (0/90 days of a full 90-day view); 1 measured operational-traffic snapshot; certified audience history: none.",
       "businessReason": "Trend charts become decision-grade only when they contain comparable observations rather than decorative lines.",
       "evidence": [
         {
           "type": "history-contract",
-          "ref": "globaldeets-mission-control-history@1.0.0",
+          "ref": "globaldeets-mission-control-history@1.1.0",
           "state": "measured"
         }
       ],
-      "nextAction": "Persist scheduled snapshots from certified ingestion seams and require comparable metric definitions before calculating deltas.",
+      "nextAction": "Scheduled collection accumulates snapshots automatically; connect a governed Canonical Gold source (goldBindings) to add comparable operational-edge points.",
       "escalation": {
-        "level": "medium",
         "blocksInvestorClaim": false,
+        "level": "medium",
+        "class": "measurement-claim-block",
         "escalateWhen": "A chart attempts to calculate a trend from fewer than two comparable measured observations.",
         "targetLane": "Data / analytics"
-      }
+      },
+      "ageDays": 0,
+      "priority": 4
     },
     {
+      "source": "manual",
+      "status": "open",
       "id": "product:culture-convergence",
-      "priority": 6,
       "severity": "medium",
       "domain": "opportunity",
-      "status": "open",
       "businessImpact": "medium",
       "ownerLane": "Product strategy",
       "openedAt": "2026-09-23",
-      "ageDays": 1,
       "title": "Quantify Culture Sherpa convergence opportunity",
       "observed": "Culture Sherpa remains prominent in the estate and conceptually aligned with GlobalDeets place context, but shared usage evidence is not yet connected.",
       "businessReason": "The integration thesis could improve differentiation and depth, but should be supported by actual overlap and utility evidence.",
@@ -202,22 +228,24 @@
       ],
       "nextAction": "Measure cross-navigation, overlap, unique utility, search demand, and content reuse before making convergence claims.",
       "escalation": {
-        "level": "medium",
         "blocksInvestorClaim": false,
+        "class": "business-opportunity",
+        "level": "medium",
         "escalateWhen": "Integration is presented as realized value before shared usage evidence exists.",
         "targetLane": "Product strategy"
-      }
+      },
+      "ageDays": 1,
+      "priority": 5
     },
     {
+      "source": "manual",
+      "status": "open",
       "id": "narrative:repository-metadata",
-      "priority": 7,
       "severity": "medium",
       "domain": "provenance",
-      "status": "open",
       "businessImpact": "medium",
       "ownerLane": "Product narrative",
       "openedAt": "2026-09-24",
-      "ageDays": 0,
       "title": "Replace stale GitHub repository description",
       "observed": "GitHub still describes GlobalDeets as a portfolio and research intelligence showcase even though README, STATUS, and the live product have moved on.",
       "businessReason": "Repository metadata is visible during diligence and can reintroduce the obsolete product story.",
@@ -230,22 +258,99 @@
       ],
       "nextAction": "Update the repository description to the source-first world-information product narrative.",
       "escalation": {
-        "level": "medium",
         "blocksInvestorClaim": false,
+        "class": "narrative-provenance",
+        "level": "medium",
         "escalateWhen": "Repository metadata remains inconsistent with the live product during external diligence.",
         "targetLane": "Product narrative"
-      }
+      },
+      "ageDays": 0,
+      "priority": 6
     },
     {
+      "source": "derived",
+      "status": "open",
+      "id": "observability:rum-coverage",
+      "rule": "rum-coverage",
+      "subjects": [
+        "artificelligance.com",
+        "artificelligence.com",
+        "fwomps.com",
+        "fwomp.us"
+      ],
+      "severity": "medium",
+      "domain": "observability",
+      "businessImpact": "medium",
+      "ownerLane": "Platform",
+      "title": "Resolve 4 browser-observability gaps",
+      "observed": "RUM is off for artificelligance.com, artificelligence.com, fwomps.com, fwomp.us; 21 of 25 zones are observed.",
+      "businessReason": "Unobserved properties are harder to diagnose and cannot contribute comparable browser evidence.",
+      "evidence": [
+        {
+          "type": "cloudflare-rum-inventory",
+          "ref": "2026-09-24T16:29:00Z",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Enable RUM where appropriate or explicitly record an exemption with rationale.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "medium",
+        "class": "observability-gap",
+        "escalateWhen": "A currently unobserved property becomes business-critical or has a production incident.",
+        "targetLane": "Platform"
+      },
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "priority": 7
+    },
+    {
+      "source": "derived",
+      "status": "open",
+      "id": "observability:critical-path-contracts",
+      "rule": "critical-path-contracts",
+      "subjects": [
+        "culturesherpa.com",
+        "artificelligance.com",
+        "artificelligence.com",
+        "fwomps.com",
+        "fwomp.us"
+      ],
+      "severity": "low",
+      "domain": "observability",
+      "businessImpact": "medium",
+      "ownerLane": "Platform",
+      "title": "Most properties lack an authoritative critical-path contract",
+      "observed": "1 of 25 properties have an authoritative critical-path contract; 19 have only a homepage identity baseline; 5 have no contract (redirect aliases and undeclared parked zones are counted here or in the no-service finding).",
+      "businessReason": "Reachable-unverified is not verified health; only owned, contracted paths can prove the product works.",
+      "evidence": [
+        {
+          "type": "estate-registry",
+          "ref": "tools/mission-control/config/estate-registry.json",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Owners of each property declare a stable critical path (API endpoint, key page, or function) and add it to the registry.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "low",
+        "class": "insufficient-evidence",
+        "escalateWhen": "A property is described to investors as production-grade without an authoritative contract.",
+        "targetLane": "Platform + property owner"
+      },
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "priority": 8
+    },
+    {
+      "source": "manual",
+      "status": "closed",
       "id": "narrative:live-copy-cleanup",
-      "priority": 8,
       "severity": "low",
       "domain": "product-quality",
-      "status": "closed",
       "businessImpact": "low",
       "ownerLane": "Frontend / product",
       "openedAt": "2026-09-23",
-      "ageDays": 1,
       "title": "Remove remaining portfolio-era live copy",
       "observed": "GD-029 removes the remaining Data Platform Showcase language from categories.html.",
       "businessReason": "Live product surfaces should tell one coherent story.",
@@ -258,11 +363,14 @@
       ],
       "nextAction": "Keep CI drift checks active.",
       "escalation": {
-        "level": "none",
         "blocksInvestorClaim": false,
+        "class": "none",
+        "level": "none",
         "escalateWhen": "Portfolio-showcase language reappears on investor-adjacent live surfaces.",
         "targetLane": "Frontend / product"
-      }
+      },
+      "ageDays": 1,
+      "priority": 9
     }
   ]
 }

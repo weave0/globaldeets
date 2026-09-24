@@ -37,6 +37,11 @@ const REQUIRED_DEPLOY_FILES = [
   'observatory/mission-control/mission-control.js',
   'observatory/mission-control/mission-control.css',
   'observatory/mission-control/mission-control-data.json',
+  'observatory/mission-control/evidence-semantics.js',
+  'observatory/mission-control/history.json',
+  'observatory/mission-control/estate-health.json',
+  'observatory/mission-control/diagnostics.json',
+  'observatory/mission-control/probes.json',
   'functions/api/intelligence/observatory/coverage.js',
   'functions/lib/coverage-evidence-observatory.js',
 ];
@@ -149,6 +154,17 @@ function runMetadata() {
   });
 }
 
+// GD-030: the scheduled collector's validated evidence supersedes the committed seed data plane.
+// Invalid or missing evidence never reaches production; the seed fallback is deployed (or the stage
+// fails when MISSION_CONTROL_EVIDENCE_STRICT=1).
+function overlayMissionControlEvidence() {
+  const evidenceDir = process.env.MISSION_CONTROL_EVIDENCE_DIR;
+  if (!evidenceDir) return;
+  const args = ['tools/mission-control/overlay.mjs', `--evidence=${evidenceDir}`, `--dist=${OUT_DIR}`];
+  if (process.env.MISSION_CONTROL_EVIDENCE_STRICT === '1') args.push('--strict');
+  execFileSync(process.execPath, args, { cwd: ROOT, stdio: 'inherit' });
+}
+
 function stageDeploy() {
   runMetadata();
 
@@ -158,6 +174,7 @@ function stageDeploy() {
   for (const file of getRootPublicFiles()) copyFile(file);
   for (const directory of PUBLIC_DIRECTORIES) copyDirectory(directory);
 
+  overlayMissionControlEvidence();
   assertCleanArtifact();
   console.log(`Staged Cloudflare Pages artifact in ${OUT_DIR}`);
 }

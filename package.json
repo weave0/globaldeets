@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --port 5500 --open",
     "format": "prettier --write \"**/*.{html,css,js,json}\"",
-    "lint": "eslint \"**/*.js\"",
+    "lint": "eslint \"**/*.js\" \"tools/mission-control/**/*.mjs\" \"tests/helpers/*.mjs\" \"tests/mission-control-*.test.mjs\"",
     "lint:fix": "eslint \"**/*.js\" --fix",
     "metadata": "node build-metadata.js",
     "build": "npm run metadata && npm run format",
@@ -16,8 +16,12 @@
     "generate-icons": "node generate-icons.js",
     "health:prod": "node health-prod.js",
     "health:prod:json": "node health-prod.js --json",
-    "test:functions": "node --test tests/news-functions.test.mjs tests/news-regeneration-guards.test.mjs tests/news-coverage.test.mjs tests/news-source-admission.test.mjs tests/news-source-admission-hardening.test.mjs tests/news-admission-api.test.mjs tests/intelligence-model.test.mjs tests/claim-evidence-model.test.mjs tests/institutional-evidence-acquisition.test.mjs tests/santa-ynez-dossier.test.mjs tests/coverage-evidence-observatory.test.mjs tests/local-reporting-observatory.test.mjs tests/brand-mark.test.mjs tests/payment-security.test.mjs tests/mission-control-data.test.mjs",
-    "test:smoke": "playwright test"
+    "test:functions": "node --test tests/news-functions.test.mjs tests/news-regeneration-guards.test.mjs tests/news-coverage.test.mjs tests/news-source-admission.test.mjs tests/news-source-admission-hardening.test.mjs tests/news-admission-api.test.mjs tests/intelligence-model.test.mjs tests/claim-evidence-model.test.mjs tests/institutional-evidence-acquisition.test.mjs tests/santa-ynez-dossier.test.mjs tests/coverage-evidence-observatory.test.mjs tests/local-reporting-observatory.test.mjs tests/brand-mark.test.mjs tests/payment-security.test.mjs tests/mission-control-data.test.mjs tests/mission-control-probe.test.mjs tests/mission-control-collector.test.mjs tests/mission-control-evidence.test.mjs tests/mission-control-scheduler.test.mjs tests/mission-control-hardening.test.mjs",
+    "test:smoke": "playwright test",
+    "mission-control:build": "node tools/mission-control/build.mjs",
+    "mission-control:check": "node tools/mission-control/build.mjs --check",
+    "mission-control:collect": "node tools/mission-control/collect.mjs --evidence-dir=.evidence",
+    "health:mission-control": "node tools/verify-mission-control-prod.js"
   },
   "keywords": [
     "world-news",

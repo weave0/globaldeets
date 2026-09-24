@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "1.0.0",
   "contractName": "globaldeets-mission-control-history",
   "generatedAt": "2026-09-24T16:29:00Z",
   "supportedWindowsDays": [
@@ -10,9 +10,7 @@
   "policy": {
     "missingSnapshotIsZero": false,
     "certifiedAudienceMayUseOperationalTelemetry": false,
-    "chartMustExposeEvidenceState": true,
-    "trendsRequireComparableDefinitions": true,
-    "staleCarriedForwardIsMeasured": false
+    "chartMustExposeEvidenceState": true
   },
   "snapshots": [
     {
@@ -87,19 +85,16 @@
         "value",
         "unit",
         "evidenceState",
-        "certified",
-        "classification",
         "source",
         "limitations"
       ],
-      "status": "awaiting-certified-source",
-      "note": "No source is connected. Nothing may populate certifiedAudience unless it carries provenance and explicit bot/monitor/API/asset/probe exclusions."
+      "status": "awaiting-certified-source"
     },
     {
       "seam": "operational-edge",
       "accepts": [
         "Cloudflare zone analytics",
-        "GFD Canonical Gold 1.2"
+        "GFD Canonical Gold"
       ],
       "requiredFields": [
         "observedAt",
@@ -108,16 +103,16 @@
         "value",
         "unit",
         "evidenceState",
-        "source",
-        "comparabilityKey"
+        "source"
       ],
-      "status": "supported-awaiting-governed-source",
-      "note": "Consumed from Canonical Gold 1.2 via registry goldBindings when a non-fixture source is configured; fixtures are rejected."
+      "status": "supported"
     },
     {
-      "seam": "estate-availability",
+      "seam": "estate-health",
       "accepts": [
-        "production probes"
+        "GFD traffic intelligence estate_config",
+        "production probes",
+        "deploy provider evidence"
       ],
       "requiredFields": [
         "observedAt",
@@ -126,27 +121,7 @@
         "state",
         "source"
       ],
-      "status": "live-scheduled",
-      "note": "Scheduled GitHub Actions collector probes all active zones and stores dated evidence on the mission-control-evidence branch."
-    },
-    {
-      "seam": "business-events",
-      "accepts": [
-        "first-party event telemetry",
-        "GA4 events"
-      ],
-      "requiredFields": [
-        "observedAt",
-        "window",
-        "eventType",
-        "value",
-        "unit",
-        "evidenceState",
-        "attribution",
-        "source"
-      ],
-      "status": "awaiting-taxonomy",
-      "note": "No taxonomy or source is connected. No funnel or conversion figure may be fabricated."
+      "status": "supported-partially"
     }
   ]
 }

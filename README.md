@@ -41,7 +41,20 @@ Mission Control currently combines:
 - Web Analytics/RUM coverage inventory;
 - GlobalDeets edge telemetry;
 - live governed-source and evidence counts from the Coverage Observatory;
-- a versioned historical data plane for truthful 7/28/90-day views;\n- an estate-wide property health contract across all active zones;\n- an agent-consumable diagnostics queue with severity, business impact, status, owner lane, age, evidence, next action, and escalation semantics.
+- a versioned historical data plane for truthful 7/28/90-day views, **accumulated automatically** by a scheduled collector (GD-030);
+- an estate-wide property health contract across all active zones, fed by **scheduled production availability and critical-path probes** (GD-030);
+- an agent-consumable diagnostics queue **derived from that evidence** with severity, business impact, status, owner lane, age, evidence, next action, and escalation class.
+
+### Evidence pipeline (GD-030)
+
+`.github/workflows/mission-control-evidence.yml` runs every six hours (and on demand):
+
+1. probes every active zone: DNS → HTTP → expected page / critical path, with retries and a delayed confirmation re-probe;
+2. refreshes Cloudflare zone and Pages inventory when the token permits, and consumes a governed Canonical Gold 1.2 document when a non-fixture source is configured;
+3. upserts one idempotent dated snapshot, derives the diagnostics queue, and validates the whole data plane;
+4. commits the validated evidence to the `mission-control-evidence` branch (never to `main`) and deploys it with the current `main`.
+
+Any failure leaves the last valid evidence untouched, and stale evidence is shown as stale — then unknown — in the page, the raw JSON, and the queue. Health is defined by an explicit contract (`estate-health.json` → `healthContract`): HTTP 200 alone is `reachable-unverified`; only an authoritative critical-path pass on fresh evidence is `verified-healthy`. Contracts for agents: `history.json`, `estate-health.json`, `diagnostics.json`, `probes.json`. Property registry and probe contracts live in `tools/mission-control/config/`.
 
 ### Investor-claims contract
 
@@ -78,7 +91,7 @@ The current codebase includes:
 - Mission Control smoke coverage;
 - CI-gated work-item delivery.
 
-The work-item sequence is tracked as `GD-###`. **GD-027** and **GD-028** established investor-safe Mission Control; **GD-029** adds the versioned history, estate-health, and agent-diagnostics data plane.
+The work-item sequence is tracked as `GD-###`. **GD-027** and **GD-028** established investor-safe Mission Control; **GD-029** adds the versioned history, estate-health, and agent-diagnostics data plane; **GD-030** makes that data plane accumulate from scheduled snapshots and estate-wide production probes.
 
 ## Development
 
@@ -100,9 +113,9 @@ The live operating queue in Mission Control is authoritative. Current high-level
 2. close browser-observability gaps across the estate;
 3. finish eliminating stale portfolio-era product narrative;
 4. instrument meaningful business conversion and retention events;
-5. add estate-wide health, latency, deploy freshness, and critical-path diagnostics;
+5. extend critical-path contracts beyond GlobalDeets (owners declare stable paths) and add a second probe vantage;
 6. quantify the Culture Sherpa convergence thesis with real usage evidence;
-7. automate the Mission Control snapshot and add history/alerts.
+7. connect a governed Canonical Gold source and certified audience / business-event ingestion (the seams exist; no data is fabricated).
 
 ## Provenance rule
 

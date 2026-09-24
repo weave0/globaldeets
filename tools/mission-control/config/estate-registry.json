@@ -1,0 +1,1111 @@
+{
+  "contractName": "globaldeets-estate-registry",
+  "schemaVersion": "1.0.0",
+  "inventory": {
+    "asOf": "2026-09-24T16:29:00Z",
+    "source": "Cloudflare account zone inventory + per-zone RUM settings",
+    "refresh": "collector refreshes zones and Pages deploy facts when the Cloudflare token permits; otherwise these facts are carried forward and labelled by age."
+  },
+  "probeContract": {
+    "userAgent": "GlobalDeets-MissionControl-Probe/1.0 (+https://globaldeets.com/observatory/mission-control/)",
+    "syntheticHeader": "X-GlobalDeets-Probe",
+    "syntheticHeaderValue": "mission-control",
+    "timeoutMs": 10000,
+    "maxRedirects": 5,
+    "attempts": 3,
+    "retryDelaysMs": [
+      0,
+      3000,
+      7000
+    ],
+    "slowMs": 5000,
+    "tlsExpiryWarnDays": 14,
+    "maxBodyBytes": 524288,
+    "concurrency": 5,
+    "confirmationDelayMs": 300000,
+    "vantage": "github-actions"
+  },
+  "canaries": [
+    {
+      "id": "cloudflare-trace",
+      "url": "https://www.cloudflare.com/cdn-cgi/trace"
+    },
+    {
+      "id": "example",
+      "url": "https://example.com/"
+    }
+  ],
+  "goldBindings": [],
+  "properties": [
+    {
+      "propertyId": "globaldeets.com",
+      "displayName": "GlobalDeets",
+      "emphasisRank": 1,
+      "investorCritical": true,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "cloudflare-pages",
+        "project": "globaldeets",
+        "servingDomainState": "observed",
+        "sharedProject": false,
+        "latestProductionDeployAt": "2026-09-23T22:41:27.895511Z",
+        "evidenceState": "measured",
+        "note": null
+      },
+      "lastMeaningfulActivity": {
+        "at": "2026-09-23T22:41:27.895511Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
+      },
+      "probe": {
+        "origin": "https://globaldeets.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "Owned property; critical path verified against production on 2026-09-24.",
+        "criticalPath": {
+          "level": "authoritative",
+          "basis": "GlobalDeets owns and deploys this property; checks mirror the production verification the deploy workflow already enforces.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "GlobalDeets"
+            },
+            {
+              "id": "news-health",
+              "path": "/api/news/health",
+              "kind": "json",
+              "jsonRequires": [
+                {
+                  "path": "totalSources",
+                  "type": "number"
+                },
+                {
+                  "path": "sourceHealth",
+                  "type": "array"
+                }
+              ]
+            },
+            {
+              "id": "mission-control-data",
+              "path": "/observatory/mission-control/mission-control-data.json",
+              "kind": "json",
+              "jsonRequires": [
+                {
+                  "path": "missionControlId",
+                  "equals": "globaldeets-estate"
+                }
+              ]
+            },
+            {
+              "id": "coverage-observatory",
+              "path": "/api/intelligence/observatory/coverage",
+              "kind": "json",
+              "jsonRequires": [
+                {
+                  "path": "observatoryId",
+                  "equals": "coverage-evidence"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "culturesherpa.org",
+      "displayName": "Culture Sherpa",
+      "emphasisRank": 2,
+      "investorCritical": true,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://culturesherpa.org",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "cultur"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "culturesherpa.com",
+      "displayName": "culturesherpa.com",
+      "emphasisRank": 3,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://culturesherpa.com",
+        "path": "/",
+        "expectation": "redirects",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "expectedFinalHost": "culturesherpa.org",
+        "criticalPath": null,
+        "criticalPathReason": "Redirect-only alias: availability is probed, but there is no independent critical path."
+      }
+    },
+    {
+      "propertyId": "agentkagent.com",
+      "displayName": "agentkagent.com",
+      "emphasisRank": 4,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://agentkagent.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "AgentK"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "aiaimate.com",
+      "displayName": "aiaimate.com",
+      "emphasisRank": 5,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://aiaimate.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "AIAIMate"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "artificelligance.com",
+      "displayName": "artificelligance.com",
+      "emphasisRank": 6,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "off",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://artificelligance.com",
+        "path": "/",
+        "expectation": "unspecified",
+        "expectationBasis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended.",
+        "criticalPath": null
+      }
+    },
+    {
+      "propertyId": "artificelligence.com",
+      "displayName": "artificelligence.com",
+      "emphasisRank": 7,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "off",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://artificelligence.com",
+        "path": "/",
+        "expectation": "unspecified",
+        "expectationBasis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended.",
+        "criticalPath": null
+      }
+    },
+    {
+      "propertyId": "brettleeweaver.com",
+      "displayName": "brettleeweaver.com",
+      "emphasisRank": 8,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "cloudflare-pages",
+        "project": "brettleeweaver",
+        "servingDomainState": "no_active_domain",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "measured",
+        "note": "Pages project exists, but mapped custom domains are deactivated; deploy freshness is not treated as serving freshness."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://brettleeweaver.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "expectedFinalHost": "www.brettleeweaver.com",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Brett Lee Weaver"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "citizenapproved.org",
+      "displayName": "citizenapproved.org",
+      "emphasisRank": 9,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "cloudflare-pages",
+        "project": "citizenapproved",
+        "servingDomainState": "observed",
+        "sharedProject": false,
+        "latestProductionDeployAt": "2026-08-30T15:13:03.25794Z",
+        "evidenceState": "measured",
+        "note": null
+      },
+      "lastMeaningfulActivity": {
+        "at": "2026-08-30T15:13:03.25794Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
+      },
+      "probe": {
+        "origin": "https://citizenapproved.org",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "CitizenApproved"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "cyancanoe.com",
+      "displayName": "cyancanoe.com",
+      "emphasisRank": 10,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "cloudflare-pages",
+        "project": "cyan-canoe",
+        "servingDomainState": "observed",
+        "sharedProject": false,
+        "latestProductionDeployAt": "2026-08-27T00:55:08.751143Z",
+        "evidenceState": "measured",
+        "note": null
+      },
+      "lastMeaningfulActivity": {
+        "at": "2026-08-27T00:55:08.751143Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
+      },
+      "probe": {
+        "origin": "https://cyancanoe.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Cyan Canoe"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "flipskillet.com",
+      "displayName": "flipskillet.com",
+      "emphasisRank": 11,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "cloudflare-pages",
+        "project": "flipskillet",
+        "servingDomainState": "observed",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-09-22T04:52:11.331067Z",
+        "evidenceState": "measured",
+        "note": null
+      },
+      "lastMeaningfulActivity": {
+        "at": "2026-09-22T04:52:11.331067Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
+      },
+      "probe": {
+        "origin": "https://flipskillet.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Flipskillet"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "flipskillit.com",
+      "displayName": "flipskillit.com",
+      "emphasisRank": 12,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "cloudflare-pages",
+        "project": "flipskillet",
+        "servingDomainState": "observed",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-09-22T04:52:11.331067Z",
+        "evidenceState": "measured",
+        "note": null
+      },
+      "lastMeaningfulActivity": {
+        "at": "2026-09-22T04:52:11.331067Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
+      },
+      "probe": {
+        "origin": "https://flipskillit.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Flipskillet"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "foxyana.com",
+      "displayName": "foxyana.com",
+      "emphasisRank": 13,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://foxyana.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Foxyana"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "fwomps.com",
+      "displayName": "fwomps.com",
+      "emphasisRank": 14,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "off",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://fwomps.com",
+        "path": "/",
+        "expectation": "unspecified",
+        "expectationBasis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended.",
+        "criticalPath": null
+      }
+    },
+    {
+      "propertyId": "fwomp.us",
+      "displayName": "fwomp.us",
+      "emphasisRank": 15,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "off",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://fwomp.us",
+        "path": "/",
+        "expectation": "unspecified",
+        "expectationBasis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended.",
+        "criticalPath": null
+      }
+    },
+    {
+      "propertyId": "gflippinv.com",
+      "displayName": "gflippinv.com",
+      "emphasisRank": 16,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "cloudflare-pages",
+        "project": "good-flippin-vibes",
+        "servingDomainState": "observed",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-09-04T04:06:20.010853Z",
+        "evidenceState": "measured",
+        "note": null
+      },
+      "lastMeaningfulActivity": {
+        "at": "2026-09-04T04:06:20.010853Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
+      },
+      "probe": {
+        "origin": "https://gflippinv.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Good Flippin Vibes"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "goodflippindesign.com",
+      "displayName": "goodflippindesign.com",
+      "emphasisRank": 17,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "cloudflare-pages",
+        "project": "goodflippindesign",
+        "servingDomainState": "observed",
+        "sharedProject": false,
+        "latestProductionDeployAt": "2026-09-23T01:49:40.10745Z",
+        "evidenceState": "measured",
+        "note": null
+      },
+      "lastMeaningfulActivity": {
+        "at": "2026-09-23T01:49:40.10745Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
+      },
+      "probe": {
+        "origin": "https://goodflippindesign.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Good Flippin Design"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "goodflippinluck.com",
+      "displayName": "goodflippinluck.com",
+      "emphasisRank": 18,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://goodflippinluck.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Good Flippin Luck"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "goodflippinnews.com",
+      "displayName": "goodflippinnews.com",
+      "emphasisRank": 19,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://goodflippinnews.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Good Flippin News"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "goodflippinvibes.com",
+      "displayName": "goodflippinvibes.com",
+      "emphasisRank": 20,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "cloudflare-pages",
+        "project": "good-flippin-vibes",
+        "servingDomainState": "observed",
+        "sharedProject": true,
+        "latestProductionDeployAt": "2026-09-04T04:06:20.010853Z",
+        "evidenceState": "measured",
+        "note": null
+      },
+      "lastMeaningfulActivity": {
+        "at": "2026-09-04T04:06:20.010853Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
+      },
+      "probe": {
+        "origin": "https://goodflippinvibes.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Good Flippin Vibes"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "goodflippinyikes.com",
+      "displayName": "goodflippinyikes.com",
+      "emphasisRank": 21,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://goodflippinyikes.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Good Flippin Yikes"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "heavymoose.com",
+      "displayName": "heavymoose.com",
+      "emphasisRank": 22,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "cloudflare-pages",
+        "project": "heavymoose",
+        "servingDomainState": "observed",
+        "sharedProject": false,
+        "latestProductionDeployAt": "2026-09-09T23:26:32.961221Z",
+        "evidenceState": "measured",
+        "note": null
+      },
+      "lastMeaningfulActivity": {
+        "at": "2026-09-09T23:26:32.961221Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
+      },
+      "probe": {
+        "origin": "https://heavymoose.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Heavy Moose"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "lowertownstpaul.org",
+      "displayName": "lowertownstpaul.org",
+      "emphasisRank": 23,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://lowertownstpaul.org",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Lowertown"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "minnesotapeace.com",
+      "displayName": "minnesotapeace.com",
+      "emphasisRank": 24,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "cloudflare-pages",
+        "project": "minnesotapeace",
+        "servingDomainState": "observed",
+        "sharedProject": false,
+        "latestProductionDeployAt": "2026-09-10T02:32:11.851568Z",
+        "evidenceState": "measured",
+        "note": null
+      },
+      "lastMeaningfulActivity": {
+        "at": "2026-09-10T02:32:11.851568Z",
+        "kind": "production-deploy",
+        "evidenceState": "measured"
+      },
+      "probe": {
+        "origin": "https://minnesotapeace.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "MN Peace"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "propertyId": "redleopardofstpaul.com",
+      "displayName": "redleopardofstpaul.com",
+      "emphasisRank": 25,
+      "investorCritical": false,
+      "zone": {
+        "status": "active"
+      },
+      "rum": "on",
+      "deployment": {
+        "provider": "unknown",
+        "project": null,
+        "servingDomainState": "unavailable",
+        "sharedProject": false,
+        "latestProductionDeployAt": null,
+        "evidenceState": "unavailable",
+        "note": "No Pages custom-domain mapping was observed; hosting/deploy provider remains unknown here."
+      },
+      "lastMeaningfulActivity": {
+        "at": null,
+        "kind": null,
+        "evidenceState": "unavailable",
+        "reason": "No serving deploy or other business-significant activity signal is connected for this property."
+      },
+      "probe": {
+        "origin": "https://redleopardofstpaul.com",
+        "path": "/",
+        "expectation": "serves-content",
+        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "criticalPath": {
+          "level": "baseline",
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "checks": [
+            {
+              "id": "home",
+              "path": "/",
+              "kind": "page",
+              "contentType": "text/html",
+              "titleMatches": "Red Leopard"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

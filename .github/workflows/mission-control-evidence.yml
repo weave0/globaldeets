@@ -1,0 +1,175 @@
+name: Mission Control Evidence
+
+# GD-030: scheduled production probes + historical snapshot ingestion.
+# Evidence is committed to the dedicated `mission-control-evidence` branch only after the whole data
+# plane validates, then deployed with the current main. Any failure leaves the last valid evidence intact.
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    concurrency:
+      group: mission-control-evidence
+      cancel-in-progress: false
+    outputs:
+      committed: ${{ steps.commit.outputs.committed }}
+      generated_at: ${{ steps.collect.outputs.generated_at }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Restore evidence branch
+        run: |
+          if git ls-remote --exit-code --heads origin mission-control-evidence >/dev/null 2>&1; then
+            git fetch --depth=1 origin mission-control-evidence
+            git worktree add --detach .evidence FETCH_HEAD
+          else
+            echo "No evidence branch yet; bootstrapping an orphan branch."
+            git worktree add --detach .evidence HEAD
+            git -C .evidence checkout --orphan mission-control-evidence
+            git -C .evidence rm -rf . >/dev/null
+          fi
+
+      - name: Run mission-control contract tests
+        run: node --test tests/mission-control-probe.test.mjs tests/mission-control-collector.test.mjs tests/mission-control-evidence.test.mjs tests/mission-control-scheduler.test.mjs tests/mission-control-hardening.test.mjs
+
+      - name: Collect probes and ingest snapshot
+        id: collect
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GOLD_SOURCE: ${{ secrets.MISSION_CONTROL_GOLD_SOURCE }}
+          GOLD_SOURCE_TOKEN: ${{ secrets.MISSION_CONTROL_GOLD_TOKEN }}
+        run: |
+          set +e
+          node tools/mission-control/collect.mjs --evidence-dir=.evidence
+          code=$?
+          echo "exit_code=${code}" >> "$GITHUB_OUTPUT"
+          if [ -f .evidence/latest/estate-health.json ]; then
+            echo "generated_at=$(node -p "require('./.evidence/latest/estate-health.json').generatedAt || ''")" >> "$GITHUB_OUTPUT"
+          fi
+          # 0 = valid run published, 2 = invalid vantage recorded (evidence still committed so staleness is visible).
+          # Anything else wrote nothing and preserves the last valid evidence.
+          if [ "${code}" -ne 0 ] && [ "${code}" -ne 2 ]; then exit "${code}"; fi
+          exit 0
+
+      - name: Commit evidence (only after validated collection)
+        id: commit
+        run: |
+          cd .evidence
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No evidence changes."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "Mission Control evidence ${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}"
+          git push origin HEAD:mission-control-evidence
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Fail the run when the probe vantage was invalid
+        if: steps.collect.outputs.exit_code == '2'
+        run: |
+          echo "::error::Probe vantage invalid; evidence recorded, last valid run preserved."
+          exit 1
+
+  deploy:
+    needs: collect
+    if: ${{ always() && needs.collect.outputs.committed == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      deployments: write
+    concurrency:
+      group: pages-deploy-refs/heads/main
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Fetch validated evidence
+        run: |
+          git fetch --depth=1 origin mission-control-evidence
+          git worktree add --detach .evidence FETCH_HEAD
+
+      - name: Stage artifact with strict evidence overlay
+        run: npm run stage:deploy
+        env:
+          NODE_ENV: production
+          CF_PAGES_BRANCH: main
+          CF_PAGES_COMMIT_SHA: ${{ github.sha }}
+          MISSION_CONTROL_EVIDENCE_DIR: .evidence
+          MISSION_CONTROL_EVIDENCE_STRICT: "1"
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.131.1"
+          command: pages deploy dist --project-name globaldeets --branch main --commit-hash ${{ github.sha }} --commit-dirty=false
+
+      - name: Verify production Mission Control evidence
+        env:
+          EXPECTED_GENERATED_AT: ${{ needs.collect.outputs.generated_at }}
+        run: |
+          for attempt in 1 2 3 4 5 6; do
+            if node tools/verify-mission-control-prod.js --base=https://globaldeets.com --min-generated-at="${EXPECTED_GENERATED_AT}" --require-probe-evidence; then
+              exit 0
+            fi
+            if [ "${attempt}" -eq 6 ]; then
+              echo "Mission Control production evidence did not converge after all verification attempts."
+              exit 1
+            fi
+            echo "Verification attempt ${attempt} failed; retrying after propagation delay."
+            sleep 10
+          done
+
+  alert:
+    needs: [collect, deploy]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open, update, or close the evidence-failure issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COLLECT: ${{ needs.collect.result }}
+          DEPLOY: ${{ needs.deploy.result }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Mission Control evidence collection is failing"
+          existing=$(gh issue list -R "${GITHUB_REPOSITORY}" --state open --search "\"${title}\" in:title" --json number --jq '.[0].number // empty')
+          if [ "${COLLECT}" = "failure" ] || [ "${DEPLOY}" = "failure" ]; then
+            body="Scheduled Mission Control evidence run failed (collect=${COLLECT}, deploy=${DEPLOY}): ${RUN_URL}. Last valid evidence is preserved and Mission Control shows it aging; see the diagnostics queue for the stale-evidence finding."
+            if [ -n "${existing}" ]; then
+              gh issue comment "${existing}" -R "${GITHUB_REPOSITORY}" --body "${body}"
+            else
+              gh issue create -R "${GITHUB_REPOSITORY}" --title "${title}" --body "${body}"
+            fi
+          elif [ -n "${existing}" ] && [ "${COLLECT}" = "success" ]; then
+            gh issue close "${existing}" -R "${GITHUB_REPOSITORY}" --comment "Recovered: ${RUN_URL}"
+          fi
