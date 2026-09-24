@@ -94,17 +94,27 @@ export function extractOperational(doc, bindings, propertyId = 'globaldeets.com'
   };
 }
 
-/** Reads the configured Gold source (file path or URL with optional bearer token). Never reads fixtures by default. */
-export async function loadGoldSource({ source, token, fetchImpl, readFile }) {
-  if (!source) return { doc: null, reason: 'No GOLD_SOURCE configured.' };
+/**
+ * Reads a configured governed source (file path or https URL with optional bearer token). Never reads fixtures by
+ * default. `configured` distinguishes "nothing is set up" from "set up but not readable"; `httpStatus` lets the
+ * caller tell a missing credential (401/403) from an outage.
+ */
+export async function loadGoldSource({ source, token, fetchImpl, readFile, label = 'Gold' }) {
+  if (!source) return { doc: null, configured: false, httpStatus: null, reason: 'No ' + label + ' source configured.' };
   try {
     if (/^https:\/\//i.test(source)) {
       const response = await fetchImpl(source, { headers: { accept: 'application/json', ...(token ? { authorization: 'Bearer ' + token } : {}) }, signal: AbortSignal.timeout(20000) });
-      if (!response.ok) return { doc: null, reason: 'Gold source returned HTTP ' + response.status + '.' };
-      return { doc: await response.json(), reason: null };
+      if (!response.ok) return { doc: null, configured: true, httpStatus: response.status, reason: label + ' source returned HTTP ' + response.status + '.' };
+      return { doc: await response.json(), configured: true, httpStatus: response.status, reason: null };
     }
-    return { doc: JSON.parse(await readFile(source, 'utf8')), reason: null };
+    return { doc: JSON.parse(await readFile(source, 'utf8')), configured: true, httpStatus: null, reason: null };
   } catch (error) {
-    return { doc: null, reason: 'Gold source unreadable: ' + String(error?.message || error).slice(0, 120) };
+    return { doc: null, configured: true, httpStatus: null, reason: label + ' source unreadable: ' + String(error?.message || error).slice(0, 120) };
   }
+}
+
+/** The insights document sits beside the Gold document; its default location is derived from the Gold source. */
+export function defaultInsightsSource(goldSource) {
+  const source = String(goldSource || '');
+  return /canonical-gold-m1\.2\.json$/.test(source) ? source.replace(/canonical-gold-m1\.2\.json$/, 'traffic-insights-1.0.json') : null;
 }

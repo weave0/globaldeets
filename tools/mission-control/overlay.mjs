@@ -3,13 +3,15 @@
  * Overlays the latest validated evidence over a staged deploy artifact.
  *   node tools/mission-control/overlay.mjs --evidence=<dir> --dist=dist [--strict]
  * Invalid or missing evidence never reaches production: the seed fallback stays in place (or --strict fails).
+ * Evidence published before GD-031 (the legacy five-file set) is not overlaid: it lacks the GD-031 documents the
+ * page renders, so the seed stays until the next collection publishes the full data plane.
  */
 import { copyFileSync, existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadConfig } from './lib/collect.mjs';
 import { expectedPropertyIds, validateDataPlane } from './lib/contracts.mjs';
-import { PUBLISHED_FILES } from './lib/evidence.mjs';
+import { PLANE_KEYS, PUBLISHED_FILES } from './lib/evidence.mjs';
 
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const arg = name => process.argv.find(item => item.startsWith('--' + name + '='))?.slice(name.length + 3) || null;
@@ -24,12 +26,11 @@ function skip(message) {
 
 if (!evidenceDir || !existsSync(join(evidenceDir, 'latest'))) skip('no evidence directory (seed fallback deployed).');
 const latest = join(evidenceDir, 'latest');
-if (!PUBLISHED_FILES.every(name => existsSync(join(latest, name)))) skip('evidence set incomplete.');
+if (!PUBLISHED_FILES.every(name => existsSync(join(latest, name)))) skip('evidence set incomplete (or published before GD-031).');
 
 let plane;
 try {
-  const read = name => JSON.parse(readFileSync(join(latest, name), 'utf8'));
-  plane = { history: read('history.json'), estate: read('estate-health.json'), diagnostics: read('diagnostics.json'), summary: read('mission-control-data.json'), probes: read('probes.json') };
+  plane = Object.fromEntries(PUBLISHED_FILES.map(name => [PLANE_KEYS[name], JSON.parse(readFileSync(join(latest, name), 'utf8'))]));
 } catch (error) {
   skip('evidence unreadable: ' + error.message);
 }

@@ -37,11 +37,15 @@ test('GD-029 estate health covers all 25 active zones and keeps unknown health u
   assert.equal(estate.properties[0].propertyId, 'globaldeets.com');
   assert.equal(estate.properties[1].propertyId, 'culturesherpa.org');
 
-  const unobserved = estate.properties
-    .filter(item => item.observability.state === 'unobserved')
+  // The Cloudflare RUM flag is a carried-forward SETTING; browser telemetry is judged from served pages, and the
+  // seed contains no probe evidence, so no property may claim any instrumentation state beyond unknown.
+  const settingOff = estate.properties
+    .filter(item => item.observability.rum !== 'on')
     .map(item => item.propertyId)
     .sort();
-  assert.deepEqual(unobserved, ['artificelligance.com', 'artificelligence.com', 'fwomp.us', 'fwomps.com']);
+  assert.deepEqual(settingOff, ['artificelligance.com', 'artificelligence.com', 'fwomp.us', 'fwomps.com']);
+  assert.ok(estate.properties.every(item => ['unknown', 'not-applicable'].includes(item.observability.state) && item.observability.evidenceState === 'unavailable'));
+  assert.ok(estate.properties.every(item => item.observability.rumSetting.evidenceState === 'carried-forward'));
 
   assert.equal(estate.summary.rumObservedZones, 21);
   assert.equal(estate.summary.availabilityKnownZones, 0);
@@ -93,12 +97,14 @@ test('GD-029 diagnostics are sortable and agent-consumable with escalation seman
 test('GD-029 live investor-adjacent surfaces reject portfolio-era analytics copy', () => {
   const categories = readText('categories.html');
   const missionHtml = readText('observatory/mission-control/index.html');
-  const missionJs = readText('observatory/mission-control/mission-control.js');
+  const executiveJs = readText('observatory/mission-control/mc-executive.js');
 
   assert.doesNotMatch(categories, /Data Platform Showcase/i);
   assert.match(categories, /Source-first world information/i);
-  assert.match(missionHtml, /Historical data plane/i);
-  assert.match(missionHtml, /Property health &amp; evidence/i);
-  assert.match(missionHtml, /Certified audience/i);
-  assert.match(missionJs, /No GA4\/RUM-quality human-audience series has passed the evidence gate yet/);
+  assert.match(missionHtml, />Executive</);
+  assert.match(missionHtml, />Operator</);
+  assert.match(missionHtml, /evidence behind every claim/i);
+  assert.match(executiveJs, /never as an audience/);
+  assert.match(executiveJs, /nothing here is estimated/);
+  for (const source of [missionHtml, executiveJs]) assert.doesNotMatch(source, /Data Platform Showcase|portfolio and research showcase/i);
 });

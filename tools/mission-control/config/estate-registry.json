@@ -1,6 +1,6 @@
 {
   "contractName": "globaldeets-estate-registry",
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "2.0.0",
   "inventory": {
     "asOf": "2026-09-24T16:29:00Z",
     "source": "Cloudflare account zone inventory + per-zone RUM settings",
@@ -113,7 +113,39 @@
                 }
               ]
             }
-          ]
+          ],
+          "basisSource": "owner-deploy-verification"
+        },
+        "criticalPathStatus": "authoritative"
+      },
+      "profile": {
+        "name": "GlobalDeets",
+        "purpose": "Live world news pinned to a 3D globe, with source links, culture context, webcams and public knowledge resources.",
+        "category": "platform",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 2,
+        "audience": null,
+        "earningPath": "Commissioned briefs and data sponsors",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone globaldeets.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -158,6 +190,42 @@
               "titleMatches": "cultur"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Culture Sherpa",
+        "purpose": "Interactive cultural atlas for exploring the world's cultures.",
+        "category": "learning",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 2,
+        "audience": "Learners, educators, travelers, culture-curious visitors and institutional partners",
+        "earningPath": "Grants, learning sponsors and modules",
+        "primaryOutcome": {
+          "type": "engagement",
+          "label": "Explore the cultural atlas"
+        },
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone culturesherpa.org"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -192,7 +260,36 @@
         "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
         "expectedFinalHost": "culturesherpa.org",
         "criticalPath": null,
-        "criticalPathReason": "Redirect-only alias: availability is probed, but there is no independent critical path."
+        "criticalPathReason": "Redirect-only alias: availability is probed, but there is no independent critical path.",
+        "criticalPathStatus": "not-applicable"
+      },
+      "profile": {
+        "name": "Culture Sherpa (alias)",
+        "purpose": null,
+        "category": "learning",
+        "lifecycle": "alias",
+        "aliasOf": "culturesherpa.org",
+        "strategicTier": 2,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "observed-behaviour",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone culturesherpa.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
+        }
       }
     },
     {
@@ -236,6 +333,34 @@
               "titleMatches": "AgentK"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "AgentK",
+        "purpose": "Effect-integrity layer between AI-agent intent and consequential real-world tool actions.",
+        "category": "research",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone agentkagent.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -267,10 +392,11 @@
         "origin": "https://aiaimate.com",
         "path": "/",
         "expectation": "serves-content",
-        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "expectationBasis": "Owner-documented search API route (source) plus homepage identity.",
         "criticalPath": {
-          "level": "baseline",
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "level": "authoritative",
+          "basis": "The AIAIMate portal implements and documents a search API (portal/app/api/search) that the learning experience depends on; the contract is defined in source (ok: true, results array).",
+          "basisSource": "owner-source-route",
           "checks": [
             {
               "id": "home",
@@ -278,8 +404,70 @@
               "kind": "page",
               "contentType": "text/html",
               "titleMatches": "AIAIMate"
+            },
+            {
+              "id": "search-api",
+              "path": "/api/search?q=ai",
+              "kind": "json",
+              "jsonRequires": [
+                {
+                  "path": "ok",
+                  "equals": true
+                },
+                {
+                  "path": "results",
+                  "type": "array"
+                }
+              ]
             }
           ]
+        },
+        "criticalPathStatus": "authoritative"
+      },
+      "profile": {
+        "name": "AIAIMate",
+        "purpose": "Free, visual AI-literacy lessons, interactive tools and guided learning paths.",
+        "category": "learning",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 2,
+        "audience": "AI learners, professionals, students and partners looking for practical AI education",
+        "earningPath": "Subscriptions, premium kits and sponsors",
+        "primaryOutcome": {
+          "type": "engagement",
+          "label": "Start learning AI by doing"
+        },
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "observed-homepage",
+          "audience": "owner-brand-registry",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone aiaimate.com"
+        },
+        "businessEvents": {
+          "status": "declared-unconnected",
+          "candidateProducers": [
+            {
+              "type": "signup",
+              "producer": "portal/app/api/newsletter/subscribe",
+              "repository": "weave0/aiaimate"
+            },
+            {
+              "type": "purchase",
+              "producer": "portal/app/api/stripe/create-checkout and create-subscription",
+              "repository": "weave0/aiaimate"
+            }
+          ],
+          "note": "Event-producing routes exist in source; no governed feed is connected to Mission Control."
         }
       }
     },
@@ -312,7 +500,34 @@
         "path": "/",
         "expectation": "unspecified",
         "expectationBasis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended.",
-        "criticalPath": null
+        "criticalPath": null,
+        "criticalPathStatus": "not-applicable"
+      },
+      "profile": {
+        "name": "artificelligance.com",
+        "purpose": null,
+        "category": "reserved",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "category": "observed-behaviour"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone artificelligance.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
+        }
       }
     },
     {
@@ -344,7 +559,34 @@
         "path": "/",
         "expectation": "unspecified",
         "expectationBasis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended.",
-        "criticalPath": null
+        "criticalPath": null,
+        "criticalPathStatus": "not-applicable"
+      },
+      "profile": {
+        "name": "artificelligence.com",
+        "purpose": null,
+        "category": "reserved",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "category": "observed-behaviour"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone artificelligence.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
+        }
       }
     },
     {
@@ -389,6 +631,37 @@
               "titleMatches": "Brett Lee Weaver"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Brett Lee Weaver",
+        "purpose": "Personal site of a commercial leader, systems thinker and AI-native builder.",
+        "category": "personal",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 3,
+        "audience": null,
+        "earningPath": "Credibility, speaking and partner trust",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone brettleeweaver.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -432,6 +705,37 @@
               "titleMatches": "CitizenApproved"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "CitizenApproved",
+        "purpose": "Source-first guide to current U.S. citizenship and naturalization law and policy.",
+        "category": "civic",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 2,
+        "audience": null,
+        "earningPath": "Civic sponsors, grants and email list",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone citizenapproved.org"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -475,6 +779,40 @@
               "titleMatches": "Cyan Canoe"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Cyan Canoe",
+        "purpose": "Helps schools, churches and mission-led organizations see where generosity goes and discuss impact without overstating evidence.",
+        "category": "civic",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone cyancanoe.com"
+        },
+        "businessEvents": {
+          "status": "declared-unconnected",
+          "candidateProducers": [
+            {
+              "type": "lead",
+              "producer": "site/landing/functions/inquiry.js",
+              "repository": "weave0/cyan-canoe"
+            }
+          ],
+          "note": "Event-producing routes exist in source; no governed feed is connected to Mission Control."
         }
       }
     },
@@ -518,6 +856,34 @@
               "titleMatches": "Flipskillet"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Flipskillet",
+        "purpose": "Evidence-driven atlas of global media ownership, control and geographic presence.",
+        "category": "research",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "owner-repository",
+          "category": "classified-from-purpose"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone flipskillet.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -561,6 +927,34 @@
               "titleMatches": "Flipskillet"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Flipskillet (alias)",
+        "purpose": null,
+        "category": "research",
+        "lifecycle": "alias",
+        "aliasOf": "flipskillet.com",
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "observed-behaviour",
+          "category": "classified-from-purpose"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone flipskillit.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -605,6 +999,34 @@
               "titleMatches": "Foxyana"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Foxyana",
+        "purpose": "Ukrainian cultural project translating Carpathian heritage through dance, music, story and image.",
+        "category": "creative",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone foxyana.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -637,7 +1059,34 @@
         "path": "/",
         "expectation": "unspecified",
         "expectationBasis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended.",
-        "criticalPath": null
+        "criticalPath": null,
+        "criticalPathStatus": "not-applicable"
+      },
+      "profile": {
+        "name": "fwomps.com",
+        "purpose": null,
+        "category": "reserved",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "category": "observed-behaviour"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone fwomps.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
+        }
       }
     },
     {
@@ -669,7 +1118,34 @@
         "path": "/",
         "expectation": "unspecified",
         "expectationBasis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended.",
-        "criticalPath": null
+        "criticalPath": null,
+        "criticalPathStatus": "not-applicable"
+      },
+      "profile": {
+        "name": "fwomp.us",
+        "purpose": null,
+        "category": "reserved",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "category": "observed-behaviour"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone fwomp.us"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
+        }
       }
     },
     {
@@ -712,6 +1188,34 @@
               "titleMatches": "Good Flippin Vibes"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Good Flippin Vibes (alias)",
+        "purpose": null,
+        "category": "community",
+        "lifecycle": "alias",
+        "aliasOf": "goodflippinvibes.com",
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "observed-behaviour",
+          "category": "classified-from-purpose"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone gflippinv.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -742,10 +1246,11 @@
         "origin": "https://goodflippindesign.com",
         "path": "/",
         "expectation": "serves-content",
-        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "expectationBasis": "Owner-declared production-critical routes (owner health targets).",
         "criticalPath": {
-          "level": "baseline",
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "level": "authoritative",
+          "basis": "Routes the owner already treats as production-critical in their own monitoring (config/health-targets.json: home, /donate, /community-portal are marked critical) plus the documented /api/health endpoint.",
+          "basisSource": "owner-health-targets",
           "checks": [
             {
               "id": "home",
@@ -753,8 +1258,90 @@
               "kind": "page",
               "contentType": "text/html",
               "titleMatches": "Good Flippin Design"
+            },
+            {
+              "id": "donate",
+              "path": "/donate",
+              "kind": "page",
+              "contentType": "text/html",
+              "bodyIncludes": [
+                "Donate"
+              ],
+              "minBytes": 5000
+            },
+            {
+              "id": "community-portal",
+              "path": "/community-portal",
+              "kind": "page",
+              "contentType": "text/html",
+              "bodyIncludes": [
+                "Community"
+              ],
+              "minBytes": 5000
+            },
+            {
+              "id": "api-health",
+              "path": "/api/health",
+              "kind": "json",
+              "jsonRequires": [
+                {
+                  "path": "ok",
+                  "equals": true
+                },
+                {
+                  "path": "database",
+                  "equals": "ok"
+                }
+              ]
             }
           ]
+        },
+        "criticalPathStatus": "authoritative"
+      },
+      "profile": {
+        "name": "Good Flippin Design",
+        "purpose": "Web development and AI-integration studio; portfolio and trust hub for the ecosystem.",
+        "category": "platform",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 1,
+        "audience": "Prospects, sponsors, partners, supporters and ecosystem operators",
+        "earningPath": "Patrons, ads, sponsor intake and commissioned work",
+        "primaryOutcome": {
+          "type": "lead",
+          "label": "Start a project inquiry"
+        },
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone goodflippindesign.com"
+        },
+        "businessEvents": {
+          "status": "declared-unconnected",
+          "candidateProducers": [
+            {
+              "type": "lead",
+              "producer": "functions/api/contact.js and functions/api/legal-forms.js",
+              "repository": "weave0/goodflippindesign"
+            },
+            {
+              "type": "purchase",
+              "producer": "functions/create-checkout.js (Stripe checkout)",
+              "repository": "weave0/goodflippindesign"
+            }
+          ],
+          "note": "Event-producing routes exist in source; no governed feed is connected to Mission Control."
         }
       }
     },
@@ -799,6 +1386,42 @@
               "titleMatches": "Good Flippin Luck"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Good Flippin Luck",
+        "purpose": "Playable charm, promo and creative-commerce surface for the Good Flippin Vibes universe.",
+        "category": "creative",
+        "lifecycle": "incubating",
+        "aliasOf": null,
+        "strategicTier": 4,
+        "audience": "Supporters, fans, casual visitors and music/art followers",
+        "earningPath": null,
+        "primaryOutcome": {
+          "type": "engagement",
+          "label": "Play, share and join the supporter list"
+        },
+        "expectedState": "not-live",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "expectedState": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone goodflippinluck.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -843,6 +1466,42 @@
               "titleMatches": "Good Flippin News"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Good Flippin News",
+        "purpose": "Joy-forward dispatches from the Good Flippin Vibes creative and civic ecosystem.",
+        "category": "community",
+        "lifecycle": "incubating",
+        "aliasOf": null,
+        "strategicTier": 4,
+        "audience": "Supporters, partners and local, civic and creative readers",
+        "earningPath": null,
+        "primaryOutcome": {
+          "type": "signup",
+          "label": "Subscribe or follow ecosystem dispatches"
+        },
+        "expectedState": "not-live",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "expectedState": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone goodflippinnews.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -886,6 +1545,42 @@
               "titleMatches": "Good Flippin Vibes"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Good Flippin Vibes",
+        "purpose": "Wellness, art and community: the origin brand of the ecosystem.",
+        "category": "community",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 1,
+        "audience": "Community members, supporters and art/music followers",
+        "earningPath": "Patrons and community features",
+        "primaryOutcome": {
+          "type": "signup",
+          "label": "Join or support the community"
+        },
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone goodflippinvibes.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -930,6 +1625,34 @@
               "titleMatches": "Good Flippin Yikes"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Good Flippin Yikes",
+        "purpose": "Publishing shell for evolving posts, topics and curated links.",
+        "category": "community",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone goodflippinyikes.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -973,6 +1696,37 @@
               "titleMatches": "Heavy Moose"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Heavy Moose",
+        "purpose": "Official artist site for Heavy Moose: industrial, dark ambient and experimental music, releases and videos.",
+        "category": "creative",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 3,
+        "audience": null,
+        "earningPath": "Patron support, streaming and merch",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone heavymoose.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -1017,6 +1771,37 @@
               "titleMatches": "Lowertown"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Lowertown St. Paul",
+        "purpose": "Portrait of Lowertown, a Saint Paul National Historic District.",
+        "category": "civic",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 3,
+        "audience": null,
+        "earningPath": "Local sponsors and quarterly briefings",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone lowertownstpaul.org"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -1047,19 +1832,101 @@
         "origin": "https://minnesotapeace.com",
         "path": "/",
         "expectation": "serves-content",
-        "expectationBasis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract.",
+        "expectationBasis": "Owner deploy verification enforces these publication routes.",
         "criticalPath": {
-          "level": "baseline",
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "level": "authoritative",
+          "basis": "The publication sections the owner already verifies after every deploy (deploy workflow: Verify exact public URLs serve the publication build). Only route availability and page substance are checked, not volatile copy.",
+          "basisSource": "owner-deploy-verification",
           "checks": [
             {
               "id": "home",
               "path": "/",
               "kind": "page",
               "contentType": "text/html",
-              "titleMatches": "MN Peace"
+              "titleMatches": "MN Peace",
+              "minBytes": 2000
+            },
+            {
+              "id": "record",
+              "path": "/record/",
+              "kind": "page",
+              "contentType": "text/html",
+              "minBytes": 2000
+            },
+            {
+              "id": "status",
+              "path": "/status/",
+              "kind": "page",
+              "contentType": "text/html",
+              "minBytes": 2000
+            },
+            {
+              "id": "guide",
+              "path": "/guide/",
+              "kind": "page",
+              "contentType": "text/html",
+              "minBytes": 2000
+            },
+            {
+              "id": "oversight",
+              "path": "/oversight/",
+              "kind": "page",
+              "contentType": "text/html",
+              "minBytes": 2000
+            },
+            {
+              "id": "programs",
+              "path": "/programs/",
+              "kind": "page",
+              "contentType": "text/html",
+              "minBytes": 2000
+            },
+            {
+              "id": "money",
+              "path": "/money/",
+              "kind": "page",
+              "contentType": "text/html",
+              "minBytes": 2000
+            },
+            {
+              "id": "authority",
+              "path": "/authority/",
+              "kind": "page",
+              "contentType": "text/html",
+              "minBytes": 2000
             }
           ]
+        },
+        "criticalPathStatus": "authoritative"
+      },
+      "profile": {
+        "name": "MN Peace",
+        "purpose": "Plain-language guide to Minnesota's public-program fraud cases, oversight failures and reforms, with primary records.",
+        "category": "civic",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 3,
+        "audience": null,
+        "earningPath": "Civic services and local partnerships",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone minnesotapeace.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     },
@@ -1104,8 +1971,137 @@
               "titleMatches": "Red Leopard"
             }
           ]
+        },
+        "criticalPathStatus": "baseline-only"
+      },
+      "profile": {
+        "name": "Red Leopard of St. Paul",
+        "purpose": "Home for Nine Lives on the Strip: Lowertown-born hair metal, cover art and the developing Melanie release.",
+        "category": "creative",
+        "lifecycle": "incubating",
+        "aliasOf": null,
+        "strategicTier": 4,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        }
+      },
+      "measurement": {
+        "audience": {
+          "source": "canonical-gold",
+          "binding": "cloudflare zone redleopardofstpaul.com"
+        },
+        "businessEvents": {
+          "status": "none-declared",
+          "candidateProducers": [],
+          "note": "No event-producing route has been declared for this property."
         }
       }
     }
-  ]
+  ],
+  "provenanceSources": {
+    "owner-brand-registry": {
+      "label": "Owner brand registry",
+      "reference": "weave0/goodflippindesign brands.json",
+      "asOf": "2026-06-11",
+      "note": "Owner-authored. Status/audience/CTA fields can lag the live product; only used where consistent with the observed property."
+    },
+    "owner-north-star": {
+      "label": "Ecosystem North Star",
+      "reference": "weave0/goodflippindesign ECOSYSTEM_NORTH_STAR.md v1.0",
+      "asOf": "2026-07-14",
+      "note": "Owner-authored strategic tiers, roles and earning paths. Traffic figures quoted there are informal and are never used as metrics."
+    },
+    "owner-repository": {
+      "label": "Owner repository description",
+      "reference": "GitHub repository description authored by the owner",
+      "asOf": "2026-09-24",
+      "note": "Owner-authored but not a governed status declaration."
+    },
+    "observed-homepage": {
+      "label": "Observed homepage",
+      "reference": "Title and meta description served by the property on 2026-09-24",
+      "asOf": "2026-09-24",
+      "note": "What the property says about itself; not an owner declaration of intent or status."
+    },
+    "observed-behaviour": {
+      "label": "Observed behaviour",
+      "reference": "Production probe and Cloudflare Pages inventory",
+      "asOf": "2026-09-24",
+      "note": "Inferred from what production does, not from a declaration."
+    },
+    "owner-health-targets": {
+      "label": "Owner health targets",
+      "reference": "weave0/goodflippindesign config/health-targets.json",
+      "asOf": "2026-09-24",
+      "note": "Routes the owner already treats as production-critical in their own monitoring."
+    },
+    "owner-deploy-verification": {
+      "label": "Owner deploy verification",
+      "reference": "Production verification step in the property deploy workflow",
+      "asOf": "2026-09-24",
+      "note": "Routes the owner already verifies after every deploy."
+    },
+    "owner-source-route": {
+      "label": "Owner source route",
+      "reference": "Route implemented and documented in the property source repository",
+      "asOf": "2026-09-24",
+      "note": "A documented API route whose contract is defined in source."
+    }
+  },
+  "audienceContract": {
+    "source": "canonical-gold",
+    "goldContract": "gfd-canonical-gold",
+    "goldSchemaMajorMinor": "1.2",
+    "insightsContract": "gfd-traffic-insights",
+    "metricPattern": "cloudflare.{propertyId}.{days}d.{field}",
+    "windowsDays": [
+      7,
+      28,
+      90
+    ],
+    "requirement": {
+      "what": "A read credential for the governed Canonical Gold and Traffic Insights documents.",
+      "where": "https://traffic.goodflippindesign.com/gold/ (admin-gated by design; the documents are produced daily by the Traffic Intelligence pipeline).",
+      "secrets": [
+        "MISSION_CONTROL_GOLD_SOURCE",
+        "MISSION_CONTROL_GOLD_TOKEN"
+      ],
+      "owner": "Traffic Intelligence owner (weave0/goodflippindesign, workflow traffic-intelligence-deploy.yml)"
+    }
+  },
+  "businessEventContract": {
+    "feedContract": "globaldeets-business-events-feed",
+    "feedSchemaVersion": "1.0.0",
+    "requirement": {
+      "what": "A governed first-party business-event feed (counts per property, event type and window) with explicit instrumentation status.",
+      "secrets": [
+        "MISSION_CONTROL_EVENTS_SOURCE",
+        "MISSION_CONTROL_EVENTS_TOKEN"
+      ],
+      "owner": "Each property owner declares an outcome; a producer publishes counts to the feed contract."
+    }
+  },
+  "instrumentationContract": {
+    "detected": [
+      "ga4",
+      "cloudflare-web-analytics"
+    ],
+    "placeholderMeasurementIds": [
+      "G-XXXXXXXXXX",
+      "G-XXXXXXXX",
+      "G-0000000000"
+    ],
+    "receptionVerification": {
+      "source": "Cloudflare Web Analytics (RUM) page-load events by request host, last 24 hours",
+      "requires": "CLOUDFLARE_API_TOKEN with Account Analytics: Read"
+    }
+  },
+  "knownSurfaces": []
 }

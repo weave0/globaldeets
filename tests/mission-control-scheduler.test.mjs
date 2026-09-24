@@ -122,7 +122,12 @@ test('registry contract: 25 zones, GlobalDeets first, Culture Sherpa second, hon
   assert.equal(ranked[1].propertyId, 'culturesherpa.org');
   assert.deepEqual(reg.properties.filter(item => item.investorCritical).map(item => item.propertyId).sort(), ['culturesherpa.org', 'globaldeets.com']);
   const authoritative = reg.properties.filter(item => item.probe.criticalPath?.level === 'authoritative').map(item => item.propertyId);
-  assert.deepEqual(authoritative, ['globaldeets.com'], 'only the owned, verified property claims an authoritative contract');
+  // GD-031: authoritative contracts exist only where the owner's own configuration defines them, and each names its source.
+  assert.deepEqual(authoritative, ['globaldeets.com', 'aiaimate.com', 'goodflippindesign.com', 'minnesotapeace.com']);
+  for (const id of authoritative) {
+    const property = reg.properties.find(item => item.propertyId === id);
+    assert.ok(reg.provenanceSources[property.probe.criticalPath.basisSource], id + ' authoritative contract must cite an owner source');
+  }
   for (const property of reg.properties.filter(item => item.probe.criticalPath?.level === 'baseline')) {
     assert.match(property.probe.criticalPath.basis, /never as an outage/);
   }

@@ -42,6 +42,13 @@ const REQUIRED_DEPLOY_FILES = [
   'observatory/mission-control/estate-health.json',
   'observatory/mission-control/diagnostics.json',
   'observatory/mission-control/probes.json',
+  'observatory/mission-control/audience.json',
+  'observatory/mission-control/business-events.json',
+  'observatory/mission-control/executive.json',
+  'observatory/mission-control/mc-model.js',
+  'observatory/mission-control/mc-charts.js',
+  'observatory/mission-control/mc-executive.js',
+  'observatory/mission-control/mc-operator.js',
   'functions/api/intelligence/observatory/coverage.js',
   'functions/lib/coverage-evidence-observatory.js',
 ];

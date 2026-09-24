@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "1.2.0",
   "contractName": "globaldeets-mission-control-history",
   "generatedAt": "2026-09-24T16:29:00Z",
   "supportedWindowsDays": [
@@ -115,6 +115,25 @@
       "note": "Consumed from Canonical Gold 1.2 via registry goldBindings when a non-fixture source is configured; fixtures are rejected."
     },
     {
+      "seam": "governed-audience",
+      "accepts": [
+        "GFD Canonical Gold 1.2 per-zone Cloudflare metrics",
+        "GFD Traffic Insights 1.x"
+      ],
+      "requiredFields": [
+        "observedAt",
+        "window",
+        "metric",
+        "value",
+        "unit",
+        "evidenceState",
+        "source",
+        "comparabilityKey"
+      ],
+      "status": "reader-built-awaiting-authorized-source",
+      "note": "Per-property 7/28/90-day edge requests, trends and daily series are read from the governed Traffic Intelligence documents. Edge requests are not people; fixtures are rejected."
+    },
+    {
       "seam": "estate-availability",
       "accepts": [
         "production probes"
@@ -145,8 +164,8 @@
         "attribution",
         "source"
       ],
-      "status": "awaiting-taxonomy",
-      "note": "No taxonomy or source is connected. No funnel or conversion figure may be fabricated."
+      "status": "contract-defined-awaiting-feed",
+      "note": "The common vocabulary and feed contract (globaldeets-business-events-feed) are defined; no feed is connected. No funnel or conversion figure may be fabricated, and a zero requires declared instrumentation."
     }
   ]
 }

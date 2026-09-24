@@ -102,12 +102,12 @@ test('a declared-service DNS failure is an outage only after the delayed re-prob
 test('contract counts come from the registry, not from probe results (seed and live agree)', async () => {
   const seed = JSON.parse(readFileSync(join(ROOT, 'observatory/mission-control/diagnostics.json'), 'utf8'));
   const seedItem = seed.items.find(item => item.id === 'observability:critical-path-contracts');
-  assert.match(seedItem.observed, /^1 of 25 properties have an authoritative critical-path contract; 19 have only a homepage identity baseline;/);
+  assert.match(seedItem.observed, /^4 of 20 serving properties have an authoritative critical-path contract \(globaldeets\.com, aiaimate\.com, goodflippindesign\.com, minnesotapeace\.com\);/);
   const dir = newDir();
   const { plane } = await collect(dir);
   const liveItem = plane.diagnostics.items.find(item => item.id === 'observability:critical-path-contracts');
-  assert.match(liveItem.observed, /^1 of 25 properties have an authoritative critical-path contract; 19 have only a homepage identity baseline;/);
-  for (const property of plane.estate.properties.filter(item => item.criticalPath.state === 'unknown' && item.criticalPath.contract)) {
+  assert.match(liveItem.observed, /^4 of 20 serving properties have an authoritative critical-path contract \(globaldeets\.com, aiaimate\.com, goodflippindesign\.com, minnesotapeace\.com\);/);
+  for (const property of plane.estate.properties.filter(item => item.criticalPath.state === 'unknown' && item.criticalPath.contract.checkCount > 0)) {
     assert.ok(property.criticalPath.contract.level, 'a registered contract is reported even when not yet evaluated');
   }
 });
@@ -115,8 +115,8 @@ test('contract counts come from the registry, not from probe results (seed and l
 test('the seed thesis never claims availability evidence that the seed does not contain', () => {
   const summary = JSON.parse(readFileSync(join(ROOT, 'observatory/mission-control/mission-control-data.json'), 'utf8'));
   const platform = summary.investmentThesis.find(item => item.label === 'Platform');
-  assert.doesNotMatch(platform.statement, /real availability evidence/i);
-  assert.match(platform.statement, /when it exists/);
+  assert.doesNotMatch(platform.statement, /real availability evidence|verified healthy across|all properties are (up|healthy)/i);
+  assert.match(platform.statement, /never treats a reachable page as a healthy one/);
 });
 
 test('a Gold document with no edge-visit binding never renders a fabricated zero', () => {
@@ -182,9 +182,10 @@ test('inventory: Pages listing never sends per_page (Cloudflare rejects it); zon
   assert.deepEqual(Object.fromEntries(Object.entries(inventory.facets).map(([key, value]) => [key, Boolean(value)])), { zones: true, pages: true, rum: false });
   const snapshot = result.plane.history.snapshots.at(-1);
   assert.equal(snapshot.estate.evidenceState, 'carried-forward', 'RUM coverage is never a fresh measurement until RUM is read');
-  const item = result.plane.diagnostics.items.find(entry => entry.id === 'evidence:inventory-stale');
-  assert.match(item.observed, /RUM settings are carried forward/);
-  assert.equal(item.severity, 'low');
+  // GD-031: the RUM flag is a labelled carried-forward SETTING and telemetry is judged from served pages, so a fully
+  // refreshed zone + Pages inventory raises no inventory finding.
+  assert.equal(result.plane.diagnostics.items.find(entry => entry.id === 'evidence:inventory-stale'), undefined);
+  assert.ok(result.plane.estate.properties.every(row => row.observability.rumSetting.evidenceState === 'carried-forward'));
 });
 
 test('inventory: a later partial refresh keeps earlier facets with their own observation time, and a truncated listing fails its facet', async () => {

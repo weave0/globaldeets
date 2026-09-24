@@ -213,10 +213,14 @@ test('Gold seam: fixtures, unbound properties, unmeasured, partial, and mismatch
 });
 
 test('Gold source loading fails closed and never reads a fixture path by default', async () => {
-  assert.match((await loadGoldSource({ source: '', fetchImpl: fetch, readFile: async () => '' })).reason, /No GOLD_SOURCE/);
+  const unconfigured = await loadGoldSource({ source: '', fetchImpl: fetch, readFile: async () => '' });
+  assert.match(unconfigured.reason, /No Gold source configured/);
+  assert.equal(unconfigured.configured, false, 'nothing configured is distinguishable from configured-but-unreadable');
   const httpFail = await loadGoldSource({ source: 'https://gold.example/doc.json', token: 't', fetchImpl: async (_url, init) => { assert.equal(init.headers.authorization, 'Bearer t'); return new Response('no', { status: 401 }); }, readFile: async () => '' });
   assert.equal(httpFail.doc, null);
   assert.match(httpFail.reason, /HTTP 401/);
+  assert.equal(httpFail.configured, true);
+  assert.equal(httpFail.httpStatus, 401, 'a missing credential is distinguishable from an outage');
   const bad = await loadGoldSource({ source: '/nope.json', fetchImpl: fetch, readFile: async () => { throw new Error('ENOENT'); } });
   assert.match(bad.reason, /unreadable/);
 });

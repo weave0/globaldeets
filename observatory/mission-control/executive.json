@@ -1,0 +1,2285 @@
+{
+  "contractName": "globaldeets-executive",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-09-24T16:29:00Z",
+  "policy": {
+    "fixturesAreProduction": false,
+    "unknownIsFailure": false,
+    "headlinesRequireCurrentEvidence": true,
+    "edgeTrafficIsHumanAudience": false,
+    "missingIsZero": false,
+    "derivedOnly": true
+  },
+  "asOf": {
+    "probe": null,
+    "inventory": "2026-09-24T16:29:00Z",
+    "audience": null,
+    "businessEvents": null
+  },
+  "evidence": {
+    "classes": [
+      {
+        "id": "availability",
+        "label": "Availability probes",
+        "state": "absent",
+        "asOf": null,
+        "detail": "0 vantages",
+        "now": "2026-09-24T16:29:00Z"
+      },
+      {
+        "id": "inventory",
+        "label": "Cloudflare inventory",
+        "state": "live",
+        "asOf": "2026-09-24T16:29:00Z",
+        "detail": "carried forward",
+        "now": "2026-09-24T16:29:00Z"
+      },
+      {
+        "id": "audience",
+        "label": "Governed audience",
+        "state": "absent",
+        "asOf": null,
+        "detail": "awaiting-authorized-source",
+        "now": "2026-09-24T16:29:00Z"
+      },
+      {
+        "id": "business-events",
+        "label": "Business outcomes",
+        "state": "absent",
+        "asOf": null,
+        "detail": "not-connected",
+        "now": "2026-09-24T16:29:00Z"
+      },
+      {
+        "id": "history",
+        "label": "Historical snapshots",
+        "state": "absent",
+        "asOf": "2026-09-24T16:29:00Z",
+        "detail": "0 days retained",
+        "now": "2026-09-24T16:29:00Z"
+      },
+      {
+        "id": "instrumentation-reception",
+        "label": "Telemetry reception",
+        "state": "absent",
+        "asOf": null,
+        "detail": "not checkable",
+        "now": "2026-09-24T16:29:00Z"
+      }
+    ],
+    "liveClasses": 1,
+    "totalClasses": 6
+  },
+  "headline": {
+    "statements": [
+      {
+        "id": "estate",
+        "tone": "neutral",
+        "text": "Good Flippin Design operates 25 web properties. 16 have an owner-declared status (10 active, 3 incubating, 3 aliases); 9 have none, so their intent is shown as unknown."
+      },
+      {
+        "id": "health",
+        "tone": "unknown",
+        "text": "No valid production probe evidence exists, so nothing can be said about whether the estate is up."
+      },
+      {
+        "id": "usage",
+        "tone": "unknown",
+        "text": "Usage cannot be stated yet: the governed traffic source is awaiting authorization, so no request, growth or contribution figure is shown (and none is estimated)."
+      },
+      {
+        "id": "outcomes",
+        "tone": "unknown",
+        "text": "No property reports business outcomes yet: 6 declare an intended outcome and 3 have event-producing routes that are not connected. \"Zero conversions\" cannot be stated for any of them."
+      },
+      {
+        "id": "attention",
+        "tone": "neutral",
+        "text": "10 open items: 2 actionable now, 3 blocked on missing authority, 4 need a decision. First: No production probe evidence has been collected."
+      }
+    ]
+  },
+  "snapshot": {
+    "properties": 25,
+    "lifecycle": {
+      "active": 10,
+      "incubating": 3,
+      "experimental": 0,
+      "dormant": 0,
+      "intentionally-unpublished": 0,
+      "deprecated": 0,
+      "alias": 3,
+      "unknown": 9
+    },
+    "verifiedHealthy": 0,
+    "responding": 0,
+    "servingExpected": 20,
+    "attention": 0,
+    "blocked": 0,
+    "nothingPublished": 0
+  },
+  "maturity": [
+    {
+      "id": "probe-coverage",
+      "label": "Availability probed",
+      "decision": "Do we know whether each property is up?",
+      "numerator": 0,
+      "denominator": 25,
+      "pct": 0,
+      "state": "absent",
+      "detail": "Properties with a fresh, conclusive availability answer. Blocked and unknown are not counted."
+    },
+    {
+      "id": "vantage-coverage",
+      "label": "Independent second witness",
+      "decision": "Is one network the only witness?",
+      "numerator": 0,
+      "denominator": 20,
+      "pct": 0,
+      "state": "absent",
+      "detail": "Serving properties confirmed from at least two conclusive vantages."
+    },
+    {
+      "id": "critical-path",
+      "label": "Authoritative critical path",
+      "decision": "Do we test what matters, not just the homepage?",
+      "numerator": 4,
+      "denominator": 20,
+      "pct": 20,
+      "state": "partial",
+      "detail": "Serving properties whose critical path is owner-declared and probed. The rest are checked only against a homepage baseline."
+    },
+    {
+      "id": "instrumentation-tags",
+      "label": "Analytics tag shipped",
+      "decision": "Can the page report an audience at all?",
+      "numerator": 0,
+      "denominator": 24,
+      "pct": 0,
+      "state": "absent",
+      "detail": "Serving properties whose HTML ships a real analytics tag (placeholders excluded)."
+    },
+    {
+      "id": "instrumentation-verified",
+      "label": "Telemetry reception verified",
+      "decision": "Is browser data actually arriving?",
+      "numerator": 0,
+      "denominator": 24,
+      "pct": 0,
+      "state": "absent",
+      "detail": "Properties with reception evidence, not just a tag."
+    },
+    {
+      "id": "audience",
+      "label": "Audience measured",
+      "decision": "Can we say how much each property is used?",
+      "numerator": 0,
+      "denominator": 25,
+      "pct": 0,
+      "state": "absent",
+      "detail": "Properties with a governed 28-day traffic reading."
+    },
+    {
+      "id": "business-events",
+      "label": "Business outcomes measured",
+      "decision": "Can we say what each property produces?",
+      "numerator": 0,
+      "denominator": 24,
+      "pct": 0,
+      "state": "absent",
+      "detail": "Properties reporting outcome events through a governed feed."
+    },
+    {
+      "id": "declared-lifecycle",
+      "label": "Owner-declared lifecycle",
+      "decision": "Do we know which states are intended?",
+      "numerator": 16,
+      "denominator": 25,
+      "pct": 64,
+      "state": "partial",
+      "detail": "Properties whose owner has declared active, incubating, dormant or similar."
+    },
+    {
+      "id": "declared-outcome",
+      "label": "Owner-declared outcome",
+      "decision": "Do we know what success looks like?",
+      "numerator": 6,
+      "denominator": 25,
+      "pct": 24,
+      "state": "partial",
+      "detail": "Properties with a declared primary outcome."
+    }
+  ],
+  "portfolio": {
+    "groups": [
+      {
+        "categoryId": "platform",
+        "label": "Platform & studio",
+        "tiles": [
+          {
+            "propertyId": "globaldeets.com",
+            "name": "GlobalDeets",
+            "purpose": "Live world news pinned to a 3D globe, with source links, culture context, webcams and public knowledge resources.",
+            "purposeSource": "observed-homepage",
+            "category": "platform",
+            "lifecycle": "active",
+            "aliasOf": null,
+            "strategicTier": 2,
+            "earningPath": "Commissioned briefs and data sponsors",
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "active",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": true,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "goodflippindesign.com",
+            "name": "Good Flippin Design",
+            "purpose": "Web development and AI-integration studio; portfolio and trust hub for the ecosystem.",
+            "purposeSource": "owner-brand-registry",
+            "category": "platform",
+            "lifecycle": "active",
+            "aliasOf": null,
+            "strategicTier": 1,
+            "earningPath": "Patrons, ads, sponsor intake and commissioned work",
+            "primaryOutcome": {
+              "type": "lead",
+              "label": "Start a project inquiry"
+            },
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "active",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          }
+        ]
+      },
+      {
+        "categoryId": "learning",
+        "label": "Learning & culture",
+        "tiles": [
+          {
+            "propertyId": "culturesherpa.org",
+            "name": "Culture Sherpa",
+            "purpose": "Interactive cultural atlas for exploring the world's cultures.",
+            "purposeSource": "owner-brand-registry",
+            "category": "learning",
+            "lifecycle": "active",
+            "aliasOf": null,
+            "strategicTier": 2,
+            "earningPath": "Grants, learning sponsors and modules",
+            "primaryOutcome": {
+              "type": "engagement",
+              "label": "Explore the cultural atlas"
+            },
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "active",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": true,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "culturesherpa.com",
+            "name": "Culture Sherpa (alias)",
+            "purpose": null,
+            "purposeSource": null,
+            "category": "learning",
+            "lifecycle": "alias",
+            "aliasOf": "culturesherpa.org",
+            "strategicTier": 2,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "alias",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "alias",
+              "note": "An additional address for culturesherpa.org."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "aiaimate.com",
+            "name": "AIAIMate",
+            "purpose": "Free, visual AI-literacy lessons, interactive tools and guided learning paths.",
+            "purposeSource": "observed-homepage",
+            "category": "learning",
+            "lifecycle": "active",
+            "aliasOf": null,
+            "strategicTier": 2,
+            "earningPath": "Subscriptions, premium kits and sponsors",
+            "primaryOutcome": {
+              "type": "engagement",
+              "label": "Start learning AI by doing"
+            },
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "active",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          }
+        ]
+      },
+      {
+        "categoryId": "civic",
+        "label": "Civic & public interest",
+        "tiles": [
+          {
+            "propertyId": "citizenapproved.org",
+            "name": "CitizenApproved",
+            "purpose": "Source-first guide to current U.S. citizenship and naturalization law and policy.",
+            "purposeSource": "observed-homepage",
+            "category": "civic",
+            "lifecycle": "active",
+            "aliasOf": null,
+            "strategicTier": 2,
+            "earningPath": "Civic sponsors, grants and email list",
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "active",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "cyancanoe.com",
+            "name": "Cyan Canoe",
+            "purpose": "Helps schools, churches and mission-led organizations see where generosity goes and discuss impact without overstating evidence.",
+            "purposeSource": "observed-homepage",
+            "category": "civic",
+            "lifecycle": "unknown",
+            "aliasOf": null,
+            "strategicTier": null,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "unknown",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "lowertownstpaul.org",
+            "name": "Lowertown St. Paul",
+            "purpose": "Portrait of Lowertown, a Saint Paul National Historic District.",
+            "purposeSource": "observed-homepage",
+            "category": "civic",
+            "lifecycle": "active",
+            "aliasOf": null,
+            "strategicTier": 3,
+            "earningPath": "Local sponsors and quarterly briefings",
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "active",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "minnesotapeace.com",
+            "name": "MN Peace",
+            "purpose": "Plain-language guide to Minnesota's public-program fraud cases, oversight failures and reforms, with primary records.",
+            "purposeSource": "observed-homepage",
+            "category": "civic",
+            "lifecycle": "active",
+            "aliasOf": null,
+            "strategicTier": 3,
+            "earningPath": "Civic services and local partnerships",
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "active",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          }
+        ]
+      },
+      {
+        "categoryId": "research",
+        "label": "AI & research",
+        "tiles": [
+          {
+            "propertyId": "agentkagent.com",
+            "name": "AgentK",
+            "purpose": "Effect-integrity layer between AI-agent intent and consequential real-world tool actions.",
+            "purposeSource": "observed-homepage",
+            "category": "research",
+            "lifecycle": "unknown",
+            "aliasOf": null,
+            "strategicTier": null,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "unknown",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "flipskillet.com",
+            "name": "Flipskillet",
+            "purpose": "Evidence-driven atlas of global media ownership, control and geographic presence.",
+            "purposeSource": "owner-repository",
+            "category": "research",
+            "lifecycle": "unknown",
+            "aliasOf": null,
+            "strategicTier": null,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "unknown",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "flipskillit.com",
+            "name": "Flipskillet (alias)",
+            "purpose": null,
+            "purposeSource": null,
+            "category": "research",
+            "lifecycle": "alias",
+            "aliasOf": "flipskillet.com",
+            "strategicTier": null,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "alias",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "alias",
+              "note": "An additional address for flipskillet.com."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          }
+        ]
+      },
+      {
+        "categoryId": "creative",
+        "label": "Music & creative",
+        "tiles": [
+          {
+            "propertyId": "foxyana.com",
+            "name": "Foxyana",
+            "purpose": "Ukrainian cultural project translating Carpathian heritage through dance, music, story and image.",
+            "purposeSource": "observed-homepage",
+            "category": "creative",
+            "lifecycle": "unknown",
+            "aliasOf": null,
+            "strategicTier": null,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "unknown",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "goodflippinluck.com",
+            "name": "Good Flippin Luck",
+            "purpose": "Playable charm, promo and creative-commerce surface for the Good Flippin Vibes universe.",
+            "purposeSource": "owner-brand-registry",
+            "category": "creative",
+            "lifecycle": "incubating",
+            "aliasOf": null,
+            "strategicTier": 4,
+            "earningPath": null,
+            "primaryOutcome": {
+              "type": "engagement",
+              "label": "Play, share and join the supporter list"
+            },
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "incubating",
+              "expectedState": "not-live",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "heavymoose.com",
+            "name": "Heavy Moose",
+            "purpose": "Official artist site for Heavy Moose: industrial, dark ambient and experimental music, releases and videos.",
+            "purposeSource": "observed-homepage",
+            "category": "creative",
+            "lifecycle": "active",
+            "aliasOf": null,
+            "strategicTier": 3,
+            "earningPath": "Patron support, streaming and merch",
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "active",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "redleopardofstpaul.com",
+            "name": "Red Leopard of St. Paul",
+            "purpose": "Home for Nine Lives on the Strip: Lowertown-born hair metal, cover art and the developing Melanie release.",
+            "purposeSource": "observed-homepage",
+            "category": "creative",
+            "lifecycle": "incubating",
+            "aliasOf": null,
+            "strategicTier": 4,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "incubating",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          }
+        ]
+      },
+      {
+        "categoryId": "community",
+        "label": "Community & brand",
+        "tiles": [
+          {
+            "propertyId": "gflippinv.com",
+            "name": "Good Flippin Vibes (alias)",
+            "purpose": null,
+            "purposeSource": null,
+            "category": "community",
+            "lifecycle": "alias",
+            "aliasOf": "goodflippinvibes.com",
+            "strategicTier": null,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "alias",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "alias",
+              "note": "An additional address for goodflippinvibes.com."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "goodflippinnews.com",
+            "name": "Good Flippin News",
+            "purpose": "Joy-forward dispatches from the Good Flippin Vibes creative and civic ecosystem.",
+            "purposeSource": "owner-brand-registry",
+            "category": "community",
+            "lifecycle": "incubating",
+            "aliasOf": null,
+            "strategicTier": 4,
+            "earningPath": null,
+            "primaryOutcome": {
+              "type": "signup",
+              "label": "Subscribe or follow ecosystem dispatches"
+            },
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "incubating",
+              "expectedState": "not-live",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "goodflippinvibes.com",
+            "name": "Good Flippin Vibes",
+            "purpose": "Wellness, art and community: the origin brand of the ecosystem.",
+            "purposeSource": "owner-brand-registry",
+            "category": "community",
+            "lifecycle": "active",
+            "aliasOf": null,
+            "strategicTier": 1,
+            "earningPath": "Patrons and community features",
+            "primaryOutcome": {
+              "type": "signup",
+              "label": "Join or support the community"
+            },
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "active",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "goodflippinyikes.com",
+            "name": "Good Flippin Yikes",
+            "purpose": "Publishing shell for evolving posts, topics and curated links.",
+            "purposeSource": "observed-homepage",
+            "category": "community",
+            "lifecycle": "unknown",
+            "aliasOf": null,
+            "strategicTier": null,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "unknown",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          }
+        ]
+      },
+      {
+        "categoryId": "personal",
+        "label": "Personal & professional",
+        "tiles": [
+          {
+            "propertyId": "brettleeweaver.com",
+            "name": "Brett Lee Weaver",
+            "purpose": "Personal site of a commercial leader, systems thinker and AI-native builder.",
+            "purposeSource": "observed-homepage",
+            "category": "personal",
+            "lifecycle": "active",
+            "aliasOf": null,
+            "strategicTier": 3,
+            "earningPath": "Credibility, speaking and partner trust",
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "active",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          }
+        ]
+      },
+      {
+        "categoryId": "reserved",
+        "label": "Reserved, nothing published",
+        "tiles": [
+          {
+            "propertyId": "artificelligance.com",
+            "name": "artificelligance.com",
+            "purpose": null,
+            "purposeSource": null,
+            "category": "reserved",
+            "lifecycle": "unknown",
+            "aliasOf": null,
+            "strategicTier": null,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "unknown",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "artificelligence.com",
+            "name": "artificelligence.com",
+            "purpose": null,
+            "purposeSource": null,
+            "category": "reserved",
+            "lifecycle": "unknown",
+            "aliasOf": null,
+            "strategicTier": null,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "unknown",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "fwomps.com",
+            "name": "fwomps.com",
+            "purpose": null,
+            "purposeSource": null,
+            "category": "reserved",
+            "lifecycle": "unknown",
+            "aliasOf": null,
+            "strategicTier": null,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "unknown",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          },
+          {
+            "propertyId": "fwomp.us",
+            "name": "fwomp.us",
+            "purpose": null,
+            "purposeSource": null,
+            "category": "reserved",
+            "lifecycle": "unknown",
+            "aliasOf": null,
+            "strategicTier": null,
+            "earningPath": null,
+            "primaryOutcome": null,
+            "operatingStatus": {
+              "key": "unknown",
+              "tone": "unknown"
+            },
+            "expectation": {
+              "lifecycle": "unknown",
+              "expectedState": "unknown",
+              "observedMode": "unknown",
+              "met": null,
+              "kind": "no-declaration",
+              "note": "The owner has not declared an expected state for this property."
+            },
+            "investorCritical": false,
+            "sharePct": null,
+            "direction": "unknown"
+          }
+        ]
+      }
+    ]
+  },
+  "knowledgeMatrix": {
+    "columns": [
+      {
+        "id": "availability",
+        "label": "Up?"
+      },
+      {
+        "id": "critical-path",
+        "label": "Works?"
+      },
+      {
+        "id": "telemetry",
+        "label": "Measured?"
+      },
+      {
+        "id": "audience",
+        "label": "Used?"
+      },
+      {
+        "id": "outcomes",
+        "label": "Produces?"
+      }
+    ],
+    "rows": [
+      {
+        "propertyId": "globaldeets.com",
+        "name": "GlobalDeets",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "unknown",
+            "label": "Not declared"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "culturesherpa.org",
+        "name": "Culture Sherpa",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "culturesherpa.com",
+        "name": "Culture Sherpa (alias)",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "na",
+            "label": "Not applicable"
+          },
+          {
+            "column": "telemetry",
+            "state": "na",
+            "label": "Not applicable"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "na",
+            "label": "Not applicable"
+          }
+        ]
+      },
+      {
+        "propertyId": "agentkagent.com",
+        "name": "AgentK",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "aiaimate.com",
+        "name": "AIAIMate",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "unknown",
+            "label": "Not declared"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "partial",
+            "label": "Producer exists, not connected"
+          }
+        ]
+      },
+      {
+        "propertyId": "artificelligance.com",
+        "name": "artificelligance.com",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "na",
+            "label": "Not applicable"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "artificelligence.com",
+        "name": "artificelligence.com",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "na",
+            "label": "Not applicable"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "brettleeweaver.com",
+        "name": "Brett Lee Weaver",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "citizenapproved.org",
+        "name": "CitizenApproved",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "cyancanoe.com",
+        "name": "Cyan Canoe",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "partial",
+            "label": "Producer exists, not connected"
+          }
+        ]
+      },
+      {
+        "propertyId": "flipskillet.com",
+        "name": "Flipskillet",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "flipskillit.com",
+        "name": "Flipskillet (alias)",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "foxyana.com",
+        "name": "Foxyana",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "fwomps.com",
+        "name": "fwomps.com",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "na",
+            "label": "Not applicable"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "fwomp.us",
+        "name": "fwomp.us",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "na",
+            "label": "Not applicable"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "gflippinv.com",
+        "name": "Good Flippin Vibes (alias)",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "goodflippindesign.com",
+        "name": "Good Flippin Design",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "unknown",
+            "label": "Not declared"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "partial",
+            "label": "Producer exists, not connected"
+          }
+        ]
+      },
+      {
+        "propertyId": "goodflippinluck.com",
+        "name": "Good Flippin Luck",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "goodflippinnews.com",
+        "name": "Good Flippin News",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "goodflippinvibes.com",
+        "name": "Good Flippin Vibes",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "goodflippinyikes.com",
+        "name": "Good Flippin Yikes",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "heavymoose.com",
+        "name": "Heavy Moose",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "lowertownstpaul.org",
+        "name": "Lowertown St. Paul",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "minnesotapeace.com",
+        "name": "MN Peace",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "unknown",
+            "label": "Not declared"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      },
+      {
+        "propertyId": "redleopardofstpaul.com",
+        "name": "Red Leopard of St. Paul",
+        "cells": [
+          {
+            "column": "availability",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "critical-path",
+            "state": "partial",
+            "label": "Homepage only"
+          },
+          {
+            "column": "telemetry",
+            "state": "unknown",
+            "label": "Unknown"
+          },
+          {
+            "column": "audience",
+            "state": "unknown",
+            "label": "Awaiting source"
+          },
+          {
+            "column": "outcomes",
+            "state": "unknown",
+            "label": "Not instrumented"
+          }
+        ]
+      }
+    ]
+  },
+  "audience": {
+    "status": "awaiting-authorized-source",
+    "statusLabel": "Awaiting authorized source",
+    "reason": "No governed Canonical Gold source is configured for Mission Control.",
+    "requirement": {
+      "what": "A read credential for the governed Canonical Gold and Traffic Insights documents.",
+      "where": "https://traffic.goodflippindesign.com/gold/ (admin-gated by design; the documents are produced daily by the Traffic Intelligence pipeline).",
+      "secrets": [
+        "MISSION_CONTROL_GOLD_SOURCE",
+        "MISSION_CONTROL_GOLD_TOKEN"
+      ],
+      "owner": "Traffic Intelligence owner (weave0/goodflippindesign, workflow traffic-intelligence-deploy.yml)"
+    },
+    "asOf": null,
+    "freshness": {
+      "state": "unknown",
+      "ageHours": null,
+      "freshUntil": null,
+      "expiresAt": null
+    },
+    "registryWindows": [
+      7,
+      28,
+      90
+    ]
+  },
+  "audienceCards": [],
+  "business": {
+    "status": "not-connected",
+    "statusLabel": "Not connected",
+    "reason": "No governed business-event feed is connected. Event-producing routes may exist in source, but none reports counts to Mission Control.",
+    "requirement": {
+      "what": "A governed first-party business-event feed (counts per property, event type and window) with explicit instrumentation status.",
+      "secrets": [
+        "MISSION_CONTROL_EVENTS_SOURCE",
+        "MISSION_CONTROL_EVENTS_TOKEN"
+      ],
+      "owner": "Each property owner declares an outcome; a producer publishes counts to the feed contract."
+    },
+    "coverage": {
+      "propertiesApplicable": 24,
+      "withDeclaredOutcome": 6,
+      "withCandidateProducers": 3,
+      "instrumented": 0
+    },
+    "declaredOutcomes": [
+      {
+        "type": "engagement",
+        "label": "Meaningful engagement",
+        "properties": [
+          {
+            "propertyId": "culturesherpa.org",
+            "name": "Culture Sherpa",
+            "label": "Explore the cultural atlas",
+            "state": "uninstrumented"
+          },
+          {
+            "propertyId": "aiaimate.com",
+            "name": "AIAIMate",
+            "label": "Start learning AI by doing",
+            "state": "not-connected"
+          },
+          {
+            "propertyId": "goodflippinluck.com",
+            "name": "Good Flippin Luck",
+            "label": "Play, share and join the supporter list",
+            "state": "uninstrumented"
+          }
+        ]
+      },
+      {
+        "type": "signup",
+        "label": "Sign-up",
+        "properties": [
+          {
+            "propertyId": "goodflippinnews.com",
+            "name": "Good Flippin News",
+            "label": "Subscribe or follow ecosystem dispatches",
+            "state": "uninstrumented"
+          },
+          {
+            "propertyId": "goodflippinvibes.com",
+            "name": "Good Flippin Vibes",
+            "label": "Join or support the community",
+            "state": "uninstrumented"
+          }
+        ]
+      },
+      {
+        "type": "lead",
+        "label": "Lead or contact",
+        "properties": [
+          {
+            "propertyId": "goodflippindesign.com",
+            "name": "Good Flippin Design",
+            "label": "Start a project inquiry",
+            "state": "not-connected"
+          }
+        ]
+      }
+    ],
+    "connectableProducers": [
+      {
+        "propertyId": "aiaimate.com",
+        "name": "AIAIMate",
+        "types": [
+          "signup",
+          "purchase"
+        ]
+      },
+      {
+        "propertyId": "cyancanoe.com",
+        "name": "Cyan Canoe",
+        "types": [
+          "lead"
+        ]
+      },
+      {
+        "propertyId": "goodflippindesign.com",
+        "name": "Good Flippin Design",
+        "types": [
+          "lead",
+          "purchase"
+        ]
+      }
+    ],
+    "funnel": {
+      "id": "outcome-funnel",
+      "title": "What business actions are occurring?",
+      "question": "How many meaningful actions happened, and where?",
+      "kind": "bars",
+      "unit": "events, 28 days",
+      "evidenceState": "empty",
+      "asOf": null,
+      "provenance": null,
+      "data": null,
+      "empty": {
+        "title": "Not measured yet",
+        "detail": "No governed business-event feed is connected. Event-producing routes may exist in source, but none reports counts to Mission Control.",
+        "unblockedBy": "A governed first-party business-event feed (counts per property, event type and window) with explicit instrumentation status. Secrets: MISSION_CONTROL_EVENTS_SOURCE, MISSION_CONTROL_EVENTS_TOKEN."
+      },
+      "caption": null
+    }
+  },
+  "findings": {
+    "nextUp": {
+      "id": "evidence:probe-missing",
+      "title": "No production probe evidence has been collected",
+      "severity": "high",
+      "category": "evidence-quality",
+      "subjects": [],
+      "why": "Without probes the estate can fail silently.",
+      "action": "Run the mission-control-evidence workflow (workflow_dispatch) and confirm it commits to the evidence branch.",
+      "actionability": "actionable-now",
+      "confidence": "high",
+      "priorityScore": 108
+    },
+    "counts": {
+      "open": 10,
+      "actionableNow": 2,
+      "blockedOnAuthority": 3,
+      "decisionNeeded": 4,
+      "nextUp": "evidence:probe-missing"
+    },
+    "risks": [
+      {
+        "id": "measurement:audience-certification",
+        "title": "Certify human audience metrics",
+        "severity": "critical",
+        "category": "audience",
+        "subjects": [],
+        "why": "Operational edge telemetry cannot responsibly stand in for human traction. Investors will ask how many real people use this.",
+        "action": "Connect certified GA4/RUM-quality audience ingestion (history ingestion seam: certified-audience) with explicit bot, monitor, API, asset, and Mission Control probe exclusions.",
+        "actionability": "blocked-on-authority",
+        "confidence": "high",
+        "priorityScore": 115
+      },
+      {
+        "id": "evidence:probe-missing",
+        "title": "No production probe evidence has been collected",
+        "severity": "high",
+        "category": "evidence-quality",
+        "subjects": [],
+        "why": "Without probes the estate can fail silently.",
+        "action": "Run the mission-control-evidence workflow (workflow_dispatch) and confirm it commits to the evidence branch.",
+        "actionability": "actionable-now",
+        "confidence": "high",
+        "priorityScore": 108
+      },
+      {
+        "id": "business-outcomes:coverage",
+        "title": "0 of 24 properties report business outcomes",
+        "severity": "medium",
+        "category": "business-outcomes",
+        "subjects": [
+          "globaldeets.com",
+          "culturesherpa.org",
+          "agentkagent.com",
+          "aiaimate.com",
+          "artificelligance.com",
+          "artificelligence.com",
+          "brettleeweaver.com",
+          "citizenapproved.org",
+          "cyancanoe.com",
+          "flipskillet.com",
+          "flipskillit.com",
+          "foxyana.com",
+          "fwomps.com",
+          "fwomp.us",
+          "gflippinv.com",
+          "goodflippindesign.com",
+          "goodflippinluck.com",
+          "goodflippinnews.com",
+          "goodflippinvibes.com",
+          "goodflippinyikes.com",
+          "heavymoose.com",
+          "lowertownstpaul.org",
+          "minnesotapeace.com",
+          "redleopardofstpaul.com"
+        ],
+        "why": "Traffic without outcomes cannot show that the estate produces value: leads, sign-ups, purchases and downloads are what an investor asks about after audience.",
+        "action": "Start with the properties whose producers already exist in source: publish counts to the globaldeets-business-events-feed contract (per property, event type and window) and set the events feed secrets.",
+        "actionability": "actionable-now",
+        "confidence": "high",
+        "priorityScore": 93
+      },
+      {
+        "id": "audience:governed-source",
+        "title": "Connect the governed audience source (awaiting authorization)",
+        "severity": "high",
+        "category": "audience",
+        "subjects": [],
+        "why": "Without a governed traffic source, usage, growth and each property's contribution cannot be stated at all. Nothing is estimated or shown as zero.",
+        "action": "Grant Mission Control read access: A read credential for the governed Canonical Gold and Traffic Insights documents. Then set the repository secrets MISSION_CONTROL_GOLD_SOURCE and MISSION_CONTROL_GOLD_TOKEN.",
+        "actionability": "blocked-on-authority",
+        "confidence": "high",
+        "priorityScore": 68
+      }
+    ],
+    "opportunities": [
+      {
+        "id": "product:culture-convergence",
+        "title": "Quantify Culture Sherpa convergence opportunity",
+        "severity": "medium",
+        "category": "product",
+        "subjects": [
+          "culturesherpa.org",
+          "globaldeets.com"
+        ],
+        "why": "The integration thesis could improve differentiation and depth, but should be supported by actual overlap and utility evidence.",
+        "action": "Measure cross-navigation, overlap, unique utility, search demand, and content reuse before making convergence claims.",
+        "actionability": "decision-needed",
+        "confidence": "medium",
+        "priorityScore": 77
+      },
+      {
+        "id": "business-outcomes:declare",
+        "title": "16 of 24 properties have no declared primary outcome",
+        "severity": "low",
+        "category": "business-outcomes",
+        "subjects": [
+          "globaldeets.com",
+          "agentkagent.com",
+          "artificelligance.com",
+          "artificelligence.com",
+          "brettleeweaver.com",
+          "citizenapproved.org",
+          "cyancanoe.com",
+          "flipskillet.com",
+          "foxyana.com",
+          "fwomps.com",
+          "fwomp.us",
+          "goodflippinyikes.com",
+          "heavymoose.com",
+          "lowertownstpaul.org",
+          "minnesotapeace.com",
+          "redleopardofstpaul.com"
+        ],
+        "why": "A property with no declared outcome cannot be judged useful, whatever its traffic.",
+        "action": "Owners declare one primary outcome per property from the common vocabulary (visit, engagement, CTA, lead, sign-up, application, purchase, download, or another declared outcome).",
+        "actionability": "decision-needed",
+        "confidence": "high",
+        "priorityScore": 36
+      }
+    ],
+    "gaps": [
+      {
+        "id": "data:history-density",
+        "title": "Accumulate enough comparable history for 7/28/90-day trends",
+        "severity": "medium",
+        "category": "evidence-quality",
+        "subjects": [],
+        "why": "Trend charts become decision-grade only when they contain comparable observations rather than decorative lines.",
+        "action": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
+        "actionability": "monitor",
+        "confidence": "high",
+        "priorityScore": 43
+      },
+      {
+        "id": "business-outcomes:declare",
+        "title": "16 of 24 properties have no declared primary outcome",
+        "severity": "low",
+        "category": "business-outcomes",
+        "subjects": [
+          "globaldeets.com",
+          "agentkagent.com",
+          "artificelligance.com",
+          "artificelligence.com",
+          "brettleeweaver.com",
+          "citizenapproved.org",
+          "cyancanoe.com",
+          "flipskillet.com",
+          "foxyana.com",
+          "fwomps.com",
+          "fwomp.us",
+          "goodflippinyikes.com",
+          "heavymoose.com",
+          "lowertownstpaul.org",
+          "minnesotapeace.com",
+          "redleopardofstpaul.com"
+        ],
+        "why": "A property with no declared outcome cannot be judged useful, whatever its traffic.",
+        "action": "Owners declare one primary outcome per property from the common vocabulary (visit, engagement, CTA, lead, sign-up, application, purchase, download, or another declared outcome).",
+        "actionability": "decision-needed",
+        "confidence": "high",
+        "priorityScore": 36
+      },
+      {
+        "id": "observability:critical-path-contracts",
+        "title": "16 of 20 serving properties still need an owner-declared critical path",
+        "severity": "low",
+        "category": "critical-path",
+        "subjects": [
+          "culturesherpa.org",
+          "agentkagent.com",
+          "brettleeweaver.com",
+          "citizenapproved.org",
+          "cyancanoe.com",
+          "flipskillet.com",
+          "flipskillit.com",
+          "foxyana.com",
+          "gflippinv.com",
+          "goodflippinluck.com",
+          "goodflippinnews.com",
+          "goodflippinvibes.com",
+          "goodflippinyikes.com",
+          "heavymoose.com",
+          "lowertownstpaul.org",
+          "redleopardofstpaul.com"
+        ],
+        "why": "Reachable-unverified is not verified health; only owned, contracted paths can prove the product works.",
+        "action": "Each property owner names the one route or function that proves the product works (API endpoint, key page, search) and Mission Control adds it to the registry.",
+        "actionability": "decision-needed",
+        "confidence": "high",
+        "priorityScore": 36
+      },
+      {
+        "id": "governance:lifecycle-undeclared",
+        "title": "9 properties have no owner-declared lifecycle",
+        "severity": "low",
+        "category": "governance",
+        "subjects": [
+          "agentkagent.com",
+          "artificelligance.com",
+          "artificelligence.com",
+          "cyancanoe.com",
+          "flipskillet.com",
+          "foxyana.com",
+          "fwomps.com",
+          "fwomp.us",
+          "goodflippinyikes.com"
+        ],
+        "why": "Without a declared lifecycle an expected pause looks the same as neglect, and real outages cannot be told from intended silence.",
+        "action": "Owners declare each property's lifecycle and purpose in the estate registry.",
+        "actionability": "decision-needed",
+        "confidence": "high",
+        "priorityScore": 30
+      }
+    ],
+    "wins": [
+      {
+        "id": "win:critical-paths",
+        "title": "4 properties have a critical path defined from the owner's own configuration, not just a homepage check",
+        "detail": "Owner-derived critical paths: globaldeets.com, aiaimate.com, goodflippindesign.com, minnesotapeace.com.",
+        "evidence": "estate-registry"
+      }
+    ]
+  },
+  "unknowns": [
+    {
+      "id": "unknown:usage",
+      "title": "How much the properties are used",
+      "detail": "The governed audience source is awaiting authorized source. Nothing is estimated.",
+      "closedBy": "A read credential for the governed Canonical Gold and Traffic Insights documents."
+    },
+    {
+      "id": "unknown:humans",
+      "title": "How many real people use the estate",
+      "detail": "No connected source separates certified humans from automated traffic. Edge requests are never presented as human audience.",
+      "closedBy": "A human-audience source with bot and agent classification."
+    },
+    {
+      "id": "unknown:outcomes",
+      "title": "What the properties produce",
+      "detail": "No business-outcome feed is connected, so no lead, sign-up or purchase count exists, not even a zero.",
+      "closedBy": "A governed first-party business-event feed (counts per property, event type and window) with explicit instrumentation status."
+    },
+    {
+      "id": "unknown:telemetry",
+      "title": "Whether any browser telemetry is arriving",
+      "detail": "0 properties ship an analytics tag; none has reception evidence.",
+      "closedBy": "GA4 Data API or Cloudflare Web Analytics read access."
+    },
+    {
+      "id": "unknown:lifecycle",
+      "title": "What 9 properties are meant to be",
+      "detail": "No owner-declared lifecycle or purpose for them; production behaviour is shown without judging intent.",
+      "closedBy": "Owners declare lifecycle and purpose in the estate registry."
+    }
+  ],
+  "charts": {
+    "operationalComposition": {
+      "id": "operational-composition",
+      "title": "What state is the estate in?",
+      "question": "Is the estate functioning, and how much of it can we actually verify?",
+      "kind": "segments",
+      "unit": "properties",
+      "evidenceState": "empty",
+      "asOf": null,
+      "provenance": "Production probes from 0 vantages; health contract 1.1.0",
+      "data": null,
+      "empty": {
+        "title": "No probe evidence",
+        "detail": "No valid production probe run has been collected, so the estate state is unknown.",
+        "unblockedBy": "The next scheduled collection."
+      },
+      "caption": "Responding is not the same as healthy: only properties that pass an authoritative critical-path check are called verified."
+    },
+    "trajectory": {
+      "id": "audience-trajectory",
+      "title": "Is usage growing or shrinking?",
+      "question": "How many requests does the estate serve each day?",
+      "kind": "line",
+      "unit": "requests per day",
+      "evidenceState": "empty",
+      "asOf": null,
+      "provenance": null,
+      "data": null,
+      "empty": {
+        "title": "Not measured yet",
+        "detail": "No governed Canonical Gold source is configured for Mission Control.",
+        "unblockedBy": "A read credential for the governed Canonical Gold and Traffic Insights documents. Secrets: MISSION_CONTROL_GOLD_SOURCE, MISSION_CONTROL_GOLD_TOKEN."
+      },
+      "caption": null
+    },
+    "contribution": {
+      "id": "audience-contribution",
+      "title": "Which properties carry the traffic?",
+      "question": "What share of estate requests does each property account for?",
+      "kind": "bars",
+      "unit": "requests, 28 days",
+      "evidenceState": "empty",
+      "asOf": null,
+      "provenance": null,
+      "data": null,
+      "empty": {
+        "title": "Not measured yet",
+        "detail": "No governed Canonical Gold source is configured for Mission Control.",
+        "unblockedBy": "A read credential for the governed Canonical Gold and Traffic Insights documents. Secrets: MISSION_CONTROL_GOLD_SOURCE, MISSION_CONTROL_GOLD_TOKEN."
+      },
+      "caption": null
+    },
+    "movers": {
+      "id": "audience-movers",
+      "title": "What is changing?",
+      "question": "Which properties are growing or declining materially?",
+      "kind": "bars",
+      "unit": "percent change",
+      "evidenceState": "empty",
+      "asOf": null,
+      "provenance": null,
+      "data": null,
+      "empty": {
+        "title": "Not measured yet",
+        "detail": "No governed Canonical Gold source is configured for Mission Control.",
+        "unblockedBy": "A read credential for the governed Canonical Gold and Traffic Insights documents. Secrets: MISSION_CONTROL_GOLD_SOURCE, MISSION_CONTROL_GOLD_TOKEN."
+      },
+      "caption": null
+    },
+    "composition": {
+      "id": "audience-composition",
+      "title": "Who is this traffic?",
+      "question": "How much is human, automated or unknown?",
+      "kind": "segments",
+      "unit": "share of requests",
+      "evidenceState": "empty",
+      "asOf": null,
+      "provenance": null,
+      "data": null,
+      "empty": {
+        "title": "Not measured yet",
+        "detail": "No governed Canonical Gold source is configured for Mission Control.",
+        "unblockedBy": "A read credential for the governed Canonical Gold and Traffic Insights documents. Secrets: MISSION_CONTROL_GOLD_SOURCE, MISSION_CONTROL_GOLD_TOKEN."
+      },
+      "caption": null
+    },
+    "outcomeFunnel": {
+      "id": "outcome-funnel",
+      "title": "What business actions are occurring?",
+      "question": "How many meaningful actions happened, and where?",
+      "kind": "bars",
+      "unit": "events, 28 days",
+      "evidenceState": "empty",
+      "asOf": null,
+      "provenance": null,
+      "data": null,
+      "empty": {
+        "title": "Not measured yet",
+        "detail": "No governed business-event feed is connected. Event-producing routes may exist in source, but none reports counts to Mission Control.",
+        "unblockedBy": "A governed first-party business-event feed (counts per property, event type and window) with explicit instrumentation status. Secrets: MISSION_CONTROL_EVENTS_SOURCE, MISSION_CONTROL_EVENTS_TOKEN."
+      },
+      "caption": null
+    }
+  },
+  "shareText": "GlobalDeets Mission Control — estate summary\nGenerated 2026-09-24T16:29:00Z from governed evidence (probe run none, observed never).\n\n• Good Flippin Design operates 25 web properties. 16 have an owner-declared status (10 active, 3 incubating, 3 aliases); 9 have none, so their intent is shown as unknown.\n• No valid production probe evidence exists, so nothing can be said about whether the estate is up.\n• Usage cannot be stated yet: the governed traffic source is awaiting authorization, so no request, growth or contribution figure is shown (and none is estimated).\n• No property reports business outcomes yet: 6 declare an intended outcome and 3 have event-producing routes that are not connected. \"Zero conversions\" cannot be stated for any of them.\n• 10 open items: 2 actionable now, 3 blocked on missing authority, 4 need a decision. First: No production probe evidence has been collected.\n\nMeasurement coverage:\n  - Availability probed: 0 of 25 (0%)\n  - Independent second witness: 0 of 20 (0%)\n  - Authoritative critical path: 4 of 20 (20%)\n  - Analytics tag shipped: 0 of 24 (0%)\n  - Telemetry reception verified: 0 of 24 (0%)\n  - Audience measured: 0 of 25 (0%)\n  - Business outcomes measured: 0 of 24 (0%)\n  - Owner-declared lifecycle: 16 of 25 (64%)\n  - Owner-declared outcome: 6 of 25 (24%)\n\nAudience source: awaiting authorized source. Business-outcome feed: not connected.\nUnknown is not zero, reachable is not healthy, and edge requests are not people.",
+  "evidenceSummary": "1 of 6 evidence classes are live"
+}

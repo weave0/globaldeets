@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "2.0.0",
   "contractName": "globaldeets-estate-health",
   "generatedAt": "2026-09-24T16:29:00Z",
   "propertyCount": 25,
@@ -10,10 +10,13 @@
     "zoneEqualsIndependentAudience": false,
     "httpReachabilityEqualsHealth": false,
     "providerTopologyIsUnhealthy": false,
-    "expiredEvidenceIsCurrent": false
+    "expiredEvidenceIsCurrent": false,
+    "intentionallyInactiveIsOutage": false,
+    "cloudflareRumSettingIsTelemetry": false,
+    "tagPresenceIsReception": false
   },
   "healthContract": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "states": [
       "verified-healthy",
       "reachable-unverified",
@@ -23,6 +26,7 @@
       "no-service-published",
       "probe-blocked",
       "contract-drift",
+      "vantage-conflict",
       "evidence-stale",
       "evidence-expired",
       "health-evidence-incomplete"
@@ -32,7 +36,10 @@
       "HTTP 2xx alone yields reachable-unverified, never verified-healthy.",
       "A successful deploy is not availability evidence.",
       "A blocked probe (edge challenge, 401/403, 429) is insufficient evidence, not an outage.",
+      "A blocked vantage is set aside when another vantage is conclusive; the blocked vantage stays visible as evidence.",
+      "Vantages that conclusively disagree yield vantage-conflict; neither answer is silently chosen.",
       "A zone that publishes no web address and declares no service is no-service-published, not an outage.",
+      "A declared-inactive or unknown-intent property that publishes nothing is never an outage.",
       "Provider topology (Pages, Workers, external hosts) never by itself makes a property unhealthy.",
       "Baseline (non-authoritative) contract mismatches are contract-drift for review, never outages.",
       "Expired evidence is presented as unknown; a confirmed outage keeps its alarm while it ages.",
@@ -54,6 +61,16 @@
       "cadenceHours": 24,
       "freshWithinHours": 48,
       "expiredAfterHours": 168
+    },
+    "audience": {
+      "cadenceHours": 24,
+      "freshWithinHours": 36,
+      "expiredAfterHours": 96
+    },
+    "businessEvents": {
+      "cadenceHours": 24,
+      "freshWithinHours": 36,
+      "expiredAfterHours": 96
     }
   },
   "evidence": {
@@ -63,6 +80,7 @@
       "validity": "none",
       "vantage": null,
       "vantageCount": 0,
+      "vantages": [],
       "canaries": [],
       "syntheticTraffic": null,
       "freshness": {
@@ -89,6 +107,12 @@
         "freshUntil": "2026-09-26T16:29:00.000Z",
         "expiresAt": "2026-10-01T16:29:00.000Z"
       }
+    },
+    "rumReception": {
+      "status": "unavailable",
+      "reason": "No RUM reception evidence was collected.",
+      "windowHours": 24,
+      "observedAt": null
     }
   },
   "summary": {
@@ -101,16 +125,64 @@
     "unavailableZones": 0,
     "noServiceZones": 0,
     "probeBlockedZones": 0,
+    "conflictingZones": 0,
     "criticalPathKnownZones": 0,
     "criticalPathContractZones": 20,
+    "criticalPathAuthoritativeZones": 4,
+    "criticalPathBaselineZones": 16,
+    "criticalPathNeedsDeclarationZones": 16,
+    "servingExpectedZones": 20,
     "verifiedHealthyZones": 0,
-    "pagesMappedActiveZones": 10
+    "pagesMappedActiveZones": 10,
+    "instrumentation": {
+      "applicable": 24,
+      "activeVerified": 0,
+      "configuredUnverified": 0,
+      "configuredInvalid": 0,
+      "absent": 0,
+      "inaccessible": 0,
+      "unknown": 24
+    },
+    "vantages": {
+      "valid": 0,
+      "agree": 0,
+      "partial": 0,
+      "conflict": 0,
+      "single": 0,
+      "inconclusive": 0
+    },
+    "lifecycle": {
+      "active": 10,
+      "incubating": 3,
+      "experimental": 0,
+      "dormant": 0,
+      "intentionally-unpublished": 0,
+      "deprecated": 0,
+      "alias": 3,
+      "unknown": 9
+    },
+    "ownerDeclared": {
+      "lifecycle": 16,
+      "purpose": 18,
+      "primaryOutcome": 6
+    },
+    "expectationUnmetZones": []
+  },
+  "infrastructure": {
+    "evidenceState": "unavailable",
+    "reason": "The Pages inventory was not refreshed, so surfaces and projects cannot be reconciled.",
+    "observedAt": null,
+    "projectCount": null,
+    "unregisteredSurfaces": [],
+    "orphanProjects": []
   },
   "sourceNotes": [
-    "Zone, RUM, and Pages facts come from the Cloudflare account inventory; they are refreshed by the collector when the token permits and otherwise carried forward and labelled by age.",
+    "Zone and Pages facts come from the Cloudflare account inventory; they are refreshed by the collector when the token permits and otherwise carried forward and labelled by age.",
+    "The Cloudflare RUM flag is a carried-forward setting. Browser instrumentation is judged from the analytics tags production actually serves; only reception evidence proves telemetry arrives.",
     "Availability and critical-path state come only from scheduled production probes; a successful deploy is not treated as uptime.",
     "Probe traffic is synthetic monitor traffic (see evidence.probe.syntheticTraffic) and must be excluded from audience classification.",
-    "Properties without an honest critical-path contract keep criticalPath: unknown."
+    "Properties without an honest critical-path contract keep criticalPath: unknown and are counted as needing an owner declaration.",
+    "Purpose, lifecycle and outcome come from owner declarations where they exist; each field carries its provenance and unknown stays unknown."
   ],
   "properties": [
     {
@@ -118,16 +190,58 @@
       "displayName": "GlobalDeets",
       "emphasisRank": 1,
       "investorCritical": true,
+      "profile": {
+        "name": "GlobalDeets",
+        "purpose": "Live world news pinned to a 3D globe, with source links, culture context, webcams and public knowledge resources.",
+        "category": "platform",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 2,
+        "audience": null,
+        "earningPath": "Commissioned briefs and data sponsors",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -169,8 +283,11 @@
         "contract": {
           "level": "authoritative",
           "checkCount": 4,
-          "basis": "GlobalDeets owns and deploys this property; checks mirror the production verification the deploy workflow already enforces."
-        }
+          "basis": "GlobalDeets owns and deploys this property; checks mirror the production verification the deploy workflow already enforces.",
+          "basisSource": "owner-deploy-verification",
+          "status": "authoritative"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -198,16 +315,63 @@
       "displayName": "Culture Sherpa",
       "emphasisRank": 2,
       "investorCritical": true,
+      "profile": {
+        "name": "Culture Sherpa",
+        "purpose": "Interactive cultural atlas for exploring the world's cultures.",
+        "category": "learning",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 2,
+        "audience": "Learners, educators, travelers, culture-curious visitors and institutional partners",
+        "earningPath": "Grants, learning sponsors and modules",
+        "primaryOutcome": {
+          "type": "engagement",
+          "label": "Explore the cultural atlas"
+        },
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -249,8 +413,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -279,16 +446,56 @@
       "displayName": "culturesherpa.com",
       "emphasisRank": 3,
       "investorCritical": false,
+      "profile": {
+        "name": "Culture Sherpa (alias)",
+        "purpose": null,
+        "category": "learning",
+        "lifecycle": "alias",
+        "aliasOf": "culturesherpa.org",
+        "strategicTier": 2,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "observed-behaviour",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "alias",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "alias",
+          "note": "An additional address for culturesherpa.org."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "not-applicable",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "This address only redirects; the destination property carries the instrumentation.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -327,7 +534,14 @@
           "freshUntil": null,
           "expiresAt": null
         },
-        "contract": null
+        "contract": {
+          "level": null,
+          "checkCount": 0,
+          "basis": null,
+          "basisSource": null,
+          "status": "not-applicable"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -356,16 +570,55 @@
       "displayName": "agentkagent.com",
       "emphasisRank": 4,
       "investorCritical": false,
+      "profile": {
+        "name": "AgentK",
+        "purpose": "Effect-integrity layer between AI-agent intent and consequential real-world tool actions.",
+        "category": "research",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -407,8 +660,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -437,16 +693,63 @@
       "displayName": "aiaimate.com",
       "emphasisRank": 5,
       "investorCritical": false,
+      "profile": {
+        "name": "AIAIMate",
+        "purpose": "Free, visual AI-literacy lessons, interactive tools and guided learning paths.",
+        "category": "learning",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 2,
+        "audience": "AI learners, professionals, students and partners looking for practical AI education",
+        "earningPath": "Subscriptions, premium kits and sponsors",
+        "primaryOutcome": {
+          "type": "engagement",
+          "label": "Start learning AI by doing"
+        },
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "observed-homepage",
+          "audience": "owner-brand-registry",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -486,10 +789,13 @@
           "expiresAt": null
         },
         "contract": {
-          "level": "baseline",
-          "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "level": "authoritative",
+          "checkCount": 2,
+          "basis": "The AIAIMate portal implements and documents a search API (portal/app/api/search) that the learning experience depends on; the contract is defined in source (ok: true, results array).",
+          "basisSource": "owner-source-route",
+          "status": "authoritative"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -508,7 +814,7 @@
       },
       "probeExpectation": {
         "expectation": "serves-content",
-        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+        "basis": "Owner-documented search API route (source) plus homepage identity."
       },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
@@ -518,16 +824,54 @@
       "displayName": "artificelligance.com",
       "emphasisRank": 6,
       "investorCritical": false,
+      "profile": {
+        "name": "artificelligance.com",
+        "purpose": null,
+        "category": "reserved",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "category": "observed-behaviour"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "unobserved",
+        "state": "unknown",
         "rum": "off",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "off",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -566,7 +910,14 @@
           "freshUntil": null,
           "expiresAt": null
         },
-        "contract": null
+        "contract": {
+          "level": null,
+          "checkCount": 0,
+          "basis": null,
+          "basisSource": null,
+          "status": "not-applicable"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -595,16 +946,54 @@
       "displayName": "artificelligence.com",
       "emphasisRank": 7,
       "investorCritical": false,
+      "profile": {
+        "name": "artificelligence.com",
+        "purpose": null,
+        "category": "reserved",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "category": "observed-behaviour"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "unobserved",
+        "state": "unknown",
         "rum": "off",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "off",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -643,7 +1032,14 @@
           "freshUntil": null,
           "expiresAt": null
         },
-        "contract": null
+        "contract": {
+          "level": null,
+          "checkCount": 0,
+          "basis": null,
+          "basisSource": null,
+          "status": "not-applicable"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -672,16 +1068,58 @@
       "displayName": "brettleeweaver.com",
       "emphasisRank": 8,
       "investorCritical": false,
+      "profile": {
+        "name": "Brett Lee Weaver",
+        "purpose": "Personal site of a commercial leader, systems thinker and AI-native builder.",
+        "category": "personal",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 3,
+        "audience": null,
+        "earningPath": "Credibility, speaking and partner trust",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -723,8 +1161,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -753,16 +1194,58 @@
       "displayName": "citizenapproved.org",
       "emphasisRank": 9,
       "investorCritical": false,
+      "profile": {
+        "name": "CitizenApproved",
+        "purpose": "Source-first guide to current U.S. citizenship and naturalization law and policy.",
+        "category": "civic",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 2,
+        "audience": null,
+        "earningPath": "Civic sponsors, grants and email list",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -804,8 +1287,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -833,16 +1319,55 @@
       "displayName": "cyancanoe.com",
       "emphasisRank": 10,
       "investorCritical": false,
+      "profile": {
+        "name": "Cyan Canoe",
+        "purpose": "Helps schools, churches and mission-led organizations see where generosity goes and discuss impact without overstating evidence.",
+        "category": "civic",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -884,8 +1409,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -913,16 +1441,55 @@
       "displayName": "flipskillet.com",
       "emphasisRank": 11,
       "investorCritical": false,
+      "profile": {
+        "name": "Flipskillet",
+        "purpose": "Evidence-driven atlas of global media ownership, control and geographic presence.",
+        "category": "research",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "owner-repository",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -964,8 +1531,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -993,16 +1563,55 @@
       "displayName": "flipskillit.com",
       "emphasisRank": 12,
       "investorCritical": false,
+      "profile": {
+        "name": "Flipskillet (alias)",
+        "purpose": null,
+        "category": "research",
+        "lifecycle": "alias",
+        "aliasOf": "flipskillet.com",
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "observed-behaviour",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "alias",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "alias",
+          "note": "An additional address for flipskillet.com."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -1044,8 +1653,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -1073,16 +1685,55 @@
       "displayName": "foxyana.com",
       "emphasisRank": 13,
       "investorCritical": false,
+      "profile": {
+        "name": "Foxyana",
+        "purpose": "Ukrainian cultural project translating Carpathian heritage through dance, music, story and image.",
+        "category": "creative",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -1124,8 +1775,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -1154,16 +1808,54 @@
       "displayName": "fwomps.com",
       "emphasisRank": 14,
       "investorCritical": false,
+      "profile": {
+        "name": "fwomps.com",
+        "purpose": null,
+        "category": "reserved",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "category": "observed-behaviour"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "unobserved",
+        "state": "unknown",
         "rum": "off",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "off",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -1202,7 +1894,14 @@
           "freshUntil": null,
           "expiresAt": null
         },
-        "contract": null
+        "contract": {
+          "level": null,
+          "checkCount": 0,
+          "basis": null,
+          "basisSource": null,
+          "status": "not-applicable"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -1231,16 +1930,54 @@
       "displayName": "fwomp.us",
       "emphasisRank": 15,
       "investorCritical": false,
+      "profile": {
+        "name": "fwomp.us",
+        "purpose": null,
+        "category": "reserved",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "category": "observed-behaviour"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "unobserved",
+        "state": "unknown",
         "rum": "off",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "off",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -1279,7 +2016,14 @@
           "freshUntil": null,
           "expiresAt": null
         },
-        "contract": null
+        "contract": {
+          "level": null,
+          "checkCount": 0,
+          "basis": null,
+          "basisSource": null,
+          "status": "not-applicable"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -1308,16 +2052,55 @@
       "displayName": "gflippinv.com",
       "emphasisRank": 16,
       "investorCritical": false,
+      "profile": {
+        "name": "Good Flippin Vibes (alias)",
+        "purpose": null,
+        "category": "community",
+        "lifecycle": "alias",
+        "aliasOf": "goodflippinvibes.com",
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "observed-behaviour",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "alias",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "alias",
+          "note": "An additional address for goodflippinvibes.com."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -1359,8 +2142,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -1388,16 +2174,63 @@
       "displayName": "goodflippindesign.com",
       "emphasisRank": 17,
       "investorCritical": false,
+      "profile": {
+        "name": "Good Flippin Design",
+        "purpose": "Web development and AI-integration studio; portfolio and trust hub for the ecosystem.",
+        "category": "platform",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 1,
+        "audience": "Prospects, sponsors, partners, supporters and ecosystem operators",
+        "earningPath": "Patrons, ads, sponsor intake and commissioned work",
+        "primaryOutcome": {
+          "type": "lead",
+          "label": "Start a project inquiry"
+        },
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -1437,10 +2270,13 @@
           "expiresAt": null
         },
         "contract": {
-          "level": "baseline",
-          "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "level": "authoritative",
+          "checkCount": 4,
+          "basis": "Routes the owner already treats as production-critical in their own monitoring (config/health-targets.json: home, /donate, /community-portal are marked critical) plus the documented /api/health endpoint.",
+          "basisSource": "owner-health-targets",
+          "status": "authoritative"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -1458,7 +2294,7 @@
       },
       "probeExpectation": {
         "expectation": "serves-content",
-        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+        "basis": "Owner-declared production-critical routes (owner health targets)."
       },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
@@ -1468,16 +2304,63 @@
       "displayName": "goodflippinluck.com",
       "emphasisRank": 18,
       "investorCritical": false,
+      "profile": {
+        "name": "Good Flippin Luck",
+        "purpose": "Playable charm, promo and creative-commerce surface for the Good Flippin Vibes universe.",
+        "category": "creative",
+        "lifecycle": "incubating",
+        "aliasOf": null,
+        "strategicTier": 4,
+        "audience": "Supporters, fans, casual visitors and music/art followers",
+        "earningPath": null,
+        "primaryOutcome": {
+          "type": "engagement",
+          "label": "Play, share and join the supporter list"
+        },
+        "expectedState": "not-live",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "expectedState": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        },
+        "expectation": {
+          "lifecycle": "incubating",
+          "expectedState": "not-live",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -1519,8 +2402,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -1549,16 +2435,63 @@
       "displayName": "goodflippinnews.com",
       "emphasisRank": 19,
       "investorCritical": false,
+      "profile": {
+        "name": "Good Flippin News",
+        "purpose": "Joy-forward dispatches from the Good Flippin Vibes creative and civic ecosystem.",
+        "category": "community",
+        "lifecycle": "incubating",
+        "aliasOf": null,
+        "strategicTier": 4,
+        "audience": "Supporters, partners and local, civic and creative readers",
+        "earningPath": null,
+        "primaryOutcome": {
+          "type": "signup",
+          "label": "Subscribe or follow ecosystem dispatches"
+        },
+        "expectedState": "not-live",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "expectedState": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        },
+        "expectation": {
+          "lifecycle": "incubating",
+          "expectedState": "not-live",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -1600,8 +2533,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -1630,16 +2566,63 @@
       "displayName": "goodflippinvibes.com",
       "emphasisRank": 20,
       "investorCritical": false,
+      "profile": {
+        "name": "Good Flippin Vibes",
+        "purpose": "Wellness, art and community: the origin brand of the ecosystem.",
+        "category": "community",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 1,
+        "audience": "Community members, supporters and art/music followers",
+        "earningPath": "Patrons and community features",
+        "primaryOutcome": {
+          "type": "signup",
+          "label": "Join or support the community"
+        },
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-brand-registry",
+          "purpose": "owner-brand-registry",
+          "audience": "owner-brand-registry",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star",
+          "primaryOutcome": "owner-brand-registry"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -1681,8 +2664,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -1710,16 +2696,55 @@
       "displayName": "goodflippinyikes.com",
       "emphasisRank": 21,
       "investorCritical": false,
+      "profile": {
+        "name": "Good Flippin Yikes",
+        "purpose": "Publishing shell for evolving posts, topics and curated links.",
+        "category": "community",
+        "lifecycle": "unknown",
+        "aliasOf": null,
+        "strategicTier": null,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose"
+        },
+        "expectation": {
+          "lifecycle": "unknown",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -1761,8 +2786,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -1791,16 +2819,58 @@
       "displayName": "heavymoose.com",
       "emphasisRank": 22,
       "investorCritical": false,
+      "profile": {
+        "name": "Heavy Moose",
+        "purpose": "Official artist site for Heavy Moose: industrial, dark ambient and experimental music, releases and videos.",
+        "category": "creative",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 3,
+        "audience": null,
+        "earningPath": "Patron support, streaming and merch",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -1842,8 +2912,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -1871,16 +2944,58 @@
       "displayName": "lowertownstpaul.org",
       "emphasisRank": 23,
       "investorCritical": false,
+      "profile": {
+        "name": "Lowertown St. Paul",
+        "purpose": "Portrait of Lowertown, a Saint Paul National Historic District.",
+        "category": "civic",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 3,
+        "audience": null,
+        "earningPath": "Local sponsors and quarterly briefings",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -1922,8 +3037,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",
@@ -1952,16 +3070,58 @@
       "displayName": "minnesotapeace.com",
       "emphasisRank": 24,
       "investorCritical": false,
+      "profile": {
+        "name": "MN Peace",
+        "purpose": "Plain-language guide to Minnesota's public-program fraud cases, oversight failures and reforms, with primary records.",
+        "category": "civic",
+        "lifecycle": "active",
+        "aliasOf": null,
+        "strategicTier": 3,
+        "audience": null,
+        "earningPath": "Civic services and local partnerships",
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "earningPath": "owner-north-star",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "active",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -2001,10 +3161,13 @@
           "expiresAt": null
         },
         "contract": {
-          "level": "baseline",
-          "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "level": "authoritative",
+          "checkCount": 8,
+          "basis": "The publication sections the owner already verifies after every deploy (deploy workflow: Verify exact public URLs serve the publication build). Only route availability and page substance are checked, not volatile copy.",
+          "basisSource": "owner-deploy-verification",
+          "status": "authoritative"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "cloudflare-pages",
@@ -2022,7 +3185,7 @@
       },
       "probeExpectation": {
         "expectation": "serves-content",
-        "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
+        "basis": "Owner deploy verification enforces these publication routes."
       },
       "diagnosticState": "health-evidence-incomplete",
       "evidenceAsOf": "2026-09-24T16:29:00Z"
@@ -2032,16 +3195,57 @@
       "displayName": "redleopardofstpaul.com",
       "emphasisRank": 25,
       "investorCritical": false,
+      "profile": {
+        "name": "Red Leopard of St. Paul",
+        "purpose": "Home for Nine Lives on the Strip: Lowertown-born hair metal, cover art and the developing Melanie release.",
+        "category": "creative",
+        "lifecycle": "incubating",
+        "aliasOf": null,
+        "strategicTier": 4,
+        "audience": null,
+        "earningPath": null,
+        "primaryOutcome": null,
+        "expectedState": "unknown",
+        "provenance": {
+          "lifecycle": "owner-north-star",
+          "purpose": "observed-homepage",
+          "category": "classified-from-purpose",
+          "strategicTier": "owner-north-star"
+        },
+        "expectation": {
+          "lifecycle": "incubating",
+          "expectedState": "unknown",
+          "observedMode": "unknown",
+          "met": null,
+          "kind": "no-declaration",
+          "note": "The owner has not declared an expected state for this property."
+        },
+        "operatingStatus": {
+          "key": "unknown",
+          "tone": "unknown"
+        }
+      },
       "zone": {
         "status": "active",
         "evidenceState": "measured",
         "source": "Cloudflare zone inventory"
       },
       "observability": {
-        "state": "observed",
+        "state": "unknown",
         "rum": "on",
-        "evidenceState": "measured",
-        "source": "Cloudflare zone RUM setting"
+        "rumSetting": {
+          "value": "on",
+          "evidenceState": "carried-forward",
+          "asOf": "2026-09-24T16:29:00Z",
+          "source": "Cloudflare zone RUM setting"
+        },
+        "evidenceState": "unavailable",
+        "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
+        "providers": [],
+        "reason": "No fresh page was inspected for this property.",
+        "confidence": "high",
+        "reception": null,
+        "discrepancy": null
       },
       "availability": {
         "state": "unknown",
@@ -2083,8 +3287,11 @@
         "contract": {
           "level": "baseline",
           "checkCount": 1,
-          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage."
-        }
+          "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
+          "basisSource": null,
+          "status": "baseline-only"
+        },
+        "vantages": []
       },
       "deployment": {
         "provider": "unknown",

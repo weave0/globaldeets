@@ -30,6 +30,9 @@ jobs:
           test -f observatory/mission-control/estate-health.json || (echo "MISSING: Mission Control estate health" && exit 1)
           test -f observatory/mission-control/diagnostics.json || (echo "MISSING: Mission Control diagnostics" && exit 1)
           test -f observatory/mission-control/probes.json || (echo "MISSING: Mission Control probes" && exit 1)
+          test -f observatory/mission-control/audience.json || (echo "MISSING: Mission Control audience" && exit 1)
+          test -f observatory/mission-control/business-events.json || (echo "MISSING: Mission Control business events" && exit 1)
+          test -f observatory/mission-control/executive.json || (echo "MISSING: Mission Control executive summary" && exit 1)
           test -f observatory/mission-control/evidence-semantics.js || (echo "MISSING: Mission Control evidence semantics" && exit 1)
           test -f tools/mission-control/config/estate-registry.json || (echo "MISSING: estate registry" && exit 1)
           test -f .github/workflows/mission-control-evidence.yml || (echo "MISSING: scheduled evidence workflow" && exit 1)
@@ -81,9 +84,14 @@ jobs:
           node --check observatory/coverage/observatory.js
           node --check observatory/mission-control/mission-control.js
           node --check observatory/mission-control/evidence-semantics.js
+          node --check observatory/mission-control/mc-model.js
+          node --check observatory/mission-control/mc-charts.js
+          node --check observatory/mission-control/mc-executive.js
+          node --check observatory/mission-control/mc-operator.js
           node --check tools/verify-mission-control-prod.js
           node --check tools/mission-control/collect.mjs
           node --check tools/mission-control/build.mjs
+          node --check tools/mission-control/probe-vantage.mjs
           node --check tools/mission-control/overlay.mjs
           node --check tools/mission-control/lib/probe.mjs
           node --check tools/mission-control/lib/estate.mjs
@@ -95,6 +103,13 @@ jobs:
           node --check tools/mission-control/lib/evidence.mjs
           node --check tools/mission-control/lib/collect.mjs
           node --check tools/mission-control/lib/cloudflare-inventory.mjs
+          node --check tools/mission-control/lib/instrumentation.mjs
+          node --check tools/mission-control/lib/rum-reception.mjs
+          node --check tools/mission-control/lib/readings.mjs
+          node --check tools/mission-control/lib/audience.mjs
+          node --check tools/mission-control/lib/events.mjs
+          node --check tools/mission-control/lib/vantage.mjs
+          node --check tools/mission-control/lib/executive.mjs
           node --check shared/ecosystem-nav.js
           node --check playwright.config.js
           node --check tests/smoke.spec.js
@@ -115,6 +130,14 @@ jobs:
           node --check tests/mission-control-evidence.test.mjs
           node --check tests/mission-control-scheduler.test.mjs
           node --check tests/mission-control-hardening.test.mjs
+          node --check tests/mission-control-audience.test.mjs
+          node --check tests/mission-control-events.test.mjs
+          node --check tests/mission-control-instrumentation.test.mjs
+          node --check tests/mission-control-vantage.test.mjs
+          node --check tests/mission-control-intelligence.test.mjs
+          node --check tests/mission-control-executive.test.mjs
+          node --check tests/mission-control-migration.test.mjs
+          node --check tests/mission-control-model.test.mjs
       - name: Reject stale investor-facing copy
         run: |
           if grep -qi "Data Platform Showcase" categories.html; then echo "STALE: portfolio-era categories copy" && exit 1; fi

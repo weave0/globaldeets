@@ -8,12 +8,43 @@ on:
   schedule:
     - cron: "17 */6 * * *"
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Collect and validate everything, but commit and deploy nothing"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 jobs:
+  # GD-031: a second, independent network. The same probe engine runs from a macOS runner (a different provider
+  # network from the Ubuntu runner) and its raw run is handed to the collector, which reconciles the two vantages.
+  # Disagreement becomes evidence; a failing or missing secondary never blocks the primary collection.
+  vantage-macos:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Probe the estate from the second vantage
+        run: node tools/mission-control/probe-vantage.mjs --id=github-actions-macos --network="GitHub-hosted macOS" --out=vantages
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: vantage-macos
+          path: vantages/
+          if-no-files-found: ignore
+          retention-days: 2
+
   collect:
+    needs: vantage-macos
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     permissions:
@@ -44,7 +75,14 @@ jobs:
           fi
 
       - name: Run mission-control contract tests
-        run: node --test tests/mission-control-probe.test.mjs tests/mission-control-collector.test.mjs tests/mission-control-evidence.test.mjs tests/mission-control-scheduler.test.mjs tests/mission-control-hardening.test.mjs
+        run: node --test tests/mission-control-probe.test.mjs tests/mission-control-collector.test.mjs tests/mission-control-evidence.test.mjs tests/mission-control-scheduler.test.mjs tests/mission-control-hardening.test.mjs tests/mission-control-audience.test.mjs tests/mission-control-events.test.mjs tests/mission-control-instrumentation.test.mjs tests/mission-control-vantage.test.mjs tests/mission-control-intelligence.test.mjs tests/mission-control-executive.test.mjs tests/mission-control-migration.test.mjs tests/mission-control-model.test.mjs
+
+      - name: Fetch the second vantage
+        continue-on-error: true
+        uses: actions/download-artifact@v7
+        with:
+          name: vantage-macos
+          path: vantages
 
       - name: Collect probes and ingest snapshot
         id: collect
@@ -53,9 +91,15 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           GOLD_SOURCE: ${{ secrets.MISSION_CONTROL_GOLD_SOURCE }}
           GOLD_SOURCE_TOKEN: ${{ secrets.MISSION_CONTROL_GOLD_TOKEN }}
+          INSIGHTS_SOURCE: ${{ secrets.MISSION_CONTROL_INSIGHTS_SOURCE }}
+          EVENTS_SOURCE: ${{ secrets.MISSION_CONTROL_EVENTS_SOURCE }}
+          EVENTS_SOURCE_TOKEN: ${{ secrets.MISSION_CONTROL_EVENTS_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
         run: |
           set +e
-          node tools/mission-control/collect.mjs --evidence-dir=.evidence
+          flags=""
+          if [ "${DRY_RUN}" = "true" ]; then flags="--dry-run"; fi
+          node tools/mission-control/collect.mjs --evidence-dir=.evidence --secondary-dir=vantages ${flags}
           code=$?
           echo "exit_code=${code}" >> "$GITHUB_OUTPUT"
           if [ -f .evidence/latest/estate-health.json ]; then
@@ -68,6 +112,7 @@ jobs:
 
       - name: Commit evidence (only after validated collection)
         id: commit
+        if: ${{ inputs.dry_run != true }}
         run: |
           cd .evidence
           git config user.name "github-actions[bot]"

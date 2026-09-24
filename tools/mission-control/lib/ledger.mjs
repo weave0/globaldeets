@@ -1,12 +1,15 @@
 /**
- * Historical snapshot ledger (GD-030).
+ * Historical snapshot ledger (GD-030, extended in GD-031).
  *
  * The ledger accumulates dated snapshots. It is append/upsert-only for scheduled snapshots, never
  * touches seeded snapshots, never converts missing evidence to zero, and is idempotent: replaying the
  * same observation yields byte-identical history, and an older observation can never overwrite a newer one.
+ *
+ * Schema 1.2.0 adds `instrumentation`, `audience` and (real) `businessEvents` sections to new snapshots.
+ * Snapshots written under 1.1.0 lack them and remain valid and readable; nothing is backfilled.
  */
 export const HISTORY_CONTRACT_NAME = 'globaldeets-mission-control-history';
-export const HISTORY_SCHEMA_VERSION = '1.1.0';
+export const HISTORY_SCHEMA_VERSION = '1.2.0';
 export const SNAPSHOT_RETENTION_DAYS = 400;
 
 export const INGESTION_SEAMS = Object.freeze([
@@ -25,6 +28,13 @@ export const INGESTION_SEAMS = Object.freeze([
     note: 'Consumed from Canonical Gold 1.2 via registry goldBindings when a non-fixture source is configured; fixtures are rejected.',
   },
   {
+    seam: 'governed-audience',
+    accepts: ['GFD Canonical Gold 1.2 per-zone Cloudflare metrics', 'GFD Traffic Insights 1.x'],
+    requiredFields: ['observedAt', 'window', 'metric', 'value', 'unit', 'evidenceState', 'source', 'comparabilityKey'],
+    status: 'reader-built-awaiting-authorized-source',
+    note: 'Per-property 7/28/90-day edge requests, trends and daily series are read from the governed Traffic Intelligence documents. Edge requests are not people; fixtures are rejected.',
+  },
+  {
     seam: 'estate-availability',
     accepts: ['production probes'],
     requiredFields: ['observedAt', 'propertyId', 'signal', 'state', 'source'],
@@ -35,8 +45,8 @@ export const INGESTION_SEAMS = Object.freeze([
     seam: 'business-events',
     accepts: ['first-party event telemetry', 'GA4 events'],
     requiredFields: ['observedAt', 'window', 'eventType', 'value', 'unit', 'evidenceState', 'attribution', 'source'],
-    status: 'awaiting-taxonomy',
-    note: 'No taxonomy or source is connected. No funnel or conversion figure may be fabricated.',
+    status: 'contract-defined-awaiting-feed',
+    note: 'The common vocabulary and feed contract (globaldeets-business-events-feed) are defined; no feed is connected. No funnel or conversion figure may be fabricated, and a zero requires declared instrumentation.',
   },
 ]);
 
@@ -63,7 +73,7 @@ function pct(numerator, denominator) {
 }
 
 /** Builds one dated scheduled snapshot from the built estate contract and optional operational evidence. */
-export function buildScheduledSnapshot({ estate, operational, observedAt, runId, dayRollup }) {
+export function buildScheduledSnapshot({ estate, operational, audience = null, events = null, observedAt, runId, dayRollup }) {
   const summary = estate.summary;
   const inventory = estate.evidence.inventory;
   const probe = estate.evidence.probe;
@@ -130,10 +140,38 @@ export function buildScheduledSnapshot({ estate, operational, observedAt, runId,
       certified: false,
       reason: 'No certified audience source is connected; edge and probe traffic are not human audience.',
     },
-    businessEvents: {
-      evidenceState: 'unavailable',
-      reason: 'No business-event taxonomy or source is connected.',
-    },
+    instrumentation: probeUsable
+      ? {
+          evidenceState: 'measured',
+          probeRunId: probe.runId,
+          comparabilityKey: 'instrumentation|v1|properties=' + estate.propertyCount,
+          ...summary.instrumentation,
+        }
+      : { evidenceState: 'unavailable', comparabilityKey: 'instrumentation|v1|properties=' + estate.propertyCount, reason: 'No usable probe evidence to inspect served pages.' },
+    audience: audienceSnapshot(audience, estate.propertyCount),
+    businessEvents: events && events.source.status === 'measured'
+      ? { evidenceState: 'measured', sourceStatus: 'measured', instrumentedProperties: events.coverage.instrumented, propertiesApplicable: events.coverage.propertiesApplicable, feedGeneratedAt: events.source.observedAt }
+      : { evidenceState: 'unavailable', sourceStatus: events?.source?.status || 'not-connected', reason: events?.source?.reason || 'No business-event taxonomy or source is connected.' },
+  };
+}
+
+/** Compact governed-audience point for the ledger: estate edge requests per window, never a person count. */
+function audienceSnapshot(audience, propertyCount) {
+  const key = 'audience|gold-1.2|properties=' + propertyCount;
+  if (!audience || !['measured', 'partial'].includes(audience.source.status) || audience.source.freshness.state === 'expired') {
+    return { evidenceState: 'unavailable', sourceStatus: audience?.source?.status || 'awaiting-authorized-source', comparabilityKey: key, reason: audience?.source?.reason || 'No governed audience source is readable.' };
+  }
+  const requests = Object.fromEntries([7, 28, 90].map(days => [days, audience.estate.requests[days].value]));
+  const complete = audience.estate.requests[28].evidenceState === 'measured';
+  return {
+    evidenceState: complete ? 'measured' : 'partial',
+    sourceStatus: audience.source.status,
+    comparabilityKey: key + '|' + (audience.estate.requests[28].comparabilityKey || 'unkeyed'),
+    sourceGeneratedAt: audience.source.gold.generatedAt,
+    propertiesMeasured: audience.estate.propertiesMeasured,
+    propertiesExpected: audience.estate.propertiesExpected,
+    edgeRequests: requests,
+    limitations: 'Edge requests, not people; includes automated traffic.',
   };
 }
 
@@ -205,6 +243,20 @@ export function validateHistory(history) {
       const total = availability.availableZones + availability.degradedZones + availability.unavailableZones + availability.noServiceZones + availability.blockedZones + availability.unknownZones;
       if (total !== availability.propertyCount) errors.push('history: ' + snapshot.snapshotId + '.availability zone states do not sum to propertyCount');
     }
+    // GD-031 sections. Absent on snapshots written before schema 1.2.0, which stay valid.
+    const audience = snapshot.audience;
+    if (audience) {
+      const valued = ['measured', 'partial'].includes(audience.evidenceState);
+      if (valued && (!audience.sourceGeneratedAt || !audience.edgeRequests || ![7, 28, 90].every(days => typeof audience.edgeRequests[days] === 'number' || audience.edgeRequests[days] === null))) errors.push('history: ' + snapshot.snapshotId + '.audience measured without governed source provenance');
+      if (!valued && audience.edgeRequests != null) errors.push('history: ' + snapshot.snapshotId + '.audience has values without measured evidence');
+      if (valued && Object.values(audience.edgeRequests || {}).some(value => typeof value === 'number' && value < 0)) errors.push('history: ' + snapshot.snapshotId + '.audience has a negative value');
+    }
+    const instrumentation = snapshot.instrumentation;
+    if (instrumentation?.evidenceState === 'measured') {
+      const total = ['activeVerified', 'configuredUnverified', 'configuredInvalid', 'absent', 'inaccessible', 'unknown'].reduce((sum, key) => sum + (instrumentation[key] ?? NaN), 0);
+      if (total !== instrumentation.applicable) errors.push('history: ' + snapshot.snapshotId + '.instrumentation states do not sum to applicable');
+    }
+    if (snapshot.businessEvents && !['measured', 'unavailable'].includes(snapshot.businessEvents.evidenceState)) errors.push('history: ' + snapshot.snapshotId + '.businessEvents evidenceState');
   }
   return errors;
 }
