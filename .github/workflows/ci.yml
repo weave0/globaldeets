@@ -26,6 +26,9 @@ jobs:
           test -f _headers       || (echo "MISSING: _headers" && exit 1)
           test -f dossiers/santa-ynez-pipeline/index.html || (echo "MISSING: Santa Ynez dossier" && exit 1)
           test -f observatory/coverage/index.html || (echo "MISSING: Coverage & Evidence Observatory" && exit 1)
+          test -f observatory/mission-control/history.json || (echo "MISSING: Mission Control history" && exit 1)
+          test -f observatory/mission-control/estate-health.json || (echo "MISSING: Mission Control estate health" && exit 1)
+          test -f observatory/mission-control/diagnostics.json || (echo "MISSING: Mission Control diagnostics" && exit 1)
           echo "All required files present."
 
       - name: Verify GA4 tag present
@@ -72,6 +75,7 @@ jobs:
           node --check functions/lib/coverage-evidence-observatory.js
           node --check dossiers/santa-ynez-pipeline/dossier.js
           node --check observatory/coverage/observatory.js
+          node --check observatory/mission-control/mission-control.js
           node --check shared/ecosystem-nav.js
           node --check playwright.config.js
           node --check tests/smoke.spec.js
@@ -85,6 +89,12 @@ jobs:
           node --check tests/santa-ynez-dossier.test.mjs
           node --check tests/coverage-evidence-observatory.test.mjs
           node --check tests/local-reporting-observatory.test.mjs
+          node --check tests/mission-control-data.test.mjs
+          node --check tests/mission-control-smoke.spec.js
+      - name: Reject stale investor-facing copy
+        run: |
+          if grep -qi "Data Platform Showcase" categories.html; then echo "STALE: portfolio-era categories copy" && exit 1; fi
+
 
       - name: Lint JavaScript
         run: npm run lint
