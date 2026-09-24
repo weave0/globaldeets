@@ -1,11 +1,16 @@
 {
   "missionControlId": "globaldeets-estate",
-  "snapshotVersion": "2026-09-23.2",
-  "generatedAt": "2026-09-23T20:17:00Z",
+  "snapshotVersion": "2026-09-24.1",
+  "generatedAt": "2026-09-24T16:29:00Z",
   "investorClaimsPolicy": {
     "humanAudienceRequiresCertifiedMeasurement": true,
     "edgeTrafficIsHumanAudience": false,
     "missingMeasurementIsZero": false
+  },
+  "dataPlane": {
+    "history": "/observatory/mission-control/history.json",
+    "estateHealth": "/observatory/mission-control/estate-health.json",
+    "diagnostics": "/observatory/mission-control/diagnostics.json"
   },
   "estate": {
     "activeZones": 25,
@@ -17,9 +22,11 @@
       "fwomps.com",
       "fwomp.us"
     ],
-    "source": "Cloudflare account zone inventory + Web Analytics site inventory"
+    "source": "Cloudflare account zone inventory + per-zone RUM settings"
   },
   "globaldeetsTraffic": {
+    "sourceSnapshotId": "2026-09-23.2",
+    "asOf": "2026-09-23T20:17:00Z",
     "window": {
       "start": "2026-08-27",
       "end": "2026-09-23",
@@ -31,140 +38,26 @@
     "syntheticHealthPath": "/_stcore/health",
     "audienceStatus": "measurement-constrained",
     "investorSafe": false,
-    "note": "Raw edge visits are materially contaminated by operational health traffic and must not be presented as human audience traction."
+    "note": "This is operational telemetry from the latest comparable edge snapshot, not a September 24 audience refresh."
   },
   "investmentThesis": [
     {
       "label": "Product",
       "title": "A governed world-information layer is already live",
-      "statement": "GlobalDeets is operating as a source-first world desk with live news, place context, public knowledge, webcams, and an evidence-governance layer rather than a static portfolio demo.",
+      "statement": "GlobalDeets operates as a source-first world desk with live news, place context, public knowledge, webcams, and an evidence-governance layer.",
       "proof": "Current product surfaces + governed source registry + Coverage & Evidence Observatory."
     },
     {
       "label": "Platform",
-      "title": "The wider estate creates distribution and data leverage",
-      "statement": "Twenty-five active web properties create a meaningful experimentation and distribution surface, while Culture Sherpa is a particularly relevant future context layer for GlobalDeets.",
-      "proof": "Cloudflare zone inventory; 21 of 25 properties already have browser observability."
+      "title": "The estate is now visible as an operating system, not a logo wall",
+      "statement": "Twenty-five active zones are represented in one health contract, with GlobalDeets first, Culture Sherpa prominent, and unknown service state exposed instead of implied healthy.",
+      "proof": "Cloudflare zone/RUM inventory + GD-029 estate-health contract."
     },
     {
       "label": "Execution",
-      "title": "The diagnostic system exposes uncertainty instead of hiding it",
-      "statement": "Mission Control separates operational traffic from certified audience, ranks unresolved gaps, and keeps business-critical measurement debt visible until evidence closes it.",
-      "proof": "Fail-closed Mission Control contract + explicit prioritized gap queue."
-    }
-  ],
-  "gaps": [
-    {
-      "id": "measurement:audience-certification",
-      "priority": 1,
-      "severity": "critical",
-      "domain": "measurement",
-      "status": "in-progress",
-      "businessImpact": "existential",
-      "ownerLane": "Data / analytics",
-      "openedAt": "2026-09-23",
-      "title": "Certify human audience metrics",
-      "observed": "Raw edge visits include substantial synthetic health traffic.",
-      "businessReason": "Until human activity is separated from monitors, bots, APIs, and assets, traction cannot be responsibly shown to investors.",
-      "target": "Human/bot/monitor/API/asset traffic classified before investor display",
-      "nextAction": "Automate RUM and GA4 ingestion; publish certified human page-load, visitor, engagement, and referral metrics with explicit exclusions.",
-      "evidence": "36,391 raw edge visits; 31,681 attached to /_stcore/health in the current 28-day snapshot."
-    },
-    {
-      "id": "observability:rum-coverage",
-      "priority": 2,
-      "severity": "high",
-      "domain": "observability",
-      "status": "open",
-      "businessImpact": "high",
-      "ownerLane": "Platform",
-      "openedAt": "2026-09-23",
-      "title": "Close estate browser-observability gaps",
-      "observed": "21 of 25 active zones have Web Analytics/RUM coverage.",
-      "businessReason": "Neglected properties can silently fail or miss opportunities when they are outside the same measurement fabric.",
-      "target": "25 of 25 active zones observed or explicitly exempted",
-      "nextAction": "Enable or explicitly exempt browser analytics for the four uncovered zones and make the audit automatic.",
-      "evidence": "Cloudflare zone inventory + Web Analytics site inventory."
-    },
-    {
-      "id": "narrative:stale-repository-state",
-      "priority": 3,
-      "severity": "high",
-      "domain": "provenance",
-      "status": "in-progress",
-      "businessImpact": "high",
-      "ownerLane": "Product narrative",
-      "openedAt": "2026-09-23",
-      "title": "Replace stale portfolio-era narrative",
-      "observed": "README.md and STATUS.md still describe an obsolete portfolio product and old estimated performance claims.",
-      "businessReason": "Contradictory product descriptions undermine diligence and cause agents to reason from the wrong product state.",
-      "target": "Repository narrative matches the source-first intelligence product and cites verifiable evidence",
-      "nextAction": "Replace stale README/STATUS content in GD-028 and add drift detection for investor-facing claims.",
-      "evidence": "README.md and STATUS.md on main at GD-027 merge head."
-    },
-    {
-      "id": "business:conversion-measurement",
-      "priority": 4,
-      "severity": "high",
-      "domain": "business",
-      "status": "open",
-      "businessImpact": "high",
-      "ownerLane": "Growth / business",
-      "openedAt": "2026-09-23",
-      "title": "Instrument meaningful business conversion events",
-      "observed": "No certified investor-facing funnel for subscriber, partner, donor, sponsor, licensing, or investor-intent conversion is represented here.",
-      "businessReason": "Traffic without conversion or retention evidence does not explain economic potential.",
-      "target": "Named conversion and retention events with source, date window, and attribution limits",
-      "nextAction": "Define the business-event taxonomy, connect first-party/GA4 event telemetry, and connect commerce/donation data where applicable.",
-      "evidence": "No certified funnel is present in the current Mission Control snapshot."
-    },
-    {
-      "id": "estate:service-health",
-      "priority": 5,
-      "severity": "medium",
-      "domain": "reliability",
-      "status": "open",
-      "businessImpact": "medium",
-      "ownerLane": "Platform",
-      "openedAt": "2026-09-23",
-      "title": "Unify estate health and availability",
-      "observed": "Traffic and content observability exist, but cross-property availability, latency, deploy freshness, and broken critical paths are not yet represented together.",
-      "businessReason": "A broad estate needs autonomous detection of silent failure, not periodic human rediscovery.",
-      "target": "Estate-wide status, latency, deploy freshness, broken-link and critical-path checks",
-      "nextAction": "Ingest production health checks for every active property and rank failures by user and business impact.",
-      "evidence": "Current Mission Control has coverage inventory but no per-property service-health table."
-    },
-    {
-      "id": "product:culture-convergence",
-      "priority": 6,
-      "severity": "medium",
-      "domain": "opportunity",
-      "status": "open",
-      "businessImpact": "medium",
-      "ownerLane": "Product strategy",
-      "openedAt": "2026-09-23",
-      "title": "Quantify Culture Sherpa convergence opportunity",
-      "observed": "Culture Sherpa is a separate high-potential property conceptually aligned with GlobalDeets' place-based context layer.",
-      "businessReason": "The integration thesis may improve differentiation, retention, and content depth, but should be supported by usage and overlap evidence.",
-      "target": "Evidence-backed integration thesis with shared audience, content, and product metrics",
-      "nextAction": "Measure overlap, unique utility, cross-navigation, search demand, and migration/integration options before convergence decisions.",
-      "evidence": "GlobalDeets 2030 product plan names Culture Sherpa as the culture layer."
-    },
-    {
-      "id": "analytics:obsolete-surface",
-      "priority": 7,
-      "severity": "medium",
-      "domain": "product-quality",
-      "status": "in-progress",
-      "businessImpact": "medium",
-      "ownerLane": "Frontend / product",
-      "openedAt": "2026-09-23",
-      "title": "Retire misleading legacy analytics dashboard",
-      "observed": "analytics.html still visualizes old portfolio-project categories rather than current traffic, product, or business performance.",
-      "businessReason": "An investor following an Analytics link should never land on decorative project-count charts that resemble business analytics.",
-      "target": "Mission Control is the canonical analytics and diagnostics surface",
-      "nextAction": "Replace analytics.html with a durable handoff to Mission Control and update navigation references.",
-      "evidence": "Legacy analytics.html on main."
+      "title": "The diagnostic layer is consumable by both humans and agents",
+      "statement": "Mission Control exposes priority, severity, business impact, ownership, age, evidence, next action, and escalation rules from one queue contract.",
+      "proof": "GD-029 diagnostics contract + sortable Mission Control queue."
     }
   ]
 }
