@@ -247,21 +247,29 @@ function evidenceItems(estate, history, now, latestAttempt) {
     );
   }
   const inventory = estate.evidence.inventory;
-  if (['stale', 'expired'].includes(inventory.freshness.state)) {
+  const carried = [
+    inventory.facets?.zones ? null : 'zone status',
+    inventory.facets?.pages ? null : 'Pages deploy facts',
+    inventory.facets?.rum ? null : 'RUM settings',
+  ].filter(Boolean);
+  const aged = ['stale', 'expired'].includes(inventory.freshness.state);
+  if (aged || carried.length) {
     items.push(
       item({
         id: 'evidence:inventory-stale',
-        rule: 'inventory-stale',
-        severity: 'low',
+        rule: 'inventory-incomplete',
+        severity: aged ? 'medium' : 'low',
         domain: 'observability',
         businessImpact: 'low',
         ownerLane: 'Platform',
-        title: 'Cloudflare zone/RUM/Pages inventory is carried forward',
-        observed: 'Inventory was last observed ' + inventory.freshness.ageHours + ' hours ago' + (inventory.refreshed ? '.' : ' and has never been refreshed by the collector.'),
-        businessReason: 'Zone counts, RUM coverage, and deploy freshness are only as current as the inventory read.',
-        evidence: [{ type: 'inventory', ref: inventory.asOf, state: inventory.freshness.state }],
-        nextAction: 'Grant the collector token Zone:Read and Pages:Read (or refresh the registry) so inventory refreshes automatically.',
-        escalation: { level: 'low', class: 'stale-evidence', escalateWhen: 'Inventory expires (over 7 days).', targetLane: 'Platform' },
+        title: aged ? 'Cloudflare inventory is ' + inventory.freshness.state : 'Part of the Cloudflare inventory is carried forward, not refreshed',
+        observed: (carried.length ? carried.join(', ') + ' are carried forward from the ' + inventory.asOf.slice(0, 10) + ' read and are not refreshed by the collector. ' : '') +
+          (aged ? 'Inventory was last observed ' + inventory.freshness.ageHours + ' hours ago. ' : '') +
+          'RUM coverage is therefore never plotted as a fresh measurement.',
+        businessReason: 'Zone counts, RUM coverage, and deploy freshness are only as current as the inventory read behind them.',
+        evidence: [{ type: 'inventory', ref: inventory.asOf, state: aged ? inventory.freshness.state : 'partial' }],
+        nextAction: 'Grant the collector token the missing read scopes (Zone:Read, Pages:Read) for zone and Pages facts. RUM settings additionally need a RUM read added to the collector (it does not read them yet), so they stay carried forward until that is built.',
+        escalation: { level: aged ? 'medium' : 'low', class: 'stale-evidence', escalateWhen: 'Inventory expires (over 7 days) or a carried-forward fact is used in investor material as current.', targetLane: 'Platform' },
       })
     );
   }

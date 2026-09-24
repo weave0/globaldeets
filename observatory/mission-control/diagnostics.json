@@ -74,6 +74,7 @@
       "audience-certification",
       "critical-path-contracts",
       "history-density",
+      "inventory-incomplete",
       "probe-missing",
       "rum-coverage"
     ]
@@ -343,6 +344,37 @@
       "priority": 8
     },
     {
+      "source": "derived",
+      "status": "open",
+      "id": "evidence:inventory-stale",
+      "rule": "inventory-incomplete",
+      "severity": "low",
+      "domain": "observability",
+      "businessImpact": "low",
+      "ownerLane": "Platform",
+      "title": "Part of the Cloudflare inventory is carried forward, not refreshed",
+      "observed": "zone status, Pages deploy facts, RUM settings are carried forward from the 2026-09-24 read and are not refreshed by the collector. RUM coverage is therefore never plotted as a fresh measurement.",
+      "businessReason": "Zone counts, RUM coverage, and deploy freshness are only as current as the inventory read behind them.",
+      "evidence": [
+        {
+          "type": "inventory",
+          "ref": "2026-09-24T16:29:00Z",
+          "state": "partial"
+        }
+      ],
+      "nextAction": "Grant the collector token the missing read scopes (Zone:Read, Pages:Read) for zone and Pages facts. RUM settings additionally need a RUM read added to the collector (it does not read them yet), so they stay carried forward until that is built.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "low",
+        "class": "stale-evidence",
+        "escalateWhen": "Inventory expires (over 7 days) or a carried-forward fact is used in investor material as current.",
+        "targetLane": "Platform"
+      },
+      "openedAt": "2026-09-24",
+      "ageDays": 0,
+      "priority": 9
+    },
+    {
       "source": "manual",
       "status": "closed",
       "id": "narrative:live-copy-cleanup",
@@ -370,7 +402,7 @@
         "targetLane": "Frontend / product"
       },
       "ageDays": 1,
-      "priority": 9
+      "priority": 10
     }
   ]
 }
