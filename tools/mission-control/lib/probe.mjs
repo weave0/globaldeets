@@ -371,6 +371,8 @@ export async function probeProperty(property, ctx) {
     durationMs: result.durationMs ?? null,
     contentType: result.contentType || null,
     bytes: result.bytes ?? null,
+    // What the edge said when it refused: distinguishes a managed challenge from an access rule.
+    cfMitigated: result.cfMitigated || null,
     attempts: fetched.attempts,
     errorCode: result.errorMessage || null,
   };

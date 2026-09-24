@@ -457,7 +457,8 @@ function coverageItems(estate) {
   // Instrumentation truth.
   const inst = state => rows.filter(row => row.observability.state === state);
   const absent = inst('absent');
-  const invalid = inst('configured-invalid');
+  // A placeholder tag is a defect whether or not another, real tag is also present.
+  const invalid = rows.filter(row => (row.observability.providers || []).some(provider => provider.placeholder));
   const unverified = inst('configured-unverified');
   const tier = list => Math.min(...list.map(row => row.profile?.strategicTier ?? 4), 4);
 
@@ -473,7 +474,7 @@ function coverageItems(estate) {
         businessImpact: 'medium',
         ownerLane: 'Property owner',
         title: plural(invalid.length, 'property ships', 'properties ship') + ' an analytics tag with a placeholder ID',
-        observed: invalid.map(row => row.propertyId + ' (' + row.observability.providers.map(provider => provider.measurementId || provider.id).join(', ') + ')').join('; ') + ' load an analytics script configured with a placeholder measurement ID. It cannot be collecting real data.',
+        observed: invalid.map(row => row.propertyId + ' (' + row.observability.providers.filter(provider => provider.placeholder).map(provider => provider.measurementId || provider.id).join(', ') + ')').join('; ') + ' load an analytics script configured with a placeholder measurement ID. That tag cannot be collecting real data' + (invalid.some(row => row.observability.state !== 'configured-invalid') ? ' (another, real tag is also present on some of these)' : '') + '.',
         businessReason: 'The page looks instrumented while measuring nothing, which would silently hide its audience.',
         evidence: [{ type: 'served-html', ref: 'production probe ' + (estate.evidence.probe.runId || 'none'), state: 'measured' }],
         nextAction: 'Replace the placeholder with the real GA4 measurement ID (or remove the tag) and redeploy.',

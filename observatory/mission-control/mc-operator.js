@@ -143,7 +143,7 @@
       el('summary', '', ['Evidence']),
       el('ul', 'plain', [
         el('li', '', [row.availability.reason]),
-        row.availability.evidence?.http ? el('li', '', ['HTTP ' + (row.availability.evidence.http.status ?? 'none') + ' · DNS ' + (row.availability.evidence.dns?.state || 'n/a') + ' · TLS ' + (row.availability.evidence.tls?.state || 'n/a') + (row.availability.evidence.tls?.daysRemaining != null ? ' (' + row.availability.evidence.tls.daysRemaining + ' days left)' : '')]) : null,
+        row.availability.evidence?.http ? el('li', '', ['HTTP ' + (row.availability.evidence.http.status ?? 'none') + ' · DNS ' + (row.availability.evidence.dns?.state || 'n/a') + ' · TLS ' + (row.availability.evidence.tls?.state || 'n/a') + (row.availability.evidence.tls?.daysRemaining != null ? ' (' + row.availability.evidence.tls.daysRemaining + ' days left)' : '') + (row.availability.evidence.http.cfMitigated ? ' · edge action: ' + row.availability.evidence.http.cfMitigated : '')]) : null,
         ...vantages.map(item => el('li', '', ['Vantage ' + item.vantage + ': ' + item.state + (item.blocked ? ' (blocked)' : '') + (item.httpStatus ? ' · HTTP ' + item.httpStatus : '')])),
         ...checks.map(check => el('li', check.pass ? '' : 'is-fail', [(check.pass ? '✓ ' : '✕ ') + check.id + ' ' + check.path + ' · ' + check.detail])),
         contract.basis ? el('li', '', ['Critical path basis: ' + contract.basis]) : null,

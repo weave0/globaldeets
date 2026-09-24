@@ -308,6 +308,7 @@ export function buildEstateHealth({ registry, inventory = null, probeRun = null,
                 finalUrl: observation.http.finalUrl ?? null,
                 redirects: observation.http.redirects?.length ?? 0,
                 durationMs: observation.http.durationMs ?? null,
+                cfMitigated: observation.http.cfMitigated ?? null,
                 attempts: observation.http.attempts ?? 0,
               }
             : null,
