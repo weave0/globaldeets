@@ -153,7 +153,7 @@ jobs:
 
   deploy:
     needs: collect
-    if: ${{ always() && needs.collect.outputs.committed == 'true' }}
+    if: ${{ needs.collect.result == 'success' && needs.collect.outputs.committed == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     permissions:
