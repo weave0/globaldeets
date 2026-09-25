@@ -53,8 +53,9 @@ const PROBES = {
     const start = new Date(end.getTime() - 3600000);
     const query = 'query($a:String!,$s:Time!,$e:Time!){viewer{accounts(filter:{accountTag:$a}){rumPageloadEventsAdaptiveGroups(filter:{datetime_geq:$s,datetime_leq:$e},limit:1){count}}}}';
     const result = await call(fetchImpl, API + '/graphql', { token, method: 'POST', body: { query, variables: { a: accountId, s: start.toISOString(), e: end.toISOString() } } });
-    if (Array.isArray(result.json?.errors) && result.json.errors.length) return { ...cloudflareVerdict({ status: 403, json: result.json }), status: 'denied' };
-    if (!Array.isArray(result.json?.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups)) return { status: 'denied', detail: 'account exposes no RUM dataset to this token' };
+    if (result.networkError) return cloudflareVerdict(result);
+    if (Array.isArray(result.json?.errors) && result.json.errors.length) return cloudflareVerdict(result);
+    if (!Array.isArray(result.json?.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups)) return { status: 'error', detail: 'GraphQL response did not include the expected RUM dataset' };
     return { status: 'ok', detail: null };
   },
   async 'd1-database'({ token, accountId, capability, fetchImpl }) {
@@ -69,8 +70,10 @@ const PROBES = {
   },
 };
 
-function remedy(capability, credential) {
+function remedy(capability, credential, status) {
+  if (status === 'error') return 'Retry the preflight; this is not classified as an authorization failure. If it persists, inspect the upstream response before changing credentials.';
   if (capability.id === 'events.feed.read') return 'Set ' + capability.secrets.join(' + ') + ' in GitHub Actions secrets. ' + capability.permission + '.';
+  if (status === 'missing') return 'Provide the required secret or configuration declared for this capability.';
   if (capability.permission) return 'Edit the ' + credential.secret + ' token at ' + credential.createAt + ' and add "' + capability.permission + '" on the account in ' + credential.accountSecret + '.';
   return 'Replace ' + credential.secret + ' with an active token (' + credential.createAt + ').';
 }
@@ -98,7 +101,7 @@ export async function runPreflight({ manifest, env = {}, fetchImpl, now = Date.n
   if (events && d1 && events.status === 'missing') d1.required = true;
 
   for (const item of results) {
-    if (!OK.has(item.status)) item.remedy = remedy(manifest.capabilities.find(c => c.id === item.id), credential);
+    if (!OK.has(item.status)) item.remedy = remedy(manifest.capabilities.find(c => c.id === item.id), credential, item.status);
   }
   const failures = results.filter(item => item.required && !OK.has(item.status));
   return { healthy: failures.length === 0, results, failures };
