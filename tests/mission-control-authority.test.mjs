@@ -186,3 +186,17 @@ test('audience feed: an outage, a bot challenge, a malformed body, a fixture and
     assert.equal(report.healthy, true, name + ': a degradable audience feed never fails the whole run');
   }
 });
+
+test('audience feed: a rejected dedicated insights credential is blamed on that credential, not the Gold token', async () => {
+  const env = { ...AUDIENCE_ENV, INSIGHTS_SOURCE_TOKEN: 'mcf_insights_only' };
+  const { item } = await audienceResult(env, (url, init) => (url.includes('insights') ? new Response('no', { status: 401 }) : feedReply(url, init)));
+  assert.equal(item.status, 'denied');
+  assert.match(item.detail, /rejected INSIGHTS_SOURCE_TOKEN/);
+  assert.doesNotMatch(item.detail, /MISSION_CONTROL_GOLD_TOKEN/);
+  assert.match(item.remedy, /INSIGHTS_SOURCE_TOKEN/);
+  assert.doesNotMatch(item.remedy, /Set MISSION_CONTROL_GOLD_TOKEN/);
+  const gold = await audienceResult(AUDIENCE_ENV, () => new Response('no', { status: 401 }));
+  assert.match(gold.item.detail, /rejected MISSION_CONTROL_GOLD_TOKEN/);
+  const shared = await audienceResult(AUDIENCE_ENV, (url, init) => (url.includes('insights') ? new Response('no', { status: 403 }) : feedReply(url, init)));
+  assert.match(shared.item.detail, /Traffic Insights source rejected MISSION_CONTROL_GOLD_TOKEN/, 'without an override the shared credential is the one in use');
+});

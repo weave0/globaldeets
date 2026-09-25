@@ -70,16 +70,16 @@ const PROBES = {
    * outage, a corrupt document, a fixture and a schema mismatch are never reported as one thing.
    */
   async 'audience-feed'({ env, fetchImpl }) {
-    const verdictFor = (loaded, label, classify) => {
+    const verdictFor = (loaded, label, classify, credentialName) => {
       switch (loaded.failureKind) {
         case null:
           return classify(loaded.doc);
         case 'source-missing':
           return { status: 'missing', detail: label + ' source is not configured' };
         case 'credential-missing':
-          return { status: 'denied', detail: label + ' source requires a credential and MISSION_CONTROL_GOLD_TOKEN is not set (HTTP ' + loaded.httpStatus + ')' };
+          return { status: 'denied', credentialName, detail: label + ' source requires a credential and ' + credentialName + ' is not set (HTTP ' + loaded.httpStatus + ')' };
         case 'credential-rejected':
-          return { status: 'denied', detail: label + ' source rejected MISSION_CONTROL_GOLD_TOKEN (HTTP ' + loaded.httpStatus + ')' };
+          return { status: 'denied', credentialName, detail: label + ' source rejected ' + credentialName + ' (HTTP ' + loaded.httpStatus + ')' };
         default:
           return { status: 'error', detail: loaded.reason };
       }
@@ -88,14 +88,14 @@ const PROBES = {
     const goldVerdict = verdictFor(gold, 'Canonical Gold', doc => {
       const problem = classifyGoldEnvelope(doc);
       return problem ? { status: 'error', detail: 'Canonical Gold is ' + problem.kind + ': ' + problem.reason } : { status: 'ok', detail: (doc.metrics || []).length + ' Gold metrics, generated ' + doc.generated_at };
-    });
+    }, 'MISSION_CONTROL_GOLD_TOKEN');
     if (goldVerdict.status !== 'ok') return goldVerdict;
     const insightsSource = env.INSIGHTS_SOURCE || defaultInsightsSource(env.GOLD_SOURCE);
     const insights = await loadGoldSource({ source: insightsSource, token: env.INSIGHTS_SOURCE_TOKEN || env.GOLD_SOURCE_TOKEN, fetchImpl, readFile, label: 'Traffic Insights' });
     const insightsVerdict = verdictFor(insights, 'Traffic Insights', doc => {
       const checked = validateInsightsEnvelope(doc);
       return checked.error ? { status: 'error', detail: 'Traffic Insights is ' + checked.kind + ': ' + checked.error } : { status: 'ok', detail: 'insights generated ' + doc.generated_at };
-    });
+    }, env.INSIGHTS_SOURCE_TOKEN ? 'INSIGHTS_SOURCE_TOKEN' : 'MISSION_CONTROL_GOLD_TOKEN');
     return insightsVerdict.status === 'ok' ? { status: 'ok', detail: goldVerdict.detail + '; ' + insightsVerdict.detail } : insightsVerdict;
   },
   async 'events-feed'({ env, fetchImpl }) {
@@ -107,9 +107,10 @@ const PROBES = {
   },
 };
 
-function remedy(capability, credential, status) {
+function remedy(capability, credential, status, item = {}) {
   if (capability.id === 'audience.feed.read') {
     if (status === 'error') return 'The feed answered but is not usable; see the detail. This is not a credential problem, so the next evidence run retries without changing secrets.';
+    if (status === 'denied' && item.credentialName === 'INSIGHTS_SOURCE_TOKEN') return 'The dedicated INSIGHTS_SOURCE_TOKEN override is the credential in use for Traffic Insights (the Gold credential is not sent there). Correct it or remove it so MISSION_CONTROL_GOLD_TOKEN is used for both documents. No Cloudflare API token is involved.';
     if (status === 'denied') return 'Set MISSION_CONTROL_GOLD_TOKEN to the value of MISSION_CONTROL_FEED_TOKEN in weave0/goodflippindesign (the Traffic Intelligence deploy binds it to the Pages project). No Cloudflare API token is involved.';
     return 'Set MISSION_CONTROL_GOLD_SOURCE (the evidence workflow defaults it to the Traffic Intelligence Gold URL).';
   }
@@ -145,7 +146,7 @@ export async function runPreflight({ manifest, env = {}, fetchImpl, now = Date.n
   if (events && d1 && events.status === 'missing') d1.required = true;
 
   for (const item of results) {
-    if (!OK.has(item.status)) item.remedy = remedy(manifest.capabilities.find(c => c.id === item.id), credential, item.status);
+    if (!OK.has(item.status)) item.remedy = remedy(manifest.capabilities.find(c => c.id === item.id), credential, item.status, item);
   }
   const failures = results.filter(item => item.required && !OK.has(item.status));
   return { healthy: failures.length === 0, results, failures };

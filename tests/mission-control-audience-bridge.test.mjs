@@ -228,3 +228,25 @@ test('the credential never reaches a published document', async () => {
   const rejected = await collect(newDir(), { feed: trafficFeed(), env: { GOLD_SOURCE: GOLD_URL, GOLD_SOURCE_TOKEN: TOKEN + 'x' } });
   assert.ok(!JSON.stringify(rejected.plane).includes(TOKEN));
 });
+
+test('rollout: evidence published before GD-036 (audience 1.0.x, no condition) is still readable and is regenerated as 1.1.0', async () => {
+  const { readFileSync, writeFileSync } = await import('node:fs');
+  const { join } = await import('node:path');
+  const dir = newDir();
+  const first = await collect(dir, { runId: 'pre' });
+  assert.equal(first.plane.audience.schemaVersion, '1.1.0');
+
+  // Rewrite the persisted audience exactly as a pre-GD-036 collector published it.
+  const legacy = JSON.parse(JSON.stringify(first.plane.audience));
+  legacy.schemaVersion = '1.0.0';
+  delete legacy.source.condition;
+  assert.deepEqual(validateAudience(legacy, opts), [], 'a legacy 1.0.x audience validates without a condition');
+  assert.ok(validateAudience({ ...legacy, schemaVersion: '1.1.0' }, opts).some(error => /source\.condition/.test(error)), 'but a 1.1.0 audience must carry one');
+
+  const file = join(dir, 'latest', 'audience.json');
+  writeFileSync(file, JSON.stringify(legacy, null, 2) + '\n');
+  const second = await collect(dir, { runId: 'post', start: '2026-10-01T18:00:00Z', feed: trafficFeed(), env: { GOLD_SOURCE: GOLD_URL, GOLD_SOURCE_TOKEN: TOKEN } });
+  assert.equal(second.plane.audience.schemaVersion, '1.1.0');
+  assert.equal(second.plane.audience.source.condition, 'connected');
+  assert.equal(JSON.parse(readFileSync(file, 'utf8')).source.condition, 'connected');
+});

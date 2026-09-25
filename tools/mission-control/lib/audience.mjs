@@ -19,7 +19,10 @@ const require = createRequire(import.meta.url);
 const semantics = require('../../../observatory/mission-control/evidence-semantics.js');
 
 export const AUDIENCE_CONTRACT_NAME = 'globaldeets-audience';
-export const AUDIENCE_SCHEMA_VERSION = '1.0.0';
+// 1.1.0 (GD-036) adds source.condition and source.insights.condition. Evidence published before GD-036 is 1.0.x and
+// stays valid without them, so the first scheduled run after rollout can read it and regenerate the plane.
+export const AUDIENCE_SCHEMA_VERSION = '1.1.0';
+const CONDITION_REQUIRED_FROM = [1, 1];
 /**
  * The single, exhaustive reason the governed audience source is (or is not) usable. Each is a different real-world
  * condition with a different remedy, so none may be collapsed into "missing authority".
@@ -467,8 +470,12 @@ export function validateAudience(audience, { expectPropertyIds } = {}) {
   const status = audience.source?.status;
   if (!['measured', 'partial', 'awaiting-authorized-source', 'unavailable', 'rejected'].includes(status)) errors.push('audience: source.status');
   const condition = audience.source?.condition;
-  if (!Object.hasOwn(SOURCE_CONDITIONS, condition)) errors.push('audience: source.condition');
-  else if (!SOURCE_CONDITIONS[condition].status.includes(status)) errors.push('audience: source.condition ' + condition + ' cannot accompany status ' + status);
+  const [major, minor] = String(audience.schemaVersion).split('.').map(Number);
+  const legacyWithoutCondition = condition === undefined && (major < CONDITION_REQUIRED_FROM[0] || (major === CONDITION_REQUIRED_FROM[0] && minor < CONDITION_REQUIRED_FROM[1]));
+  if (!legacyWithoutCondition) {
+    if (!Object.hasOwn(SOURCE_CONDITIONS, condition)) errors.push('audience: source.condition');
+    else if (!SOURCE_CONDITIONS[condition].status.includes(status)) errors.push('audience: source.condition ' + condition + ' cannot accompany status ' + status);
+  }
   if (audience.source?.gold && audience.source.gold.fixture !== false) errors.push('audience: a fixture Gold document can never be published');
   if (['measured', 'partial'].includes(status) && !audience.source?.gold) errors.push('audience: measured audience without Gold provenance');
   if (status === 'awaiting-authorized-source' && !audience.source.requirement) errors.push('audience: awaiting-authorized-source must state the missing authority');
