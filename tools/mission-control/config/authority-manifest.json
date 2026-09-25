@@ -81,6 +81,22 @@
             ]
         },
         {
+            "id": "audience.feed.read",
+            "required": false,
+            "degradesTo": "An explicit, diagnosed 'audience unavailable' state; the run still publishes probe evidence.",
+            "purpose": "Governed audience intelligence: Canonical Gold 1.2 and Traffic Insights from GFD Traffic Intelligence (edge requests, windows, trends, contribution).",
+            "secrets": [
+                "MISSION_CONTROL_GOLD_SOURCE",
+                "MISSION_CONTROL_GOLD_TOKEN",
+                "MISSION_CONTROL_INSIGHTS_SOURCE"
+            ],
+            "permission": "MISSION_CONTROL_GOLD_TOKEN must equal MISSION_CONTROL_FEED_TOKEN in weave0/goodflippindesign (an application secret bound to the gfd-traffic-intelligence Pages project by its deploy; not a Cloudflare API token)",
+            "probe": "audience-feed",
+            "consumers": [
+                "tools/mission-control/lib/collect.mjs"
+            ]
+        },
+        {
             "id": "cloudflare.d1.read",
             "required": false,
             "when": "MISSION_CONTROL_EVENTS_SOURCE is unset (REST fallback only)",

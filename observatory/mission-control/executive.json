@@ -1762,12 +1762,17 @@
     "reason": "No governed Canonical Gold source is configured for Mission Control.",
     "requirement": {
       "what": "A read credential for the governed Canonical Gold and Traffic Insights documents.",
-      "where": "https://traffic.goodflippindesign.com/gold/ (admin-gated by design; the documents are produced daily by the Traffic Intelligence pipeline).",
+      "where": "https://traffic.goodflippindesign.com/gold/ (private by design: a human admin session or the Mission Control feed credential; the documents are produced daily by the Traffic Intelligence pipeline).",
       "secrets": [
         "MISSION_CONTROL_GOLD_SOURCE",
         "MISSION_CONTROL_GOLD_TOKEN"
       ],
-      "owner": "Traffic Intelligence owner (weave0/goodflippindesign, workflow traffic-intelligence-deploy.yml)"
+      "owner": "Traffic Intelligence owner (weave0/goodflippindesign, workflow traffic-intelligence-deploy.yml)",
+      "provisioning": "Automatic: the Traffic Intelligence deploy binds MISSION_CONTROL_FEED_TOKEN to its Pages project; the same application secret is stored here as MISSION_CONTROL_GOLD_TOKEN. No Cloudflare API token is involved.",
+      "defaultSources": {
+        "MISSION_CONTROL_GOLD_SOURCE": "https://traffic.goodflippindesign.com/gold/canonical-gold-m1.2.json",
+        "MISSION_CONTROL_INSIGHTS_SOURCE": "https://traffic.goodflippindesign.com/gold/traffic-insights-1.0.json"
+      }
     },
     "asOf": null,
     "freshness": {
@@ -1984,12 +1989,12 @@
       },
       {
         "id": "audience:governed-source",
-        "title": "Connect the governed audience source (awaiting authorization)",
+        "title": "Connect the governed audience source",
         "severity": "high",
         "category": "audience",
         "subjects": [],
         "why": "Without a governed traffic source, usage, growth and each property's contribution cannot be stated at all. Nothing is estimated or shown as zero.",
-        "action": "Grant Mission Control read access: A read credential for the governed Canonical Gold and Traffic Insights documents. Then set the repository secrets MISSION_CONTROL_GOLD_SOURCE and MISSION_CONTROL_GOLD_TOKEN.",
+        "action": "Point Mission Control at the governed Canonical Gold document by setting MISSION_CONTROL_GOLD_SOURCE (the evidence workflow defaults it to the Traffic Intelligence Gold URL).",
         "actionability": "blocked-on-authority",
         "confidence": "high",
         "priorityScore": 68

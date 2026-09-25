@@ -13,6 +13,9 @@ import { confirmFailures, probeEstate } from '../../tools/mission-control/lib/pr
 export const GA4 = id => '<script async src="https://www.googletagmanager.com/gtag/js?id=' + id + '"></script>';
 export const CF_BEACON = token => '<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{"token": "' + token + '"}\'></script>';
 
+/** The governed Traffic Intelligence origin; a `feed` handler in collect() answers for it like the production worker would. */
+export const FEED_ORIGIN = 'https://traffic.goodflippindesign.com';
+
 export const newDir = () => mkdtempSync(join(tmpdir(), 'mc-gd031-'));
 
 /** Serves tagged HTML for a host, keeping the property's baseline title. */
@@ -30,7 +33,7 @@ export function writeSource(dir, name, doc) {
   return path;
 }
 
-export async function collect(dir, { mutate, start = '2026-10-01T12:00:00Z', runId = 'gd031-run', env = {}, secondary = null, dryRun = false, cloudflare = null } = {}) {
+export async function collect(dir, { mutate, start = '2026-10-01T12:00:00Z', runId = 'gd031-run', env = {}, secondary = null, dryRun = false, cloudflare = null, feed = null } = {}) {
   const clock = makeClock(Date.parse(start));
   const world = healthyWorld(registry(), clock);
   if (mutate) mutate(world);
@@ -38,6 +41,10 @@ export async function collect(dir, { mutate, start = '2026-10-01T12:00:00Z', run
   if (cloudflare) {
     const web = world.fetchImpl;
     deps = makeDeps(world, { fetchImpl: async (input, init) => (String(input).startsWith('https://api.cloudflare.com/') ? cloudflare(input, init) : web(input, init)) });
+  }
+  if (feed) {
+    const inner = deps.fetchImpl;
+    deps = { ...deps, fetchImpl: async (input, init) => (String(input).startsWith(FEED_ORIGIN) ? feed(input, init) : inner(input, init)) };
   }
   let secondaryDir = null;
   if (secondary) {

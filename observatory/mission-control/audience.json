@@ -12,16 +12,22 @@
   },
   "source": {
     "status": "awaiting-authorized-source",
+    "condition": "source-missing",
     "kind": "canonical-gold",
     "reason": "No governed Canonical Gold source is configured for Mission Control.",
     "requirement": {
       "what": "A read credential for the governed Canonical Gold and Traffic Insights documents.",
-      "where": "https://traffic.goodflippindesign.com/gold/ (admin-gated by design; the documents are produced daily by the Traffic Intelligence pipeline).",
+      "where": "https://traffic.goodflippindesign.com/gold/ (private by design: a human admin session or the Mission Control feed credential; the documents are produced daily by the Traffic Intelligence pipeline).",
       "secrets": [
         "MISSION_CONTROL_GOLD_SOURCE",
         "MISSION_CONTROL_GOLD_TOKEN"
       ],
-      "owner": "Traffic Intelligence owner (weave0/goodflippindesign, workflow traffic-intelligence-deploy.yml)"
+      "owner": "Traffic Intelligence owner (weave0/goodflippindesign, workflow traffic-intelligence-deploy.yml)",
+      "provisioning": "Automatic: the Traffic Intelligence deploy binds MISSION_CONTROL_FEED_TOKEN to its Pages project; the same application secret is stored here as MISSION_CONTROL_GOLD_TOKEN. No Cloudflare API token is involved.",
+      "defaultSources": {
+        "MISSION_CONTROL_GOLD_SOURCE": "https://traffic.goodflippindesign.com/gold/canonical-gold-m1.2.json",
+        "MISSION_CONTROL_INSIGHTS_SOURCE": "https://traffic.goodflippindesign.com/gold/traffic-insights-1.0.json"
+      }
     },
     "gold": null,
     "insights": {

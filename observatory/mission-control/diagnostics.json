@@ -492,7 +492,7 @@
       "confidence": "high",
       "actionability": {
         "state": "blocked-on-authority",
-        "blockedBy": "A read credential for the governed Canonical Gold and Traffic Insights documents."
+        "blockedBy": "A read credential and location for the governed audience source"
       },
       "id": "audience:governed-source",
       "rule": "audience-source",
@@ -502,17 +502,18 @@
       "businessImpact": "high",
       "ownerLane": "Data / analytics",
       "openedAt": "2026-09-24",
-      "title": "Connect the governed audience source (awaiting authorization)",
+      "title": "Connect the governed audience source",
       "observed": "No governed Canonical Gold source is configured for Mission Control. Mission Control reads Canonical Gold 1.2 and Traffic Insights; the reader is built and tested, so per-property 7/28/90-day traffic, trends, contribution and concentration appear as soon as a valid, non-fixture document is readable.",
       "businessReason": "Without a governed traffic source, usage, growth and each property's contribution cannot be stated at all. Nothing is estimated or shown as zero.",
       "evidence": [
         {
           "type": "audience-contract",
           "ref": "globaldeets-audience",
-          "state": "awaiting-authorized-source"
+          "state": "awaiting-authorized-source",
+          "condition": "source-missing"
         }
       ],
-      "nextAction": "Grant Mission Control read access: A read credential for the governed Canonical Gold and Traffic Insights documents. Then set the repository secrets MISSION_CONTROL_GOLD_SOURCE and MISSION_CONTROL_GOLD_TOKEN.",
+      "nextAction": "Point Mission Control at the governed Canonical Gold document by setting MISSION_CONTROL_GOLD_SOURCE (the evidence workflow defaults it to the Traffic Intelligence Gold URL).",
       "escalation": {
         "blocksInvestorClaim": true,
         "level": "high",
