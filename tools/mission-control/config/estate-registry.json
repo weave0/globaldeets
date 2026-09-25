@@ -2080,12 +2080,12 @@
     "feedContract": "globaldeets-business-events-feed",
     "feedSchemaVersion": "1.0.0",
     "requirement": {
-      "what": "A governed first-party business-event feed (counts per property, event type and window) with explicit instrumentation status.",
+      "what": "Read access to the governed first-party business-event counters in Cloudflare D1, or an explicit compatible feed override.",
       "secrets": [
-        "MISSION_CONTROL_EVENTS_SOURCE",
-        "MISSION_CONTROL_EVENTS_TOKEN"
+        "CLOUDFLARE_API_TOKEN",
+        "CLOUDFLARE_ACCOUNT_ID"
       ],
-      "owner": "Each property owner declares an outcome; a producer publishes counts to the feed contract."
+      "owner": "Each property owner declares an outcome; Mission Control reads the count-only D1 store directly. EVENTS_SOURCE remains an optional override."
     }
   },
   "instrumentationContract": {
