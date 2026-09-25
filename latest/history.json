@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.2.0",
   "contractName": "globaldeets-mission-control-history",
-  "generatedAt": "2026-09-25T12:38:33.254Z",
+  "generatedAt": "2026-09-25T17:15:45.897Z",
   "supportedWindowsDays": [
     7,
     28,
@@ -150,23 +150,23 @@
     },
     {
       "snapshotId": "2026-09-25.scheduled",
-      "observedAt": "2026-09-25T12:38:33.254Z",
+      "observedAt": "2026-09-25T17:15:45.897Z",
       "collector": {
         "kind": "scheduled",
-        "runId": "run-36136043176-1"
+        "runId": "run-36165943264-1"
       },
       "estate": {
         "activeZones": 25,
         "rumObservedZones": 21,
         "rumCoveragePct": 84,
         "evidenceState": "carried-forward",
-        "inventoryObservedAt": "2026-09-25T12:38:33.255Z",
+        "inventoryObservedAt": "2026-09-25T17:15:45.899Z",
         "comparabilityKey": "estate-rum|v1"
       },
       "availability": {
         "evidenceState": "measured",
-        "probeRunId": "run-36136043176-1",
-        "probeObservedAt": "2026-09-25T12:38:33.254Z",
+        "probeRunId": "run-36165943264-1",
+        "probeObservedAt": "2026-09-25T17:15:45.897Z",
         "comparabilityKey": "estate-availability|v1|properties=25",
         "propertyCount": 25,
         "conclusiveServiceZones": 20,
@@ -179,7 +179,7 @@
         "verifiedHealthyZones": 3,
         "availableRatioPct": 100,
         "dayRollup": {
-          "runs": 3,
+          "runs": 4,
           "worstAvailableZones": 20,
           "worstUnavailableZones": 0
         }
@@ -203,11 +203,11 @@
       },
       "instrumentation": {
         "evidenceState": "measured",
-        "probeRunId": "run-36136043176-1",
+        "probeRunId": "run-36165943264-1",
         "comparabilityKey": "instrumentation|v1|properties=25",
         "applicable": 20,
-        "activeVerified": 5,
-        "configuredUnverified": 14,
+        "activeVerified": 6,
+        "configuredUnverified": 13,
         "configuredInvalid": 0,
         "absent": 0,
         "inaccessible": 1,
@@ -221,8 +221,8 @@
       },
       "businessEvents": {
         "evidenceState": "unavailable",
-        "sourceStatus": "not-connected",
-        "reason": "No governed business-event feed is connected. Event-producing routes may exist in source, but none reports counts to Mission Control."
+        "sourceStatus": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service"
       }
     }
   ],

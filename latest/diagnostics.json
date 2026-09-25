@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0.0",
   "contractName": "globaldeets-diagnostics-queue",
-  "generatedAt": "2026-09-25T12:38:33.254Z",
+  "generatedAt": "2026-09-25T17:15:45.897Z",
   "agentContract": {
     "sortableFields": [
       "priority",
@@ -288,13 +288,13 @@
       "ownerLane": "Product + Data",
       "openedAt": "2026-09-24",
       "title": "0 of 20 properties report business outcomes",
-      "observed": "Event-producing routes exist in source for aiaimate.com (signup, purchase); cyancanoe.com (lead); goodflippindesign.com (lead, purchase), but no governed feed connects them. The rest declare no countable outcome.",
+      "observed": "No property reports a business outcome to Mission Control. \"0 conversions\" cannot be stated for any property because none is instrumented.",
       "businessReason": "Traffic without outcomes cannot show that the estate produces value: leads, sign-ups, purchases and downloads are what an investor asks about after audience.",
       "evidence": [
         {
           "type": "business-event-contract",
-          "ref": "globaldeets-business-events@2026-09-25T12:38:33.254Z",
-          "state": "not-connected"
+          "ref": "globaldeets-business-events@2026-09-25T17:15:45.897Z",
+          "state": "awaiting-authorized-source"
         }
       ],
       "nextAction": "Start with the properties whose producers already exist in source: publish counts to the globaldeets-business-events-feed contract (per property, event type and window) and set the events feed secrets.",
@@ -455,7 +455,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36136043176-1",
+          "ref": "production probe run-36165943264-1",
           "state": "measured"
         }
       ],
@@ -471,7 +471,7 @@
       "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T12:38:33.254Z",
+        "observedAt": "2026-09-25T17:15:45.897Z",
         "basis": "Production probes"
       },
       "priorityScore": 72,
@@ -597,7 +597,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-25T12:38:33.255Z",
+          "ref": "2026-09-25T17:15:45.899Z",
           "state": "measured"
         }
       ],
@@ -613,7 +613,7 @@
       "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T12:38:33.255Z",
+        "observedAt": "2026-09-25T17:15:45.899Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 48,
@@ -680,7 +680,7 @@
       "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T12:38:33.254Z",
+        "observedAt": "2026-09-25T17:15:45.897Z",
         "basis": "Historical snapshots"
       },
       "priorityScore": 43,
@@ -877,7 +877,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-25T12:38:33.254Z",
+          "ref": "globaldeets-estate-health@2026-09-25T17:15:45.897Z",
           "state": "measured"
         }
       ],
@@ -903,7 +903,7 @@
       "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T12:38:33.254Z",
+        "observedAt": "2026-09-25T17:15:45.897Z",
         "basis": "Production probes"
       },
       "priorityScore": 34,
@@ -959,7 +959,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-25T12:38:33.254Z",
+          "ref": "globaldeets-estate-health@2026-09-25T17:15:45.897Z",
           "state": "measured"
         }
       ],
@@ -975,7 +975,7 @@
       "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T12:38:33.254Z",
+        "observedAt": "2026-09-25T17:15:45.897Z",
         "basis": "Production probes"
       },
       "priorityScore": 15,
@@ -1065,7 +1065,6 @@
         "cyancanoe.com",
         "flipskillet.com",
         "flipskillit.com",
-        "foxyana.com",
         "gflippinv.com",
         "goodflippinluck.com",
         "goodflippinnews.com",
@@ -1078,13 +1077,13 @@
       "domain": "observability",
       "businessImpact": "medium",
       "ownerLane": "Data / analytics",
-      "title": "14 properties ship an analytics tag whose data reception is unverified",
-      "observed": "culturesherpa.org, agentkagent.com, aiaimate.com, cyancanoe.com, flipskillet.com, flipskillit.com, foxyana.com, gflippinv.com, goodflippinluck.com, goodflippinnews.com, goodflippinvibes.com, heavymoose.com, lowertownstpaul.org, redleopardofstpaul.com ship a real analytics tag, but nothing proves events are received. Cloudflare Web Analytics reception was checked.",
+      "title": "13 properties ship an analytics tag whose data reception is unverified",
+      "observed": "culturesherpa.org, agentkagent.com, aiaimate.com, cyancanoe.com, flipskillet.com, flipskillit.com, gflippinv.com, goodflippinluck.com, goodflippinnews.com, goodflippinvibes.com, heavymoose.com, lowertownstpaul.org, redleopardofstpaul.com ship a real analytics tag, but nothing proves events are received. Cloudflare Web Analytics reception was checked.",
       "businessReason": "A shipped tag is configuration, not measurement; audience claims need proof that events arrive.",
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36136043176-1",
+          "ref": "production probe run-36165943264-1",
           "state": "measured"
         }
       ],
@@ -1100,7 +1099,7 @@
       "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T12:38:33.254Z",
+        "observedAt": "2026-09-25T17:15:45.897Z",
         "basis": "Production probes"
       },
       "priorityScore": 12,
@@ -1113,7 +1112,7 @@
         {
           "factor": "estate-wide",
           "points": 15,
-          "why": "Affects 14 properties across the estate."
+          "why": "Affects 13 properties across the estate."
         },
         {
           "factor": "business-impact",
@@ -1216,7 +1215,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-25T12:38:33.255Z",
+          "ref": "2026-09-25T17:15:45.899Z",
           "state": "measured"
         }
       ],
@@ -1232,7 +1231,7 @@
       "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T12:38:33.255Z",
+        "observedAt": "2026-09-25T17:15:45.899Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 11,

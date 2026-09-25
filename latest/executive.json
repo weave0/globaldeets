@@ -1,7 +1,7 @@
 {
   "contractName": "globaldeets-executive",
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-09-25T12:38:33.254Z",
+  "generatedAt": "2026-09-25T17:15:45.897Z",
   "policy": {
     "fixturesAreProduction": false,
     "unknownIsFailure": false,
@@ -11,8 +11,8 @@
     "derivedOnly": true
   },
   "asOf": {
-    "probe": "2026-09-25T12:38:33.254Z",
-    "inventory": "2026-09-25T12:38:33.255Z",
+    "probe": "2026-09-25T17:15:45.897Z",
+    "inventory": "2026-09-25T17:15:45.899Z",
     "audience": null,
     "businessEvents": null
   },
@@ -22,17 +22,17 @@
         "id": "availability",
         "label": "Availability probes",
         "state": "live",
-        "asOf": "2026-09-25T12:38:33.254Z",
+        "asOf": "2026-09-25T17:15:45.897Z",
         "detail": "2 vantages",
-        "now": "2026-09-25T12:38:33.254Z"
+        "now": "2026-09-25T17:15:45.897Z"
       },
       {
         "id": "inventory",
         "label": "Cloudflare inventory",
         "state": "live",
-        "asOf": "2026-09-25T12:38:33.255Z",
+        "asOf": "2026-09-25T17:15:45.899Z",
         "detail": "refreshed",
-        "now": "2026-09-25T12:38:33.254Z"
+        "now": "2026-09-25T17:15:45.897Z"
       },
       {
         "id": "audience",
@@ -40,31 +40,31 @@
         "state": "absent",
         "asOf": null,
         "detail": "awaiting-authorized-source",
-        "now": "2026-09-25T12:38:33.254Z"
+        "now": "2026-09-25T17:15:45.897Z"
       },
       {
         "id": "business-events",
         "label": "Business outcomes",
         "state": "absent",
         "asOf": null,
-        "detail": "not-connected",
-        "now": "2026-09-25T12:38:33.254Z"
+        "detail": "awaiting-authorized-source",
+        "now": "2026-09-25T17:15:45.897Z"
       },
       {
         "id": "history",
         "label": "Historical snapshots",
         "state": "live",
-        "asOf": "2026-09-25T12:38:33.254Z",
+        "asOf": "2026-09-25T17:15:45.897Z",
         "detail": "2 days retained",
-        "now": "2026-09-25T12:38:33.254Z"
+        "now": "2026-09-25T17:15:45.897Z"
       },
       {
         "id": "instrumentation-reception",
         "label": "Telemetry reception",
         "state": "live",
-        "asOf": "2026-09-25T12:38:43.991Z",
+        "asOf": "2026-09-25T17:16:00.130Z",
         "detail": "checked",
-        "now": "2026-09-25T12:38:33.254Z"
+        "now": "2026-09-25T17:15:45.897Z"
       }
     ],
     "liveClasses": 4,
@@ -163,9 +163,9 @@
       "id": "instrumentation-verified",
       "label": "Telemetry reception verified",
       "decision": "Is browser data actually arriving?",
-      "numerator": 5,
+      "numerator": 6,
       "denominator": 20,
-      "pct": 25,
+      "pct": 30,
       "state": "partial",
       "detail": "Properties with reception evidence, not just a tag."
     },
@@ -1129,8 +1129,8 @@
           },
           {
             "column": "outcomes",
-            "state": "partial",
-            "label": "Producer exists, not connected"
+            "state": "unknown",
+            "label": "Not instrumented"
           }
         ]
       },
@@ -1284,8 +1284,8 @@
           },
           {
             "column": "outcomes",
-            "state": "partial",
-            "label": "Producer exists, not connected"
+            "state": "unknown",
+            "label": "Not instrumented"
           }
         ]
       },
@@ -1367,8 +1367,8 @@
           },
           {
             "column": "telemetry",
-            "state": "partial",
-            "label": "Tag shipped, unverified"
+            "state": "known",
+            "label": "Verified"
           },
           {
             "column": "audience",
@@ -1501,8 +1501,8 @@
           },
           {
             "column": "outcomes",
-            "state": "partial",
-            "label": "Producer exists, not connected"
+            "state": "unknown",
+            "label": "Not instrumented"
           }
         ]
       },
@@ -1784,9 +1784,9 @@
   },
   "audienceCards": [],
   "business": {
-    "status": "not-connected",
-    "statusLabel": "Not connected",
-    "reason": "No governed business-event feed is connected. Event-producing routes may exist in source, but none reports counts to Mission Control.",
+    "status": "awaiting-authorized-source",
+    "statusLabel": "Awaiting authorized source",
+    "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
     "requirement": {
       "what": "A governed first-party business-event feed (counts per property, event type and window) with explicit instrumentation status.",
       "secrets": [
@@ -1810,19 +1810,19 @@
             "propertyId": "culturesherpa.org",
             "name": "Culture Sherpa",
             "label": "Explore the cultural atlas",
-            "state": "uninstrumented"
+            "state": "awaiting-authorized-source"
           },
           {
             "propertyId": "aiaimate.com",
             "name": "AIAIMate",
             "label": "Start learning AI by doing",
-            "state": "not-connected"
+            "state": "awaiting-authorized-source"
           },
           {
             "propertyId": "goodflippinluck.com",
             "name": "Good Flippin Luck",
             "label": "Play, share and join the supporter list",
-            "state": "uninstrumented"
+            "state": "awaiting-authorized-source"
           }
         ]
       },
@@ -1834,13 +1834,13 @@
             "propertyId": "goodflippinnews.com",
             "name": "Good Flippin News",
             "label": "Subscribe or follow ecosystem dispatches",
-            "state": "uninstrumented"
+            "state": "awaiting-authorized-source"
           },
           {
             "propertyId": "goodflippinvibes.com",
             "name": "Good Flippin Vibes",
             "label": "Join or support the community",
-            "state": "uninstrumented"
+            "state": "awaiting-authorized-source"
           }
         ]
       },
@@ -1852,36 +1852,12 @@
             "propertyId": "goodflippindesign.com",
             "name": "Good Flippin Design",
             "label": "Start a project inquiry",
-            "state": "not-connected"
+            "state": "awaiting-authorized-source"
           }
         ]
       }
     ],
-    "connectableProducers": [
-      {
-        "propertyId": "aiaimate.com",
-        "name": "AIAIMate",
-        "types": [
-          "signup",
-          "purchase"
-        ]
-      },
-      {
-        "propertyId": "cyancanoe.com",
-        "name": "Cyan Canoe",
-        "types": [
-          "lead"
-        ]
-      },
-      {
-        "propertyId": "goodflippindesign.com",
-        "name": "Good Flippin Design",
-        "types": [
-          "lead",
-          "purchase"
-        ]
-      }
-    ],
+    "connectableProducers": [],
     "funnel": {
       "id": "outcome-funnel",
       "title": "What business actions are occurring?",
@@ -1894,7 +1870,7 @@
       "data": null,
       "empty": {
         "title": "Not measured yet",
-        "detail": "No governed business-event feed is connected. Event-producing routes may exist in source, but none reports counts to Mission Control.",
+        "detail": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "unblockedBy": "A governed first-party business-event feed (counts per property, event type and window) with explicit instrumentation status. Secrets: MISSION_CONTROL_EVENTS_SOURCE, MISSION_CONTROL_EVENTS_TOKEN."
       },
       "caption": null
@@ -2222,7 +2198,7 @@
       "kind": "segments",
       "unit": "properties",
       "evidenceState": "measured",
-      "asOf": "2026-09-25T12:38:33.254Z",
+      "asOf": "2026-09-25T17:15:45.897Z",
       "provenance": "Production probes from 2 vantages; health contract 1.1.0",
       "data": {
         "total": 25,
@@ -2383,12 +2359,12 @@
       "data": null,
       "empty": {
         "title": "Not measured yet",
-        "detail": "No governed business-event feed is connected. Event-producing routes may exist in source, but none reports counts to Mission Control.",
+        "detail": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "unblockedBy": "A governed first-party business-event feed (counts per property, event type and window) with explicit instrumentation status. Secrets: MISSION_CONTROL_EVENTS_SOURCE, MISSION_CONTROL_EVENTS_TOKEN."
       },
       "caption": null
     }
   },
-  "shareText": "GlobalDeets Mission Control — estate summary\nGenerated 2026-09-25T12:38:33.254Z from governed evidence (probe run run-36136043176-1, observed 2026-09-25T12:38:33.254Z).\n\n• Good Flippin Design operates 25 web properties. 16 have an owner-declared status (10 active, 3 incubating, 3 aliases); 9 have none, so their intent is shown as unknown.\n• 19 of 20 properties that publish a site are responding; 3 are verified healthy end-to-end. None is failing. 1 property is blocked from view (not counted as failing). 4 domains publish nothing.\n• Usage cannot be stated yet: the governed traffic source is awaiting authorization, so no request, growth or contribution figure is shown (and none is estimated).\n• No property reports business outcomes yet: 6 declare an intended outcome and 3 have event-producing routes that are not connected. \"Zero conversions\" cannot be stated for any of them.\n• 15 open items: 2 actionable now, 4 blocked on missing authority, 8 need a decision. First: 0 of 20 properties report business outcomes.\n\nMeasurement coverage:\n  - Availability probed: 24 of 25 (96%)\n  - Independent second witness: 19 of 20 (95%)\n  - Authoritative critical path: 4 of 20 (20%)\n  - Analytics tag shipped: 19 of 20 (95%)\n  - Telemetry reception verified: 5 of 20 (25%)\n  - Audience measured: 0 of 25 (0%)\n  - Business outcomes measured: 0 of 20 (0%)\n  - Owner-declared lifecycle: 16 of 25 (64%)\n  - Owner-declared outcome: 6 of 25 (24%)\n\nAudience source: awaiting authorized source. Business-outcome feed: not connected.\nUnknown is not zero, reachable is not healthy, and edge requests are not people.",
+  "shareText": "GlobalDeets Mission Control — estate summary\nGenerated 2026-09-25T17:15:45.897Z from governed evidence (probe run run-36165943264-1, observed 2026-09-25T17:15:45.897Z).\n\n• Good Flippin Design operates 25 web properties. 16 have an owner-declared status (10 active, 3 incubating, 3 aliases); 9 have none, so their intent is shown as unknown.\n• 19 of 20 properties that publish a site are responding; 3 are verified healthy end-to-end. None is failing. 1 property is blocked from view (not counted as failing). 4 domains publish nothing.\n• Usage cannot be stated yet: the governed traffic source is awaiting authorization, so no request, growth or contribution figure is shown (and none is estimated).\n• No property reports business outcomes yet: 6 declare an intended outcome and 3 have event-producing routes that are not connected. \"Zero conversions\" cannot be stated for any of them.\n• 15 open items: 2 actionable now, 4 blocked on missing authority, 8 need a decision. First: 0 of 20 properties report business outcomes.\n\nMeasurement coverage:\n  - Availability probed: 24 of 25 (96%)\n  - Independent second witness: 19 of 20 (95%)\n  - Authoritative critical path: 4 of 20 (20%)\n  - Analytics tag shipped: 19 of 20 (95%)\n  - Telemetry reception verified: 6 of 20 (30%)\n  - Audience measured: 0 of 25 (0%)\n  - Business outcomes measured: 0 of 20 (0%)\n  - Owner-declared lifecycle: 16 of 25 (64%)\n  - Owner-declared outcome: 6 of 25 (24%)\n\nAudience source: awaiting authorized source. Business-outcome feed: awaiting authorized source.\nUnknown is not zero, reachable is not healthy, and edge requests are not people.",
   "evidenceSummary": "4 of 6 evidence classes are live"
 }

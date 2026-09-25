@@ -1,7 +1,7 @@
 {
   "contractName": "globaldeets-business-events",
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-09-25T12:38:33.254Z",
+  "generatedAt": "2026-09-25T17:15:45.897Z",
   "policy": {
     "missingIsZero": false,
     "zeroRequiresInstrumentation": true,
@@ -57,8 +57,8 @@
     }
   ],
   "source": {
-    "status": "not-connected",
-    "reason": "No governed business-event feed is connected. Event-producing routes may exist in source, but none reports counts to Mission Control.",
+    "status": "awaiting-authorized-source",
+    "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
     "requirement": {
       "what": "A governed first-party business-event feed (counts per property, event type and window) with explicit instrumentation status.",
       "secrets": [
@@ -91,29 +91,29 @@
       "primaryOutcome": null,
       "earningPath": "Commissioned briefs and data sponsors",
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -125,8 +125,8 @@
       },
       "earningPath": "Grants, learning sponsors and modules",
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [
@@ -135,44 +135,44 @@
           "label": "Meaningful engagement",
           "readings": {
             "7": {
-              "evidenceState": "uninstrumented",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No countable outcome is declared."
+              "reason": "Awaiting authorized source."
             },
             "28": {
-              "evidenceState": "uninstrumented",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No countable outcome is declared."
+              "reason": "Awaiting authorized source."
             },
             "90": {
-              "evidenceState": "uninstrumented",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No countable outcome is declared."
+              "reason": "Awaiting authorized source."
             }
           }
         }
       ],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -212,29 +212,29 @@
       "primaryOutcome": null,
       "earningPath": null,
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -246,8 +246,8 @@
       },
       "earningPath": "Subscriptions, premium kits and sponsors",
       "instrumentation": {
-        "state": "not-connected",
-        "reason": "Event-producing routes exist in source (signup, purchase) but no governed feed carries their counts.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": [
           {
             "type": "signup",
@@ -267,22 +267,22 @@
           "label": "Meaningful engagement",
           "readings": {
             "7": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             },
             "28": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             },
             "90": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             }
           }
         },
@@ -291,22 +291,22 @@
           "label": "Purchase or payment",
           "readings": {
             "7": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             },
             "28": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             },
             "90": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             }
           }
         },
@@ -315,44 +315,44 @@
           "label": "Sign-up",
           "readings": {
             "7": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             },
             "28": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             },
             "90": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             }
           }
         }
       ],
       "conversion": {
         "7": {
-          "evidenceState": "not-connected",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No governed feed carries this producer."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "not-connected",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No governed feed carries this producer."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "not-connected",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No governed feed carries this producer."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -423,29 +423,29 @@
       "primaryOutcome": null,
       "earningPath": "Credibility, speaking and partner trust",
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -454,29 +454,29 @@
       "primaryOutcome": null,
       "earningPath": "Civic sponsors, grants and email list",
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -485,8 +485,8 @@
       "primaryOutcome": null,
       "earningPath": null,
       "instrumentation": {
-        "state": "not-connected",
-        "reason": "Event-producing routes exist in source (lead) but no governed feed carries their counts.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": [
           {
             "type": "lead",
@@ -501,44 +501,44 @@
           "label": "Lead or contact",
           "readings": {
             "7": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             },
             "28": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             },
             "90": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             }
           }
         }
       ],
       "conversion": {
         "7": {
-          "evidenceState": "not-connected",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No governed feed carries this producer."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "not-connected",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No governed feed carries this producer."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "not-connected",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No governed feed carries this producer."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -547,29 +547,29 @@
       "primaryOutcome": null,
       "earningPath": null,
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -578,29 +578,29 @@
       "primaryOutcome": null,
       "earningPath": null,
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -609,29 +609,29 @@
       "primaryOutcome": null,
       "earningPath": null,
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -702,29 +702,29 @@
       "primaryOutcome": null,
       "earningPath": null,
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -736,8 +736,8 @@
       },
       "earningPath": "Patrons, ads, sponsor intake and commissioned work",
       "instrumentation": {
-        "state": "not-connected",
-        "reason": "Event-producing routes exist in source (lead, purchase) but no governed feed carries their counts.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": [
           {
             "type": "lead",
@@ -757,22 +757,22 @@
           "label": "Lead or contact",
           "readings": {
             "7": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             },
             "28": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             },
             "90": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             }
           }
         },
@@ -781,44 +781,44 @@
           "label": "Purchase or payment",
           "readings": {
             "7": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             },
             "28": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             },
             "90": {
-              "evidenceState": "not-connected",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No governed feed carries this producer."
+              "reason": "Awaiting authorized source."
             }
           }
         }
       ],
       "conversion": {
         "7": {
-          "evidenceState": "not-connected",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No governed feed carries this producer."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "not-connected",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No governed feed carries this producer."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "not-connected",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No governed feed carries this producer."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -830,8 +830,8 @@
       },
       "earningPath": null,
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [
@@ -840,44 +840,44 @@
           "label": "Meaningful engagement",
           "readings": {
             "7": {
-              "evidenceState": "uninstrumented",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No countable outcome is declared."
+              "reason": "Awaiting authorized source."
             },
             "28": {
-              "evidenceState": "uninstrumented",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No countable outcome is declared."
+              "reason": "Awaiting authorized source."
             },
             "90": {
-              "evidenceState": "uninstrumented",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No countable outcome is declared."
+              "reason": "Awaiting authorized source."
             }
           }
         }
       ],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -889,8 +889,8 @@
       },
       "earningPath": null,
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [
@@ -899,44 +899,44 @@
           "label": "Sign-up",
           "readings": {
             "7": {
-              "evidenceState": "uninstrumented",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No countable outcome is declared."
+              "reason": "Awaiting authorized source."
             },
             "28": {
-              "evidenceState": "uninstrumented",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No countable outcome is declared."
+              "reason": "Awaiting authorized source."
             },
             "90": {
-              "evidenceState": "uninstrumented",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No countable outcome is declared."
+              "reason": "Awaiting authorized source."
             }
           }
         }
       ],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -948,8 +948,8 @@
       },
       "earningPath": "Patrons and community features",
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [
@@ -958,44 +958,44 @@
           "label": "Sign-up",
           "readings": {
             "7": {
-              "evidenceState": "uninstrumented",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No countable outcome is declared."
+              "reason": "Awaiting authorized source."
             },
             "28": {
-              "evidenceState": "uninstrumented",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No countable outcome is declared."
+              "reason": "Awaiting authorized source."
             },
             "90": {
-              "evidenceState": "uninstrumented",
+              "evidenceState": "awaiting-authorized-source",
               "value": null,
               "unit": "events",
-              "reason": "No countable outcome is declared."
+              "reason": "Awaiting authorized source."
             }
           }
         }
       ],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -1004,29 +1004,29 @@
       "primaryOutcome": null,
       "earningPath": null,
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -1035,29 +1035,29 @@
       "primaryOutcome": null,
       "earningPath": "Patron support, streaming and merch",
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -1066,29 +1066,29 @@
       "primaryOutcome": null,
       "earningPath": "Local sponsors and quarterly briefings",
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -1097,29 +1097,29 @@
       "primaryOutcome": null,
       "earningPath": "Civic services and local partnerships",
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     },
@@ -1128,29 +1128,29 @@
       "primaryOutcome": null,
       "earningPath": null,
       "instrumentation": {
-        "state": "uninstrumented",
-        "reason": "No event-producing route has been declared for this property.",
+        "state": "awaiting-authorized-source",
+        "reason": "Cloudflare D1 business-event source could not be read: The given account is not valid or is not authorized to access this service",
         "candidateProducers": []
       },
       "events": [],
       "conversion": {
         "7": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "28": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         },
         "90": {
-          "evidenceState": "uninstrumented",
+          "evidenceState": "awaiting-authorized-source",
           "value": null,
           "unit": "percent",
-          "reason": "No countable outcome is declared."
+          "reason": "Awaiting authorized source."
         }
       }
     }
