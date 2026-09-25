@@ -102,6 +102,18 @@ test.describe('live evidence, executive view', () => {
     await expect(page.locator('.hero .kpi', { hasText: 'Edge traffic' })).toContainText('requests, not people');
     await expect(page.locator('.hero .kpi', { hasText: 'Business outcomes' })).toContainText('2 / 20');
 
+    // Decision cockpit: expose the governed diagnostics ranking and investor-claim guardrails without inventing another score.
+    const cockpit = page.locator('.decision-cockpit');
+    await expect(cockpit.getByRole('heading', { name: 'Decision cockpit' })).toBeVisible();
+    await expect(cockpit.locator('.kpi', { hasText: 'Actionable now' })).toContainText(String(plane.diagnostics.summary.actionableNow));
+    await expect(cockpit.locator('.kpi', { hasText: 'Decisions needed' })).toContainText(String(plane.diagnostics.summary.decisionNeeded));
+    await expect(cockpit.locator('.kpi', { hasText: 'Blocked on authority' })).toContainText(String(plane.diagnostics.summary.blockedOnAuthority));
+    const openDiagnostics = plane.diagnostics.items.filter(item => !['closed', 'resolved', 'dismissed', 'superseded'].includes(item.status));
+    const claimBlockers = openDiagnostics.filter(item => item.escalation?.blocksInvestorClaim);
+    await expect(cockpit.locator('.kpi', { hasText: 'Investor-claim blockers' })).toContainText(String(claimBlockers.length));
+    if (openDiagnostics.length) await expect(cockpit.locator('.decision-item').first()).toContainText(openDiagnostics[0].title);
+    await expect(cockpit).toContainText('Open evidence & score');
+
     // Contribution chart: bars and the table view equal the audience contract exactly.
     const bars = plane.audience.properties.filter(row => row.requests[28].evidenceState === 'measured').sort((a, b) => b.requests[28].value - a.requests[28].value);
     const card = page.locator('.chart-card', { hasText: 'Which properties carry the traffic?' });
