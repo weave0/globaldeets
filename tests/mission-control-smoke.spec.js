@@ -108,7 +108,8 @@ test.describe('live evidence, executive view', () => {
     await expect(cockpit.locator('.kpi', { hasText: 'Actionable now' })).toContainText(String(plane.diagnostics.summary.actionableNow));
     await expect(cockpit.locator('.kpi', { hasText: 'Decisions needed' })).toContainText(String(plane.diagnostics.summary.decisionNeeded));
     await expect(cockpit.locator('.kpi', { hasText: 'Blocked on authority' })).toContainText(String(plane.diagnostics.summary.blockedOnAuthority));
-    const openDiagnostics = plane.diagnostics.items.filter(item => !['closed', 'resolved', 'dismissed', 'superseded'].includes(item.status));
+    const terminalStatuses = plane.diagnostics.agentContract.terminalStatuses;
+    const openDiagnostics = plane.diagnostics.items.filter(item => !terminalStatuses.includes(item.status));
     const claimBlockers = openDiagnostics.filter(item => item.escalation?.blocksInvestorClaim);
     await expect(cockpit.locator('.kpi', { hasText: 'Investor-claim blockers' })).toContainText(String(claimBlockers.length));
     if (openDiagnostics.length) await expect(cockpit.locator('.decision-item').first()).toContainText(openDiagnostics[0].title);

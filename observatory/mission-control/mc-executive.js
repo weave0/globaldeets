@@ -239,7 +239,8 @@
   }
 
   // ── Decision cockpit ─────────────────────────────────────────────────────────────────────────
-  const TERMINAL = new Set(['closed', 'resolved', 'dismissed', 'superseded']);
+  // Mirrors agentContract.terminalStatuses (diagnostics.mjs) and the operator/model views.
+  const TERMINAL = new Set(['closed', 'accepted-risk']);
   const SEVERITY_TONE = { critical: 'bad', high: 'bad', medium: 'watch', low: 'info' };
 
   function decisionItem(item, rank) {
