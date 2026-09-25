@@ -13,13 +13,16 @@ const ENV = { CLOUDFLARE_API_TOKEN: 'tok', CLOUDFLARE_ACCOUNT_ID: 'acct', EVENTS
 const reply = (status, json) => ({ status, ok: status < 300, json: async () => json });
 const denied = () => reply(403, { success: false, errors: [{ code: 9109, message: 'Unauthorized to access requested resource' }] });
 
-function fakeCloudflare({ deny = [] } = {}) {
+function fakeCloudflare({ deny = [], graphqlError = null } = {}) {
   const calls = [];
   const fetchImpl = async (url, init = {}) => {
     calls.push(url);
     const hit = key => url.includes(key);
     if (hit('/tokens/verify')) return reply(200, { success: true, result: { status: 'active' } });
-    if (hit('/graphql')) return deny.includes('graphql') ? reply(200, { data: null, errors: [{ message: 'not authorized for that account' }] }) : reply(200, { data: { viewer: { accounts: [{ rumPageloadEventsAdaptiveGroups: [] }] } } });
+    if (hit('/graphql')) {
+      if (graphqlError) return reply(200, { data: null, errors: [{ message: graphqlError }] });
+      return deny.includes('graphql') ? reply(200, { data: null, errors: [{ message: 'not authorized for that account' }] }) : reply(200, { data: { viewer: { accounts: [{ rumPageloadEventsAdaptiveGroups: [] }] } } });
+    }
     if (hit('/zones')) return deny.includes('zones') ? denied() : reply(200, { success: true, result: [] });
     if (hit('/pages/projects')) return deny.includes('pages') ? denied() : reply(200, { success: true, result: [] });
     if (hit('/d1/database/')) return deny.includes('d1') ? denied() : reply(200, { success: true, result: {} });
@@ -67,6 +70,15 @@ test('a rejected feed token and an unauthorized RUM query both fail with remedie
   assert.deepEqual(report.failures.map(f => f.id).sort(), ['cloudflare.analytics.read', 'events.feed.read']);
   assert.match(report.failures.find(f => f.id === 'cloudflare.analytics.read').remedy, /Account Analytics → Read/);
   assert.match(report.failures.find(f => f.id === 'events.feed.read').remedy, /MISSION_CONTROL_EVENTS_TOKEN/);
+});
+
+
+test('a non-authorization GraphQL error is classified as an upstream error, not a missing permission', async () => {
+  const report = await runPreflight({ manifest, env: ENV, fetchImpl: fakeCloudflare({ graphqlError: 'Unknown field rumPageloadEventsAdaptiveGroups' }).fetchImpl, now: NOW });
+  const item = report.failures.find(f => f.id === 'cloudflare.analytics.read');
+  assert.equal(item.status, 'error');
+  assert.match(item.remedy, /not classified as an authorization failure/i);
+  assert.doesNotMatch(item.remedy, /Account Analytics/);
 });
 
 test('missing secrets are reported as missing without any network call', async () => {
