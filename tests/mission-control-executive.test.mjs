@@ -168,7 +168,7 @@ test('outcomes are described as measured only when a governed feed reports them;
 
   const none = (await collect(newDir())).plane.executive;
   assert.equal(none.business.funnel.evidenceState, 'empty');
-  assert.match(none.business.funnel.empty.unblockedBy, /CLOUDFLARE_API_TOKEN/);
+  assert.match(none.business.funnel.empty.unblockedBy, /MISSION_CONTROL_EVENTS_SOURCE/);
   assert.deepEqual(none.business.connectableProducers.map(item => item.propertyId).sort(), ['aiaimate.com', 'cyancanoe.com', 'goodflippindesign.com']);
 });
 
