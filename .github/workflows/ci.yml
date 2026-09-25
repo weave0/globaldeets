@@ -33,6 +33,7 @@ jobs:
           test -f observatory/mission-control/audience.json || (echo "MISSING: Mission Control audience" && exit 1)
           test -f observatory/mission-control/business-events.json || (echo "MISSING: Mission Control business events" && exit 1)
           test -f observatory/mission-control/executive.json || (echo "MISSING: Mission Control executive summary" && exit 1)
+          test -f observatory/mission-control/coverage-matrix.json || (echo "MISSING: Mission Control estate coverage matrix" && exit 1)
           test -f observatory/mission-control/evidence-semantics.js || (echo "MISSING: Mission Control evidence semantics" && exit 1)
           test -f tools/mission-control/config/estate-registry.json || (echo "MISSING: estate registry" && exit 1)
           test -f .github/workflows/mission-control-evidence.yml || (echo "MISSING: scheduled evidence workflow" && exit 1)
@@ -110,6 +111,8 @@ jobs:
           node --check tools/mission-control/lib/events.mjs
           node --check tools/mission-control/lib/vantage.mjs
           node --check tools/mission-control/lib/executive.mjs
+          node --check tools/mission-control/lib/coverage-matrix.mjs
+          node --check tools/mission-control/coverage-report.mjs
           node --check shared/ecosystem-nav.js
           node --check playwright.config.js
           node --check tests/smoke.spec.js
@@ -136,6 +139,7 @@ jobs:
           node --check tests/mission-control-vantage.test.mjs
           node --check tests/mission-control-intelligence.test.mjs
           node --check tests/mission-control-executive.test.mjs
+          node --check tests/mission-control-coverage.test.mjs
           node --check tests/mission-control-migration.test.mjs
           node --check tests/mission-control-model.test.mjs
       - name: Reject stale investor-facing copy

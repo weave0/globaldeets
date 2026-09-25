@@ -3,13 +3,14 @@
  * the only clock is the `now` input.
  *
  * Order matters: estate -> audience + business events -> history snapshot -> diagnostics (which score and
- * rank findings using all of them) -> executive summary (which derives from all of the above).
+ * rank findings using all of them) -> executive summary and estate coverage matrix (both derive from all of the above).
  */
 import { buildEstateHealth } from './estate.mjs';
 import { buildDiagnostics } from './diagnostics.mjs';
 import { buildAudience } from './audience.mjs';
 import { buildBusinessEvents } from './events.mjs';
 import { buildExecutive } from './executive.mjs';
+import { buildCoverageMatrix } from './coverage-matrix.mjs';
 import { buildScheduledSnapshot, HISTORY_SCHEMA_VERSION, INGESTION_SEAMS, initialHistory, pruneHistory, upsertSnapshot } from './ledger.mjs';
 
 export function compactRun(run) {
@@ -140,6 +141,7 @@ export function assemblePlane({
 
   const diagnostics = buildDiagnostics({ estate, history, manual, previous: previousDiagnostics, latestAttempt, audience, events, now });
   const executive = buildExecutive({ registry, estate, audience, events, diagnostics, history, now });
+  const coverage = buildCoverageMatrix({ registry, estate, audience, events, diagnostics, now });
 
   const missingRum = estate.properties.filter(item => item.observability.rum !== 'on').map(item => item.propertyId);
   const summary = {
@@ -175,5 +177,5 @@ export function assemblePlane({
     recentRuns: compactRuns.filter(run => Date.parse(run.finishedAt) >= Date.parse(now) - 28 * 86400000),
   };
 
-  return { history, estate, diagnostics, summary, probes, audience, events, executive, snapshotAction };
+  return { history, estate, diagnostics, summary, probes, audience, events, executive, coverage, snapshotAction };
 }

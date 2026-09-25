@@ -11,6 +11,13 @@ export class EvidenceCorruptError extends Error {}
 export const LEGACY_PUBLISHED_FILES = ['history.json', 'estate-health.json', 'diagnostics.json', 'mission-control-data.json', 'probes.json'];
 export const PUBLISHED_FILES = [...LEGACY_PUBLISHED_FILES, 'audience.json', 'business-events.json', 'executive.json'];
 
+/**
+ * Documents derived purely from the published set (GD-033). They are always written, but never required on read:
+ * an evidence branch published before they existed is still a complete, valid set, and the next collection adds them.
+ */
+export const DERIVED_FILES = ['coverage-matrix.json'];
+export const WRITTEN_FILES = [...PUBLISHED_FILES, ...DERIVED_FILES];
+
 /** Maps published file names to plane keys. */
 export const PLANE_KEYS = {
   'history.json': 'history',
@@ -21,10 +28,11 @@ export const PLANE_KEYS = {
   'audience.json': 'audience',
   'business-events.json': 'events',
   'executive.json': 'executive',
+  'coverage-matrix.json': 'coverage',
 };
 
 export function planeDocuments(plane) {
-  return Object.fromEntries(PUBLISHED_FILES.map(name => [name, plane[PLANE_KEYS[name]]]));
+  return Object.fromEntries(WRITTEN_FILES.map(name => [name, plane[PLANE_KEYS[name]]]));
 }
 const PROBE_RUN_RETENTION_DAYS = 120;
 
@@ -112,7 +120,7 @@ export function persistEvidence(dir, { plane, latestValidRun, inventory, compact
   rmSync(next, { recursive: true, force: true });
   rmSync(prev, { recursive: true, force: true });
   const documents = planeDocuments(plane);
-  for (const name of PUBLISHED_FILES) atomicWrite(join(next, name), pretty(documents[name]));
+  for (const name of WRITTEN_FILES) atomicWrite(join(next, name), pretty(documents[name]));
   if (existsSync(latest)) renameSync(latest, prev);
   renameSync(next, latest);
   rmSync(prev, { recursive: true, force: true });
