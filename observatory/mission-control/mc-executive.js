@@ -238,6 +238,69 @@
     ]);
   }
 
+  // ── Decision cockpit ─────────────────────────────────────────────────────────────────────────
+  const TERMINAL = new Set(['closed', 'resolved', 'dismissed', 'superseded']);
+  const SEVERITY_TONE = { critical: 'bad', high: 'bad', medium: 'watch', low: 'info' };
+
+  function decisionItem(item, rank) {
+    const subjects = item.subjects || [];
+    const investorBlocked = Boolean(item.escalation?.blocksInvestorClaim);
+    return el('article', 'decision-item sev-' + item.severity, [
+      el('div', 'decision-rank', ['#' + rank], { 'aria-label': 'Priority ' + rank }),
+      el('div', 'decision-main', [
+        el('div', 'decision-heading', [
+          el('h3', '', [item.title]),
+          pill(SEVERITY_TONE[item.severity] || 'neutral', item.severity.charAt(0).toUpperCase() + item.severity.slice(1)),
+        ]),
+        el('p', 'decision-why', [item.businessReason || item.observed || '']),
+        el('div', 'decision-meta', [
+          el('span', 'chip', ['Business impact: ' + (item.businessImpact || 'unknown')]),
+          item.actionability?.state ? el('span', 'chip', [model.ACTIONABILITY_LABELS[item.actionability.state] || item.actionability.state]) : null,
+          investorBlocked ? el('span', 'chip is-strong', ['Blocks investor claim']) : null,
+          subjects.length ? el('span', 'chip', [subjects.length + ' ' + (subjects.length === 1 ? 'property' : 'properties')]) : null,
+        ]),
+        item.nextAction ? el('p', 'decision-action', [el('span', 'label', ['Next: ']), item.nextAction]) : null,
+        item.actionability?.blockedBy ? el('p', 'decision-blocker', [el('span', 'label', ['Blocked by: ']), item.actionability.blockedBy]) : null,
+        el('a', 'inline-link no-print', ['Open evidence & score →'], { href: '#operator?find=' + encodeURIComponent(item.id) }),
+      ]),
+    ]);
+  }
+
+  function renderDecisionCockpit(ctx) {
+    const all = ctx.diagnostics.items || [];
+    const open = all.filter(item => !TERMINAL.has(item.status));
+    const ranked = open.slice(0, 4);
+    const investorBlockers = open.filter(item => item.escalation?.blocksInvestorClaim);
+    const counts = ctx.diagnostics.summary || {};
+    const supportedWins = ctx.executive.findings.wins.length;
+
+    return el('section', 'block decision-cockpit', [
+      sectionHead('What deserves attention now', 'Decision cockpit', 'The existing diagnostics queue already scores severity, business impact, actionability and evidence confidence. This view turns that ranking into an executive work surface without inventing a second score.'),
+      el('div', 'decision-stats', [
+        kpi('Actionable now', String(counts.actionableNow || 0), 'items that can be worked immediately', (counts.actionableNow || 0) ? 'info' : 'neutral'),
+        kpi('Decisions needed', String(counts.decisionNeeded || 0), 'owner or product decisions, not outages', (counts.decisionNeeded || 0) ? 'watch' : 'neutral'),
+        kpi('Blocked on authority', String(counts.blockedOnAuthority || 0), 'waiting on access or external authority', (counts.blockedOnAuthority || 0) ? 'watch' : 'neutral'),
+        kpi('Investor-claim blockers', String(investorBlockers.length), investorBlockers.length ? 'claims that should stay out of diligence material for now' : 'no open diagnostic explicitly blocks a claim', investorBlockers.length ? 'bad' : 'good'),
+      ]),
+      el('div', 'decision-layout', [
+        el('div', 'decision-priority', [
+          el('div', 'decision-subhead', [el('h3', '', ['Highest-priority work']), el('p', 'muted', ['Ranked by the governed diagnostics plane.'])]),
+          ranked.length ? el('div', 'decision-list', ranked.map((item, index) => decisionItem(item, index + 1))) : el('p', 'muted', ['No open diagnostic items.']),
+        ]),
+        el('aside', 'card claim-readiness', [
+          el('h3', '', ['Investor-readiness ledger']),
+          el('p', 'chart-question', ['A claim is either supported by current evidence or explicitly held back.']),
+          el('div', 'claim-row', [el('strong', '', [String(supportedWins)]), el('span', '', ['evidence-backed wins currently safe to discuss'])]),
+          el('div', 'claim-row', [el('strong', '', [String(investorBlockers.length)]), el('span', '', ['open items explicitly blocking an investor claim'])]),
+          investorBlockers.length
+            ? el('ul', 'claim-blockers', investorBlockers.slice(0, 4).map(item => el('li', '', [el('strong', '', [item.title]), el('span', 'muted', [item.escalation?.escalateWhen ? ' — ' + item.escalation.escalateWhen : ''])])))
+            : el('p', 'muted', ['No current diagnostic is marked as an investor-claim blocker.']),
+          el('p', 'claim-note', ['This is a disclosure guardrail, not a valuation or investment recommendation.']),
+        ]),
+      ]),
+    ]);
+  }
+
   // ── Wins / opportunities / risks / unknowns ─────────────────────────────────────────────────
   function findingList(items, kind) {
     if (!items.length) return el('p', 'muted', [kind === 'wins' ? 'Nothing the evidence supports claiming yet.' : 'None.']);
@@ -287,7 +350,7 @@
 
   function render(root, ctx) {
     // Executive meaning first: state of the estate, usage, outcomes, attention; the property-by-property detail after.
-    root.replaceChildren(renderHero(ctx), renderWorking(ctx), renderAudience(ctx), renderBusiness(ctx), renderFindings(ctx), renderPortfolio(ctx), renderKnowledge(ctx), renderEvidence(ctx));
+    root.replaceChildren(renderHero(ctx), renderDecisionCockpit(ctx), renderWorking(ctx), renderAudience(ctx), renderBusiness(ctx), renderFindings(ctx), renderPortfolio(ctx), renderKnowledge(ctx), renderEvidence(ctx));
   }
 
   window.MissionControlExecutive = { render, pill, sectionHead, emptyState, TONE_GLYPH, semantics };
