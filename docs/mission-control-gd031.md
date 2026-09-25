@@ -61,8 +61,9 @@ telemetry.
 `globaldeets-business-events-feed` 1.0 is the ingestion contract (`records[]` of property, event type, window, integer
 count, plus `instrumentedProperties[]`). A zero is accepted only for a property the feed itself lists as instrumented;
 rates need a comparable visit denominator. Properties whose source contains event-producing routes are shown as
-`not-connected`; properties with nothing declared are `uninstrumented`. Connect with `MISSION_CONTROL_EVENTS_SOURCE` and
-`MISSION_CONTROL_EVENTS_TOKEN`.
+`not-connected`; properties with nothing declared are `uninstrumented`. The production collector reads the governed
+Cloudflare D1 event counters directly through its existing Cloudflare account authority. `MISSION_CONTROL_EVENTS_SOURCE`
+and `MISSION_CONTROL_EVENTS_TOKEN` remain an optional compatible-feed override.
 
 ## Critical-path maturity
 
