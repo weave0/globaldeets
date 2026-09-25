@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0.0",
   "contractName": "globaldeets-diagnostics-queue",
-  "generatedAt": "2026-09-24T22:48:58.746Z",
+  "generatedAt": "2026-09-25T01:00:35.157Z",
   "agentContract": {
     "sortableFields": [
       "priority",
@@ -212,13 +212,13 @@
         "targetLane": "Data / analytics + Product narrative"
       },
       "subjects": [],
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "unknown",
         "observedAt": null,
         "basis": "Governed audience source"
       },
-      "priorityScore": 115,
+      "priorityScore": 116,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -239,6 +239,11 @@
           "factor": "actionability",
           "points": -20,
           "why": "Blocked on authority that is not available yet."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 1
@@ -288,7 +293,7 @@
       "evidence": [
         {
           "type": "business-event-contract",
-          "ref": "globaldeets-business-events@2026-09-24T22:48:58.746Z",
+          "ref": "globaldeets-business-events@2026-09-25T01:00:35.157Z",
           "state": "not-connected"
         }
       ],
@@ -300,7 +305,7 @@
         "escalateWhen": "Any investor material states conversion or outcome figures.",
         "targetLane": "Product + Data"
       },
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "unknown",
         "observedAt": null,
@@ -379,13 +384,13 @@
         "culturesherpa.org",
         "globaldeets.com"
       ],
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": 77,
+      "priorityScore": 78,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -416,6 +421,11 @@
           "factor": "confidence",
           "points": -4,
           "why": "Evidence confidence is medium."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 3
@@ -445,7 +455,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36069459865-1",
+          "ref": "production probe run-36080059976-1",
           "state": "measured"
         }
       ],
@@ -458,10 +468,10 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T22:48:58.746Z",
+        "observedAt": "2026-09-25T01:00:35.157Z",
         "basis": "Production probes"
       },
       "priorityScore": 72,
@@ -530,7 +540,7 @@
         "targetLane": "Data / analytics"
       },
       "subjects": [],
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "unknown",
         "observedAt": null,
@@ -587,7 +597,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-24T22:48:58.747Z",
+          "ref": "2026-09-25T01:00:35.158Z",
           "state": "measured"
         }
       ],
@@ -600,10 +610,10 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T22:48:58.747Z",
+        "observedAt": "2026-09-25T01:00:35.158Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 48,
@@ -649,7 +659,7 @@
       "ownerLane": "Data / analytics",
       "openedAt": "2026-09-24",
       "title": "Accumulate enough comparable history for 7/28/90-day trends",
-      "observed": "1 scheduled daily snapshot retained (1/90 days of a full 90-day view); 1 measured operational-traffic snapshot; certified audience history: none.",
+      "observed": "2 scheduled daily snapshots retained (2/90 days of a full 90-day view); 1 measured operational-traffic snapshot; certified audience history: none.",
       "businessReason": "Trend charts become decision-grade only when they contain comparable observations rather than decorative lines.",
       "evidence": [
         {
@@ -667,10 +677,10 @@
         "targetLane": "Data / analytics"
       },
       "subjects": [],
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T22:48:58.746Z",
+        "observedAt": "2026-09-25T01:00:35.157Z",
         "basis": "Historical snapshots"
       },
       "priorityScore": 43,
@@ -747,7 +757,7 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -826,7 +836,7 @@
         "targetLane": "Platform + property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -867,7 +877,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-24T22:48:58.746Z",
+          "ref": "globaldeets-estate-health@2026-09-25T01:00:35.157Z",
           "state": "measured"
         }
       ],
@@ -890,10 +900,10 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T22:48:58.746Z",
+        "observedAt": "2026-09-25T01:00:35.157Z",
         "basis": "Production probes"
       },
       "priorityScore": 34,
@@ -949,7 +959,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-24T22:48:58.746Z",
+          "ref": "globaldeets-estate-health@2026-09-25T01:00:35.157Z",
           "state": "measured"
         }
       ],
@@ -962,10 +972,10 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T22:48:58.746Z",
+        "observedAt": "2026-09-25T01:00:35.157Z",
         "basis": "Production probes"
       },
       "priorityScore": 15,
@@ -1020,7 +1030,7 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -1073,7 +1083,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36069459865-1",
+          "ref": "production probe run-36080059976-1",
           "state": "measured"
         }
       ],
@@ -1086,10 +1096,10 @@
         "targetLane": "Data / analytics"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T22:48:58.746Z",
+        "observedAt": "2026-09-25T01:00:35.157Z",
         "basis": "Production probes"
       },
       "priorityScore": 12,
@@ -1161,7 +1171,7 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -1205,7 +1215,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-24T22:48:58.747Z",
+          "ref": "2026-09-25T01:00:35.158Z",
           "state": "measured"
         }
       ],
@@ -1218,10 +1228,10 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-24T22:48:58.747Z",
+        "observedAt": "2026-09-25T01:00:35.158Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 11,
@@ -1283,7 +1293,7 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 0,
+      "ageDays": 1,
       "priorityScore": -10,
       "priorityBreakdown": [
         {
@@ -1351,7 +1361,7 @@
       "category": "governance",
       "closedAt": "2026-09-24",
       "subjects": [],
-      "ageDays": 0,
+      "ageDays": 1,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -1417,13 +1427,13 @@
       },
       "category": "product",
       "subjects": [],
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": -89,
+      "priorityScore": -88,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1439,6 +1449,11 @@
           "factor": "confidence",
           "points": -4,
           "why": "Evidence confidence is medium."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 18
