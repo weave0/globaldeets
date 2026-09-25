@@ -64,7 +64,7 @@ test.describe('committed baseline (no probe evidence, no governed sources)', () 
     await expect(hero.locator('.kpi', { hasText: 'Business outcomes' })).toContainText('Not connected');
     await expect(page.getByText('Usage isn’t measured yet, and nothing here is estimated')).toBeVisible();
     await expect(page.locator('.requirement').first()).toContainText('MISSION_CONTROL_GOLD_TOKEN');
-    await expect(page.locator('.requirement').last()).toContainText('MISSION_CONTROL_EVENTS_SOURCE');
+    await expect(page.locator('.requirement').last()).toContainText('CLOUDFLARE_API_TOKEN');
     await expect(page.locator('.window-card')).toHaveCount(0);
     await expect(page.locator('.linechart')).toHaveCount(0);
     await expect(page.getByText('Not measured yet').first()).toBeVisible();
