@@ -75,7 +75,7 @@ jobs:
           fi
 
       - name: Run mission-control contract tests
-        run: node --test tests/mission-control-probe.test.mjs tests/mission-control-collector.test.mjs tests/mission-control-evidence.test.mjs tests/mission-control-scheduler.test.mjs tests/mission-control-hardening.test.mjs tests/mission-control-audience.test.mjs tests/mission-control-events.test.mjs tests/mission-control-instrumentation.test.mjs tests/mission-control-vantage.test.mjs tests/mission-control-intelligence.test.mjs tests/mission-control-executive.test.mjs tests/mission-control-migration.test.mjs tests/mission-control-model.test.mjs
+        run: node --test tests/mission-control-probe.test.mjs tests/mission-control-collector.test.mjs tests/mission-control-evidence.test.mjs tests/mission-control-scheduler.test.mjs tests/mission-control-hardening.test.mjs tests/mission-control-audience.test.mjs tests/mission-control-events.test.mjs tests/mission-control-events-d1.test.mjs tests/mission-control-instrumentation.test.mjs tests/mission-control-vantage.test.mjs tests/mission-control-intelligence.test.mjs tests/mission-control-executive.test.mjs tests/mission-control-migration.test.mjs tests/mission-control-model.test.mjs
 
       - name: Fetch the second vantage
         continue-on-error: true
@@ -94,6 +94,7 @@ jobs:
           INSIGHTS_SOURCE: ${{ secrets.MISSION_CONTROL_INSIGHTS_SOURCE }}
           EVENTS_SOURCE: ${{ secrets.MISSION_CONTROL_EVENTS_SOURCE }}
           EVENTS_SOURCE_TOKEN: ${{ secrets.MISSION_CONTROL_EVENTS_TOKEN }}
+          EVENTS_D1_DATABASE_ID: a46ec9df-31b8-4285-845b-1fd3a62bd1b5
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
           set +e
