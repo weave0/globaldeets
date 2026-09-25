@@ -17,7 +17,7 @@ test('no feed: nothing is connected, "not connected" and "uninstrumented" stay d
   const events = build({ doc: null, configured: false, httpStatus: null, reason: 'x' });
   assert.equal(events.source.status, 'not-connected');
   assert.deepEqual(validateBusinessEvents(events, opts), []);
-  assert.ok(events.source.requirement.secrets.includes('MISSION_CONTROL_EVENTS_SOURCE'));
+  assert.ok(events.source.requirement.secrets.includes('CLOUDFLARE_API_TOKEN'));
   // Properties whose source declares event-producing routes are "not connected"; the rest are "uninstrumented".
   assert.equal(row(events, 'goodflippindesign.com').instrumentation.state, 'not-connected');
   assert.equal(row(events, 'aiaimate.com').instrumentation.state, 'not-connected');
