@@ -1,0 +1,99 @@
+{
+    "contractName": "globaldeets-mission-control-authority",
+    "schemaVersion": "1.0.0",
+    "description": "Every external capability the Mission Control collector and its deploy depend on. A new Cloudflare call or secret without an entry here fails tests/mission-control-authority.test.mjs.",
+    "credential": {
+        "secret": "CLOUDFLARE_API_TOKEN",
+        "accountSecret": "CLOUDFLARE_ACCOUNT_ID",
+        "kind": "Cloudflare account API token (one governed token, account-scoped, least privilege)",
+        "createAt": "https://dash.cloudflare.com/?to=/:account/api-tokens"
+    },
+    "capabilities": [
+        {
+            "id": "cloudflare.token.active",
+            "required": true,
+            "purpose": "Token exists, is active, and is not expired.",
+            "permission": null,
+            "probe": "token-verify",
+            "consumers": []
+        },
+        {
+            "id": "cloudflare.zones.read",
+            "required": true,
+            "purpose": "Estate inventory: zones and their status.",
+            "permission": "Zone → Zone → Read (All zones from the account)",
+            "probe": "zones-list",
+            "apiPaths": [
+                "/zones"
+            ],
+            "consumers": [
+                "tools/mission-control/lib/cloudflare-inventory.mjs"
+            ]
+        },
+        {
+            "id": "cloudflare.pages.read",
+            "required": true,
+            "purpose": "Estate inventory: Pages projects, domains, latest production deploy.",
+            "permission": "Account → Cloudflare Pages → Read",
+            "probe": "pages-list",
+            "apiPaths": [
+                "/pages/projects"
+            ],
+            "consumers": [
+                "tools/mission-control/lib/cloudflare-inventory.mjs"
+            ]
+        },
+        {
+            "id": "cloudflare.analytics.read",
+            "required": true,
+            "purpose": "RUM reception: Web Analytics page-load events per host.",
+            "permission": "Account → Account Analytics → Read",
+            "probe": "rum-graphql",
+            "apiPaths": [
+                "/graphql"
+            ],
+            "consumers": [
+                "tools/mission-control/lib/rum-reception.mjs"
+            ]
+        },
+        {
+            "id": "cloudflare.pages.deploy",
+            "required": true,
+            "purpose": "Deploy the validated evidence overlay to the globaldeets Pages project.",
+            "permission": "Account → Cloudflare Pages → Edit",
+            "probe": null,
+            "consumers": [
+                ".github/workflows/mission-control-evidence.yml"
+            ]
+        },
+        {
+            "id": "events.feed.read",
+            "required": true,
+            "purpose": "First-party business events via gfd-mission-control-events (native D1 binding; no Cloudflare API permission needed).",
+            "secrets": [
+                "MISSION_CONTROL_EVENTS_SOURCE",
+                "MISSION_CONTROL_EVENTS_TOKEN"
+            ],
+            "permission": "FEED_TOKEN on the gfd-mission-control-events Worker must equal MISSION_CONTROL_EVENTS_TOKEN",
+            "probe": "events-feed",
+            "consumers": [
+                "tools/mission-control/lib/collect.mjs"
+            ]
+        },
+        {
+            "id": "cloudflare.d1.read",
+            "required": false,
+            "when": "MISSION_CONTROL_EVENTS_SOURCE is unset (REST fallback only)",
+            "purpose": "Fallback read of gfd_community event counters over the D1 REST API.",
+            "permission": "Account → D1 → Read",
+            "probe": "d1-database",
+            "apiPaths": [
+                "/d1/database"
+            ],
+            "consumers": [
+                "tools/mission-control/lib/events-d1.mjs"
+            ],
+            "databaseId": "a46ec9df-31b8-4285-845b-1fd3a62bd1b5"
+        }
+    ]
+}

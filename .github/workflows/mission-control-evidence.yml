@@ -75,7 +75,18 @@ jobs:
           fi
 
       - name: Run mission-control contract tests
-        run: node --test tests/mission-control-probe.test.mjs tests/mission-control-collector.test.mjs tests/mission-control-evidence.test.mjs tests/mission-control-scheduler.test.mjs tests/mission-control-hardening.test.mjs tests/mission-control-audience.test.mjs tests/mission-control-events.test.mjs tests/mission-control-events-d1.test.mjs tests/mission-control-instrumentation.test.mjs tests/mission-control-vantage.test.mjs tests/mission-control-intelligence.test.mjs tests/mission-control-executive.test.mjs tests/mission-control-coverage.test.mjs tests/mission-control-migration.test.mjs tests/mission-control-model.test.mjs
+        run: node --test tests/mission-control-probe.test.mjs tests/mission-control-collector.test.mjs tests/mission-control-evidence.test.mjs tests/mission-control-scheduler.test.mjs tests/mission-control-hardening.test.mjs tests/mission-control-audience.test.mjs tests/mission-control-events.test.mjs tests/mission-control-events-d1.test.mjs tests/mission-control-authority.test.mjs tests/mission-control-instrumentation.test.mjs tests/mission-control-vantage.test.mjs tests/mission-control-intelligence.test.mjs tests/mission-control-executive.test.mjs tests/mission-control-coverage.test.mjs tests/mission-control-migration.test.mjs tests/mission-control-model.test.mjs
+
+      # GD-034: prove every declared capability before collecting; the run fails later with the exact missing permission.
+      - name: Credential preflight
+        id: preflight
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          EVENTS_SOURCE: ${{ secrets.MISSION_CONTROL_EVENTS_SOURCE }}
+          EVENTS_SOURCE_TOKEN: ${{ secrets.MISSION_CONTROL_EVENTS_TOKEN }}
+        run: node tools/mission-control/preflight.mjs
 
       - name: Fetch the second vantage
         continue-on-error: true
@@ -127,6 +138,12 @@ jobs:
           git commit -m "Mission Control evidence ${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}"
           git push origin HEAD:mission-control-evidence
           echo "committed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Fail the run when a required credential capability is missing
+        if: steps.preflight.outcome == 'failure'
+        run: |
+          echo "::error::Credential preflight failed; see the preflight step summary for the exact permission to add."
+          exit 1
 
       - name: Fail the run when the probe vantage was invalid
         if: steps.collect.outputs.exit_code == '2'
