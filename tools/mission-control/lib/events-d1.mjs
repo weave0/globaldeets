@@ -52,12 +52,17 @@ export function buildD1BusinessEventsFeed({ producers, daily, now }) {
   const instrumentedProperties = [...new Set(producers.filter(validProducer).map(row => row.property_id))].sort();
   const announced = new Set(producers.filter(validProducer).map(row => row.property_id + '|' + row.event_type));
   const counts = new Map();
+  const lastDays = new Map();
+  const nowMs = Date.parse(generatedAt);
 
   for (const row of daily.filter(validDaily)) {
     const dayMs = Date.parse(row.day + 'T00:00:00.000Z');
-    if (!Number.isFinite(dayMs) || dayMs >= endMs) continue; // current/future UTC day is never a completed window
+    if (!Number.isFinite(dayMs) || dayMs > nowMs) continue; // a future day can never be an observed event
     const key = row.property_id + '|' + row.event_type;
     if (!announced.has(key)) continue;
+    // The latest confirmed event may fall on today (a partial day); completed-window counts never include it.
+    if (row.count > 0 && (!lastDays.has(key) || row.day > lastDays.get(key))) lastDays.set(key, row.day);
+    if (dayMs >= endMs) continue; // the current UTC day is never a completed window
     for (const days of EVENT_WINDOWS) {
       const startMs = endMs - days * DAY_MS;
       if (dayMs >= startMs) counts.set(key + '|' + days, (counts.get(key + '|' + days) || 0) + row.count);
@@ -76,6 +81,7 @@ export function buildD1BusinessEventsFeed({ producers, daily, now }) {
           days,
         },
         count: counts.get(row.property_id + '|' + row.event_type + '|' + days) || 0,
+        lastEventDay: lastDays.get(row.property_id + '|' + row.event_type) || null,
       });
     }
   }

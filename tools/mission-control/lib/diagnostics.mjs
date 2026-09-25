@@ -680,6 +680,7 @@ function businessItems(estate, audience, events) {
   const declared = applicable.filter(row => row.primaryOutcome);
   const producers = applicable.filter(row => row.instrumentation.state === 'not-connected');
   const nameOf = id => estate.properties.find(row => row.propertyId === id)?.profile?.name || id;
+  const unreadable = ['awaiting-authorized-source', 'unavailable'].includes(events.source.status);
 
   if (events.source.status !== 'measured' || instrumented.length < applicable.length) {
     items.push(
@@ -695,13 +696,17 @@ function businessItems(estate, audience, events) {
         ownerLane: 'Product + Data',
         openedAt: '2026-09-24',
         title: instrumented.length + ' of ' + applicable.length + ' properties report business outcomes',
-        observed: producers.length
-          ? 'Event-producing routes exist in source for ' + producers.map(row => row.propertyId + ' (' + row.instrumentation.candidateProducers.map(entry => entry.type).join(', ') + ')').join('; ') + ', but no governed feed connects them. The rest declare no countable outcome.'
-          : 'No property reports a business outcome to Mission Control. "0 conversions" cannot be stated for any property because none is instrumented.',
+        observed: unreadable
+          ? 'A business-event source is configured but Mission Control cannot read it (' + (events.source.reason || events.source.status) + '). No count, not even a zero, is stated for any property until it is readable.'
+          : producers.length
+            ? 'Event-producing routes exist in source for ' + producers.map(row => row.propertyId + ' (' + row.instrumentation.candidateProducers.map(entry => entry.type).join(', ') + ')').join('; ') + ', but no governed feed connects them. The rest declare no countable outcome.'
+            : 'No property reports a business outcome to Mission Control. "0 conversions" cannot be stated for any property because none is instrumented.',
         businessReason: 'Traffic without outcomes cannot show that the estate produces value: leads, sign-ups, purchases and downloads are what an investor asks about after audience.',
         evidence: [{ type: 'business-event-contract', ref: 'globaldeets-business-events@' + events.generatedAt, state: events.source.status }],
-        nextAction: 'Start with the properties whose producers already exist in source: publish counts to the globaldeets-business-events-feed contract (per property, event type and window) and set the events feed secrets.',
-        actionability: actionNow(),
+        nextAction: unreadable
+          ? 'Restore Mission Control read authority to the governed event store: give the collection token D1 read access on the store\'s account (or set the EVENTS_SOURCE override). Then confirm each producer\'s first arriving event before listing it as instrumented.'
+          : 'Start with the properties whose producers already exist in source: publish counts to the globaldeets-business-events-feed contract (per property, event type and window) and set the events feed secrets.',
+        actionability: unreadable ? blocked('Read authority for the governed business-event store') : actionNow(),
         escalation: { level: 'high', class: 'measurement-claim-block', blocksInvestorClaim: true, escalateWhen: 'Any investor material states conversion or outcome figures.', targetLane: 'Product + Data' },
       })
     );
