@@ -7,6 +7,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { confirmFailures, probeEstate } from './probe.mjs';
 import { defaultInsightsSource, extractOperational, loadGoldSource } from './gold.mjs';
+import { loadBusinessEventsD1 } from './events-d1.mjs';
 import { mergeInventory, refreshInventory } from './cloudflare-inventory.mjs';
 import { fetchRumReception } from './rum-reception.mjs';
 import { validateSecondaryRun } from './vantage.mjs';
@@ -114,7 +115,15 @@ export async function runCollection({ root, evidenceDir, secondaryDir = null, dr
   const gold = await loadGoldSource({ source: goldSource, token: env.GOLD_SOURCE_TOKEN, fetchImpl: deps.fetchImpl, readFile: deps.readFile, label: 'Canonical Gold' });
   const insightsSource = env.INSIGHTS_SOURCE || defaultInsightsSource(goldSource);
   const insights = await loadGoldSource({ source: insightsSource, token: env.INSIGHTS_SOURCE_TOKEN || env.GOLD_SOURCE_TOKEN, fetchImpl: deps.fetchImpl, readFile: deps.readFile, label: 'Traffic Insights' });
-  const eventsFeed = await loadGoldSource({ source: env.EVENTS_SOURCE || null, token: env.EVENTS_SOURCE_TOKEN, fetchImpl: deps.fetchImpl, readFile: deps.readFile, label: 'Business-event feed' });
+  const eventsFeed = env.EVENTS_SOURCE
+    ? await loadGoldSource({ source: env.EVENTS_SOURCE, token: env.EVENTS_SOURCE_TOKEN, fetchImpl: deps.fetchImpl, readFile: deps.readFile, label: 'Business-event feed' })
+    : await loadBusinessEventsD1({
+        token: env.CLOUDFLARE_API_TOKEN,
+        accountId: env.CLOUDFLARE_ACCOUNT_ID,
+        databaseId: env.EVENTS_D1_DATABASE_ID,
+        fetchImpl: deps.fetchImpl,
+        now,
+      });
   log('audience source: ' + (gold.configured ? (gold.doc ? 'read' : gold.reason) : 'not configured') + '; events feed: ' + (eventsFeed.configured ? (eventsFeed.doc ? 'read' : eventsFeed.reason) : 'not configured'));
 
   const operational = extractOperational(gold.doc, config.registry.goldBindings, 'globaldeets.com');
