@@ -8,7 +8,7 @@ import { ROOT, registry } from './helpers/mission-control-fakes.mjs';
 import { collect, newDir, writeSource } from './helpers/mission-control-plane.mjs';
 import { syntheticGold, syntheticInsights } from './helpers/mission-control-audience-fixtures.mjs';
 import { CollectionError } from '../tools/mission-control/lib/collect.mjs';
-import { LEGACY_PUBLISHED_FILES, PUBLISHED_FILES } from '../tools/mission-control/lib/evidence.mjs';
+import { LEGACY_PUBLISHED_FILES, WRITTEN_FILES } from '../tools/mission-control/lib/evidence.mjs';
 import { validateHistory } from '../tools/mission-control/lib/ledger.mjs';
 
 const ids = registry().properties.map(item => item.propertyId);
@@ -40,7 +40,7 @@ function downgradeToGd030(dir) {
 }
 
 function removeNewFiles(dir) {
-  for (const name of ['audience.json', 'business-events.json', 'executive.json']) rmSync(join(dir, 'latest', name), { force: true });
+  for (const name of ['audience.json', 'business-events.json', 'executive.json', 'coverage-matrix.json']) rmSync(join(dir, 'latest', name), { force: true });
 }
 
 test('GD-030 evidence (five files, estate schema 1.x) is read, its history preserved, and superseded by the full GD-031 data plane', async () => {
@@ -57,7 +57,7 @@ test('GD-030 evidence (five files, estate schema 1.x) is read, its history prese
   const clock = makeClock(Date.parse(clockedStart));
   const result = await runCollection({ root: ROOT, evidenceDir: dir, deps: makeDeps(healthyWorld(registry(), clock)), runId: 'second', confirmDelayMs: 1, skipInventory: true, log: message => logs.push(message) });
   assert.ok(logs.some(line => /migrating GD-030 evidence/.test(line)));
-  assert.deepEqual(readdirSync(join(dir, 'latest')).sort(), [...PUBLISHED_FILES].sort());
+  assert.deepEqual(readdirSync(join(dir, 'latest')).sort(), [...WRITTEN_FILES].sort());
   assert.equal(read(dir, 'estate-health.json').schemaVersion, '2.0.0');
   assert.equal(read(dir, 'history.json').schemaVersion, '1.2.0');
   const after = read(dir, 'history.json');

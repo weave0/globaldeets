@@ -8,6 +8,7 @@ import { validateHistory } from './ledger.mjs';
 import { validateAudience } from './audience.mjs';
 import { validateBusinessEvents } from './events.mjs';
 import { validateExecutive } from './executive.mjs';
+import { validateCoverageMatrix } from './coverage-matrix.mjs';
 
 const require = createRequire(import.meta.url);
 const semantics = require('../../../observatory/mission-control/evidence-semantics.js');
@@ -232,7 +233,7 @@ export function validateLegacyDataPlane({ history, estate, diagnostics, summary,
  * when present; the collector always supplies them, and the legacy five-file set stays valid on its own so
  * evidence published before GD-031 remains readable.
  */
-export function validateDataPlane({ history, estate, diagnostics, summary, probes, audience, events, executive }, options = {}) {
+export function validateDataPlane({ history, estate, diagnostics, summary, probes, audience, events, executive, coverage }, options = {}) {
   return [
     ...validateHistory(history),
     ...validateEstate(estate, options),
@@ -242,5 +243,7 @@ export function validateDataPlane({ history, estate, diagnostics, summary, probe
     ...(audience ? validateAudience(audience, options) : []),
     ...(events ? validateBusinessEvents(events, options) : []),
     ...(executive ? validateExecutive(executive, { estate }) : []),
+    // Derived (GD-033): optional so evidence published before the coverage matrix stays valid.
+    ...(coverage ? validateCoverageMatrix(coverage, { estate }) : []),
   ];
 }

@@ -46,7 +46,7 @@ function requireCondition(condition, message) {
 
 (async () => {
   const base = '/observatory/mission-control';
-  const [summary, history, estate, diagnostics, probes, audience, events, executive, semanticsSource, page, scripts] = await Promise.all([
+  const [summary, history, estate, diagnostics, probes, audience, events, executive, coverage, semanticsSource, page, scripts] = await Promise.all([
     json(`${base}/mission-control-data.json`),
     json(`${base}/history.json`),
     json(`${base}/estate-health.json`),
@@ -55,6 +55,7 @@ function requireCondition(condition, message) {
     json(`${base}/audience.json`),
     json(`${base}/business-events.json`),
     json(`${base}/executive.json`),
+    json(`${base}/coverage-matrix.json`),
     text(`${base}/evidence-semantics.js`),
     text(`${base}/`),
     Promise.all(['mc-model.js', 'mc-charts.js', 'mc-executive.js', 'mc-operator.js', 'mission-control.js', 'mission-control.css'].map(name => text(`${base}/${name}`))),
@@ -63,13 +64,18 @@ function requireCondition(condition, message) {
 
   // GD-031: the exact validators the collector enforces are re-run against what production actually serves.
   const { validateDataPlane, expectedPropertyIds } = await import('./mission-control/lib/contracts.mjs');
-  const planeErrors = validateDataPlane({ history, estate, diagnostics, summary, probes, audience, events, executive }, { expectPropertyCount: EXPECTED_PROPERTIES, expectPropertyIds: expectedPropertyIds(registry) });
+  const planeErrors = validateDataPlane({ history, estate, diagnostics, summary, probes, audience, events, executive, coverage }, { expectPropertyCount: EXPECTED_PROPERTIES, expectPropertyIds: expectedPropertyIds(registry) });
   requireCondition(planeErrors.length === 0, `production data plane fails validation: ${planeErrors.slice(0, 5).join('; ')}`);
 
   requireCondition(summary.missionControlId === 'globaldeets-estate', 'summary identity changed');
   requireCondition(summary.investorClaimsPolicy?.edgeTrafficIsHumanAudience === false, 'edge traffic must not be human audience');
   requireCondition(summary.globaldeetsTraffic?.investorSafe === false, 'operational traffic must not be investor-safe');
   requireCondition(history.contractName === 'globaldeets-mission-control-history', 'history contract changed');
+  // GD-033: the coverage matrix is the inventory of what is known per property; it must account for the whole estate and agree with it.
+  requireCondition(coverage.rows.length === EXPECTED_PROPERTIES, 'coverage matrix must have exactly one row per registered property');
+  requireCondition(coverage.generatedAt === estate.generatedAt, 'coverage matrix is not derived from the served estate evidence');
+  requireCondition(coverage.rows.filter(row => row.facets.production.state === 'available').length <= estate.summary.availableZones, 'coverage matrix reports more available properties than the estate measured');
+  requireCondition(coverage.rows.filter(row => row.facets.production.status === 'blocked').length === estate.summary.probeBlockedZones, 'coverage matrix blocked-probe count disagrees with the estate');
   requireCondition(history.policy?.missingSnapshotIsZero === false, 'missing snapshots must never be zero');
   requireCondition(history.snapshots.length >= 2, 'history lost its seeded snapshots');
   requireCondition(estate.contractName === 'globaldeets-estate-health', 'estate contract changed');

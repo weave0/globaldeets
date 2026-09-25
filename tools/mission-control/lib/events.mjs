@@ -54,6 +54,7 @@ export function validateFeed(doc, registry) {
     const days = Math.round((Date.parse(record.window.end) - Date.parse(record.window.start)) / 86400000);
     if (!Number.isFinite(days) || days !== record.window.days) return 'Feed record window bounds do not match its day count for ' + record.propertyId + '.';
     if (!Number.isInteger(record.count) || record.count < 0) return 'Feed record count must be a non-negative integer (' + record.propertyId + ' ' + record.eventType + ').';
+    if (record.lastEventDay != null && !/^\d{4}-\d{2}-\d{2}$/.test(String(record.lastEventDay))) return 'Feed record lastEventDay must be a UTC date (' + record.propertyId + ' ' + record.eventType + ').';
     if (!instrumented.has(record.propertyId)) return 'Feed reports counts for ' + record.propertyId + ' without declaring it instrumented.';
     const key = [record.propertyId, record.eventType, record.window.days].join('|');
     if (seen.has(key)) return 'Feed repeats ' + key + '; refusing to choose between duplicates.';
@@ -140,6 +141,8 @@ export function buildBusinessEvents({ registry, now, feed, availabilityById = ne
     }
     const events = [...eventTypes].sort().map(eventType => ({
       eventType,
+      // Day granularity: the counter store keeps daily counts, so the latest confirmed event is a UTC day, never a timestamp.
+      lastEventDay: state === 'instrumented' ? EVENT_WINDOWS.map(days => records.get([property.propertyId, eventType, days].join('|'))?.lastEventDay || null).find(Boolean) || null : null,
       label: semantics.OUTCOME_VOCABULARY.find(item => item.id === eventType)?.label || eventType,
       readings: Object.fromEntries(
         EVENT_WINDOWS.map(days => {
@@ -230,6 +233,8 @@ export function validateBusinessEvents(events, { expectPropertyIds } = {}) {
     const state = property.instrumentation?.state;
     if (!['instrumented', 'not-connected', 'uninstrumented', 'awaiting-authorized-source', 'unavailable', 'not-applicable'].includes(state)) errors.push(label + ' instrumentation.state');
     for (const event of property.events || []) {
+      if (event.lastEventDay != null && !/^\d{4}-\d{2}-\d{2}$/.test(String(event.lastEventDay))) errors.push(label + '.' + event.eventType + ' lastEventDay');
+      if (state !== 'instrumented' && event.lastEventDay != null) errors.push(label + '.' + event.eventType + ' has a last event without instrumentation');
       for (const days of EVENT_WINDOWS) {
         const reading = event.readings?.[days];
         errors.push(...validateReading(reading, label + '.' + event.eventType + '.' + days));
