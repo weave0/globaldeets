@@ -75,7 +75,7 @@ jobs:
           fi
 
       - name: Run mission-control contract tests
-        run: node --test tests/mission-control-probe.test.mjs tests/mission-control-collector.test.mjs tests/mission-control-evidence.test.mjs tests/mission-control-scheduler.test.mjs tests/mission-control-hardening.test.mjs tests/mission-control-audience.test.mjs tests/mission-control-events.test.mjs tests/mission-control-events-d1.test.mjs tests/mission-control-authority.test.mjs tests/mission-control-instrumentation.test.mjs tests/mission-control-vantage.test.mjs tests/mission-control-intelligence.test.mjs tests/mission-control-executive.test.mjs tests/mission-control-coverage.test.mjs tests/mission-control-migration.test.mjs tests/mission-control-model.test.mjs
+        run: node --test tests/mission-control-probe.test.mjs tests/mission-control-collector.test.mjs tests/mission-control-evidence.test.mjs tests/mission-control-scheduler.test.mjs tests/mission-control-hardening.test.mjs tests/mission-control-audience.test.mjs tests/mission-control-audience-bridge.test.mjs tests/mission-control-events.test.mjs tests/mission-control-events-d1.test.mjs tests/mission-control-authority.test.mjs tests/mission-control-instrumentation.test.mjs tests/mission-control-vantage.test.mjs tests/mission-control-intelligence.test.mjs tests/mission-control-executive.test.mjs tests/mission-control-coverage.test.mjs tests/mission-control-migration.test.mjs tests/mission-control-model.test.mjs
 
       # GD-034: prove every declared capability before collecting; the run fails later with the exact missing permission.
       - name: Credential preflight
@@ -86,6 +86,11 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           EVENTS_SOURCE: ${{ secrets.MISSION_CONTROL_EVENTS_SOURCE }}
           EVENTS_SOURCE_TOKEN: ${{ secrets.MISSION_CONTROL_EVENTS_TOKEN }}
+          # GD-036: the governed audience feed. The token is an application secret shared with the Traffic Intelligence
+          # deploy (MISSION_CONTROL_FEED_TOKEN there); the source URLs are not secret, so they default in the workflow.
+          GOLD_SOURCE: ${{ secrets.MISSION_CONTROL_GOLD_SOURCE || 'https://traffic.goodflippindesign.com/gold/canonical-gold-m1.2.json' }}
+          GOLD_SOURCE_TOKEN: ${{ secrets.MISSION_CONTROL_GOLD_TOKEN }}
+          INSIGHTS_SOURCE: ${{ secrets.MISSION_CONTROL_INSIGHTS_SOURCE || 'https://traffic.goodflippindesign.com/gold/traffic-insights-1.0.json' }}
         run: node tools/mission-control/preflight.mjs
 
       - name: Fetch the second vantage
@@ -100,9 +105,9 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          GOLD_SOURCE: ${{ secrets.MISSION_CONTROL_GOLD_SOURCE }}
+          GOLD_SOURCE: ${{ secrets.MISSION_CONTROL_GOLD_SOURCE || 'https://traffic.goodflippindesign.com/gold/canonical-gold-m1.2.json' }}
           GOLD_SOURCE_TOKEN: ${{ secrets.MISSION_CONTROL_GOLD_TOKEN }}
-          INSIGHTS_SOURCE: ${{ secrets.MISSION_CONTROL_INSIGHTS_SOURCE }}
+          INSIGHTS_SOURCE: ${{ secrets.MISSION_CONTROL_INSIGHTS_SOURCE || 'https://traffic.goodflippindesign.com/gold/traffic-insights-1.0.json' }}
           EVENTS_SOURCE: ${{ secrets.MISSION_CONTROL_EVENTS_SOURCE }}
           EVENTS_SOURCE_TOKEN: ${{ secrets.MISSION_CONTROL_EVENTS_TOKEN }}
           EVENTS_D1_DATABASE_ID: a46ec9df-31b8-4285-845b-1fd3a62bd1b5

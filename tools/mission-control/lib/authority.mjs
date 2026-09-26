@@ -3,7 +3,10 @@
  * and names the exact missing permission instead of surfacing a raw Cloudflare error code later.
  * Read-only: GETs plus one bounded GraphQL query.
  */
+import { readFile } from 'node:fs/promises';
+import { classifyGoldEnvelope, validateInsightsEnvelope } from './audience.mjs';
 import { FEED_CONTRACT_NAME } from './events.mjs';
+import { defaultInsightsSource, loadGoldSource } from './gold.mjs';
 
 const API = 'https://api.cloudflare.com/client/v4';
 const OK = new Set(['ok', 'skipped', 'unprobed', 'fallback']);
@@ -61,6 +64,40 @@ const PROBES = {
   async 'd1-database'({ token, accountId, capability, fetchImpl }) {
     return cloudflareVerdict(await call(fetchImpl, API + '/accounts/' + encodeURIComponent(accountId) + '/d1/database/' + encodeURIComponent(capability.databaseId), { token }));
   },
+  /**
+   * Governed audience feed (GD-036). Reads the Gold and Insights documents exactly as the collector will and
+   * reports the real condition, so a missing source, a missing or rejected credential, an edge challenge, an
+   * outage, a corrupt document, a fixture and a schema mismatch are never reported as one thing.
+   */
+  async 'audience-feed'({ env, fetchImpl }) {
+    const verdictFor = (loaded, label, classify, credentialName) => {
+      switch (loaded.failureKind) {
+        case null:
+          return classify(loaded.doc);
+        case 'source-missing':
+          return { status: 'missing', detail: label + ' source is not configured' };
+        case 'credential-missing':
+          return { status: 'denied', credentialName, detail: label + ' source requires a credential and ' + credentialName + ' is not set (HTTP ' + loaded.httpStatus + ')' };
+        case 'credential-rejected':
+          return { status: 'denied', credentialName, detail: label + ' source rejected ' + credentialName + ' (HTTP ' + loaded.httpStatus + ')' };
+        default:
+          return { status: 'error', detail: loaded.reason };
+      }
+    };
+    const gold = await loadGoldSource({ source: env.GOLD_SOURCE, token: env.GOLD_SOURCE_TOKEN, fetchImpl, readFile, label: 'Canonical Gold' });
+    const goldVerdict = verdictFor(gold, 'Canonical Gold', doc => {
+      const problem = classifyGoldEnvelope(doc);
+      return problem ? { status: 'error', detail: 'Canonical Gold is ' + problem.kind + ': ' + problem.reason } : { status: 'ok', detail: (doc.metrics || []).length + ' Gold metrics, generated ' + doc.generated_at };
+    }, 'MISSION_CONTROL_GOLD_TOKEN');
+    if (goldVerdict.status !== 'ok') return goldVerdict;
+    const insightsSource = env.INSIGHTS_SOURCE || defaultInsightsSource(env.GOLD_SOURCE);
+    const insights = await loadGoldSource({ source: insightsSource, token: env.INSIGHTS_SOURCE_TOKEN || env.GOLD_SOURCE_TOKEN, fetchImpl, readFile, label: 'Traffic Insights' });
+    const insightsVerdict = verdictFor(insights, 'Traffic Insights', doc => {
+      const checked = validateInsightsEnvelope(doc);
+      return checked.error ? { status: 'error', detail: 'Traffic Insights is ' + checked.kind + ': ' + checked.error } : { status: 'ok', detail: 'insights generated ' + doc.generated_at };
+    }, env.INSIGHTS_SOURCE_TOKEN ? 'INSIGHTS_SOURCE_TOKEN' : 'MISSION_CONTROL_GOLD_TOKEN');
+    return insightsVerdict.status === 'ok' ? { status: 'ok', detail: goldVerdict.detail + '; ' + insightsVerdict.detail } : insightsVerdict;
+  },
   async 'events-feed'({ env, fetchImpl }) {
     const result = await call(fetchImpl, env.EVENTS_SOURCE, { token: env.EVENTS_SOURCE_TOKEN });
     if (result.networkError) return { status: 'error', detail: 'unreachable: ' + result.networkError };
@@ -70,7 +107,13 @@ const PROBES = {
   },
 };
 
-function remedy(capability, credential, status) {
+function remedy(capability, credential, status, item = {}) {
+  if (capability.id === 'audience.feed.read') {
+    if (status === 'error') return 'The feed answered but is not usable; see the detail. This is not a credential problem, so the next evidence run retries without changing secrets.';
+    if (status === 'denied' && item.credentialName === 'INSIGHTS_SOURCE_TOKEN') return 'The dedicated INSIGHTS_SOURCE_TOKEN override is the credential in use for Traffic Insights (the Gold credential is not sent there). Correct it or remove it so MISSION_CONTROL_GOLD_TOKEN is used for both documents. No Cloudflare API token is involved.';
+    if (status === 'denied') return 'Set MISSION_CONTROL_GOLD_TOKEN to the value of MISSION_CONTROL_FEED_TOKEN in weave0/goodflippindesign (the Traffic Intelligence deploy binds it to the Pages project). No Cloudflare API token is involved.';
+    return 'Set MISSION_CONTROL_GOLD_SOURCE (the evidence workflow defaults it to the Traffic Intelligence Gold URL).';
+  }
   if (status === 'error') return 'Retry the preflight; this is not classified as an authorization failure. If it persists, inspect the upstream response before changing credentials.';
   if (capability.id === 'events.feed.read') return 'Set ' + capability.secrets.join(' + ') + ' in GitHub Actions secrets. ' + capability.permission + '.';
   if (status === 'missing') return 'Provide the required secret or configuration declared for this capability.';
@@ -90,6 +133,8 @@ export async function runPreflight({ manifest, env = {}, fetchImpl, now = Date.n
     else if (!capability.probe) outcome = { status: 'unprobed', detail: 'write capability; proven by the deploy step' };
     else if (capability.id === 'events.feed.read' && !eventsViaFeed) outcome = { status: 'missing', detail: 'MISSION_CONTROL_EVENTS_SOURCE is not set' };
     else if (capability.id === 'events.feed.read' && !env.EVENTS_SOURCE_TOKEN) outcome = { status: 'missing', detail: 'MISSION_CONTROL_EVENTS_TOKEN is not set' };
+    else if (capability.id === 'audience.feed.read' && !env.GOLD_SOURCE) outcome = { status: 'missing', detail: 'MISSION_CONTROL_GOLD_SOURCE is not set' };
+    else if (capability.id === 'audience.feed.read') outcome = await PROBES[capability.probe]({ env, fetchImpl });
     else if (capability.id !== 'events.feed.read' && (!token || !accountId)) outcome = { status: 'missing', detail: [!token && credential.secret, !accountId && credential.accountSecret].filter(Boolean).join(' and ') + ' not provided' };
     else outcome = await PROBES[capability.probe]({ token, accountId, capability, env, fetchImpl, now });
     results.push({ id: capability.id, required: capability.required, permission: capability.permission, ...outcome });
@@ -101,7 +146,7 @@ export async function runPreflight({ manifest, env = {}, fetchImpl, now = Date.n
   if (events && d1 && events.status === 'missing') d1.required = true;
 
   for (const item of results) {
-    if (!OK.has(item.status)) item.remedy = remedy(manifest.capabilities.find(c => c.id === item.id), credential, item.status);
+    if (!OK.has(item.status)) item.remedy = remedy(manifest.capabilities.find(c => c.id === item.id), credential, item.status, item);
   }
   const failures = results.filter(item => item.required && !OK.has(item.status));
   return { healthy: failures.length === 0, results, failures };

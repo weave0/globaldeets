@@ -43,10 +43,34 @@ windows that do not share a comparability key are never summed, and a trend is o
 comparable with full daily coverage. No source separates humans from automated traffic, so classification is published as
 `unsupported` and all measured traffic is "unclassified edge requests".
 
-**Production state: `awaiting-authorized-source`.** The documents live behind an admin gate at
-`https://traffic.goodflippindesign.com/gold/`. To connect them, set the repository secrets `MISSION_CONTROL_GOLD_SOURCE`
-(the Canonical Gold URL), `MISSION_CONTROL_GOLD_TOKEN` (a read credential the gate accepts) and optionally
-`MISSION_CONTROL_INSIGHTS_SOURCE` (defaults to the sibling `traffic-insights-1.0.json`). Nothing else changes.
+**Connection (GD-036).** The documents live behind a private gate at `https://traffic.goodflippindesign.com/gold/`.
+The gate accepts a human admin session *or* a narrowly scoped Mission Control feed credential (read-only GET/HEAD of
+the Gold and Insights documents; it is not an admin identity). That credential is an application secret, not a
+Cloudflare API token: the Traffic Intelligence deploy binds `MISSION_CONTROL_FEED_TOKEN` to its Pages project and the
+same value is stored here as `MISSION_CONTROL_GOLD_TOKEN`. The source URLs are not secret and default in
+`mission-control-evidence.yml` (`MISSION_CONTROL_GOLD_SOURCE` / `MISSION_CONTROL_INSIGHTS_SOURCE` override them); the
+same token is sent to both documents unless `INSIGHTS_SOURCE_TOKEN` is set. To rotate, set both secrets to a new
+`mcf_`-prefixed value and re-run the Traffic Intelligence deploy.
+
+Every way the source can fail is a distinct `audience.source.condition`, and the diagnostics finding
+`audience:governed-source` is generated from that condition and closes on its own once the source is `connected`:
+
+| Condition | Status | Meaning |
+|---|---|---|
+| `connected` / `stale` | measured / partial | Readable, valid, non-fixture Gold; `stale` is labelled and raises its own finding |
+| `source-missing` | awaiting-authorized-source | No source configured |
+| `credential-missing` | awaiting-authorized-source | Source requires a credential and none was provided |
+| `credential-rejected` | awaiting-authorized-source | Source rejected the presented credential |
+| `edge-challenge` | unavailable | A Cloudflare challenge answered; the credential was not evaluated |
+| `transport-failure` | unavailable | Unreachable or an HTTP error |
+| `malformed` | rejected | Not valid JSON / structurally corrupt |
+| `schema-mismatch` | rejected | Wrong contract or unsupported schema version |
+| `fixture` | rejected | Fixture data is never production evidence |
+| `no-measurements` | unavailable | Valid document with no fully covered per-property request metric |
+
+The credential preflight probes the feed as `audience.feed.read` (non-required: audience degrades to an explicit,
+diagnosed state rather than failing the run). Edge traffic is still requests, not people; nothing here certifies a
+human audience.
 
 ## Live instrumentation truth
 

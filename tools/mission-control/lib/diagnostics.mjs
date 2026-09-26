@@ -558,6 +558,53 @@ function coverageItems(estate) {
 
 // ── Audience (governed Canonical Gold) ───────────────────────────────────────────────────────────
 
+/**
+ * What each real source condition means and what resolves it. Kept beside the rule so the diagnostic reflects the
+ * actual condition rather than one generic "missing authority" message; the finding closes by itself the moment
+ * the condition becomes `connected`.
+ */
+const SOURCE_CONDITION_COPY = {
+  'source-missing': {
+    title: 'Connect the governed audience source',
+    next: 'Point Mission Control at the governed Canonical Gold document by setting MISSION_CONTROL_GOLD_SOURCE (the evidence workflow defaults it to the Traffic Intelligence Gold URL).',
+    blockedBy: 'A read credential and location for the governed audience source',
+  },
+  'credential-missing': {
+    title: 'The governed audience source needs a credential Mission Control does not have',
+    next: 'Provide MISSION_CONTROL_GOLD_TOKEN. It is the same application secret as MISSION_CONTROL_FEED_TOKEN on the GFD Traffic Intelligence Pages project, which the Traffic Intelligence deploy provisions.',
+    blockedBy: 'A read credential for the governed audience source (MISSION_CONTROL_GOLD_TOKEN)',
+  },
+  'credential-rejected': {
+    title: 'The governed audience source rejected Mission Control\'s credential',
+    next: 'Re-align the secrets: MISSION_CONTROL_GOLD_TOKEN here must equal MISSION_CONTROL_FEED_TOKEN in weave0/goodflippindesign, and the Traffic Intelligence deploy must have provisioned it on the Pages project. Re-run the Traffic Intelligence deploy, then the evidence workflow.',
+    blockedBy: 'A read credential the governed audience source accepts (MISSION_CONTROL_GOLD_TOKEN matching the Traffic Intelligence feed credential)',
+  },
+  'edge-challenge': {
+    title: 'A Cloudflare edge challenge is answering instead of the governed audience source',
+    next: 'Allow the evidence collector through the edge (a WAF skip rule for the Gold feed path) or set MISSION_CONTROL_GOLD_SOURCE to the Pages origin; the credential has not been evaluated.',
+  },
+  'transport-failure': {
+    title: 'The governed audience source is unreachable',
+    next: 'Check the Traffic Intelligence deployment and DNS for the Gold feed; the credential has not been evaluated. The next evidence run retries automatically.',
+  },
+  malformed: {
+    title: 'The governed audience source returned a malformed document',
+    next: 'Inspect the Canonical Gold document served by Traffic Intelligence; it is not valid Canonical Gold and no value is taken from it.',
+  },
+  fixture: {
+    title: 'The governed audience source is serving fixture data, not production',
+    next: 'Re-run the Traffic Intelligence deploy so live Gold (fixture=false) replaces the committed fixture. Fixture data is never shown as production evidence.',
+  },
+  'schema-mismatch': {
+    title: 'The governed audience source uses an unsupported contract or schema version',
+    next: 'Align the Traffic Intelligence Canonical Gold schema (1.2.x) with the Mission Control reader, or update the reader.',
+  },
+  'no-measurements': {
+    title: 'The governed audience source carries no fully covered per-property request metric',
+    next: 'Inspect Cloudflare analytics coverage in the Traffic Intelligence pipeline; nothing is estimated in the meantime.',
+  },
+};
+
 function audienceItems(estate, audience) {
   const items = [];
   if (!audience) return items;
@@ -567,6 +614,7 @@ function audienceItems(estate, audience) {
 
   if (!['measured', 'partial'].includes(source.status)) {
     const awaiting = source.status === 'awaiting-authorized-source';
+    const copy = SOURCE_CONDITION_COPY[source.condition] || {};
     items.push(
       item({
         id: 'audience:governed-source',
@@ -578,12 +626,12 @@ function audienceItems(estate, audience) {
         freshnessBasis: 'audience',
         ownerLane: 'Data / analytics',
         openedAt: '2026-09-24',
-        title: awaiting ? 'Connect the governed audience source (awaiting authorization)' : 'The governed audience source is ' + source.status,
+        title: copy.title || 'The governed audience source is ' + source.status,
         observed: source.reason + ' Mission Control reads Canonical Gold 1.2 and Traffic Insights; the reader is built and tested, so per-property 7/28/90-day traffic, trends, contribution and concentration appear as soon as a valid, non-fixture document is readable.',
         businessReason: 'Without a governed traffic source, usage, growth and each property\'s contribution cannot be stated at all. Nothing is estimated or shown as zero.',
-        evidence: [{ type: 'audience-contract', ref: 'globaldeets-audience', state: source.status }],
-        nextAction: awaiting && source.requirement ? 'Grant Mission Control read access: ' + source.requirement.what + ' Then set the repository secrets ' + source.requirement.secrets.join(' and ') + '.' : 'Inspect the audience source and its credential.',
-        actionability: awaiting ? blocked(source.requirement ? source.requirement.what : 'A read credential for the governed audience source') : actionNow(),
+        evidence: [{ type: 'audience-contract', ref: 'globaldeets-audience', state: source.status, condition: source.condition }],
+        nextAction: copy.next || (awaiting && source.requirement ? 'Grant Mission Control read access: ' + source.requirement.what + ' Then set the repository secrets ' + source.requirement.secrets.join(' and ') + '.' : 'Inspect the audience source and its credential.'),
+        actionability: awaiting ? blocked(copy.blockedBy || (source.requirement ? source.requirement.what : 'A read credential for the governed audience source')) : actionNow(),
         escalation: { level: 'high', class: 'measurement-claim-block', blocksInvestorClaim: true, escalateWhen: 'Any investor material states usage, growth or contribution figures.', targetLane: 'Data / analytics' },
       })
     );

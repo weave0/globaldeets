@@ -114,3 +114,89 @@ test('every secret the evidence workflow passes to the collector is declared in 
   const audience = new Set(['MISSION_CONTROL_GOLD_SOURCE', 'MISSION_CONTROL_GOLD_TOKEN', 'MISSION_CONTROL_INSIGHTS_SOURCE']);
   for (const name of used) assert.ok(declared.has(name) || audience.has(name), 'workflow secret ' + name + ' is not declared in authority-manifest.json');
 });
+
+// GD-036: the audience feed is probed exactly as the collector reads it, and every condition stays distinct.
+const AUDIENCE_ENV = { ...ENV, GOLD_SOURCE: 'https://traffic.test/gold/canonical-gold-m1.2.json', GOLD_SOURCE_TOKEN: 'mcf_feed' };
+const validGold = { contract_name: 'gfd-canonical-gold', schema_version: '1.2.0', fixture: false, generated_at: '2026-09-25T06:00:00Z', metrics: [{ metric_id: 'a' }] };
+const validInsights = { contract_name: 'gfd-traffic-insights', schema_version: '1.1.0', fixture: false, generated_at: '2026-09-25T06:10:00Z', series: [], trend_comparisons: [] };
+
+function withAudience(handler) {
+  const cf = fakeCloudflare();
+  const seen = [];
+  const fetchImpl = async (url, init = {}) => {
+    if (String(url).startsWith('https://traffic.test/')) {
+      seen.push({ url: String(url), authorization: init.headers?.authorization });
+      return handler(String(url), init);
+    }
+    return cf.fetchImpl(url, init);
+  };
+  return { fetchImpl, seen };
+}
+const audienceResult = async (env, handler) => {
+  const world = withAudience(handler);
+  const report = await runPreflight({ manifest, env, fetchImpl: world.fetchImpl, now: NOW });
+  return { report, item: report.results.find(r => r.id === 'audience.feed.read'), seen: world.seen };
+};
+const feedReply = (url, init, { gold = validGold, insights = validInsights, token = 'mcf_feed' } = {}) => {
+  if (init.headers?.authorization !== 'Bearer ' + token) return new Response('no', { status: 401 });
+  return new Response(JSON.stringify(url.includes('insights') ? insights : gold), { status: 200, headers: { 'content-type': 'application/json' } });
+};
+
+test('audience feed: a connected feed passes, and one credential is used for both documents', async () => {
+  const { item, report, seen } = await audienceResult(AUDIENCE_ENV, (url, init) => feedReply(url, init));
+  assert.equal(item.status, 'ok');
+  assert.equal(report.healthy, true);
+  assert.deepEqual(seen.map(call => [call.url, call.authorization]), [
+    ['https://traffic.test/gold/canonical-gold-m1.2.json', 'Bearer mcf_feed'],
+    ['https://traffic.test/gold/traffic-insights-1.0.json', 'Bearer mcf_feed'],
+  ]);
+});
+
+test('audience feed: source missing, credential missing and credential rejected are three different findings', async () => {
+  const noSource = await audienceResult({ ...AUDIENCE_ENV, GOLD_SOURCE: '' }, () => assert.fail('no request without a source'));
+  assert.equal(noSource.item.status, 'missing');
+  assert.match(noSource.item.detail, /MISSION_CONTROL_GOLD_SOURCE is not set/);
+
+  const noToken = await audienceResult({ ...AUDIENCE_ENV, GOLD_SOURCE_TOKEN: '' }, (url, init) => feedReply(url, init));
+  assert.equal(noToken.item.status, 'denied');
+  assert.match(noToken.item.detail, /MISSION_CONTROL_GOLD_TOKEN is not set/);
+
+  const wrong = await audienceResult({ ...AUDIENCE_ENV, GOLD_SOURCE_TOKEN: 'mcf_wrong' }, (url, init) => feedReply(url, init));
+  assert.equal(wrong.item.status, 'denied');
+  assert.match(wrong.item.detail, /rejected MISSION_CONTROL_GOLD_TOKEN/);
+  assert.match(wrong.item.remedy, /MISSION_CONTROL_FEED_TOKEN/);
+  assert.match(wrong.item.remedy, /No Cloudflare API token/);
+  for (const { item } of [noToken, wrong]) assert.ok(!JSON.stringify(item).includes('mcf_wrong') && !JSON.stringify(item).includes('mcf_feed'), 'the credential is never reported');
+});
+
+test('audience feed: an outage, a bot challenge, a malformed body, a fixture and a schema mismatch are not authorization failures', async () => {
+  const cases = [
+    ['outage', () => new Response('down', { status: 503 }), /HTTP 503/],
+    ['challenge', () => new Response('<html>Just a moment</html>', { status: 403, headers: { 'content-type': 'text/html', 'cf-mitigated': 'challenge' } }), /edge challenge/],
+    ['malformed', () => new Response('<html>oops</html>', { status: 200 }), /not valid JSON/],
+    ['fixture', (url, init) => feedReply(url, init, { gold: { ...validGold, fixture: true } }), /fixture/],
+    ['schema', (url, init) => feedReply(url, init, { gold: { ...validGold, schema_version: '2.0.0' } }), /schema-mismatch/],
+    ['insights fixture', (url, init) => feedReply(url, init, { insights: { ...validInsights, fixture: true } }), /Insights is fixture/],
+  ];
+  for (const [name, handler, detail] of cases) {
+    const { item, report } = await audienceResult(AUDIENCE_ENV, handler);
+    assert.equal(item.status, 'error', name);
+    assert.match(item.detail, detail, name);
+    assert.match(item.remedy, /not a credential problem/, name);
+    assert.equal(report.healthy, true, name + ': a degradable audience feed never fails the whole run');
+  }
+});
+
+test('audience feed: a rejected dedicated insights credential is blamed on that credential, not the Gold token', async () => {
+  const env = { ...AUDIENCE_ENV, INSIGHTS_SOURCE_TOKEN: 'mcf_insights_only' };
+  const { item } = await audienceResult(env, (url, init) => (url.includes('insights') ? new Response('no', { status: 401 }) : feedReply(url, init)));
+  assert.equal(item.status, 'denied');
+  assert.match(item.detail, /rejected INSIGHTS_SOURCE_TOKEN/);
+  assert.doesNotMatch(item.detail, /MISSION_CONTROL_GOLD_TOKEN/);
+  assert.match(item.remedy, /INSIGHTS_SOURCE_TOKEN/);
+  assert.doesNotMatch(item.remedy, /Set MISSION_CONTROL_GOLD_TOKEN/);
+  const gold = await audienceResult(AUDIENCE_ENV, () => new Response('no', { status: 401 }));
+  assert.match(gold.item.detail, /rejected MISSION_CONTROL_GOLD_TOKEN/);
+  const shared = await audienceResult(AUDIENCE_ENV, (url, init) => (url.includes('insights') ? new Response('no', { status: 403 }) : feedReply(url, init)));
+  assert.match(shared.item.detail, /Traffic Insights source rejected MISSION_CONTROL_GOLD_TOKEN/, 'without an override the shared credential is the one in use');
+});

@@ -19,7 +19,27 @@ const require = createRequire(import.meta.url);
 const semantics = require('../../../observatory/mission-control/evidence-semantics.js');
 
 export const AUDIENCE_CONTRACT_NAME = 'globaldeets-audience';
-export const AUDIENCE_SCHEMA_VERSION = '1.0.0';
+// 1.1.0 (GD-036) adds source.condition and source.insights.condition. Evidence published before GD-036 is 1.0.x and
+// stays valid without them, so the first scheduled run after rollout can read it and regenerate the plane.
+export const AUDIENCE_SCHEMA_VERSION = '1.1.0';
+const CONDITION_REQUIRED_FROM = [1, 1];
+/**
+ * The single, exhaustive reason the governed audience source is (or is not) usable. Each is a different real-world
+ * condition with a different remedy, so none may be collapsed into "missing authority".
+ */
+export const SOURCE_CONDITIONS = Object.freeze({
+  connected: { status: ['measured', 'partial'] },
+  stale: { status: ['measured', 'partial'] },
+  'no-measurements': { status: ['unavailable'] },
+  'source-missing': { status: ['awaiting-authorized-source'] },
+  'credential-missing': { status: ['awaiting-authorized-source'] },
+  'credential-rejected': { status: ['awaiting-authorized-source'] },
+  'edge-challenge': { status: ['unavailable'] },
+  'transport-failure': { status: ['unavailable'] },
+  malformed: { status: ['rejected'] },
+  fixture: { status: ['rejected'] },
+  'schema-mismatch': { status: ['rejected'] },
+});
 export const WINDOWS = Object.freeze([7, 28, 90]);
 export const FIELDS = Object.freeze([
   { field: 'requests', unit: 'requests', label: 'Edge requests' },
@@ -48,7 +68,7 @@ function daysBetween(start, end) {
 }
 
 /** Awaiting/unavailable shell: every reading is valueless and says why. */
-function emptyContract({ registry, now, status, reason, insights }) {
+function emptyContract({ registry, now, status, condition, reason, insights }) {
   const ids = registry.properties.map(item => item.propertyId);
   // Cells carry a short reason; the full explanation lives once in source.reason.
   const cellReason = status === 'awaiting-authorized-source' ? 'Awaiting authorized source (see source.requirement).' : 'Source not readable (see source.reason).';
@@ -61,6 +81,7 @@ function emptyContract({ registry, now, status, reason, insights }) {
     policy: policy(),
     source: {
       status,
+      condition,
       kind: 'canonical-gold',
       reason,
       requirement: registry.audienceContract?.requirement || null,
@@ -109,21 +130,29 @@ function classificationNote() {
   return 'Cloudflare zone analytics count requests, not people. No connected source separates certified humans, likely humans or automated agents, so all measured traffic is reported as unclassified edge requests.';
 }
 
-/** Validates a Gold document envelope. Returns an error string or null. */
-export function validateGoldEnvelope(doc) {
-  if (!doc || typeof doc !== 'object') return 'Gold source is not a JSON object.';
-  if (doc.contract_name !== 'gfd-canonical-gold') return 'Source is not a gfd-canonical-gold document.';
-  if (!/^1\.2\./.test(String(doc.schema_version))) return 'Unsupported Canonical Gold schema_version ' + doc.schema_version + '.';
-  if (doc.fixture !== false) return 'Canonical Gold document is a fixture (fixture !== false); fixtures are contract test data, not observations.';
-  if (!Array.isArray(doc.metrics)) return 'Canonical Gold document has no metrics array.';
-  if (!Number.isFinite(Date.parse(doc.generated_at))) return 'Canonical Gold document has an invalid generated_at.';
+/**
+ * Classifies a Gold document envelope. Returns null when usable, otherwise { kind, reason } where kind is one of
+ * 'malformed' | 'schema-mismatch' | 'fixture' (see SOURCE_CONDITIONS).
+ */
+export function classifyGoldEnvelope(doc) {
+  if (!doc || typeof doc !== 'object' || Array.isArray(doc)) return { kind: 'malformed', reason: 'Gold source is not a JSON object.' };
+  if (doc.contract_name !== 'gfd-canonical-gold') return { kind: 'schema-mismatch', reason: 'Source is not a gfd-canonical-gold document.' };
+  if (!/^1\.2\./.test(String(doc.schema_version))) return { kind: 'schema-mismatch', reason: 'Unsupported Canonical Gold schema_version ' + doc.schema_version + '.' };
+  if (doc.fixture !== false) return { kind: 'fixture', reason: 'Canonical Gold document is a fixture (fixture !== false); fixtures are contract test data, not observations.' };
+  if (!Array.isArray(doc.metrics)) return { kind: 'malformed', reason: 'Canonical Gold document has no metrics array.' };
+  if (!Number.isFinite(Date.parse(doc.generated_at))) return { kind: 'malformed', reason: 'Canonical Gold document has an invalid generated_at.' };
   const ids = new Set();
   for (const metric of doc.metrics) {
-    if (!metric || typeof metric.metric_id !== 'string') return 'Canonical Gold document contains a metric without a metric_id.';
-    if (ids.has(metric.metric_id)) return 'Canonical Gold document repeats metric ' + metric.metric_id + '; refusing to choose between them.';
+    if (!metric || typeof metric.metric_id !== 'string') return { kind: 'malformed', reason: 'Canonical Gold document contains a metric without a metric_id.' };
+    if (ids.has(metric.metric_id)) return { kind: 'malformed', reason: 'Canonical Gold document repeats metric ' + metric.metric_id + '; refusing to choose between them.' };
     ids.add(metric.metric_id);
   }
   return null;
+}
+
+/** Validates a Gold document envelope. Returns an error string or null. */
+export function validateGoldEnvelope(doc) {
+  return classifyGoldEnvelope(doc)?.reason || null;
 }
 
 function goldReading({ metric, days, unit, generatedAt, goldMinor, propertyId, field }) {
@@ -181,30 +210,30 @@ function directionFor(trend) {
 
 /** Validates an insights document; returns { error } or { ok: true }. */
 export function validateInsightsEnvelope(doc) {
-  if (!doc || typeof doc !== 'object') return { error: 'Insights source is not a JSON object.' };
-  if (doc.contract_name !== 'gfd-traffic-insights') return { error: 'Source is not a gfd-traffic-insights document.' };
-  if (!/^1\./.test(String(doc.schema_version))) return { error: 'Unsupported insights schema_version ' + doc.schema_version + '.' };
-  if (doc.fixture !== false) return { error: 'Insights document is a fixture (fixture !== false).' };
-  if (!Number.isFinite(Date.parse(doc.generated_at))) return { error: 'Insights document has an invalid generated_at.' };
-  for (const list of ['series', 'trend_comparisons']) if (doc[list] !== undefined && !Array.isArray(doc[list])) return { error: 'Insights ' + list + ' is not an array.' };
+  if (!doc || typeof doc !== 'object') return { error: 'Insights source is not a JSON object.', kind: 'malformed' };
+  if (doc.contract_name !== 'gfd-traffic-insights') return { error: 'Source is not a gfd-traffic-insights document.', kind: 'schema-mismatch' };
+  if (!/^1\./.test(String(doc.schema_version))) return { error: 'Unsupported insights schema_version ' + doc.schema_version + '.', kind: 'schema-mismatch' };
+  if (doc.fixture !== false) return { error: 'Insights document is a fixture (fixture !== false).', kind: 'fixture' };
+  if (!Number.isFinite(Date.parse(doc.generated_at))) return { error: 'Insights document has an invalid generated_at.', kind: 'malformed' };
+  for (const list of ['series', 'trend_comparisons']) if (doc[list] !== undefined && !Array.isArray(doc[list])) return { error: 'Insights ' + list + ' is not an array.', kind: 'malformed' };
   // A corrupt document must not be resolved by silently picking one of two conflicting records.
   const seriesKeys = new Set();
   for (const series of doc.series || []) {
     const key = series.property_id + '|' + series.metric_name;
-    if (seriesKeys.has(key)) return { error: 'Insights document repeats the ' + series.metric_name + ' series for ' + series.property_id + '; refusing to choose between them.' };
+    if (seriesKeys.has(key)) return { error: 'Insights document repeats the ' + series.metric_name + ' series for ' + series.property_id + '; refusing to choose between them.', kind: 'malformed' };
     seriesKeys.add(key);
   }
   const comparisonKeys = new Set();
   for (const comparison of doc.trend_comparisons || []) {
     const key = comparison.property_id + '|' + comparison.metric_name + '|' + comparison.period_days;
-    if (comparisonKeys.has(key)) return { error: 'Insights document repeats the ' + comparison.period_days + '-day ' + comparison.metric_name + ' comparison for ' + comparison.property_id + '; refusing to choose between them.' };
+    if (comparisonKeys.has(key)) return { error: 'Insights document repeats the ' + comparison.period_days + '-day ' + comparison.metric_name + ' comparison for ' + comparison.property_id + '; refusing to choose between them.', kind: 'malformed' };
     comparisonKeys.add(key);
   }
   for (const series of doc.series || []) {
     const dates = new Set();
     for (const point of series.points || []) {
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(String(point?.date)) || typeof point.value !== 'number' || !Number.isFinite(point.value) || point.value < 0) return { error: 'Insights series ' + series.series_id + ' contains an invalid point.' };
-      if (dates.has(point.date)) return { error: 'Insights series ' + series.series_id + ' repeats date ' + point.date + '.' };
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(String(point?.date)) || typeof point.value !== 'number' || !Number.isFinite(point.value) || point.value < 0) return { error: 'Insights series ' + series.series_id + ' contains an invalid point.', kind: 'malformed' };
+      if (dates.has(point.date)) return { error: 'Insights series ' + series.series_id + ' repeats date ' + point.date + '.', kind: 'malformed' };
       dates.add(point.date);
     }
   }
@@ -319,33 +348,36 @@ function buildSeries({ insights, propertyIds }) {
 export function buildAudience({ registry, now, gold, insights }) {
   const configured = Boolean(gold?.configured);
   if (!gold || !configured) {
-    return emptyContract({ registry, now, status: 'awaiting-authorized-source', reason: gold?.reason || 'No governed Canonical Gold source is configured for Mission Control.' });
+    return emptyContract({ registry, now, status: 'awaiting-authorized-source', condition: 'source-missing', reason: gold?.reason || 'No governed Canonical Gold source is configured for Mission Control.' });
   }
   if (!gold.doc) {
+    // The loader names the real condition; an unclassified 401/403 from a caller that predates it is a rejected credential.
     const denied = gold.httpStatus === 401 || gold.httpStatus === 403;
-    return emptyContract({ registry, now, status: denied ? 'awaiting-authorized-source' : 'unavailable', reason: gold.reason || 'The governed Canonical Gold source could not be read.' });
+    const condition = gold.failureKind || (denied ? 'credential-rejected' : 'transport-failure');
+    const status = SOURCE_CONDITIONS[condition]?.status[0] || 'unavailable';
+    return emptyContract({ registry, now, status, condition, reason: gold.reason || 'The governed Canonical Gold source could not be read.' });
   }
-  const envelopeError = validateGoldEnvelope(gold.doc);
-  if (envelopeError) return emptyContract({ registry, now, status: 'rejected', reason: envelopeError });
+  const envelope = classifyGoldEnvelope(gold.doc);
+  if (envelope) return emptyContract({ registry, now, status: 'rejected', condition: envelope.kind, reason: envelope.reason });
 
   const doc = gold.doc;
   const goldMinor = doc.schema_version.split('.').slice(0, 2).join('.');
   const freshness = semantics.evaluateFreshness(doc.generated_at, semantics.FRESHNESS_POLICY.audience, now);
   const index = new Map(doc.metrics.map(metric => [metric.metric_id, metric]));
 
-  let insightsStatus = { status: 'absent', reason: insights?.reason || 'No insights document is configured.', generatedAt: null, sourceGoldGeneratedAt: null };
+  let insightsStatus = { status: 'absent', condition: insights?.failureKind || 'source-missing', reason: insights?.reason || 'No insights document is configured.', generatedAt: null, sourceGoldGeneratedAt: null };
   let insightsDoc = null;
   if (insights?.doc) {
     const checked = validateInsightsEnvelope(insights.doc);
-    if (checked.error) insightsStatus = { status: 'rejected', reason: checked.error, generatedAt: null, sourceGoldGeneratedAt: null };
+    if (checked.error) insightsStatus = { status: 'rejected', condition: checked.kind, reason: checked.error, generatedAt: null, sourceGoldGeneratedAt: null };
     else if (insights.doc.source_gold_generated_at !== doc.generated_at) {
-      insightsStatus = { status: 'incomparable', reason: 'The insights document was derived from a different Gold snapshot (' + insights.doc.source_gold_generated_at + ') than the Gold document read (' + doc.generated_at + '); trends are not mixed across snapshots.', generatedAt: insights.doc.generated_at, sourceGoldGeneratedAt: insights.doc.source_gold_generated_at };
+      insightsStatus = { status: 'incomparable', condition: 'snapshot-mismatch', reason: 'The insights document was derived from a different Gold snapshot (' + insights.doc.source_gold_generated_at + ') than the Gold document read (' + doc.generated_at + '); trends are not mixed across snapshots.', generatedAt: insights.doc.generated_at, sourceGoldGeneratedAt: insights.doc.source_gold_generated_at };
     } else {
       insightsDoc = insights.doc;
-      insightsStatus = { status: 'measured', reason: null, generatedAt: insights.doc.generated_at, sourceGoldGeneratedAt: insights.doc.source_gold_generated_at };
+      insightsStatus = { status: 'measured', condition: 'connected', reason: null, generatedAt: insights.doc.generated_at, sourceGoldGeneratedAt: insights.doc.source_gold_generated_at };
     }
   } else if (insights?.reason) {
-    insightsStatus = { status: 'unavailable', reason: insights.reason, generatedAt: null, sourceGoldGeneratedAt: null };
+    insightsStatus = { status: 'unavailable', condition: insights.failureKind || 'transport-failure', reason: insights.reason, generatedAt: null, sourceGoldGeneratedAt: null };
   }
 
   const comparisonKey = (id, days) => id + '|' + days;
@@ -403,6 +435,7 @@ export function buildAudience({ registry, now, gold, insights }) {
     policy: policy(),
     source: {
       status,
+      condition: !anyMeasured ? 'no-measurements' : ['stale', 'expired'].includes(freshness.state) ? 'stale' : 'connected',
       kind: 'canonical-gold',
       reason: anyMeasured ? null : 'The Gold document carries no fully covered per-property request metric for the governed estate.',
       requirement: null,
@@ -436,6 +469,13 @@ export function validateAudience(audience, { expectPropertyIds } = {}) {
   for (const [key, value] of Object.entries(expectedPolicy)) if (audience.policy?.[key] !== value) errors.push('audience: policy.' + key);
   const status = audience.source?.status;
   if (!['measured', 'partial', 'awaiting-authorized-source', 'unavailable', 'rejected'].includes(status)) errors.push('audience: source.status');
+  const condition = audience.source?.condition;
+  const [major, minor] = String(audience.schemaVersion).split('.').map(Number);
+  const legacyWithoutCondition = condition === undefined && (major < CONDITION_REQUIRED_FROM[0] || (major === CONDITION_REQUIRED_FROM[0] && minor < CONDITION_REQUIRED_FROM[1]));
+  if (!legacyWithoutCondition) {
+    if (!Object.hasOwn(SOURCE_CONDITIONS, condition)) errors.push('audience: source.condition');
+    else if (!SOURCE_CONDITIONS[condition].status.includes(status)) errors.push('audience: source.condition ' + condition + ' cannot accompany status ' + status);
+  }
   if (audience.source?.gold && audience.source.gold.fixture !== false) errors.push('audience: a fixture Gold document can never be published');
   if (['measured', 'partial'].includes(status) && !audience.source?.gold) errors.push('audience: measured audience without Gold provenance');
   if (status === 'awaiting-authorized-source' && !audience.source.requirement) errors.push('audience: awaiting-authorized-source must state the missing authority');

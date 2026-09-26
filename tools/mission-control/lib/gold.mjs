@@ -95,21 +95,61 @@ export function extractOperational(doc, bindings, propertyId = 'globaldeets.com'
 }
 
 /**
+ * Why a governed source could not be used. Every reason is a distinct condition so diagnostics never collapse an
+ * outage, a bot challenge, a rejected credential or a corrupt document into "missing authority".
+ */
+export const SOURCE_FAILURES = Object.freeze({
+  'source-missing': 'no source is configured',
+  'credential-missing': 'the source requires a credential Mission Control was not given',
+  'credential-rejected': 'the source rejected the credential Mission Control presented',
+  'edge-challenge': 'a Cloudflare edge challenge answered instead of the source',
+  'transport-failure': 'the source could not be reached or answered with an error',
+  malformed: 'the source answered with something that is not a JSON document',
+});
+
+const failure = (kind, { configured = true, httpStatus = null, reason }) => ({ doc: null, configured, httpStatus, reason, failureKind: kind });
+
+function classifyHttpFailure(response, token, label) {
+  const status = response.status;
+  const header = name => (typeof response.headers?.get === 'function' ? response.headers.get(name) || '' : '');
+  // A managed challenge / Bot Fight response is an HTML 403 from the edge; it says nothing about the credential.
+  if (header('cf-mitigated') === 'challenge' || (status === 403 && /text\/html/i.test(header('content-type')))) {
+    return failure('edge-challenge', { httpStatus: status, reason: label + ' source was answered by a Cloudflare edge challenge (HTTP ' + status + '), not by the source; the credential was not evaluated.' });
+  }
+  if (status === 401 || status === 403) {
+    return token
+      ? failure('credential-rejected', { httpStatus: status, reason: label + ' source rejected the presented credential (HTTP ' + status + ').' })
+      : failure('credential-missing', { httpStatus: status, reason: label + ' source requires a credential (HTTP ' + status + ') and none was provided.' });
+  }
+  return failure('transport-failure', { httpStatus: status, reason: label + ' source returned HTTP ' + status + '.' });
+}
+
+/**
  * Reads a configured governed source (file path or https URL with optional bearer token). Never reads fixtures by
- * default. `configured` distinguishes "nothing is set up" from "set up but not readable"; `httpStatus` lets the
- * caller tell a missing credential (401/403) from an outage.
+ * default. `configured` distinguishes "nothing is set up" from "set up but not readable"; `httpStatus` and
+ * `failureKind` (see SOURCE_FAILURES) let the caller tell a missing or rejected credential from an outage, a
+ * bot challenge or a corrupt document. The credential is only ever sent as the Authorization header and is never
+ * placed in a reason.
  */
 export async function loadGoldSource({ source, token, fetchImpl, readFile, label = 'Gold' }) {
-  if (!source) return { doc: null, configured: false, httpStatus: null, reason: 'No ' + label + ' source configured.' };
+  if (!source) return failure('source-missing', { configured: false, reason: 'No ' + label + ' source configured.' });
+  const isMalformed = error => error instanceof SyntaxError || error?.name === 'SyntaxError';
   try {
     if (/^https:\/\//i.test(source)) {
       const response = await fetchImpl(source, { headers: { accept: 'application/json', ...(token ? { authorization: 'Bearer ' + token } : {}) }, signal: AbortSignal.timeout(20000) });
-      if (!response.ok) return { doc: null, configured: true, httpStatus: response.status, reason: label + ' source returned HTTP ' + response.status + '.' };
-      return { doc: await response.json(), configured: true, httpStatus: response.status, reason: null };
+      if (!response.ok) return classifyHttpFailure(response, token, label);
+      try {
+        return { doc: await response.json(), configured: true, httpStatus: response.status, reason: null, failureKind: null };
+      } catch (error) {
+        if (isMalformed(error)) return failure('malformed', { httpStatus: response.status, reason: label + ' source answered HTTP ' + response.status + ' with a body that is not valid JSON.' });
+        throw error;
+      }
     }
-    return { doc: JSON.parse(await readFile(source, 'utf8')), configured: true, httpStatus: null, reason: null };
+    return { doc: JSON.parse(await readFile(source, 'utf8')), configured: true, httpStatus: null, reason: null, failureKind: null };
   } catch (error) {
-    return { doc: null, configured: true, httpStatus: null, reason: label + ' source unreadable: ' + String(error?.message || error).slice(0, 120) };
+    if (isMalformed(error)) return failure('malformed', { reason: label + ' source is not valid JSON.' });
+    if (error?.code === 'ENOENT') return failure('source-missing', { reason: label + ' source path does not exist.' });
+    return failure('transport-failure', { reason: label + ' source unreadable: ' + String(error?.message || error).slice(0, 120) });
   }
 }
 
