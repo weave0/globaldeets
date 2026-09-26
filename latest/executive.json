@@ -1,7 +1,7 @@
 {
   "contractName": "globaldeets-executive",
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-09-26T06:39:22.951Z",
+  "generatedAt": "2026-09-26T12:34:43.691Z",
   "policy": {
     "fixturesAreProduction": false,
     "unknownIsFailure": false,
@@ -11,10 +11,10 @@
     "derivedOnly": true
   },
   "asOf": {
-    "probe": "2026-09-26T06:39:22.951Z",
-    "inventory": "2026-09-26T06:39:22.952Z",
+    "probe": "2026-09-26T12:34:43.691Z",
+    "inventory": "2026-09-26T12:34:43.692Z",
     "audience": "2026-09-26T06:06:59Z",
-    "businessEvents": "2026-09-26T06:39:34.144Z"
+    "businessEvents": "2026-09-26T12:34:55.070Z"
   },
   "evidence": {
     "classes": [
@@ -22,17 +22,17 @@
         "id": "availability",
         "label": "Availability probes",
         "state": "live",
-        "asOf": "2026-09-26T06:39:22.951Z",
+        "asOf": "2026-09-26T12:34:43.691Z",
         "detail": "2 vantages",
-        "now": "2026-09-26T06:39:22.951Z"
+        "now": "2026-09-26T12:34:43.691Z"
       },
       {
         "id": "inventory",
         "label": "Cloudflare inventory",
         "state": "live",
-        "asOf": "2026-09-26T06:39:22.952Z",
+        "asOf": "2026-09-26T12:34:43.692Z",
         "detail": "refreshed",
-        "now": "2026-09-26T06:39:22.951Z"
+        "now": "2026-09-26T12:34:43.691Z"
       },
       {
         "id": "audience",
@@ -40,31 +40,31 @@
         "state": "live",
         "asOf": "2026-09-26T06:06:59Z",
         "detail": "partial",
-        "now": "2026-09-26T06:39:22.951Z"
+        "now": "2026-09-26T12:34:43.691Z"
       },
       {
         "id": "business-events",
         "label": "Business outcomes",
         "state": "live",
-        "asOf": "2026-09-26T06:39:34.144Z",
+        "asOf": "2026-09-26T12:34:55.070Z",
         "detail": "measured",
-        "now": "2026-09-26T06:39:22.951Z"
+        "now": "2026-09-26T12:34:43.691Z"
       },
       {
         "id": "history",
         "label": "Historical snapshots",
         "state": "live",
-        "asOf": "2026-09-26T06:39:22.951Z",
+        "asOf": "2026-09-26T12:34:43.691Z",
         "detail": "3 days retained",
-        "now": "2026-09-26T06:39:22.951Z"
+        "now": "2026-09-26T12:34:43.691Z"
       },
       {
         "id": "instrumentation-reception",
         "label": "Telemetry reception",
         "state": "live",
-        "asOf": "2026-09-26T06:39:33.627Z",
+        "asOf": "2026-09-26T12:34:53.983Z",
         "detail": "checked",
-        "now": "2026-09-26T06:39:22.951Z"
+        "now": "2026-09-26T12:34:43.691Z"
       }
     ],
     "liveClasses": 6,
@@ -163,9 +163,9 @@
       "id": "instrumentation-verified",
       "label": "Telemetry reception verified",
       "decision": "Is browser data actually arriving?",
-      "numerator": 6,
+      "numerator": 5,
       "denominator": 20,
-      "pct": 30,
+      "pct": 25,
       "state": "partial",
       "detail": "Properties with reception evidence, not just a tag."
     },
@@ -1615,8 +1615,8 @@
           },
           {
             "column": "telemetry",
-            "state": "known",
-            "label": "Verified"
+            "state": "partial",
+            "label": "Tag shipped, unverified"
           },
           {
             "column": "audience",
@@ -1764,7 +1764,7 @@
     "asOf": "2026-09-26T06:06:59Z",
     "freshness": {
       "state": "fresh",
-      "ageHours": 0.5,
+      "ageHours": 6.5,
       "freshUntil": "2026-09-27T18:06:59.000Z",
       "expiresAt": "2026-09-30T06:06:59.000Z"
     },
@@ -2315,7 +2315,7 @@
       "kind": "bars",
       "unit": "events, 28 days",
       "evidenceState": "measured",
-      "asOf": "2026-09-26T06:39:34.144Z",
+      "asOf": "2026-09-26T12:34:55.070Z",
       "provenance": "Business-event feed GFV first-party business-event counters",
       "data": {
         "stages": [
@@ -2642,7 +2642,7 @@
       "kind": "segments",
       "unit": "properties",
       "evidenceState": "measured",
-      "asOf": "2026-09-26T06:39:22.951Z",
+      "asOf": "2026-09-26T12:34:43.691Z",
       "provenance": "Production probes from 2 vantages; health contract 1.1.0",
       "data": {
         "total": 25,
@@ -3123,7 +3123,7 @@
       "kind": "bars",
       "unit": "events, 28 days",
       "evidenceState": "measured",
-      "asOf": "2026-09-26T06:39:34.144Z",
+      "asOf": "2026-09-26T12:34:55.070Z",
       "provenance": "Business-event feed GFV first-party business-event counters",
       "data": {
         "stages": [
@@ -3151,6 +3151,6 @@
       "caption": "Sums cover only instrumented properties."
     }
   },
-  "shareText": "GlobalDeets Mission Control — estate summary\nGenerated 2026-09-26T06:39:22.951Z from governed evidence (probe run run-36224382691-1, observed 2026-09-26T06:39:22.951Z).\n\n• Good Flippin Design operates 25 web properties. 16 have an owner-declared status (10 active, 3 incubating, 3 aliases); 9 have none, so their intent is shown as unknown.\n• 19 of 20 properties that publish a site are responding; 3 are verified healthy end-to-end. None is failing. 1 property is blocked from view (not counted as failing). 4 domains publish nothing.\n• Estate traffic: 926,747 edge requests in the latest 28 days across 20 of 25 properties (a lower bound), with no comparable prior period yet. These are requests, not people: no source separates humans from automated traffic.\n• 2 of 20 properties report business outcomes.\n• 15 open items: 3 actionable now, 3 blocked on missing authority, 8 need a decision. First: 2 high-traffic properties have no measurable business outcome.\n\nMeasurement coverage:\n  - Availability probed: 24 of 25 (96%)\n  - Independent second witness: 19 of 20 (95%)\n  - Authoritative critical path: 4 of 20 (20%)\n  - Analytics tag shipped: 19 of 20 (95%)\n  - Telemetry reception verified: 6 of 20 (30%)\n  - Audience measured: 20 of 25 (80%)\n  - Business outcomes measured: 2 of 20 (10%)\n  - Owner-declared lifecycle: 16 of 25 (64%)\n  - Owner-declared outcome: 6 of 25 (24%)\n\nAudience source: partial. Business-outcome feed: measured.\nUnknown is not zero, reachable is not healthy, and edge requests are not people.",
+  "shareText": "GlobalDeets Mission Control — estate summary\nGenerated 2026-09-26T12:34:43.691Z from governed evidence (probe run run-36242325903-1, observed 2026-09-26T12:34:43.691Z).\n\n• Good Flippin Design operates 25 web properties. 16 have an owner-declared status (10 active, 3 incubating, 3 aliases); 9 have none, so their intent is shown as unknown.\n• 19 of 20 properties that publish a site are responding; 3 are verified healthy end-to-end. None is failing. 1 property is blocked from view (not counted as failing). 4 domains publish nothing.\n• Estate traffic: 926,747 edge requests in the latest 28 days across 20 of 25 properties (a lower bound), with no comparable prior period yet. These are requests, not people: no source separates humans from automated traffic.\n• 2 of 20 properties report business outcomes.\n• 15 open items: 3 actionable now, 3 blocked on missing authority, 8 need a decision. First: 2 high-traffic properties have no measurable business outcome.\n\nMeasurement coverage:\n  - Availability probed: 24 of 25 (96%)\n  - Independent second witness: 19 of 20 (95%)\n  - Authoritative critical path: 4 of 20 (20%)\n  - Analytics tag shipped: 19 of 20 (95%)\n  - Telemetry reception verified: 5 of 20 (25%)\n  - Audience measured: 20 of 25 (80%)\n  - Business outcomes measured: 2 of 20 (10%)\n  - Owner-declared lifecycle: 16 of 25 (64%)\n  - Owner-declared outcome: 6 of 25 (24%)\n\nAudience source: partial. Business-outcome feed: measured.\nUnknown is not zero, reachable is not healthy, and edge requests are not people.",
   "evidenceSummary": "6 of 6 evidence classes are live"
 }
