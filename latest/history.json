@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.2.0",
   "contractName": "globaldeets-mission-control-history",
-  "generatedAt": "2026-09-26T00:17:34.407Z",
+  "generatedAt": "2026-09-26T00:26:57.979Z",
   "supportedWindowsDays": [
     7,
     28,
@@ -229,23 +229,23 @@
     },
     {
       "snapshotId": "2026-09-26.scheduled",
-      "observedAt": "2026-09-26T00:17:34.407Z",
+      "observedAt": "2026-09-26T00:26:57.979Z",
       "collector": {
         "kind": "scheduled",
-        "runId": "run-36204258435-1"
+        "runId": "run-36204847501-1"
       },
       "estate": {
         "activeZones": 25,
         "rumObservedZones": 21,
         "rumCoveragePct": 84,
         "evidenceState": "carried-forward",
-        "inventoryObservedAt": "2026-09-26T00:17:34.408Z",
+        "inventoryObservedAt": "2026-09-26T00:26:57.981Z",
         "comparabilityKey": "estate-rum|v1"
       },
       "availability": {
         "evidenceState": "measured",
-        "probeRunId": "run-36204258435-1",
-        "probeObservedAt": "2026-09-26T00:17:34.407Z",
+        "probeRunId": "run-36204847501-1",
+        "probeObservedAt": "2026-09-26T00:26:57.979Z",
         "comparabilityKey": "estate-availability|v1|properties=25",
         "propertyCount": 25,
         "conclusiveServiceZones": 20,
@@ -258,7 +258,7 @@
         "verifiedHealthyZones": 3,
         "availableRatioPct": 100,
         "dayRollup": {
-          "runs": 1,
+          "runs": 2,
           "worstAvailableZones": 20,
           "worstUnavailableZones": 0
         }
@@ -271,7 +271,7 @@
         "residualUnclassifiedVisits": null,
         "evidenceState": "unavailable",
         "investorSafe": false,
-        "reason": "Canonical Gold source was answered by a Cloudflare edge challenge (HTTP 403), not by the source; the credential was not evaluated."
+        "reason": "No Canonical Gold metric is bound to globaldeets.com (registry goldBindings is empty)."
       },
       "certifiedAudience": {
         "evidenceState": "unavailable",
@@ -282,7 +282,7 @@
       },
       "instrumentation": {
         "evidenceState": "measured",
-        "probeRunId": "run-36204258435-1",
+        "probeRunId": "run-36204847501-1",
         "comparabilityKey": "instrumentation|v1|properties=25",
         "applicable": 20,
         "activeVerified": 6,
@@ -293,17 +293,25 @@
         "unknown": 0
       },
       "audience": {
-        "evidenceState": "unavailable",
-        "sourceStatus": "unavailable",
-        "comparabilityKey": "audience|gold-1.2|properties=25",
-        "reason": "Canonical Gold source was answered by a Cloudflare edge challenge (HTTP 403), not by the source; the credential was not evaluated."
+        "evidenceState": "partial",
+        "sourceStatus": "partial",
+        "comparabilityKey": "audience|gold-1.2|properties=25|gold|1.2|28d|2026-09-26T00:00:00Z|UTC|half_open",
+        "sourceGeneratedAt": "2026-09-26T00:13:53Z",
+        "propertiesMeasured": 20,
+        "propertiesExpected": 25,
+        "edgeRequests": {
+          "7": 312642,
+          "28": 926747,
+          "90": 2330393
+        },
+        "limitations": "Edge requests, not people; includes automated traffic."
       },
       "businessEvents": {
         "evidenceState": "measured",
         "sourceStatus": "measured",
         "instrumentedProperties": 2,
         "propertiesApplicable": 20,
-        "feedGeneratedAt": "2026-09-26T00:17:44.342Z"
+        "feedGeneratedAt": "2026-09-26T00:27:09.714Z"
       }
     }
   ],

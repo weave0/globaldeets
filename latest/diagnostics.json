@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0.0",
   "contractName": "globaldeets-diagnostics-queue",
-  "generatedAt": "2026-09-26T00:17:34.407Z",
+  "generatedAt": "2026-09-26T00:26:57.979Z",
   "agentContract": {
     "sortableFields": [
       "priority",
@@ -152,7 +152,6 @@
     "note": "Items with source \"derived\" are computed from probe, history, inventory, audience and business-event evidence on every collection run; source \"manual\" items are hand-authored judgments with no derivable evidence.",
     "derivedRules": [
       "audience-certification",
-      "audience-source",
       "business-outcome-coverage",
       "critical-path-contracts",
       "critical-path-failed",
@@ -165,16 +164,16 @@
       "new-production-surface",
       "no-service-published",
       "outcome-declaration-gap",
-      "outcomes-without-audience",
-      "probe-blocked"
+      "probe-blocked",
+      "traffic-without-outcome"
     ]
   },
   "summary": {
-    "open": 16,
+    "open": 15,
     "actionableNow": 3,
-    "blockedOnAuthority": 4,
+    "blockedOnAuthority": 3,
     "decisionNeeded": 8,
-    "nextUp": "audience:governed-source"
+    "nextUp": "business-outcomes:traffic-without-outcome"
   },
   "items": [
     {
@@ -195,7 +194,7 @@
       "ownerLane": "Data / analytics",
       "openedAt": "2026-09-23",
       "title": "Certify human audience metrics",
-      "observed": "The latest measured operational edge snapshot (2026-09-23.2) contains 36,391 raw visits, including 31,681 attached to a synthetic health path. Mission Control probes add tagged synthetic traffic that must also be excluded.",
+      "observed": "Governed edge requests are now read for 20 properties, but Cloudflare counts requests, not people, and no connected source separates certified humans from automated traffic. Probe traffic and other automation remain unclassified.",
       "businessReason": "Operational edge telemetry cannot responsibly stand in for human traction. Investors will ask how many real people use this.",
       "evidence": [
         {
@@ -215,8 +214,8 @@
       "subjects": [],
       "ageDays": 3,
       "freshness": {
-        "state": "unknown",
-        "observedAt": null,
+        "state": "fresh",
+        "observedAt": "2026-09-26T00:13:53Z",
         "basis": "Governed audience source"
       },
       "priorityScore": 116,
@@ -253,51 +252,63 @@
       "source": "derived",
       "status": "open",
       "polarity": "risk",
-      "confidence": "high",
+      "confidence": "medium",
       "actionability": {
         "state": "actionable-now",
         "blockedBy": null
       },
-      "id": "audience:governed-source",
-      "rule": "audience-source",
-      "category": "audience",
-      "severity": "high",
-      "domain": "measurement",
+      "id": "business-outcomes:traffic-without-outcome",
+      "rule": "traffic-without-outcome",
+      "category": "business-outcomes",
+      "subjects": [
+        "globaldeets.com",
+        "gflippinv.com"
+      ],
+      "severity": "medium",
+      "domain": "business",
       "businessImpact": "high",
-      "ownerLane": "Data / analytics",
-      "openedAt": "2026-09-24",
-      "title": "A Cloudflare edge challenge is answering instead of the governed audience source",
-      "observed": "Canonical Gold source was answered by a Cloudflare edge challenge (HTTP 403), not by the source; the credential was not evaluated. Mission Control reads Canonical Gold 1.2 and Traffic Insights; the reader is built and tested, so per-property 7/28/90-day traffic, trends, contribution and concentration appear as soon as a valid, non-fixture document is readable.",
-      "businessReason": "Without a governed traffic source, usage, growth and each property's contribution cannot be stated at all. Nothing is estimated or shown as zero.",
+      "ownerLane": "Product + Data",
+      "title": "2 high-traffic properties have no measurable business outcome",
+      "observed": "GlobalDeets (18.4% of edge requests); Good Flippin Vibes (alias) (12.5% of edge requests) carry at least 10% of estate traffic but report no outcome events.",
+      "businessReason": "The properties that attract the most attention are where an unmeasured conversion path costs the most.",
       "evidence": [
         {
           "type": "audience-contract",
-          "ref": "globaldeets-audience",
-          "state": "unavailable",
-          "condition": "edge-challenge"
+          "ref": "globaldeets-audience@2026-09-26T00:26:57.979Z",
+          "state": "partial"
         }
       ],
-      "nextAction": "Allow the evidence collector through the edge (a WAF skip rule for the Gold feed path) or set MISSION_CONTROL_GOLD_SOURCE to the Pages origin; the credential has not been evaluated.",
+      "nextAction": "Instrument the primary outcome on these properties first.",
       "escalation": {
-        "blocksInvestorClaim": true,
-        "level": "high",
+        "blocksInvestorClaim": false,
+        "level": "medium",
         "class": "measurement-claim-block",
-        "escalateWhen": "Any investor material states usage, growth or contribution figures.",
-        "targetLane": "Data / analytics"
+        "escalateWhen": "Traffic is quoted without outcomes.",
+        "targetLane": "Product + Data"
       },
-      "subjects": [],
-      "ageDays": 2,
+      "openedAt": "2026-09-26",
+      "ageDays": 0,
       "freshness": {
-        "state": "unknown",
-        "observedAt": null,
+        "state": "fresh",
+        "observedAt": "2026-09-26T00:13:53Z",
         "basis": "Governed audience source"
       },
-      "priorityScore": 109,
+      "priorityScore": 103,
       "priorityBreakdown": [
         {
           "factor": "severity",
-          "points": 70,
-          "why": "Severity is high."
+          "points": 40,
+          "why": "Severity is medium."
+        },
+        {
+          "factor": "investor-critical",
+          "points": 25,
+          "why": "Affects an investor-critical property."
+        },
+        {
+          "factor": "strategic-tier",
+          "points": 8,
+          "why": "Affects a tier 2 property in the owner strategy."
         },
         {
           "factor": "business-impact",
@@ -306,8 +317,8 @@
         },
         {
           "factor": "escalation",
-          "points": 6,
-          "why": "Escalation level is high."
+          "points": 2,
+          "why": "Escalation level is medium."
         },
         {
           "factor": "actionability",
@@ -315,9 +326,9 @@
           "why": "Can be worked on now."
         },
         {
-          "factor": "age",
-          "points": 1,
-          "why": "Open for 2 days."
+          "factor": "confidence",
+          "points": -4,
+          "why": "Evidence confidence is medium."
         }
       ],
       "priority": 2
@@ -365,7 +376,7 @@
       "evidence": [
         {
           "type": "business-event-contract",
-          "ref": "globaldeets-business-events@2026-09-26T00:17:34.407Z",
+          "ref": "globaldeets-business-events@2026-09-26T00:26:57.979Z",
           "state": "measured"
         }
       ],
@@ -380,7 +391,7 @@
       "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-26T00:17:44.342Z",
+        "observedAt": "2026-09-26T00:27:09.714Z",
         "basis": "Business-event feed"
       },
       "priorityScore": 94,
@@ -532,7 +543,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36204258435-1",
+          "ref": "production probe run-36204847501-1",
           "state": "measured"
         }
       ],
@@ -548,7 +559,7 @@
       "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-26T00:17:34.407Z",
+        "observedAt": "2026-09-26T00:26:57.979Z",
         "basis": "Production probes"
       },
       "priorityScore": 73,
@@ -612,7 +623,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-26T00:17:34.408Z",
+          "ref": "2026-09-26T00:26:57.981Z",
           "state": "measured"
         }
       ],
@@ -628,7 +639,7 @@
       "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-26T00:17:34.408Z",
+        "observedAt": "2026-09-26T00:26:57.981Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 49,
@@ -700,7 +711,7 @@
       "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-26T00:17:34.407Z",
+        "observedAt": "2026-09-26T00:26:57.979Z",
         "basis": "Historical snapshots"
       },
       "priorityScore": 44,
@@ -900,86 +911,6 @@
     {
       "source": "derived",
       "status": "open",
-      "polarity": "risk",
-      "confidence": "medium",
-      "actionability": {
-        "state": "blocked-on-authority",
-        "blockedBy": "A read credential for the governed audience source"
-      },
-      "id": "business-outcomes:outcomes-without-audience",
-      "rule": "outcomes-without-audience",
-      "category": "business-outcomes",
-      "subjects": [
-        "cyancanoe.com",
-        "goodflippindesign.com"
-      ],
-      "severity": "medium",
-      "domain": "business",
-      "businessImpact": "medium",
-      "ownerLane": "Data / analytics",
-      "title": "Business outcomes are measured without audience context",
-      "observed": "Outcome events are reported for cyancanoe.com, goodflippindesign.com, but the governed audience source is not readable, so no conversion rate against traffic can be stated.",
-      "businessReason": "An outcome count without its audience cannot show whether the property converts well or merely receives little traffic.",
-      "evidence": [
-        {
-          "type": "business-event-contract",
-          "ref": "globaldeets-business-events@2026-09-26T00:17:34.407Z",
-          "state": "measured"
-        }
-      ],
-      "nextAction": "Connect the governed audience source.",
-      "escalation": {
-        "blocksInvestorClaim": false,
-        "level": "medium",
-        "class": "measurement-claim-block",
-        "escalateWhen": "Conversion rates are quoted.",
-        "targetLane": "Data / analytics"
-      },
-      "openedAt": "2026-09-25",
-      "ageDays": 1,
-      "freshness": {
-        "state": "fresh",
-        "observedAt": "2026-09-26T00:17:44.342Z",
-        "basis": "Business-event feed"
-      },
-      "priorityScore": 36,
-      "priorityBreakdown": [
-        {
-          "factor": "severity",
-          "points": 40,
-          "why": "Severity is medium."
-        },
-        {
-          "factor": "strategic-tier",
-          "points": 12,
-          "why": "Affects a tier 1 property in the owner strategy."
-        },
-        {
-          "factor": "business-impact",
-          "points": 6,
-          "why": "Business impact is medium."
-        },
-        {
-          "factor": "escalation",
-          "points": 2,
-          "why": "Escalation level is medium."
-        },
-        {
-          "factor": "actionability",
-          "points": -20,
-          "why": "Blocked on authority that is not available yet."
-        },
-        {
-          "factor": "confidence",
-          "points": -4,
-          "why": "Evidence confidence is medium."
-        }
-      ],
-      "priority": 10
-    },
-    {
-      "source": "derived",
-      "status": "open",
       "polarity": "gap",
       "confidence": "high",
       "actionability": {
@@ -992,7 +923,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-26T00:17:34.407Z",
+          "ref": "globaldeets-estate-health@2026-09-26T00:26:57.979Z",
           "state": "measured"
         }
       ],
@@ -1018,7 +949,7 @@
       "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-26T00:17:34.407Z",
+        "observedAt": "2026-09-26T00:26:57.979Z",
         "basis": "Production probes"
       },
       "priorityScore": 35,
@@ -1049,7 +980,7 @@
           "why": "Open for 2 days."
         }
       ],
-      "priority": 11
+      "priority": 10
     },
     {
       "source": "derived",
@@ -1079,7 +1010,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-26T00:17:34.407Z",
+          "ref": "globaldeets-estate-health@2026-09-26T00:26:57.979Z",
           "state": "measured"
         }
       ],
@@ -1095,7 +1026,7 @@
       "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-26T00:17:34.407Z",
+        "observedAt": "2026-09-26T00:26:57.979Z",
         "basis": "Production probes"
       },
       "priorityScore": 16,
@@ -1111,7 +1042,7 @@
           "why": "Open for 2 days."
         }
       ],
-      "priority": 12
+      "priority": 11
     },
     {
       "source": "derived",
@@ -1174,7 +1105,7 @@
           "why": "Open for 2 days."
         }
       ],
-      "priority": 13
+      "priority": 12
     },
     {
       "source": "derived",
@@ -1213,7 +1144,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36204258435-1",
+          "ref": "production probe run-36204847501-1",
           "state": "measured"
         }
       ],
@@ -1229,7 +1160,7 @@
       "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-26T00:17:34.407Z",
+        "observedAt": "2026-09-26T00:26:57.979Z",
         "basis": "Production probes"
       },
       "priorityScore": 13,
@@ -1265,7 +1196,7 @@
           "why": "Open for 2 days."
         }
       ],
-      "priority": 14
+      "priority": 13
     },
     {
       "source": "derived",
@@ -1330,7 +1261,7 @@
           "why": "Open for 2 days."
         }
       ],
-      "priority": 15
+      "priority": 14
     },
     {
       "source": "derived",
@@ -1355,7 +1286,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-26T00:17:34.408Z",
+          "ref": "2026-09-26T00:26:57.981Z",
           "state": "measured"
         }
       ],
@@ -1371,7 +1302,7 @@
       "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-26T00:17:34.408Z",
+        "observedAt": "2026-09-26T00:26:57.981Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 12,
@@ -1392,7 +1323,7 @@
           "why": "Open for 2 days."
         }
       ],
-      "priority": 16
+      "priority": 15
     },
     {
       "category": "critical-path",
@@ -1472,7 +1403,7 @@
           "why": "Open for 2 days."
         }
       ],
-      "priority": 17,
+      "priority": 16,
       "closedAt": "2026-09-24T22:48:58.746Z"
     },
     {
@@ -1545,7 +1476,7 @@
           "why": "Open for 2 days."
         }
       ],
-      "priority": 18
+      "priority": 17
     },
     {
       "source": "manual",
@@ -1611,7 +1542,7 @@
           "why": "Open for 3 days."
         }
       ],
-      "priority": 19
+      "priority": 18
     }
   ]
 }
