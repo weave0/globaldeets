@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0.0",
   "contractName": "globaldeets-diagnostics-queue",
-  "generatedAt": "2026-09-25T19:54:27.862Z",
+  "generatedAt": "2026-09-26T00:17:34.407Z",
   "agentContract": {
     "sortableFields": [
       "priority",
@@ -171,10 +171,10 @@
   },
   "summary": {
     "open": 16,
-    "actionableNow": 2,
-    "blockedOnAuthority": 5,
+    "actionableNow": 3,
+    "blockedOnAuthority": 4,
     "decisionNeeded": 8,
-    "nextUp": "business-outcomes:coverage"
+    "nextUp": "audience:governed-source"
   },
   "items": [
     {
@@ -213,7 +213,7 @@
         "targetLane": "Data / analytics + Product narrative"
       },
       "subjects": [],
-      "ageDays": 2,
+      "ageDays": 3,
       "freshness": {
         "state": "unknown",
         "observedAt": null,
@@ -244,10 +244,83 @@
         {
           "factor": "age",
           "points": 1,
-          "why": "Open for 2 days."
+          "why": "Open for 3 days."
         }
       ],
       "priority": 1
+    },
+    {
+      "source": "derived",
+      "status": "open",
+      "polarity": "risk",
+      "confidence": "high",
+      "actionability": {
+        "state": "actionable-now",
+        "blockedBy": null
+      },
+      "id": "audience:governed-source",
+      "rule": "audience-source",
+      "category": "audience",
+      "severity": "high",
+      "domain": "measurement",
+      "businessImpact": "high",
+      "ownerLane": "Data / analytics",
+      "openedAt": "2026-09-24",
+      "title": "A Cloudflare edge challenge is answering instead of the governed audience source",
+      "observed": "Canonical Gold source was answered by a Cloudflare edge challenge (HTTP 403), not by the source; the credential was not evaluated. Mission Control reads Canonical Gold 1.2 and Traffic Insights; the reader is built and tested, so per-property 7/28/90-day traffic, trends, contribution and concentration appear as soon as a valid, non-fixture document is readable.",
+      "businessReason": "Without a governed traffic source, usage, growth and each property's contribution cannot be stated at all. Nothing is estimated or shown as zero.",
+      "evidence": [
+        {
+          "type": "audience-contract",
+          "ref": "globaldeets-audience",
+          "state": "unavailable",
+          "condition": "edge-challenge"
+        }
+      ],
+      "nextAction": "Allow the evidence collector through the edge (a WAF skip rule for the Gold feed path) or set MISSION_CONTROL_GOLD_SOURCE to the Pages origin; the credential has not been evaluated.",
+      "escalation": {
+        "blocksInvestorClaim": true,
+        "level": "high",
+        "class": "measurement-claim-block",
+        "escalateWhen": "Any investor material states usage, growth or contribution figures.",
+        "targetLane": "Data / analytics"
+      },
+      "subjects": [],
+      "ageDays": 2,
+      "freshness": {
+        "state": "unknown",
+        "observedAt": null,
+        "basis": "Governed audience source"
+      },
+      "priorityScore": 109,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 70,
+          "why": "Severity is high."
+        },
+        {
+          "factor": "business-impact",
+          "points": 12,
+          "why": "Business impact is high."
+        },
+        {
+          "factor": "escalation",
+          "points": 6,
+          "why": "Escalation level is high."
+        },
+        {
+          "factor": "actionability",
+          "points": 20,
+          "why": "Can be worked on now."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
+        }
+      ],
+      "priority": 2
     },
     {
       "source": "derived",
@@ -292,7 +365,7 @@
       "evidence": [
         {
           "type": "business-event-contract",
-          "ref": "globaldeets-business-events@2026-09-25T19:54:27.862Z",
+          "ref": "globaldeets-business-events@2026-09-26T00:17:34.407Z",
           "state": "measured"
         }
       ],
@@ -304,13 +377,13 @@
         "escalateWhen": "Any investor material states conversion or outcome figures.",
         "targetLane": "Product + Data"
       },
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T19:54:40.859Z",
+        "observedAt": "2026-09-26T00:17:44.342Z",
         "basis": "Business-event feed"
       },
-      "priorityScore": 93,
+      "priorityScore": 94,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -336,9 +409,14 @@
           "factor": "actionability",
           "points": 20,
           "why": "Can be worked on now."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
-      "priority": 2
+      "priority": 3
     },
     {
       "source": "manual",
@@ -383,7 +461,7 @@
         "culturesherpa.org",
         "globaldeets.com"
       ],
-      "ageDays": 2,
+      "ageDays": 3,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -424,10 +502,10 @@
         {
           "factor": "age",
           "points": 1,
-          "why": "Open for 2 days."
+          "why": "Open for 3 days."
         }
       ],
-      "priority": 3
+      "priority": 4
     },
     {
       "source": "derived",
@@ -454,7 +532,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36182453693-1",
+          "ref": "production probe run-36204258435-1",
           "state": "measured"
         }
       ],
@@ -467,13 +545,13 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T19:54:27.862Z",
+        "observedAt": "2026-09-26T00:17:34.407Z",
         "basis": "Production probes"
       },
-      "priorityScore": 72,
+      "priorityScore": 73,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -499,73 +577,11 @@
           "factor": "actionability",
           "points": 20,
           "why": "Can be worked on now."
-        }
-      ],
-      "priority": 4
-    },
-    {
-      "source": "derived",
-      "status": "open",
-      "polarity": "risk",
-      "confidence": "high",
-      "actionability": {
-        "state": "blocked-on-authority",
-        "blockedBy": "A read credential for the governed Canonical Gold and Traffic Insights documents."
-      },
-      "id": "audience:governed-source",
-      "rule": "audience-source",
-      "category": "audience",
-      "severity": "high",
-      "domain": "measurement",
-      "businessImpact": "high",
-      "ownerLane": "Data / analytics",
-      "openedAt": "2026-09-24",
-      "title": "Connect the governed audience source (awaiting authorization)",
-      "observed": "No Canonical Gold source configured. Mission Control reads Canonical Gold 1.2 and Traffic Insights; the reader is built and tested, so per-property 7/28/90-day traffic, trends, contribution and concentration appear as soon as a valid, non-fixture document is readable.",
-      "businessReason": "Without a governed traffic source, usage, growth and each property's contribution cannot be stated at all. Nothing is estimated or shown as zero.",
-      "evidence": [
-        {
-          "type": "audience-contract",
-          "ref": "globaldeets-audience",
-          "state": "awaiting-authorized-source"
-        }
-      ],
-      "nextAction": "Grant Mission Control read access: A read credential for the governed Canonical Gold and Traffic Insights documents. Then set the repository secrets MISSION_CONTROL_GOLD_SOURCE and MISSION_CONTROL_GOLD_TOKEN.",
-      "escalation": {
-        "blocksInvestorClaim": true,
-        "level": "high",
-        "class": "measurement-claim-block",
-        "escalateWhen": "Any investor material states usage, growth or contribution figures.",
-        "targetLane": "Data / analytics"
-      },
-      "subjects": [],
-      "ageDays": 1,
-      "freshness": {
-        "state": "unknown",
-        "observedAt": null,
-        "basis": "Governed audience source"
-      },
-      "priorityScore": 68,
-      "priorityBreakdown": [
-        {
-          "factor": "severity",
-          "points": 70,
-          "why": "Severity is high."
         },
         {
-          "factor": "business-impact",
-          "points": 12,
-          "why": "Business impact is high."
-        },
-        {
-          "factor": "escalation",
-          "points": 6,
-          "why": "Escalation level is high."
-        },
-        {
-          "factor": "actionability",
-          "points": -20,
-          "why": "Blocked on authority that is not available yet."
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 5
@@ -596,7 +612,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-25T19:54:27.864Z",
+          "ref": "2026-09-26T00:17:34.408Z",
           "state": "measured"
         }
       ],
@@ -609,13 +625,13 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T19:54:27.864Z",
+        "observedAt": "2026-09-26T00:17:34.408Z",
         "basis": "Cloudflare inventory"
       },
-      "priorityScore": 48,
+      "priorityScore": 49,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -636,6 +652,11 @@
           "factor": "confidence",
           "points": -4,
           "why": "Evidence confidence is medium."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 6
@@ -658,7 +679,7 @@
       "ownerLane": "Data / analytics",
       "openedAt": "2026-09-24",
       "title": "Accumulate enough comparable history for 7/28/90-day trends",
-      "observed": "2 scheduled daily snapshots retained (2/90 days of a full 90-day view); 1 measured operational-traffic snapshot; certified audience history: none.",
+      "observed": "3 scheduled daily snapshots retained (3/90 days of a full 90-day view); 1 measured operational-traffic snapshot; certified audience history: none.",
       "businessReason": "Trend charts become decision-grade only when they contain comparable observations rather than decorative lines.",
       "evidence": [
         {
@@ -676,13 +697,13 @@
         "targetLane": "Data / analytics"
       },
       "subjects": [],
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T19:54:27.862Z",
+        "observedAt": "2026-09-26T00:17:34.407Z",
         "basis": "Historical snapshots"
       },
-      "priorityScore": 43,
+      "priorityScore": 44,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -703,6 +724,11 @@
           "factor": "actionability",
           "points": -5,
           "why": "Nothing to fix; watch it."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 7
@@ -756,13 +782,13 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": 36,
+      "priorityScore": 37,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -778,89 +804,14 @@
           "factor": "business-impact",
           "points": 6,
           "why": "Business impact is medium."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 8
-    },
-    {
-      "source": "derived",
-      "status": "open",
-      "polarity": "risk",
-      "confidence": "medium",
-      "actionability": {
-        "state": "blocked-on-authority",
-        "blockedBy": "A read credential for the governed audience source"
-      },
-      "id": "business-outcomes:outcomes-without-audience",
-      "rule": "outcomes-without-audience",
-      "category": "business-outcomes",
-      "subjects": [
-        "cyancanoe.com",
-        "goodflippindesign.com"
-      ],
-      "severity": "medium",
-      "domain": "business",
-      "businessImpact": "medium",
-      "ownerLane": "Data / analytics",
-      "title": "Business outcomes are measured without audience context",
-      "observed": "Outcome events are reported for cyancanoe.com, goodflippindesign.com, but the governed audience source is not readable, so no conversion rate against traffic can be stated.",
-      "businessReason": "An outcome count without its audience cannot show whether the property converts well or merely receives little traffic.",
-      "evidence": [
-        {
-          "type": "business-event-contract",
-          "ref": "globaldeets-business-events@2026-09-25T19:54:27.862Z",
-          "state": "measured"
-        }
-      ],
-      "nextAction": "Connect the governed audience source.",
-      "escalation": {
-        "blocksInvestorClaim": false,
-        "level": "medium",
-        "class": "measurement-claim-block",
-        "escalateWhen": "Conversion rates are quoted.",
-        "targetLane": "Data / analytics"
-      },
-      "openedAt": "2026-09-25",
-      "ageDays": 0,
-      "freshness": {
-        "state": "fresh",
-        "observedAt": "2026-09-25T19:54:40.859Z",
-        "basis": "Business-event feed"
-      },
-      "priorityScore": 36,
-      "priorityBreakdown": [
-        {
-          "factor": "severity",
-          "points": 40,
-          "why": "Severity is medium."
-        },
-        {
-          "factor": "strategic-tier",
-          "points": 12,
-          "why": "Affects a tier 1 property in the owner strategy."
-        },
-        {
-          "factor": "business-impact",
-          "points": 6,
-          "why": "Business impact is medium."
-        },
-        {
-          "factor": "escalation",
-          "points": 2,
-          "why": "Escalation level is medium."
-        },
-        {
-          "factor": "actionability",
-          "points": -20,
-          "why": "Blocked on authority that is not available yet."
-        },
-        {
-          "factor": "confidence",
-          "points": -4,
-          "why": "Evidence confidence is medium."
-        }
-      ],
-      "priority": 9
     },
     {
       "source": "derived",
@@ -915,13 +866,13 @@
         "targetLane": "Platform + property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": 36,
+      "priorityScore": 37,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -937,6 +888,91 @@
           "factor": "business-impact",
           "points": 6,
           "why": "Business impact is medium."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
+        }
+      ],
+      "priority": 9
+    },
+    {
+      "source": "derived",
+      "status": "open",
+      "polarity": "risk",
+      "confidence": "medium",
+      "actionability": {
+        "state": "blocked-on-authority",
+        "blockedBy": "A read credential for the governed audience source"
+      },
+      "id": "business-outcomes:outcomes-without-audience",
+      "rule": "outcomes-without-audience",
+      "category": "business-outcomes",
+      "subjects": [
+        "cyancanoe.com",
+        "goodflippindesign.com"
+      ],
+      "severity": "medium",
+      "domain": "business",
+      "businessImpact": "medium",
+      "ownerLane": "Data / analytics",
+      "title": "Business outcomes are measured without audience context",
+      "observed": "Outcome events are reported for cyancanoe.com, goodflippindesign.com, but the governed audience source is not readable, so no conversion rate against traffic can be stated.",
+      "businessReason": "An outcome count without its audience cannot show whether the property converts well or merely receives little traffic.",
+      "evidence": [
+        {
+          "type": "business-event-contract",
+          "ref": "globaldeets-business-events@2026-09-26T00:17:34.407Z",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Connect the governed audience source.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "medium",
+        "class": "measurement-claim-block",
+        "escalateWhen": "Conversion rates are quoted.",
+        "targetLane": "Data / analytics"
+      },
+      "openedAt": "2026-09-25",
+      "ageDays": 1,
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-09-26T00:17:44.342Z",
+        "basis": "Business-event feed"
+      },
+      "priorityScore": 36,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 40,
+          "why": "Severity is medium."
+        },
+        {
+          "factor": "strategic-tier",
+          "points": 12,
+          "why": "Affects a tier 1 property in the owner strategy."
+        },
+        {
+          "factor": "business-impact",
+          "points": 6,
+          "why": "Business impact is medium."
+        },
+        {
+          "factor": "escalation",
+          "points": 2,
+          "why": "Escalation level is medium."
+        },
+        {
+          "factor": "actionability",
+          "points": -20,
+          "why": "Blocked on authority that is not available yet."
+        },
+        {
+          "factor": "confidence",
+          "points": -4,
+          "why": "Evidence confidence is medium."
         }
       ],
       "priority": 10
@@ -956,7 +992,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-25T19:54:27.862Z",
+          "ref": "globaldeets-estate-health@2026-09-26T00:17:34.407Z",
           "state": "measured"
         }
       ],
@@ -979,13 +1015,13 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T19:54:27.862Z",
+        "observedAt": "2026-09-26T00:17:34.407Z",
         "basis": "Production probes"
       },
-      "priorityScore": 34,
+      "priorityScore": 35,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1006,6 +1042,11 @@
           "factor": "actionability",
           "points": -20,
           "why": "Blocked on authority that is not available yet."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 11
@@ -1038,7 +1079,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-25T19:54:27.862Z",
+          "ref": "globaldeets-estate-health@2026-09-26T00:17:34.407Z",
           "state": "measured"
         }
       ],
@@ -1051,18 +1092,23 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T19:54:27.862Z",
+        "observedAt": "2026-09-26T00:17:34.407Z",
         "basis": "Production probes"
       },
-      "priorityScore": 15,
+      "priorityScore": 16,
       "priorityBreakdown": [
         {
           "factor": "severity",
           "points": 15,
           "why": "Severity is low."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 12
@@ -1109,18 +1155,23 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": 15,
+      "priorityScore": 16,
       "priorityBreakdown": [
         {
           "factor": "severity",
           "points": 15,
           "why": "Severity is low."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 13
@@ -1162,7 +1213,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36182453693-1",
+          "ref": "production probe run-36204258435-1",
           "state": "measured"
         }
       ],
@@ -1175,13 +1226,13 @@
         "targetLane": "Data / analytics"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T19:54:27.862Z",
+        "observedAt": "2026-09-26T00:17:34.407Z",
         "basis": "Production probes"
       },
-      "priorityScore": 12,
+      "priorityScore": 13,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1207,6 +1258,11 @@
           "factor": "confidence",
           "points": -4,
           "why": "Evidence confidence is medium."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 14
@@ -1250,13 +1306,13 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": 11,
+      "priorityScore": 12,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1267,6 +1323,11 @@
           "factor": "confidence",
           "points": -4,
           "why": "Evidence confidence is medium."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 15
@@ -1294,7 +1355,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-25T19:54:27.864Z",
+          "ref": "2026-09-26T00:17:34.408Z",
           "state": "measured"
         }
       ],
@@ -1307,13 +1368,13 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-25T19:54:27.864Z",
+        "observedAt": "2026-09-26T00:17:34.408Z",
         "basis": "Cloudflare inventory"
       },
-      "priorityScore": 11,
+      "priorityScore": 12,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1324,6 +1385,11 @@
           "factor": "confidence",
           "points": -4,
           "why": "Evidence confidence is medium."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 16
@@ -1372,8 +1438,8 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 1,
-      "priorityScore": -10,
+      "ageDays": 2,
+      "priorityScore": -9,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1399,6 +1465,11 @@
           "factor": "actionability",
           "points": -100,
           "why": "Needs a decision."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 17,
@@ -1440,13 +1511,13 @@
       "category": "governance",
       "closedAt": "2026-09-24",
       "subjects": [],
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": -58,
+      "priorityScore": -57,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1467,6 +1538,11 @@
           "factor": "confidence",
           "points": -4,
           "why": "Evidence confidence is medium."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 18
@@ -1506,7 +1582,7 @@
       },
       "category": "product",
       "subjects": [],
-      "ageDays": 2,
+      "ageDays": 3,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -1532,7 +1608,7 @@
         {
           "factor": "age",
           "points": 1,
-          "why": "Open for 2 days."
+          "why": "Open for 3 days."
         }
       ],
       "priority": 19

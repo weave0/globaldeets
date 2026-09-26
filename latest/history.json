@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.2.0",
   "contractName": "globaldeets-mission-control-history",
-  "generatedAt": "2026-09-25T19:54:27.862Z",
+  "generatedAt": "2026-09-26T00:17:34.407Z",
   "supportedWindowsDays": [
     7,
     28,
@@ -225,6 +225,85 @@
         "instrumentedProperties": 2,
         "propertiesApplicable": 20,
         "feedGeneratedAt": "2026-09-25T19:54:40.859Z"
+      }
+    },
+    {
+      "snapshotId": "2026-09-26.scheduled",
+      "observedAt": "2026-09-26T00:17:34.407Z",
+      "collector": {
+        "kind": "scheduled",
+        "runId": "run-36204258435-1"
+      },
+      "estate": {
+        "activeZones": 25,
+        "rumObservedZones": 21,
+        "rumCoveragePct": 84,
+        "evidenceState": "carried-forward",
+        "inventoryObservedAt": "2026-09-26T00:17:34.408Z",
+        "comparabilityKey": "estate-rum|v1"
+      },
+      "availability": {
+        "evidenceState": "measured",
+        "probeRunId": "run-36204258435-1",
+        "probeObservedAt": "2026-09-26T00:17:34.407Z",
+        "comparabilityKey": "estate-availability|v1|properties=25",
+        "propertyCount": 25,
+        "conclusiveServiceZones": 20,
+        "availableZones": 20,
+        "degradedZones": 0,
+        "unavailableZones": 0,
+        "noServiceZones": 4,
+        "blockedZones": 1,
+        "unknownZones": 0,
+        "verifiedHealthyZones": 3,
+        "availableRatioPct": 100,
+        "dayRollup": {
+          "runs": 1,
+          "worstAvailableZones": 20,
+          "worstUnavailableZones": 0
+        }
+      },
+      "globaldeetsOperational": {
+        "observationWindow": null,
+        "edgeRequests": null,
+        "edgeVisits": null,
+        "syntheticHealthVisits": null,
+        "residualUnclassifiedVisits": null,
+        "evidenceState": "unavailable",
+        "investorSafe": false,
+        "reason": "Canonical Gold source was answered by a Cloudflare edge challenge (HTTP 403), not by the source; the credential was not evaluated."
+      },
+      "certifiedAudience": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": null,
+        "certified": false,
+        "reason": "No certified audience source is connected; edge and probe traffic are not human audience."
+      },
+      "instrumentation": {
+        "evidenceState": "measured",
+        "probeRunId": "run-36204258435-1",
+        "comparabilityKey": "instrumentation|v1|properties=25",
+        "applicable": 20,
+        "activeVerified": 6,
+        "configuredUnverified": 13,
+        "configuredInvalid": 0,
+        "absent": 0,
+        "inaccessible": 1,
+        "unknown": 0
+      },
+      "audience": {
+        "evidenceState": "unavailable",
+        "sourceStatus": "unavailable",
+        "comparabilityKey": "audience|gold-1.2|properties=25",
+        "reason": "Canonical Gold source was answered by a Cloudflare edge challenge (HTTP 403), not by the source; the credential was not evaluated."
+      },
+      "businessEvents": {
+        "evidenceState": "measured",
+        "sourceStatus": "measured",
+        "instrumentedProperties": 2,
+        "propertiesApplicable": 20,
+        "feedGeneratedAt": "2026-09-26T00:17:44.342Z"
       }
     }
   ],
