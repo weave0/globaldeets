@@ -23,7 +23,6 @@ test('scheduler: runs on a cron and on demand, serialised, never cancelling a co
   assert.match(workflow, /schedule:\s*\n\s*- cron: "\d+ \*\/6 \* \* \*"/, 'six-hourly cron matching the probe freshness policy');
   assert.match(workflow, /workflow_dispatch:/);
   assert.match(workflow, /group: mission-control-evidence\s*\n\s*cancel-in-progress: false/);
-  assert.match(workflow, /group: pages-deploy-refs\/heads\/main\s*\n\s*cancel-in-progress: false/, 'shares the Pages deploy group');
 });
 
 test('scheduler: evidence is committed only after collection validates and only to the evidence branch', () => {
@@ -36,24 +35,28 @@ test('scheduler: evidence is committed only after collection validates and only 
   assert.doesNotMatch(workflow, /git push origin (main|HEAD:main)/, 'never pushes to main');
   assert.match(workflow, /exit "\$\{code\}"/, 'a hard collector failure fails the step and commits nothing');
   assert.match(workflow, /\[ "\$\{code\}" -ne 0 \] && \[ "\$\{code\}" -ne 2 \]/, 'only success or recorded-invalid-vantage may publish');
-  const collectJob = workflow.slice(workflow.indexOf('  collect:'), workflow.indexOf('  deploy:'));
+  const collectJob = workflow.slice(workflow.indexOf('  collect:'), workflow.indexOf('  alert:'));
   assert.match(collectJob, /contents: write/);
   assert.doesNotMatch(collectJob, /deployments: write/, 'collection cannot deploy');
 });
 
-test('scheduler: deploys with strict overlay, verifies production evidence, and alerts on failure', () => {
-  assert.match(workflow, /MISSION_CONTROL_EVIDENCE_STRICT: "1"/);
-  assert.match(workflow, /verify-mission-control-prod\.js[^\n]*--require-probe-evidence/);
-  assert.match(workflow, /--min-generated-at=/);
-  assert.match(workflow, /needs\.collect\.outputs\.committed == 'true'/, 'deploy only when evidence changed');
+// GD-037: Mission Control is retired from the public GlobalDeets deploy artifact. This workflow only
+// collects and commits evidence to the private mission-control-evidence branch and alerts on failure;
+// it must never gain back a step that deploys or publishes that evidence.
+test('scheduler: never deploys or publishes evidence, and alerts on collection failure', () => {
+  assert.doesNotMatch(workflow, /wrangler-action/, 'evidence workflow must not deploy to Cloudflare Pages');
+  assert.doesNotMatch(workflow, /verify-mission-control-prod\.js/, 'no step verifies a public Mission Control page that no longer exists');
+  assert.doesNotMatch(workflow, /deployments: write/, 'evidence workflow holds no deployment permission');
+  assert.match(workflow, /alert:\s*\n\s*needs: collect/, 'alert depends only on collection, not a deploy job');
   assert.match(workflow, /alert:[\s\S]*gh issue create[\s\S]*gh issue close/, 'failure opens an issue and recovery closes it');
   assert.match(workflow, /issues: write/);
 });
 
-test('main-push deploy also carries the validated evidence and verifies the data plane', () => {
+test('main-push deploy no longer verifies a retired public Mission Control page', () => {
   assert.match(deployWorkflow, /mission-control-evidence/);
   assert.match(deployWorkflow, /MISSION_CONTROL_EVIDENCE_DIR: \.evidence/);
-  assert.match(deployWorkflow, /verify-mission-control-prod\.js/);
+  assert.doesNotMatch(deployWorkflow, /verify-mission-control-prod\.js/, 'no step verifies a public Mission Control page that no longer exists');
+  assert.match(deployWorkflow, /verify-boundary-retired-prod\.js/, 'deploy verifies retired estate surfaces stay unreachable');
 });
 
 test('CI protects the data plane: drift check, contract tests, and syntax checks', () => {
@@ -61,6 +64,7 @@ test('CI protects the data plane: drift check, contract tests, and syntax checks
   assert.match(ciWorkflow, /node --check tools\/mission-control\/collect\.mjs/);
   assert.match(ciWorkflow, /node --check observatory\/mission-control\/evidence-semantics\.js/);
   assert.match(ciWorkflow, /node --check tools\/verify-mission-control-prod\.js/);
+  assert.match(ciWorkflow, /node --check tools\/verify-boundary-retired-prod\.js/);
   const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
   for (const file of ['probe', 'collector', 'evidence', 'scheduler', 'hardening']) assert.match(pkg.scripts['test:functions'], new RegExp(`mission-control-${file}\\.test\\.mjs`));
 });

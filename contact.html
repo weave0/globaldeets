@@ -193,34 +193,6 @@
             </div>
 
             <div class="form-group">
-              <label for="project-reference" class="form-label"> Project Reference </label>
-              <select
-                id="project-reference"
-                name="project-reference"
-                class="form-input form-select"
-              >
-                <option value="general">General / All Projects</option>
-                <option value="fantasy-penpal">Fantasy Penpal</option>
-                <option value="consulting-intelligence">Enterprise Consulting Intelligence</option>
-                <option value="medical-analytics">Specialty Medical Practice Analytics</option>
-                <option value="manufacturing-hub">Manufacturing Ecosystem Hub</option>
-                <option value="sports-infrastructure">Sports Infrastructure Intelligence</option>
-                <option value="healthcare-intelligence">
-                  National Healthcare System Intelligence
-                </option>
-                <option value="community-health">Community Health Network</option>
-                <option value="medical-compliance">Medical Compliance Portal</option>
-                <option value="aiaimate">aiaimate</option>
-                <option value="steve-b-tribute">Steve B Tribute</option>
-                <option value="culturesherpa">Culture Sherpa</option>
-                <option value="insurance-intelligence">
-                  Global Insurance Intelligence Platform
-                </option>
-              </select>
-              <span class="form-hint">Select a specific project or leave as "General"</span>
-            </div>
-
-            <div class="form-group">
               <label for="message" class="form-label">
                 Message <span class="required">*</span>
               </label>
@@ -381,7 +353,6 @@
               <a href="index.html">Home</a>
               <a href="categories.html">Categories</a>
               <a href="timeline.html">Timeline</a>
-              <a href="analytics.html">Analytics</a>
               <a href="contact.html" aria-current="page">Contact</a>
             </div>
           </div>
@@ -412,24 +383,6 @@
     <script src="interactions.js"></script>
     <script src="sw-register.js"></script>
     <script>
-      // Auto-select project from URL parameter
-      const urlParams = new URLSearchParams(window.location.search);
-      const projectParam = urlParams.get('project');
-      if (projectParam) {
-        const projectSelect = document.getElementById('project-reference');
-        if (projectSelect) {
-          const option = Array.from(projectSelect.options).find(opt => opt.value === projectParam);
-          if (option) {
-            projectSelect.value = projectParam;
-            // Auto-select inquiry type to feedback
-            const inquiryType = document.getElementById('inquiry-type');
-            if (inquiryType && inquiryType.value === '') {
-              inquiryType.value = 'feedback';
-            }
-          }
-        }
-      }
-
       // Form validation and submission handling
       const form = document.getElementById('contactForm');
       const submitBtn = document.getElementById('submitBtn');
