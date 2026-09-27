@@ -33,22 +33,6 @@ const REQUIRED_DEPLOY_FILES = [
   'observatory/coverage/index.html',
   'observatory/coverage/observatory.js',
   'observatory/coverage/observatory.css',
-  'observatory/mission-control/index.html',
-  'observatory/mission-control/mission-control.js',
-  'observatory/mission-control/mission-control.css',
-  'observatory/mission-control/mission-control-data.json',
-  'observatory/mission-control/evidence-semantics.js',
-  'observatory/mission-control/history.json',
-  'observatory/mission-control/estate-health.json',
-  'observatory/mission-control/diagnostics.json',
-  'observatory/mission-control/probes.json',
-  'observatory/mission-control/audience.json',
-  'observatory/mission-control/business-events.json',
-  'observatory/mission-control/executive.json',
-  'observatory/mission-control/mc-model.js',
-  'observatory/mission-control/mc-charts.js',
-  'observatory/mission-control/mc-executive.js',
-  'observatory/mission-control/mc-operator.js',
   'functions/api/intelligence/observatory/coverage.js',
   'functions/lib/coverage-evidence-observatory.js',
 ];
@@ -180,6 +164,9 @@ function stageDeploy() {
 
   for (const file of getRootPublicFiles()) copyFile(file);
   for (const directory of PUBLIC_DIRECTORIES) copyDirectory(directory);
+
+  // Internal Mission Control evidence remains a build-time/collector concern but is not part of the public GlobalDeets artifact.
+  rmSync(join(OUT_DIR, 'observatory', 'mission-control'), { recursive: true, force: true });
 
   overlayMissionControlEvidence();
   assertCleanArtifact();
