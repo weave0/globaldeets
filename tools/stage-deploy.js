@@ -165,10 +165,13 @@ function stageDeploy() {
   for (const file of getRootPublicFiles()) copyFile(file);
   for (const directory of PUBLIC_DIRECTORIES) copyDirectory(directory);
 
-  // Internal Mission Control evidence remains a build-time/collector concern but is not part of the public GlobalDeets artifact.
-  rmSync(join(OUT_DIR, 'observatory', 'mission-control'), { recursive: true, force: true });
-
   overlayMissionControlEvidence();
+
+  // Internal estate tooling is not part of the public GlobalDeets product artifact.
+  rmSync(join(OUT_DIR, 'observatory', 'mission-control'), { recursive: true, force: true });
+  rmSync(join(OUT_DIR, 'shared', 'ecosystem-nav.js'), { force: true });
+  rmSync(join(OUT_DIR, 'shared', 'ecosystem-nav.css'), { force: true });
+
   assertCleanArtifact();
   console.log(`Staged Cloudflare Pages artifact in ${OUT_DIR}`);
 }
