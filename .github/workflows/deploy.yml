@@ -140,22 +140,18 @@ jobs:
                     sleep 10
                   done
 
-            - name: Verify Mission Control data plane
+            - name: Verify public product boundary holds
               run: |
-                  expected_at=""
-                  if [ -f .evidence/latest/estate-health.json ]; then
-                    expected_at=$(node -p "require('./.evidence/latest/estate-health.json').generatedAt || ''")
-                  fi
                   for attempt in 1 2 3 4 5 6; do
-                    if node tools/verify-mission-control-prod.js --base=https://globaldeets.com --min-generated-at="${expected_at}"; then
+                    if node tools/verify-boundary-retired-prod.js --base=https://globaldeets.com; then
                       exit 0
                     fi
 
                     if [ "${attempt}" -eq 6 ]; then
-                      echo "Mission Control data plane did not converge after all verification attempts."
+                      echo "Retired estate surfaces are still reachable after all verification attempts."
                       exit 1
                     fi
 
-                    echo "Mission Control verification attempt ${attempt} failed; retrying after propagation delay."
+                    echo "Boundary verification attempt ${attempt} failed; retrying after propagation delay."
                     sleep 10
                   done

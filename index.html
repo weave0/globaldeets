@@ -101,11 +101,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="bi-ecosystem.css" />
-
-    <!-- GFD Ecosystem Navigation -->
-    <link rel="stylesheet" href="shared/ecosystem-nav.css" />
-
-    <!-- JSON-LD Structured Data for Google -->
+<!-- JSON-LD Structured Data for Google -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -136,44 +132,6 @@
       }
     </script>
 
-    <!-- Schema: CreativeWork Portfolio -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "GlobalDeets",
-        "description": "A source-first world information platform with live news, original-source routing, public knowledge, culture context, webcams, and governed evidence.",
-        "url": "https://globaldeets.com",
-        "creator": {
-          "@type": "Person",
-          "name": "Brett Weaver",
-          "jobTitle": "Creator",
-          "url": "https://goodflippindesign.com",
-          "sameAs": "https://github.com/weave0"
-        },
-        "hasPart": [
-          {
-            "@type": "CreativeWork",
-            "name": "aiaimate",
-            "description": "AI education platform with RAG-powered search",
-            "url": "https://aiaimate.com"
-          },
-          {
-            "@type": "CreativeWork",
-            "name": "Culture Sherpa",
-            "description": "Interactive cultural atlas with 470+ mapped cultures",
-            "url": "https://culturesherpa.org"
-          },
-          {
-            "@type": "CreativeWork",
-            "name": "Good Flippin Vibes",
-            "description": "Community wellness platform",
-            "url": "https://goodflippinvibes.com"
-          }
-        ]
-      }
-    </script>
-
     <!-- Schema: BreadcrumbList -->
     <script type="application/ld+json">
       {
@@ -197,12 +155,6 @@
             "position": 3,
             "name": "Timeline",
             "item": "https://globaldeets.com/timeline.html"
-          },
-          {
-            "@type": "ListItem",
-            "position": 4,
-            "name": "Analytics",
-            "item": "https://globaldeets.com/analytics.html"
           }
         ]
       }
@@ -210,168 +162,7 @@
   </head>
 
   <body>
-    <!-- GFD Ecosystem Navigation -->
-    <nav class="gfd-ecosystem-nav" aria-label="Ecosystem navigation">
-      <div class="ecosystem-nav-container">
-        <div class="ecosystem-brand">
-          <img src="assets/logo-mark.png" alt="Good Flippin Design Logo" class="ecosystem-logo" />
-          <span class="ecosystem-title">GFD Ecosystem</span>
-        </div>
-        <button
-          class="ecosystem-toggle"
-          aria-label="Open ecosystem menu"
-          aria-expanded="false"
-          aria-controls="ecosystem-dropdown"
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-      <div class="ecosystem-dropdown" id="ecosystem-dropdown" role="menu" aria-hidden="true">
-        <div class="dropdown-content">
-          <div class="nav-section">
-            <h3 class="nav-section-title">Production Platforms</h3>
-            <a
-              href="https://goodflippindesign.com"
-              class="nav-link"
-              role="menuitem"
-              target="_blank"
-              rel="noopener"
-            >
-              <span class="nav-icon" aria-hidden="true">
-                <img
-                  src="assets/logo-globe.png"
-                  alt="GFD"
-                  width="24"
-                  height="24"
-                  class="ecosystem-logo-nav"
-                />
-              </span>
-              <div class="nav-link-content">
-                <strong class="nav-link-title">Good Flippin Design</strong>
-                <small class="nav-link-subtitle">Strategic Web Development</small>
-              </div>
-            </a>
-            <a
-              href="https://aiaimate.com"
-              class="nav-link"
-              role="menuitem"
-              target="_blank"
-              rel="noopener"
-            >
-              <span class="nav-icon" aria-hidden="true">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M12 1v6m0 6v6M1 12h6m6 0h6" />
-                  <path
-                    d="M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M19.78 4.22l-4.24 4.24m-5.08 5.08l-4.24 4.24"
-                  />
-                </svg>
-              </span>
-              <div class="nav-link-content">
-                <strong class="nav-link-title">aiaimate</strong>
-                <small class="nav-link-subtitle">AI Education Platform</small>
-              </div>
-            </a>
-            <a
-              href="https://culturesherpa.org"
-              class="nav-link"
-              role="menuitem"
-              target="_blank"
-              rel="noopener"
-            >
-              <span class="nav-icon" aria-hidden="true">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <path
-                    d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
-                  />
-                </svg>
-              </span>
-              <div class="nav-link-content">
-                <strong class="nav-link-title">Culture Sherpa</strong>
-                <small class="nav-link-subtitle">Interactive Cultural Atlas</small>
-              </div>
-            </a>
-            <a
-              href="https://goodflippinvibes.com"
-              class="nav-link"
-              role="menuitem"
-              target="_blank"
-              rel="noopener"
-            >
-              <span class="nav-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                  <path
-                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                  />
-                </svg>
-              </span>
-              <div class="nav-link-content">
-                <strong class="nav-link-title">Good Flippin Vibes</strong>
-                <small class="nav-link-subtitle">Holistic Wellness Platform</small>
-              </div>
-            </a>
-          </div>
-          <div class="nav-section">
-            <h3 class="nav-section-title">Research & Intelligence</h3>
-            <a
-              href="https://citizenapproved.org"
-              class="nav-link"
-              role="menuitem"
-              target="_blank"
-              rel="noopener"
-            >
-              <span class="nav-icon" aria-hidden="true">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-              </span>
-              <div class="nav-link-content">
-                <strong class="nav-link-title">CitizenApproved</strong>
-                <small class="nav-link-subtitle">U.S. Citizenship Pathways</small>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+<a href="#main-content" class="skip-link">Skip to main content</a>
     <!-- Glass Header -->
     <header>
       <div class="container">
@@ -417,16 +208,7 @@
                 height="32"
               />
             </a>
-            <a href="spheres.html" class="nav-icon-btn" title="Ecosystem Spheres">
-              <img
-                src="assets/icons/site/nav-compass.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-              />
-            </a>
-            <a href="knowledge.html" class="nav-icon-btn" title="Knowledge Sources">
+<a href="knowledge.html" class="nav-icon-btn" title="Knowledge Sources">
               <img
                 src="assets/icons/site/nav-list.svg"
                 alt=""
@@ -498,103 +280,6 @@
       </div>
     </section>
 
-    <!-- Ecosystem Spheres -->
-    <section class="spheres-section" aria-labelledby="spheres-heading">
-      <div class="container">
-        <h2 id="spheres-heading" class="spheres-heading">
-          <span class="spheres-heading-label">GFD Ecosystem</span>
-          Five Spheres of Intelligence
-        </h2>
-        <p class="spheres-subhead">Every lens on the same planet. Pick your sphere.</p>
-        <div class="spheres-grid">
-          <a
-            href="https://globaldeets.com"
-            target="_blank"
-            rel="noopener"
-            class="sphere-card"
-            data-color="orange"
-          >
-            <div class="sphere-orb" aria-hidden="true">
-              <img src="assets/icons/site/nav-globe.svg" alt="" class="sphere-orb-icon" />
-            </div>
-            <div class="sphere-info">
-              <h3>GlobalDeets</h3>
-              <p class="sphere-tagline">Earth's information nerve center</p>
-              <span class="sphere-domain">globaldeets.com</span>
-            </div>
-          </a>
-          <a
-            href="https://goodflippinvibes.com"
-            target="_blank"
-            rel="noopener"
-            class="sphere-card"
-            data-color="green"
-          >
-            <div class="sphere-orb" aria-hidden="true">
-              <img src="assets/icons/site/nav-users.png" alt="" class="sphere-orb-icon" />
-            </div>
-            <div class="sphere-info">
-              <h3>Good Flippin Vibes</h3>
-              <p class="sphere-tagline">Positive stories. Real people. Every corner of Earth.</p>
-              <span class="sphere-domain">goodflippinvibes.com</span>
-            </div>
-          </a>
-          <a
-            href="https://culturesherpa.org"
-            target="_blank"
-            rel="noopener"
-            class="sphere-card"
-            data-color="pink"
-          >
-            <div class="sphere-orb" aria-hidden="true">
-              <img src="assets/icons/site/nav-compass.svg" alt="" class="sphere-orb-icon" />
-            </div>
-            <div class="sphere-info">
-              <h3>Culture Sherpa</h3>
-              <p class="sphere-tagline">Your guide to Earth's living cultures & traditions</p>
-              <span class="sphere-domain">culturesherpa.org</span>
-            </div>
-          </a>
-          <a
-            href="https://aiaimate.com"
-            target="_blank"
-            rel="noopener"
-            class="sphere-card"
-            data-color="purple"
-          >
-            <div class="sphere-orb" aria-hidden="true">
-              <img src="assets/icons/site/nav-grid.png" alt="" class="sphere-orb-icon" />
-            </div>
-            <div class="sphere-info">
-              <h3>aiaimate</h3>
-              <p class="sphere-tagline">Where artificial intelligence meets human creativity</p>
-              <span class="sphere-domain">aiaimate.com</span>
-            </div>
-          </a>
-          <a
-            href="https://citizenapproved.org"
-            target="_blank"
-            rel="noopener"
-            class="sphere-card"
-            data-color="cyan"
-          >
-            <div class="sphere-orb" aria-hidden="true">
-              <img src="assets/icons/site/nav-check.png" alt="" class="sphere-orb-icon" />
-            </div>
-            <div class="sphere-info">
-              <h3>Citizen Approved</h3>
-              <p class="sphere-tagline">What every citizen deserves to know</p>
-              <span class="sphere-domain">citizenapproved.org</span>
-            </div>
-          </a>
-        </div>
-        <p class="spheres-explore-link">
-          <a href="spheres.html" class="spheres-all-link">Explore all spheres &rarr;</a>
-        </p>
-      </div>
-    </section>
-
-    <div class="container">
       <!-- GlobalDeets Product Spine -->
       <main
         class="main-content"
@@ -798,8 +483,8 @@
               <h3 class="industry-title industry-title--consulting">What Lives There?</h3>
               <ul class="industry-features">
                 <li class="industry-feature">
-                  <span class="feature-check feature-check--consulting">✓</span> Culture Sherpa as
-                  the arts, food, language, and tradition layer
+                  <span class="feature-check feature-check--consulting">✓</span> A culture atlas
+                  layer for arts, food, language, and tradition
                 </li>
                 <li class="industry-feature">
                   <span class="feature-check feature-check--consulting">✓</span> Country and region
@@ -814,9 +499,7 @@
                   festivals, music, and heritage roadmap
                 </li>
               </ul>
-              <a href="spheres.html" class="industry-link industry-link--consulting"
-                >Explore the spheres →</a
-              >
+              <a href="worldmap.html" class="industry-link industry-link--consulting">Explore the world map →</a>
             </article>
 
             <article
@@ -931,100 +614,6 @@
       <div class="spinner"></div>
     </div>
 
-    <!-- Ecosystem Footer Attribution -->
-    <footer class="ecosystem-footer">
-      <div class="ecosystem-footer-container">
-        <div class="ecosystem-footer-section">
-          <p class="ecosystem-tagline">Part of the GFD Ecosystem</p>
-          <div class="ecosystem-links">
-            <a
-              href="https://goodflippindesign.com"
-              target="_blank"
-              rel="noopener"
-              class="ecosystem-link"
-              ><img
-                src="assets/icons/site/nav-grid.png"
-                alt=""
-                class="eco-icon"
-                aria-hidden="true"
-              />
-              Good Flippin Design</a
-            >
-            <a href="https://aiaimate.com" target="_blank" rel="noopener" class="ecosystem-link"
-              ><img
-                src="assets/icons/site/nav-grid.png"
-                alt=""
-                class="eco-icon"
-                aria-hidden="true"
-              />
-              aiaimate</a
-            >
-            <a
-              href="https://culturesherpa.org"
-              target="_blank"
-              rel="noopener"
-              class="ecosystem-link"
-              ><img
-                src="assets/icons/site/nav-compass.svg"
-                alt=""
-                class="eco-icon"
-                aria-hidden="true"
-              />
-              Culture Sherpa</a
-            >
-            <a
-              href="https://goodflippinvibes.com"
-              target="_blank"
-              rel="noopener"
-              class="ecosystem-link"
-              ><img
-                src="assets/icons/site/nav-users.png"
-                alt=""
-                class="eco-icon"
-                aria-hidden="true"
-              />
-              Good Flippin Vibes</a
-            >
-          </div>
-        </div>
-        <div class="ecosystem-footer-details">
-          <p class="ecosystem-description">
-            These platforms are built by
-            <a
-              href="https://goodflippindesign.com"
-              target="_blank"
-              rel="noopener"
-              class="ecosystem-gfd-link"
-              >Good Flippin Design</a
-            >
-            — a studio building open world-learning tools, source libraries, culture layers, and
-            humane AI-assisted interfaces.
-          </p>
-          <p>
-            <a
-              href="https://goodflippindesign.com"
-              target="_blank"
-              rel="noopener"
-              class="ecosystem-cta-button"
-              >Visit Good Flippin Design →</a
-            >
-          </p>
-          <p>
-            <a
-              href="https://goodflippindesign.com/donate.html"
-              target="_blank"
-              rel="noopener"
-              class="ecosystem-donate-link"
-              >❤️ Support the GFD Ecosystem</a
-            >
-          </p>
-          <p class="ecosystem-copyright">
-            © 2026 GFV LLC • Open Knowledge, Culture, Civic Tools &amp; Humane AI
-          </p>
-        </div>
-      </div>
-    </footer>
-
     <!-- Scroll to Top Button -->
     <button id="scrollToTop" class="scroll-to-top" aria-label="Scroll to top">
       <svg
@@ -1083,7 +672,6 @@
     <script src="ui-effects.js" defer></script>
     <script src="interactions.js" defer></script>
     <script src="app.js" defer></script>
-    <script src="shared/ecosystem-nav.js" defer></script>
     <script src="ux-animations.js" defer></script>
     <script src="platform-modal.js" defer></script>
     <script>

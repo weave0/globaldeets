@@ -51,21 +51,6 @@ function ensureMobileTouchTargets() {
   style.id = 'gd024-mobile-touch-targets';
   style.textContent = `
     @media (max-width: 700px) {
-      .gfd-ecosystem-nav ~ header {
-        padding: 0.15rem 0 !important;
-      }
-      .gfd-ecosystem-nav ~ header .nav-icon-btn {
-        width: 44px !important;
-        height: 44px !important;
-        min-width: 44px !important;
-        min-height: 44px !important;
-      }
-      .ecosystem-toggle {
-        width: 44px !important;
-        height: 44px !important;
-        min-width: 44px !important;
-        min-height: 44px !important;
-      }
       .featured-platform .platform-actions a,
       .featured-platform .platform-actions button {
         min-height: 44px;
@@ -130,14 +115,9 @@ function ensureHomepageTrustLinks() {
 
   const links = [
     {
-      href: '/observatory/mission-control/',
-      label: 'Mission Control',
-      className: 'btn-primary',
-    },
-    {
       href: '/observatory/coverage/',
       label: 'Coverage & Evidence Observatory',
-      className: 'btn-sample',
+      className: 'btn-primary',
     },
     {
       href: '/dossiers/santa-ynez-pipeline/',

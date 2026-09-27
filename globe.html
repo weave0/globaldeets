@@ -87,9 +87,8 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="shared/ecosystem-nav.css" />
-
-    <!-- Globe.gl -->
+    <link rel="stylesheet" href="/shared/gd025-mobile.css" />
+<!-- Globe.gl -->
     <script src="https://cdn.jsdelivr.net/npm/globe.gl@2/dist/globe.gl.min.js"></script>
 
     <!-- Canonical -->
@@ -153,11 +152,6 @@
       }
       header .site-logo-mark {
         height: 40px !important;
-      }
-
-      /* GFD ecosystem nav stays on top */
-      .gfd-ecosystem-nav {
-        z-index: 40;
       }
 
       /* Globe page-specific badge */
@@ -371,94 +365,7 @@
   </head>
 
   <body>
-    <!-- GFD Ecosystem Navigation -->
-    <nav class="gfd-ecosystem-nav" aria-label="Ecosystem navigation">
-      <div class="ecosystem-nav-container">
-        <div class="ecosystem-brand">
-          <img src="assets/logo-mark.png" alt="Good Flippin Design Logo" class="ecosystem-logo" />
-          <span class="ecosystem-title">GFD Ecosystem</span>
-        </div>
-        <button
-          class="ecosystem-toggle"
-          aria-label="Open ecosystem menu"
-          aria-expanded="false"
-          aria-controls="ecosystem-dropdown"
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-      <div class="ecosystem-dropdown" id="ecosystem-dropdown" role="menu" aria-hidden="true">
-        <div class="dropdown-content">
-          <div class="nav-section">
-            <h3 class="nav-section-title">GFD Ecosystem</h3>
-            <a
-              href="https://goodflippindesign.com"
-              class="nav-link"
-              role="menuitem"
-              target="_blank"
-              rel="noopener"
-            >
-              <div class="nav-link-content">
-                <strong class="nav-link-title">Good Flippin Design</strong>
-                <small class="nav-link-subtitle">Strategic Web Development</small>
-              </div>
-            </a>
-            <a
-              href="https://aiaimate.com"
-              class="nav-link"
-              role="menuitem"
-              target="_blank"
-              rel="noopener"
-            >
-              <div class="nav-link-content">
-                <strong class="nav-link-title">aiaimate</strong>
-                <small class="nav-link-subtitle">AI-Human Creativity</small>
-              </div>
-            </a>
-            <a
-              href="https://culturesherpa.org"
-              class="nav-link"
-              role="menuitem"
-              target="_blank"
-              rel="noopener"
-            >
-              <div class="nav-link-content">
-                <strong class="nav-link-title">Culture Sherpa</strong>
-                <small class="nav-link-subtitle">Earth's Living Culture</small>
-              </div>
-            </a>
-            <a
-              href="https://goodflippinvibes.com"
-              class="nav-link"
-              role="menuitem"
-              target="_blank"
-              rel="noopener"
-            >
-              <div class="nav-link-content">
-                <strong class="nav-link-title">Good Flippin Vibes</strong>
-                <small class="nav-link-subtitle">Things to Feel Good About</small>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <a href="#news-feed-accessible" class="skip-link">Skip globe, go to news feed</a>
+<a href="#news-feed-accessible" class="skip-link">Skip globe, go to news feed</a>
 
     <!-- Transparent header overlay -->
     <header>
@@ -510,16 +417,7 @@
                 height="32"
               />
             </a>
-            <a href="spheres.html" class="nav-icon-btn" title="Ecosystem Spheres">
-              <img
-                src="assets/icons/site/nav-compass.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-              />
-            </a>
-            <a href="knowledge.html" class="nav-icon-btn" title="Knowledge Sources">
+<a href="knowledge.html" class="nav-icon-btn" title="Knowledge Sources">
               <img
                 src="assets/icons/site/nav-list.svg"
                 alt=""
@@ -601,8 +499,7 @@
     </section>
 
     <!-- Scripts -->
-    <script src="shared/ecosystem-nav.js"></script>
-    <script src="globe-hero.js"></script>
+<script src="globe-hero.js"></script>
     <script>
       // Region filter wiring
       (function () {

@@ -2,7 +2,8 @@ name: Mission Control Evidence
 
 # GD-030: scheduled production probes + historical snapshot ingestion.
 # Evidence is committed to the dedicated `mission-control-evidence` branch only after the whole data
-# plane validates, then deployed with the current main. Any failure leaves the last valid evidence intact.
+# plane validates. Any failure leaves the last valid evidence intact. GD-037: this branch is a private
+# evidence store, not published to the public GlobalDeets site.
 
 on:
   schedule:
@@ -156,67 +157,13 @@ jobs:
           echo "::error::Probe vantage invalid; evidence recorded, last valid run preserved."
           exit 1
 
-  deploy:
-    needs: collect
-    if: ${{ needs.collect.result == 'success' && needs.collect.outputs.committed == 'true' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    permissions:
-      contents: read
-      deployments: write
-    concurrency:
-      group: pages-deploy-refs/heads/main
-      cancel-in-progress: false
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Fetch validated evidence
-        run: |
-          git fetch --depth=1 origin mission-control-evidence
-          git worktree add --detach .evidence FETCH_HEAD
-
-      - name: Stage artifact with strict evidence overlay
-        run: npm run stage:deploy
-        env:
-          NODE_ENV: production
-          CF_PAGES_BRANCH: main
-          CF_PAGES_COMMIT_SHA: ${{ github.sha }}
-          MISSION_CONTROL_EVIDENCE_DIR: .evidence
-          MISSION_CONTROL_EVIDENCE_STRICT: "1"
-
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerVersion: "4.131.1"
-          command: pages deploy dist --project-name globaldeets --branch main --commit-hash ${{ github.sha }} --commit-dirty=false
-
-      - name: Verify production Mission Control evidence
-        env:
-          EXPECTED_GENERATED_AT: ${{ needs.collect.outputs.generated_at }}
-        run: |
-          for attempt in 1 2 3 4 5 6; do
-            if node tools/verify-mission-control-prod.js --base=https://globaldeets.com --min-generated-at="${EXPECTED_GENERATED_AT}" --require-probe-evidence; then
-              exit 0
-            fi
-            if [ "${attempt}" -eq 6 ]; then
-              echo "Mission Control production evidence did not converge after all verification attempts."
-              exit 1
-            fi
-            echo "Verification attempt ${attempt} failed; retrying after propagation delay."
-            sleep 10
-          done
+  # GD-037: Mission Control is retired from the public GlobalDeets deploy artifact, so there is
+  # no longer a public page to publish this evidence to or verify. Collection above still commits
+  # each validated run to the `mission-control-evidence` branch, which is the private evidence
+  # store the authenticated GFD Command Center is meant to read from server-to-server.
 
   alert:
-    needs: [collect, deploy]
+    needs: collect
     if: ${{ always() }}
     runs-on: ubuntu-latest
     permissions:
@@ -226,13 +173,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           COLLECT: ${{ needs.collect.result }}
-          DEPLOY: ${{ needs.deploy.result }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           title="Mission Control evidence collection is failing"
           existing=$(gh issue list -R "${GITHUB_REPOSITORY}" --state open --search "\"${title}\" in:title" --json number --jq '.[0].number // empty')
-          if [ "${COLLECT}" = "failure" ] || [ "${DEPLOY}" = "failure" ]; then
-            body="Scheduled Mission Control evidence run failed (collect=${COLLECT}, deploy=${DEPLOY}): ${RUN_URL}. Last valid evidence is preserved and Mission Control shows it aging; see the diagnostics queue for the stale-evidence finding."
+          if [ "${COLLECT}" = "failure" ]; then
+            body="Scheduled Mission Control evidence run failed (collect=${COLLECT}): ${RUN_URL}. Last valid evidence is preserved and Mission Control shows it aging; see the diagnostics queue for the stale-evidence finding."
             if [ -n "${existing}" ]; then
               gh issue comment "${existing}" -R "${GITHUB_REPOSITORY}" --body "${body}"
             else

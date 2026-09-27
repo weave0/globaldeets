@@ -131,12 +131,9 @@ test('mobile homepage fits, exposes governed metrics, and keeps navigation reach
   await expect(page.locator('#globe-hero-container')).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
-  const ecosystemToggle = page.locator('.ecosystem-toggle');
-  await expect(ecosystemToggle).toBeVisible();
-  await expectPracticalTouchTarget(ecosystemToggle);
-  await ecosystemToggle.click();
-  await expect(page.locator('#ecosystem-dropdown')).toBeVisible();
-  await expectNoHorizontalOverflow(page);
+  await expect(page.locator('.ecosystem-toggle')).toHaveCount(0);
+  await expect(page.locator('#ecosystem-dropdown')).toHaveCount(0);
+  await expect(page.locator('.gfd-ecosystem-nav')).toHaveCount(0);
 
   const firstNavButton = page.locator('header .primary-nav .nav-icon-btn').first();
   await expect(firstNavButton).toBeVisible();
