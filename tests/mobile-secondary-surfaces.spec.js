@@ -27,7 +27,7 @@ async function openAndCheck(page, path, visibleSelector, label) {
 
 test('globe remains usable at phone widths', async ({ page }) => {
   await openAndCheck(page, '/globe.html', '#globe-hero-container', 'globe');
-  await expectTouchTarget(page.locator('.ecosystem-toggle'), 'globe ecosystem menu');
+  await expect(page.locator('.ecosystem-toggle'), 'globe estate ecosystem menu absent').toHaveCount(0);
   await expectTouchTarget(page.locator('header .nav-icon-btn').first(), 'globe primary nav');
   await expectTouchTarget(page.locator('.globe-filter-btn').first(), 'globe region filter');
   await expect(page.locator('.globe-filter-bar')).toBeVisible();
@@ -35,7 +35,7 @@ test('globe remains usable at phone widths', async ({ page }) => {
 
 test('knowledge directory keeps filters and source content readable', async ({ page }) => {
   await openAndCheck(page, '/knowledge.html', '.knowledge-hero', 'knowledge');
-  await expectTouchTarget(page.locator('.ecosystem-toggle'), 'knowledge ecosystem menu');
+  await expect(page.locator('.ecosystem-toggle'), 'knowledge estate ecosystem menu absent').toHaveCount(0);
   await expectTouchTarget(page.locator('header .nav-icon-btn').first(), 'knowledge primary nav');
   await expectTouchTarget(page.locator('.knowledge-filter-pill').first(), 'knowledge category filter');
   await expect(page.locator('.knowledge-grid')).toBeVisible();
@@ -43,7 +43,7 @@ test('knowledge directory keeps filters and source content readable', async ({ p
 
 test('world map keeps exploration controls reachable', async ({ page }) => {
   await openAndCheck(page, '/worldmap.html', '#main-content', 'world map');
-  await expectTouchTarget(page.locator('.ecosystem-toggle'), 'world map ecosystem menu');
+  await expect(page.locator('.ecosystem-toggle'), 'world map estate ecosystem menu absent').toHaveCount(0);
   await expectTouchTarget(page.locator('#view-toggle'), 'world map view toggle');
   await expectTouchTarget(page.locator('#panel-toggle'), 'world map panel toggle');
   await expectTouchTarget(page.locator('#location-search'), 'world map location search');
