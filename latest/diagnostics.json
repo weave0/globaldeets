@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0.0",
   "contractName": "globaldeets-diagnostics-queue",
-  "generatedAt": "2026-09-27T18:31:11.927Z",
+  "generatedAt": "2026-09-28T01:08:51.980Z",
   "agentContract": {
     "sortableFields": [
       "priority",
@@ -212,7 +212,7 @@
         "targetLane": "Data / analytics + Product narrative"
       },
       "subjects": [],
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "fresh",
         "observedAt": "2026-09-27T06:07:30Z",
@@ -243,7 +243,7 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
       "priority": 1
@@ -274,7 +274,7 @@
       "evidence": [
         {
           "type": "audience-contract",
-          "ref": "globaldeets-audience@2026-09-27T18:31:11.927Z",
+          "ref": "globaldeets-audience@2026-09-28T01:08:51.980Z",
           "state": "partial"
         }
       ],
@@ -287,13 +287,13 @@
         "targetLane": "Product + Data"
       },
       "openedAt": "2026-09-26",
-      "ageDays": 1,
+      "ageDays": 2,
       "freshness": {
         "state": "fresh",
         "observedAt": "2026-09-27T06:07:30Z",
         "basis": "Governed audience source"
       },
-      "priorityScore": 103,
+      "priorityScore": 104,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -329,6 +329,11 @@
           "factor": "confidence",
           "points": -4,
           "why": "Evidence confidence is medium."
+        },
+        {
+          "factor": "age",
+          "points": 1,
+          "why": "Open for 2 days."
         }
       ],
       "priority": 2
@@ -376,7 +381,7 @@
       "evidence": [
         {
           "type": "business-event-contract",
-          "ref": "globaldeets-business-events@2026-09-27T18:31:11.927Z",
+          "ref": "globaldeets-business-events@2026-09-28T01:08:51.980Z",
           "state": "measured"
         }
       ],
@@ -388,13 +393,13 @@
         "escalateWhen": "Any investor material states conversion or outcome figures.",
         "targetLane": "Product + Data"
       },
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-27T18:31:25.333Z",
+        "observedAt": "2026-09-28T01:09:04.654Z",
         "basis": "Business-event feed"
       },
-      "priorityScore": 94,
+      "priorityScore": 95,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -423,8 +428,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 3
@@ -472,7 +477,7 @@
         "culturesherpa.org",
         "globaldeets.com"
       ],
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -513,7 +518,7 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
       "priority": 4
@@ -543,7 +548,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36340906032-1",
+          "ref": "production probe run-36364813969-1",
           "state": "measured"
         }
       ],
@@ -556,13 +561,13 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-27T18:31:11.927Z",
+        "observedAt": "2026-09-28T01:08:51.980Z",
         "basis": "Production probes"
       },
-      "priorityScore": 73,
+      "priorityScore": 74,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -591,8 +596,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 5
@@ -623,7 +628,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-27T18:31:11.929Z",
+          "ref": "2026-09-28T01:08:51.982Z",
           "state": "measured"
         }
       ],
@@ -636,13 +641,13 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-27T18:31:11.929Z",
+        "observedAt": "2026-09-28T01:08:51.982Z",
         "basis": "Cloudflare inventory"
       },
-      "priorityScore": 49,
+      "priorityScore": 50,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -666,8 +671,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 6
@@ -690,7 +695,7 @@
       "ownerLane": "Data / analytics",
       "openedAt": "2026-09-24",
       "title": "Accumulate enough comparable history for 7/28/90-day trends",
-      "observed": "4 scheduled daily snapshots retained (4/90 days of a full 90-day view); 1 measured operational-traffic snapshot; certified audience history: none.",
+      "observed": "5 scheduled daily snapshots retained (5/90 days of a full 90-day view); 1 measured operational-traffic snapshot; certified audience history: none.",
       "businessReason": "Trend charts become decision-grade only when they contain comparable observations rather than decorative lines.",
       "evidence": [
         {
@@ -708,13 +713,13 @@
         "targetLane": "Data / analytics"
       },
       "subjects": [],
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-27T18:31:11.927Z",
+        "observedAt": "2026-09-28T01:08:51.980Z",
         "basis": "Historical snapshots"
       },
-      "priorityScore": 44,
+      "priorityScore": 45,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -738,8 +743,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 7
@@ -793,13 +798,13 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": 37,
+      "priorityScore": 38,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -818,8 +823,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 8
@@ -877,13 +882,13 @@
         "targetLane": "Platform + property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": 37,
+      "priorityScore": 38,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -902,8 +907,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 9
@@ -923,7 +928,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-27T18:31:11.927Z",
+          "ref": "globaldeets-estate-health@2026-09-28T01:08:51.980Z",
           "state": "measured"
         }
       ],
@@ -946,13 +951,13 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-27T18:31:11.927Z",
+        "observedAt": "2026-09-28T01:08:51.980Z",
         "basis": "Production probes"
       },
-      "priorityScore": 35,
+      "priorityScore": 36,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -976,8 +981,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 10
@@ -1010,7 +1015,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-27T18:31:11.927Z",
+          "ref": "globaldeets-estate-health@2026-09-28T01:08:51.980Z",
           "state": "measured"
         }
       ],
@@ -1023,13 +1028,13 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-27T18:31:11.927Z",
+        "observedAt": "2026-09-28T01:08:51.980Z",
         "basis": "Production probes"
       },
-      "priorityScore": 16,
+      "priorityScore": 17,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1038,8 +1043,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 11
@@ -1086,13 +1091,13 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": 16,
+      "priorityScore": 17,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1101,8 +1106,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 12
@@ -1145,7 +1150,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36340906032-1",
+          "ref": "production probe run-36364813969-1",
           "state": "measured"
         }
       ],
@@ -1158,13 +1163,13 @@
         "targetLane": "Data / analytics"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-27T18:31:11.927Z",
+        "observedAt": "2026-09-28T01:08:51.980Z",
         "basis": "Production probes"
       },
-      "priorityScore": 13,
+      "priorityScore": 14,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1193,8 +1198,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 13
@@ -1238,13 +1243,13 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": 12,
+      "priorityScore": 13,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1258,8 +1263,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 14
@@ -1287,7 +1292,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-27T18:31:11.929Z",
+          "ref": "2026-09-28T01:08:51.982Z",
           "state": "measured"
         }
       ],
@@ -1300,13 +1305,13 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-27T18:31:11.929Z",
+        "observedAt": "2026-09-28T01:08:51.982Z",
         "basis": "Cloudflare inventory"
       },
-      "priorityScore": 12,
+      "priorityScore": 13,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1320,8 +1325,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 15
@@ -1370,8 +1375,8 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 3,
-      "priorityScore": -9,
+      "ageDays": 4,
+      "priorityScore": -8,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1400,8 +1405,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 16,
@@ -1443,13 +1448,13 @@
       "category": "governance",
       "closedAt": "2026-09-24",
       "subjects": [],
-      "ageDays": 3,
+      "ageDays": 4,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": -57,
+      "priorityScore": -56,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1473,8 +1478,8 @@
         },
         {
           "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
+          "points": 2,
+          "why": "Open for 4 days."
         }
       ],
       "priority": 17
@@ -1514,7 +1519,7 @@
       },
       "category": "product",
       "subjects": [],
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -1540,7 +1545,7 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
       "priority": 18
