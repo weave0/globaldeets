@@ -1,7 +1,7 @@
 {
   "contractName": "globaldeets-estate-coverage-matrix",
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-09-28T18:35:02.737Z",
+  "generatedAt": "2026-09-29T01:06:12.973Z",
   "policy": {
     "unknownIsHealthy": false,
     "missingIsZero": false,
@@ -85,8 +85,8 @@
         "not-applicable": 5
       },
       "history": {
-        "verified": 0,
-        "partial": 19,
+        "verified": 19,
+        "partial": 0,
         "blocked": 1,
         "awaiting-authority": 0,
         "stale": 0,
@@ -132,7 +132,7 @@
       "expired": 0,
       "unknown": 0
     },
-    "blindSpots": 87,
+    "blindSpots": 68,
     "withProducerConfirmed": 2,
     "withLastConfirmedEvent": 0,
     "surfacesNotMonitored": 11
@@ -146,7 +146,7 @@
       "businessImpact": "existential",
       "nextAction": "Connect certified GA4/RUM-quality audience ingestion (history ingestion seam: certified-audience) with explicit bot, monitor, API, asset, and Mission Control probe exclusions.",
       "diagnosticId": "measurement:audience-certification",
-      "priorityScore": 117,
+      "priorityScore": 118,
       "properties": [
         "agentkagent.com",
         "cyancanoe.com",
@@ -170,7 +170,7 @@
       "businessImpact": "existential",
       "nextAction": "Connect certified GA4/RUM-quality audience ingestion (history ingestion seam: certified-audience) with explicit bot, monitor, API, asset, and Mission Control probe exclusions.",
       "diagnosticId": "measurement:audience-certification",
-      "priorityScore": 117,
+      "priorityScore": 118,
       "properties": [
         "culturesherpa.org",
         "aiaimate.com",
@@ -186,43 +186,11 @@
       "businessImpact": "existential",
       "nextAction": "Connect certified GA4/RUM-quality audience ingestion (history ingestion seam: certified-audience) with explicit bot, monitor, API, asset, and Mission Control probe exclusions.",
       "diagnosticId": "measurement:audience-certification",
-      "priorityScore": 117,
+      "priorityScore": 118,
       "properties": [
         "goodflippindesign.com"
       ],
       "propertyCount": 1
-    },
-    {
-      "id": "history:partial",
-      "facet": "history",
-      "status": "partial",
-      "severity": "medium",
-      "businessImpact": "medium",
-      "nextAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-      "diagnosticId": "data:history-density",
-      "priorityScore": 45,
-      "properties": [
-        "globaldeets.com",
-        "culturesherpa.org",
-        "agentkagent.com",
-        "aiaimate.com",
-        "brettleeweaver.com",
-        "citizenapproved.org",
-        "cyancanoe.com",
-        "flipskillet.com",
-        "flipskillit.com",
-        "foxyana.com",
-        "gflippinv.com",
-        "goodflippinluck.com",
-        "goodflippinnews.com",
-        "goodflippinvibes.com",
-        "goodflippinyikes.com",
-        "heavymoose.com",
-        "lowertownstpaul.org",
-        "minnesotapeace.com",
-        "redleopardofstpaul.com"
-      ],
-      "propertyCount": 19
     },
     {
       "id": "businessEvents:missing",
@@ -500,12 +468,12 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from globaldeets.com in 240 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from globaldeets.com in 127 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "verified",
-          "state": "fail",
+          "state": "pass",
           "detail": "Owner-declared critical routes were exercised (4 checks).",
           "level": "authoritative"
         },
@@ -524,9 +492,9 @@
             "instrumentation": "active-verified",
             "reception": {
               "state": "received",
-              "events": 20,
+              "events": 2,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -546,14 +514,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -567,7 +535,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "3 of 6 applicable facets are verified."
+        "detail": "4 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -577,38 +545,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "GlobalDeets owns and deploys this property; checks mirror the production verification the deploy workflow already enforces.",
           "level": "authoritative",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -628,23 +596,6 @@
           "ownerLane": "Product + Data",
           "diagnosticId": "business-outcomes:traffic-without-outcome",
           "priorityScore": 104
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         },
         {
           "id": "declaration:partial",
@@ -695,8 +646,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from culturesherpa.org in 74 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from culturesherpa.org in 66 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -721,7 +672,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -744,14 +695,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -765,7 +716,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "2 of 6 applicable facets are verified."
+        "detail": "3 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -775,38 +726,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -842,7 +793,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "criticalPath:partial",
@@ -860,23 +811,6 @@
           "ownerLane": "Platform + property owner",
           "diagnosticId": "observability:critical-path-contracts",
           "priorityScore": 38
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         }
       ],
       "severity": "medium",
@@ -911,7 +845,7 @@
           "status": "not-applicable",
           "state": "available",
           "detail": "Redirect alias: availability belongs to the destination property.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "not-applicable",
@@ -954,10 +888,10 @@
           "state": "not-applicable",
           "detail": "No published service.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -981,20 +915,20 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "No declared basis",
           "level": "none",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
@@ -1007,12 +941,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [],
@@ -1047,8 +981,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from agentkagent.com in 83 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from agentkagent.com in 50 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -1073,7 +1007,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -1093,14 +1027,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -1114,7 +1048,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "1 of 6 applicable facets are verified."
+        "detail": "2 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -1124,38 +1058,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -1191,7 +1125,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "criticalPath:partial",
@@ -1226,23 +1160,6 @@
           "ownerLane": "Property owner",
           "diagnosticId": "governance:lifecycle-undeclared",
           "priorityScore": 17
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         }
       ],
       "severity": "medium",
@@ -1276,8 +1193,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from aiaimate.com in 111 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from aiaimate.com in 147 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "verified",
@@ -1302,7 +1219,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -1335,14 +1252,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -1356,7 +1273,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "3 of 6 applicable facets are verified."
+        "detail": "4 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -1366,38 +1283,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "The AIAIMate portal implements and documents a search API (portal/app/api/search) that the learning experience depends on; the contract is defined in source (ok: true, results array).",
           "level": "authoritative",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -1433,24 +1350,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
+          "priorityScore": 118
         }
       ],
       "severity": "medium",
@@ -1485,7 +1385,7 @@
           "status": "not-applicable",
           "state": "no-service-published",
           "detail": "No web service is published, so there is nothing to be available. Ownership intent is not declared.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "not-applicable",
@@ -1528,7 +1428,7 @@
           "state": "not-applicable",
           "detail": "No published service.",
           "windowDays": 7,
-          "probeRuns": 25,
+          "probeRuns": 26,
           "conclusiveRuns": 0,
           "expectedRuns": 28,
           "coveragePct": 0,
@@ -1555,20 +1455,20 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "No declared basis",
           "level": "none",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
@@ -1581,12 +1481,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -1640,7 +1540,7 @@
           "status": "not-applicable",
           "state": "no-service-published",
           "detail": "No web service is published, so there is nothing to be available. Ownership intent is not declared.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "not-applicable",
@@ -1683,7 +1583,7 @@
           "state": "not-applicable",
           "detail": "No published service.",
           "windowDays": 7,
-          "probeRuns": 25,
+          "probeRuns": 26,
           "conclusiveRuns": 0,
           "expectedRuns": 28,
           "coveragePct": 0,
@@ -1710,20 +1610,20 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "No declared basis",
           "level": "none",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
@@ -1736,12 +1636,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -1794,8 +1694,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from www.brettleeweaver.com in 273 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from www.brettleeweaver.com in 222 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -1818,9 +1718,9 @@
             "instrumentation": "active-verified",
             "reception": {
               "state": "received",
-              "events": 10,
+              "events": 9,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -1840,14 +1740,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -1861,7 +1761,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "2 of 6 applicable facets are verified."
+        "detail": "3 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -1871,38 +1771,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -1939,23 +1839,6 @@
           "ownerLane": "Platform + property owner",
           "diagnosticId": "observability:critical-path-contracts",
           "priorityScore": 38
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         },
         {
           "id": "declaration:partial",
@@ -2006,8 +1889,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from citizenapproved.org in 159 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from citizenapproved.org in 123 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -2030,9 +1913,9 @@
             "instrumentation": "active-verified",
             "reception": {
               "state": "received",
-              "events": 12,
+              "events": 10,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -2052,14 +1935,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -2073,7 +1956,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "2 of 6 applicable facets are verified."
+        "detail": "3 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -2083,38 +1966,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -2151,23 +2034,6 @@
           "ownerLane": "Platform + property owner",
           "diagnosticId": "observability:critical-path-contracts",
           "priorityScore": 38
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         },
         {
           "id": "declaration:partial",
@@ -2218,8 +2084,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from cyancanoe.com in 168 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from cyancanoe.com in 158 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -2244,7 +2110,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -2271,14 +2137,14 @@
           }
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -2292,7 +2158,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "2 of 6 applicable facets are verified."
+        "detail": "3 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -2302,38 +2168,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -2352,7 +2218,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "criticalPath:partial",
@@ -2387,23 +2253,6 @@
           "ownerLane": "Property owner",
           "diagnosticId": "governance:lifecycle-undeclared",
           "priorityScore": 17
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         }
       ],
       "severity": "low",
@@ -2437,8 +2286,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from flipskillet.com in 171 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from flipskillet.com in 115 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -2463,7 +2312,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -2483,14 +2332,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -2504,7 +2353,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "1 of 6 applicable facets are verified."
+        "detail": "2 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -2514,38 +2363,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -2581,7 +2430,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "criticalPath:partial",
@@ -2616,23 +2465,6 @@
           "ownerLane": "Property owner",
           "diagnosticId": "governance:lifecycle-undeclared",
           "priorityScore": 17
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         }
       ],
       "severity": "medium",
@@ -2666,8 +2498,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from flipskillit.com in 167 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from flipskillit.com in 139 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -2692,7 +2524,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -2712,14 +2544,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -2733,7 +2565,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "2 of 6 applicable facets are verified."
+        "detail": "3 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -2743,38 +2575,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -2810,7 +2642,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "criticalPath:partial",
@@ -2828,23 +2660,6 @@
           "ownerLane": "Platform + property owner",
           "diagnosticId": "observability:critical-path-contracts",
           "priorityScore": 38
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         }
       ],
       "severity": "medium",
@@ -2878,8 +2693,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from foxyana.com in 93 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from foxyana.com in 85 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -2904,7 +2719,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -2924,14 +2739,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -2945,7 +2760,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "1 of 6 applicable facets are verified."
+        "detail": "2 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -2955,38 +2770,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -3022,7 +2837,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "criticalPath:partial",
@@ -3057,23 +2872,6 @@
           "ownerLane": "Property owner",
           "diagnosticId": "governance:lifecycle-undeclared",
           "priorityScore": 17
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         }
       ],
       "severity": "medium",
@@ -3108,7 +2906,7 @@
           "status": "not-applicable",
           "state": "no-service-published",
           "detail": "No web service is published, so there is nothing to be available. Ownership intent is not declared.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "not-applicable",
@@ -3151,7 +2949,7 @@
           "state": "not-applicable",
           "detail": "No published service.",
           "windowDays": 7,
-          "probeRuns": 25,
+          "probeRuns": 26,
           "conclusiveRuns": 0,
           "expectedRuns": 28,
           "coveragePct": 0,
@@ -3178,20 +2976,20 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "No declared basis",
           "level": "none",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
@@ -3204,12 +3002,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -3263,7 +3061,7 @@
           "status": "not-applicable",
           "state": "no-service-published",
           "detail": "No web service is published, so there is nothing to be available. Ownership intent is not declared.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "not-applicable",
@@ -3306,7 +3104,7 @@
           "state": "not-applicable",
           "detail": "No published service.",
           "windowDays": 7,
-          "probeRuns": 25,
+          "probeRuns": 26,
           "conclusiveRuns": 0,
           "expectedRuns": 28,
           "coveragePct": 0,
@@ -3333,20 +3131,20 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "No declared basis",
           "level": "none",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
@@ -3359,12 +3157,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -3417,8 +3215,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from gflippinv.com in 130 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from gflippinv.com in 125 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -3443,7 +3241,7 @@
               "state": "received",
               "events": 1,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -3463,14 +3261,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -3484,7 +3282,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "3 of 6 applicable facets are verified."
+        "detail": "4 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -3494,38 +3292,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -3562,23 +3360,6 @@
           "ownerLane": "Platform + property owner",
           "diagnosticId": "observability:critical-path-contracts",
           "priorityScore": 38
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         }
       ],
       "severity": "medium",
@@ -3613,7 +3394,7 @@
           "status": "blocked",
           "state": "unknown",
           "detail": "Probe was restricted by the target (edge-challenge); this vantage cannot establish availability.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "blocked",
@@ -3672,7 +3453,7 @@
           "state": "none",
           "detail": "No conclusive probe run in the last 7 days.",
           "windowDays": 7,
-          "probeRuns": 25,
+          "probeRuns": 26,
           "conclusiveRuns": 0,
           "expectedRuns": 28,
           "coveragePct": 0,
@@ -3699,20 +3480,20 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Routes the owner already treats as production-critical in their own monitoring (config/health-targets.json: home, /donate, /community-portal are marked critical) plus the documented /api/health endpoint.",
           "level": "authoritative",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
@@ -3725,12 +3506,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -3783,7 +3564,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "history:blocked",
@@ -3834,8 +3615,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from goodflippinluck.com in 170 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from goodflippinluck.com in 108 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -3860,7 +3641,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -3883,14 +3664,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -3904,7 +3685,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "2 of 6 applicable facets are verified."
+        "detail": "3 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -3914,38 +3695,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -3981,7 +3762,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "criticalPath:partial",
@@ -3999,23 +3780,6 @@
           "ownerLane": "Platform + property owner",
           "diagnosticId": "observability:critical-path-contracts",
           "priorityScore": 38
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         }
       ],
       "severity": "medium",
@@ -4049,8 +3813,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from goodflippinnews.com in 145 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from goodflippinnews.com in 148 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -4075,7 +3839,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -4098,14 +3862,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -4119,7 +3883,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "2 of 6 applicable facets are verified."
+        "detail": "3 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -4129,38 +3893,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -4196,7 +3960,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "criticalPath:partial",
@@ -4214,23 +3978,6 @@
           "ownerLane": "Platform + property owner",
           "diagnosticId": "observability:critical-path-contracts",
           "priorityScore": 38
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         }
       ],
       "severity": "medium",
@@ -4265,7 +4012,7 @@
           "status": "verified",
           "state": "available",
           "detail": "HTTP 200 from goodflippinvibes.com in 68 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -4290,7 +4037,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -4313,14 +4060,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -4334,7 +4081,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "2 of 6 applicable facets are verified."
+        "detail": "3 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -4344,38 +4091,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -4411,7 +4158,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "criticalPath:partial",
@@ -4429,23 +4176,6 @@
           "ownerLane": "Platform + property owner",
           "diagnosticId": "observability:critical-path-contracts",
           "priorityScore": 38
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         }
       ],
       "severity": "medium",
@@ -4479,8 +4209,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from goodflippinyikes.com in 144 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from goodflippinyikes.com in 98 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -4505,7 +4235,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -4525,14 +4255,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -4546,7 +4276,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "1 of 6 applicable facets are verified."
+        "detail": "2 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -4556,38 +4286,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -4623,7 +4353,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "criticalPath:partial",
@@ -4658,23 +4388,6 @@
           "ownerLane": "Property owner",
           "diagnosticId": "governance:lifecycle-undeclared",
           "priorityScore": 17
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         }
       ],
       "severity": "medium",
@@ -4708,8 +4421,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from heavymoose.com in 192 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from heavymoose.com in 162 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -4734,7 +4447,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -4754,14 +4467,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -4775,7 +4488,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "1 of 6 applicable facets are verified."
+        "detail": "2 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -4785,38 +4498,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -4835,7 +4548,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "businessEvents:missing",
@@ -4870,23 +4583,6 @@
           "ownerLane": "Platform + property owner",
           "diagnosticId": "observability:critical-path-contracts",
           "priorityScore": 38
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         },
         {
           "id": "declaration:partial",
@@ -4937,8 +4633,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from lowertownstpaul.org in 144 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from lowertownstpaul.org in 135 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -4963,7 +4659,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -4983,14 +4679,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -5004,7 +4700,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "1 of 6 applicable facets are verified."
+        "detail": "2 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -5014,38 +4710,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -5081,7 +4777,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "criticalPath:partial",
@@ -5099,23 +4795,6 @@
           "ownerLane": "Platform + property owner",
           "diagnosticId": "observability:critical-path-contracts",
           "priorityScore": 38
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         },
         {
           "id": "declaration:partial",
@@ -5166,8 +4845,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from minnesotapeace.com in 252 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from minnesotapeace.com in 160 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "verified",
@@ -5192,7 +4871,7 @@
               "state": "received",
               "events": 2,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -5212,14 +4891,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -5233,7 +4912,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "3 of 6 applicable facets are verified."
+        "detail": "4 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -5243,38 +4922,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "The publication sections the owner already verifies after every deploy (deploy workflow: Verify exact public URLs serve the publication build). Only route availability and page substance are checked, not volatile copy.",
           "level": "authoritative",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -5294,23 +4973,6 @@
           "ownerLane": "Product + Data",
           "diagnosticId": "business-outcomes:coverage",
           "priorityScore": 95
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         },
         {
           "id": "declaration:partial",
@@ -5361,8 +5023,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from redleopardofstpaul.com in 185 ms.",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "detail": "HTTP 200 from redleopardofstpaul.com in 82 ms.",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -5387,7 +5049,7 @@
               "state": "none-received",
               "events": 0,
               "windowHours": 24,
-              "observedAt": "2026-09-28T18:35:22.986Z"
+              "observedAt": "2026-09-29T01:06:26.529Z"
             }
           }
         },
@@ -5407,14 +5069,14 @@
           "counts28d": {}
         },
         "history": {
-          "status": "partial",
-          "state": "accruing",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
+          "status": "verified",
+          "state": "covered",
+          "detail": "26 of 28 expected probe runs were conclusive.",
           "windowDays": 7,
-          "probeRuns": 25,
-          "conclusiveRuns": 25,
+          "probeRuns": 26,
+          "conclusiveRuns": 26,
           "expectedRuns": 28,
-          "coveragePct": 89,
+          "coveragePct": 93,
           "availabilityRatio": 1
         },
         "declaration": {
@@ -5428,7 +5090,7 @@
       },
       "collection": {
         "status": "partial",
-        "detail": "1 of 6 applicable facets are verified."
+        "detail": "2 of 6 applicable facets are verified."
       },
       "freshness": {
         "availability": "fresh",
@@ -5438,38 +5100,38 @@
         "inventory": "fresh",
         "worst": "fresh",
         "neverCollected": [],
-        "evidenceAsOf": "2026-09-28T18:35:02.737Z"
+        "evidenceAsOf": "2026-09-29T01:06:12.973Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-36466135892-1",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "runId": "run-36506237174-1",
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-09-28T18:35:02.737Z"
+          "observedAt": "2026-09-29T01:06:12.973Z"
         },
         {
           "facet": "audience",
           "source": "Served homepage HTML (analytics tag detection), reconciled with the Cloudflare RUM setting",
           "governed": "canonical-gold",
           "governedStatus": "partial",
-          "observedAt": "2026-09-28T18:35:22.986Z"
+          "observedAt": "2026-09-29T01:06:26.529Z"
         },
         {
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-09-28T18:35:23.522Z"
+          "observedAt": "2026-09-29T01:06:27.009Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-09-28T18:35:02.738Z"
+          "observedAt": "2026-09-29T01:06:12.975Z"
         }
       ],
       "blindSpots": [
@@ -5505,7 +5167,7 @@
           "actionability": "blocked-on-authority",
           "ownerLane": "Data / analytics",
           "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 117
+          "priorityScore": 118
         },
         {
           "id": "criticalPath:partial",
@@ -5523,23 +5185,6 @@
           "ownerLane": "Platform + property owner",
           "diagnosticId": "observability:critical-path-contracts",
           "priorityScore": 38
-        },
-        {
-          "id": "history:partial",
-          "facet": "history",
-          "status": "partial",
-          "detail": "25 of 28 expected probe runs were conclusive; history is still accruing.",
-          "severity": "info",
-          "gapSeverity": "medium",
-          "scope": "estate-wide",
-          "propertyDiagnosticId": null,
-          "businessImpact": "medium",
-          "nextAction": "Keep collecting; history accrues with each conclusive probe run.",
-          "diagnosticAction": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
-          "actionability": "monitor",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "data:history-density",
-          "priorityScore": 45
         },
         {
           "id": "declaration:partial",

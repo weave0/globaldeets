@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0.0",
   "contractName": "globaldeets-diagnostics-queue",
-  "generatedAt": "2026-09-28T18:35:02.737Z",
+  "generatedAt": "2026-09-29T01:06:12.973Z",
   "agentContract": {
     "sortableFields": [
       "priority",
@@ -169,93 +169,13 @@
     ]
   },
   "summary": {
-    "open": 16,
-    "actionableNow": 4,
+    "open": 15,
+    "actionableNow": 3,
     "blockedOnAuthority": 3,
     "decisionNeeded": 8,
-    "nextUp": "criticalpath:failed:globaldeets.com"
+    "nextUp": "business-outcomes:traffic-without-outcome"
   },
   "items": [
-    {
-      "source": "derived",
-      "status": "open",
-      "polarity": "risk",
-      "confidence": "high",
-      "actionability": {
-        "state": "actionable-now",
-        "blockedBy": null
-      },
-      "id": "criticalpath:failed:globaldeets.com",
-      "subject": "globaldeets.com",
-      "subjects": [
-        "globaldeets.com"
-      ],
-      "rule": "critical-path-failed",
-      "category": "critical-path",
-      "severity": "critical",
-      "domain": "reliability",
-      "businessImpact": "high",
-      "ownerLane": "Platform",
-      "title": "GlobalDeets responds, but its critical path is failing",
-      "observed": "The authoritative critical-path contract (owner-deploy-verification) failed: mission-control-data (status-404). The homepage may look fine while the function users depend on is broken.",
-      "businessReason": "The homepage may respond while the product function investors and users depend on is broken.",
-      "evidence": [
-        {
-          "type": "critical-path-probe",
-          "ref": "globaldeets.com@2026-09-28T18:35:02.737Z",
-          "state": "measured"
-        }
-      ],
-      "nextAction": "Inspect the failing check(s) against production and the latest deploy; fix the route or correct the contract if the product intentionally changed.",
-      "escalation": {
-        "blocksInvestorClaim": false,
-        "level": "page",
-        "class": "investor-impacting-outage",
-        "escalateWhen": "Failure persists for two consecutive runs.",
-        "targetLane": "Platform"
-      },
-      "openedAt": "2026-09-28",
-      "ageDays": 0,
-      "freshness": {
-        "state": "fresh",
-        "observedAt": "2026-09-28T18:35:02.737Z",
-        "basis": "Production probes"
-      },
-      "priorityScore": 177,
-      "priorityBreakdown": [
-        {
-          "factor": "severity",
-          "points": 100,
-          "why": "Severity is critical."
-        },
-        {
-          "factor": "investor-critical",
-          "points": 25,
-          "why": "Affects an investor-critical property."
-        },
-        {
-          "factor": "strategic-tier",
-          "points": 8,
-          "why": "Affects a tier 2 property in the owner strategy."
-        },
-        {
-          "factor": "business-impact",
-          "points": 12,
-          "why": "Business impact is high."
-        },
-        {
-          "factor": "escalation",
-          "points": 12,
-          "why": "Escalation level is page."
-        },
-        {
-          "factor": "actionability",
-          "points": 20,
-          "why": "Can be worked on now."
-        }
-      ],
-      "priority": 1
-    },
     {
       "source": "derived",
       "status": "in-progress",
@@ -292,13 +212,13 @@
         "targetLane": "Data / analytics + Product narrative"
       },
       "subjects": [],
-      "ageDays": 5,
+      "ageDays": 6,
       "freshness": {
         "state": "fresh",
         "observedAt": "2026-09-28T06:10:09Z",
         "basis": "Governed audience source"
       },
-      "priorityScore": 117,
+      "priorityScore": 118,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -322,11 +242,11 @@
         },
         {
           "factor": "age",
-          "points": 2,
-          "why": "Open for 5 days."
+          "points": 3,
+          "why": "Open for 6 days."
         }
       ],
-      "priority": 2
+      "priority": 1
     },
     {
       "source": "derived",
@@ -354,7 +274,7 @@
       "evidence": [
         {
           "type": "audience-contract",
-          "ref": "globaldeets-audience@2026-09-28T18:35:02.737Z",
+          "ref": "globaldeets-audience@2026-09-29T01:06:12.973Z",
           "state": "partial"
         }
       ],
@@ -367,7 +287,7 @@
         "targetLane": "Product + Data"
       },
       "openedAt": "2026-09-26",
-      "ageDays": 2,
+      "ageDays": 3,
       "freshness": {
         "state": "fresh",
         "observedAt": "2026-09-28T06:10:09Z",
@@ -413,10 +333,10 @@
         {
           "factor": "age",
           "points": 1,
-          "why": "Open for 2 days."
+          "why": "Open for 3 days."
         }
       ],
-      "priority": 3
+      "priority": 2
     },
     {
       "source": "derived",
@@ -461,7 +381,7 @@
       "evidence": [
         {
           "type": "business-event-contract",
-          "ref": "globaldeets-business-events@2026-09-28T18:35:02.737Z",
+          "ref": "globaldeets-business-events@2026-09-29T01:06:12.973Z",
           "state": "measured"
         }
       ],
@@ -473,10 +393,10 @@
         "escalateWhen": "Any investor material states conversion or outcome figures.",
         "targetLane": "Product + Data"
       },
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-28T18:35:23.522Z",
+        "observedAt": "2026-09-29T01:06:27.009Z",
         "basis": "Business-event feed"
       },
       "priorityScore": 95,
@@ -509,10 +429,10 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
-      "priority": 4
+      "priority": 3
     },
     {
       "source": "manual",
@@ -557,13 +477,13 @@
         "culturesherpa.org",
         "globaldeets.com"
       ],
-      "ageDays": 5,
+      "ageDays": 6,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": 79,
+      "priorityScore": 80,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -597,11 +517,11 @@
         },
         {
           "factor": "age",
-          "points": 2,
-          "why": "Open for 5 days."
+          "points": 3,
+          "why": "Open for 6 days."
         }
       ],
-      "priority": 5
+      "priority": 4
     },
     {
       "source": "derived",
@@ -628,7 +548,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36466135892-1",
+          "ref": "production probe run-36506237174-1",
           "state": "measured"
         }
       ],
@@ -641,10 +561,10 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-28T18:35:02.737Z",
+        "observedAt": "2026-09-29T01:06:12.973Z",
         "basis": "Production probes"
       },
       "priorityScore": 74,
@@ -677,10 +597,10 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
-      "priority": 6
+      "priority": 5
     },
     {
       "source": "derived",
@@ -708,7 +628,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-28T18:35:02.738Z",
+          "ref": "2026-09-29T01:06:12.975Z",
           "state": "measured"
         }
       ],
@@ -721,10 +641,10 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-28T18:35:02.738Z",
+        "observedAt": "2026-09-29T01:06:12.975Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 50,
@@ -752,10 +672,10 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
-      "priority": 7
+      "priority": 6
     },
     {
       "source": "derived",
@@ -775,7 +695,7 @@
       "ownerLane": "Data / analytics",
       "openedAt": "2026-09-24",
       "title": "Accumulate enough comparable history for 7/28/90-day trends",
-      "observed": "5 scheduled daily snapshots retained (5/90 days of a full 90-day view); 1 measured operational-traffic snapshot; certified audience history: none.",
+      "observed": "6 scheduled daily snapshots retained (6/90 days of a full 90-day view); 1 measured operational-traffic snapshot; certified audience history: none.",
       "businessReason": "Trend charts become decision-grade only when they contain comparable observations rather than decorative lines.",
       "evidence": [
         {
@@ -793,10 +713,10 @@
         "targetLane": "Data / analytics"
       },
       "subjects": [],
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-28T18:35:02.737Z",
+        "observedAt": "2026-09-29T01:06:12.973Z",
         "basis": "Historical snapshots"
       },
       "priorityScore": 45,
@@ -824,10 +744,10 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
-      "priority": 8
+      "priority": 7
     },
     {
       "source": "derived",
@@ -878,7 +798,7 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -904,10 +824,10 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
-      "priority": 9
+      "priority": 8
     },
     {
       "source": "derived",
@@ -962,7 +882,7 @@
         "targetLane": "Platform + property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -988,10 +908,10 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
-      "priority": 10
+      "priority": 9
     },
     {
       "source": "derived",
@@ -1008,7 +928,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-28T18:35:02.737Z",
+          "ref": "globaldeets-estate-health@2026-09-29T01:06:12.973Z",
           "state": "measured"
         }
       ],
@@ -1031,10 +951,10 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-28T18:35:02.737Z",
+        "observedAt": "2026-09-29T01:06:12.973Z",
         "basis": "Production probes"
       },
       "priorityScore": 36,
@@ -1062,10 +982,10 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
-      "priority": 11
+      "priority": 10
     },
     {
       "source": "derived",
@@ -1095,7 +1015,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-09-28T18:35:02.737Z",
+          "ref": "globaldeets-estate-health@2026-09-29T01:06:12.973Z",
           "state": "measured"
         }
       ],
@@ -1108,10 +1028,10 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-28T18:35:02.737Z",
+        "observedAt": "2026-09-29T01:06:12.973Z",
         "basis": "Production probes"
       },
       "priorityScore": 17,
@@ -1124,10 +1044,10 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
-      "priority": 12
+      "priority": 11
     },
     {
       "source": "derived",
@@ -1171,7 +1091,7 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -1187,10 +1107,10 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
-      "priority": 13
+      "priority": 12
     },
     {
       "source": "derived",
@@ -1230,7 +1150,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36466135892-1",
+          "ref": "production probe run-36506237174-1",
           "state": "measured"
         }
       ],
@@ -1243,10 +1163,10 @@
         "targetLane": "Data / analytics"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-28T18:35:02.737Z",
+        "observedAt": "2026-09-29T01:06:12.973Z",
         "basis": "Production probes"
       },
       "priorityScore": 14,
@@ -1279,10 +1199,10 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
-      "priority": 14
+      "priority": 13
     },
     {
       "source": "derived",
@@ -1323,7 +1243,7 @@
         "targetLane": "Property owner"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -1344,10 +1264,10 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
-      "priority": 15
+      "priority": 14
     },
     {
       "source": "derived",
@@ -1372,7 +1292,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-09-28T18:35:02.738Z",
+          "ref": "2026-09-29T01:06:12.975Z",
           "state": "measured"
         }
       ],
@@ -1385,10 +1305,10 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-09-28T18:35:02.738Z",
+        "observedAt": "2026-09-29T01:06:12.975Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 13,
@@ -1406,10 +1326,91 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
-      "priority": 16
+      "priority": 15
+    },
+    {
+      "category": "critical-path",
+      "confidence": "high",
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-09-28T18:35:02.737Z",
+        "basis": "Production probes"
+      },
+      "source": "derived",
+      "status": "closed",
+      "polarity": "risk",
+      "actionability": {
+        "state": "closed",
+        "blockedBy": null
+      },
+      "id": "criticalpath:failed:globaldeets.com",
+      "subject": "globaldeets.com",
+      "subjects": [
+        "globaldeets.com"
+      ],
+      "rule": "critical-path-failed",
+      "severity": "critical",
+      "domain": "reliability",
+      "businessImpact": "high",
+      "ownerLane": "Platform",
+      "title": "GlobalDeets responds, but its critical path is failing",
+      "observed": "The authoritative critical-path contract (owner-deploy-verification) failed: mission-control-data (status-404). The homepage may look fine while the function users depend on is broken.",
+      "businessReason": "The homepage may respond while the product function investors and users depend on is broken.",
+      "evidence": [
+        {
+          "type": "critical-path-probe",
+          "ref": "globaldeets.com@2026-09-28T18:35:02.737Z",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Recovered; monitor. This item is retained for 7 days.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "page",
+        "class": "investor-impacting-outage",
+        "escalateWhen": "Failure persists for two consecutive runs.",
+        "targetLane": "Platform"
+      },
+      "openedAt": "2026-09-28",
+      "ageDays": 1,
+      "priorityScore": 57,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 100,
+          "why": "Severity is critical."
+        },
+        {
+          "factor": "investor-critical",
+          "points": 25,
+          "why": "Affects an investor-critical property."
+        },
+        {
+          "factor": "strategic-tier",
+          "points": 8,
+          "why": "Affects a tier 2 property in the owner strategy."
+        },
+        {
+          "factor": "business-impact",
+          "points": 12,
+          "why": "Business impact is high."
+        },
+        {
+          "factor": "escalation",
+          "points": 12,
+          "why": "Escalation level is page."
+        },
+        {
+          "factor": "actionability",
+          "points": -100,
+          "why": "Needs a decision."
+        }
+      ],
+      "priority": 16,
+      "closedAt": "2026-09-29T01:06:12.973Z"
     },
     {
       "category": "critical-path",
@@ -1455,7 +1456,7 @@
         "targetLane": "Platform"
       },
       "openedAt": "2026-09-24",
-      "ageDays": 4,
+      "ageDays": 5,
       "priorityScore": -8,
       "priorityBreakdown": [
         {
@@ -1486,7 +1487,7 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
       "priority": 17,
@@ -1528,7 +1529,7 @@
       "category": "governance",
       "closedAt": "2026-09-24",
       "subjects": [],
-      "ageDays": 4,
+      "ageDays": 5,
       "freshness": {
         "state": "static",
         "observedAt": null,
@@ -1559,7 +1560,7 @@
         {
           "factor": "age",
           "points": 2,
-          "why": "Open for 4 days."
+          "why": "Open for 5 days."
         }
       ],
       "priority": 18
@@ -1599,13 +1600,13 @@
       },
       "category": "product",
       "subjects": [],
-      "ageDays": 5,
+      "ageDays": 6,
       "freshness": {
         "state": "static",
         "observedAt": null,
         "basis": "Registry configuration"
       },
-      "priorityScore": -87,
+      "priorityScore": -86,
       "priorityBreakdown": [
         {
           "factor": "severity",
@@ -1624,8 +1625,8 @@
         },
         {
           "factor": "age",
-          "points": 2,
-          "why": "Open for 5 days."
+          "points": 3,
+          "why": "Open for 6 days."
         }
       ],
       "priority": 19
