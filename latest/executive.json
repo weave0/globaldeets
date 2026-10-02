@@ -1,7 +1,7 @@
 {
   "contractName": "globaldeets-executive",
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-10-01T18:35:55.274Z",
+  "generatedAt": "2026-10-02T01:04:41.208Z",
   "policy": {
     "fixturesAreProduction": false,
     "unknownIsFailure": false,
@@ -11,10 +11,10 @@
     "derivedOnly": true
   },
   "asOf": {
-    "probe": "2026-10-01T18:35:55.274Z",
-    "inventory": "2026-10-01T18:35:55.276Z",
+    "probe": "2026-10-02T01:04:41.208Z",
+    "inventory": "2026-10-02T01:04:41.210Z",
     "audience": "2026-10-01T06:08:12Z",
-    "businessEvents": "2026-10-01T18:36:12.648Z"
+    "businessEvents": "2026-10-02T01:04:52.462Z"
   },
   "evidence": {
     "classes": [
@@ -22,17 +22,17 @@
         "id": "availability",
         "label": "Availability probes",
         "state": "live",
-        "asOf": "2026-10-01T18:35:55.274Z",
+        "asOf": "2026-10-02T01:04:41.208Z",
         "detail": "2 vantages",
-        "now": "2026-10-01T18:35:55.274Z"
+        "now": "2026-10-02T01:04:41.208Z"
       },
       {
         "id": "inventory",
         "label": "Cloudflare inventory",
         "state": "live",
-        "asOf": "2026-10-01T18:35:55.276Z",
+        "asOf": "2026-10-02T01:04:41.210Z",
         "detail": "refreshed",
-        "now": "2026-10-01T18:35:55.274Z"
+        "now": "2026-10-02T01:04:41.208Z"
       },
       {
         "id": "audience",
@@ -40,31 +40,31 @@
         "state": "live",
         "asOf": "2026-10-01T06:08:12Z",
         "detail": "partial",
-        "now": "2026-10-01T18:35:55.274Z"
+        "now": "2026-10-02T01:04:41.208Z"
       },
       {
         "id": "business-events",
         "label": "Business outcomes",
         "state": "live",
-        "asOf": "2026-10-01T18:36:12.648Z",
+        "asOf": "2026-10-02T01:04:52.462Z",
         "detail": "measured",
-        "now": "2026-10-01T18:35:55.274Z"
+        "now": "2026-10-02T01:04:41.208Z"
       },
       {
         "id": "history",
         "label": "Historical snapshots",
         "state": "live",
-        "asOf": "2026-10-01T18:35:55.274Z",
-        "detail": "8 days retained",
-        "now": "2026-10-01T18:35:55.274Z"
+        "asOf": "2026-10-02T01:04:41.208Z",
+        "detail": "9 days retained",
+        "now": "2026-10-02T01:04:41.208Z"
       },
       {
         "id": "instrumentation-reception",
         "label": "Telemetry reception",
         "state": "live",
-        "asOf": "2026-10-01T18:36:11.637Z",
+        "asOf": "2026-10-02T01:04:52.114Z",
         "detail": "checked",
-        "now": "2026-10-01T18:35:55.274Z"
+        "now": "2026-10-02T01:04:41.208Z"
       }
     ],
     "liveClasses": 6,
@@ -163,9 +163,9 @@
       "id": "instrumentation-verified",
       "label": "Telemetry reception verified",
       "decision": "Is browser data actually arriving?",
-      "numerator": 7,
+      "numerator": 8,
       "denominator": 20,
-      "pct": 35,
+      "pct": 40,
       "state": "partial",
       "detail": "Properties with reception evidence, not just a tag."
     },
@@ -995,8 +995,8 @@
           },
           {
             "column": "telemetry",
-            "state": "partial",
-            "label": "Tag shipped, unverified"
+            "state": "known",
+            "label": "Verified"
           },
           {
             "column": "audience",
@@ -1764,7 +1764,7 @@
     "asOf": "2026-10-01T06:08:12Z",
     "freshness": {
       "state": "fresh",
-      "ageHours": 12.5,
+      "ageHours": 18.9,
       "freshUntil": "2026-10-02T18:08:12.000Z",
       "expiresAt": "2026-10-05T06:08:12.000Z"
     },
@@ -2299,7 +2299,7 @@
       "kind": "bars",
       "unit": "events, 28 days",
       "evidenceState": "measured",
-      "asOf": "2026-10-01T18:36:12.648Z",
+      "asOf": "2026-10-02T01:04:52.462Z",
       "provenance": "Business-event feed GFV first-party business-event counters",
       "data": {
         "stages": [
@@ -2340,7 +2340,7 @@
       "action": "Instrument the primary outcome on these properties first.",
       "actionability": "actionable-now",
       "confidence": "medium",
-      "priorityScore": 105
+      "priorityScore": 106
     },
     "counts": {
       "open": 15,
@@ -2374,7 +2374,7 @@
         "action": "Instrument the primary outcome on these properties first.",
         "actionability": "actionable-now",
         "confidence": "medium",
-        "priorityScore": 105
+        "priorityScore": 106
       },
       {
         "id": "business-outcomes:coverage",
@@ -2405,7 +2405,7 @@
         "action": "Start with the properties whose producers already exist in source: publish counts to the globaldeets-business-events-feed contract (per property, event type and window) and set the events feed secrets.",
         "actionability": "actionable-now",
         "confidence": "high",
-        "priorityScore": 96
+        "priorityScore": 97
       },
       {
         "id": "instrumentation:placeholder-tag",
@@ -2419,7 +2419,7 @@
         "action": "Replace the placeholder with the real GA4 measurement ID (or remove the tag) and redeploy.",
         "actionability": "actionable-now",
         "confidence": "high",
-        "priorityScore": 75
+        "priorityScore": 76
       }
     ],
     "opportunities": [
@@ -2461,7 +2461,7 @@
         "action": "Owners declare one primary outcome per property from the common vocabulary (visit, engagement, CTA, lead, sign-up, application, purchase, download, or another declared outcome).",
         "actionability": "decision-needed",
         "confidence": "high",
-        "priorityScore": 39
+        "priorityScore": 40
       }
     ],
     "gaps": [
@@ -2475,7 +2475,7 @@
         "action": "Scheduled collection accumulates snapshots automatically; connect the governed audience source to add comparable traffic points.",
         "actionability": "monitor",
         "confidence": "high",
-        "priorityScore": 46
+        "priorityScore": 47
       },
       {
         "id": "business-outcomes:declare",
@@ -2500,7 +2500,7 @@
         "action": "Owners declare one primary outcome per property from the common vocabulary (visit, engagement, CTA, lead, sign-up, application, purchase, download, or another declared outcome).",
         "actionability": "decision-needed",
         "confidence": "high",
-        "priorityScore": 39
+        "priorityScore": 40
       },
       {
         "id": "observability:critical-path-contracts",
@@ -2529,7 +2529,7 @@
         "action": "Each property owner names the one route or function that proves the product works (API endpoint, key page, search) and Mission Control adds it to the registry.",
         "actionability": "decision-needed",
         "confidence": "high",
-        "priorityScore": 39
+        "priorityScore": 40
       },
       {
         "id": "availability:probe-blocked",
@@ -2543,7 +2543,7 @@
         "action": "Allow-list the probe user agent / X-GlobalDeets-Probe header for these hosts (Cloudflare WAF, zone owner) or register an authenticated health path.",
         "actionability": "blocked-on-authority",
         "confidence": "high",
-        "priorityScore": 37
+        "priorityScore": 38
       },
       {
         "id": "availability:no-service-published",
@@ -2560,7 +2560,7 @@
         "action": "Decide per domain: reserve it (record it as intentionally unpublished), publish a placeholder, redirect to a primary property, or release it.",
         "actionability": "decision-needed",
         "confidence": "high",
-        "priorityScore": 18
+        "priorityScore": 19
       }
     ],
     "wins": [
@@ -2590,7 +2590,7 @@
       },
       {
         "id": "win:history",
-        "title": "8 days of dated evidence are retained",
+        "title": "9 days of dated evidence are retained",
         "detail": "Trends accumulate without interpolation.",
         "evidence": "history"
       }
@@ -2624,7 +2624,7 @@
       "kind": "segments",
       "unit": "properties",
       "evidenceState": "measured",
-      "asOf": "2026-10-01T18:35:55.274Z",
+      "asOf": "2026-10-02T01:04:41.208Z",
       "provenance": "Production probes from 2 vantages; health contract 1.1.0",
       "data": {
         "total": 25,
@@ -3117,7 +3117,7 @@
       "kind": "bars",
       "unit": "events, 28 days",
       "evidenceState": "measured",
-      "asOf": "2026-10-01T18:36:12.648Z",
+      "asOf": "2026-10-02T01:04:52.462Z",
       "provenance": "Business-event feed GFV first-party business-event counters",
       "data": {
         "stages": [
@@ -3145,6 +3145,6 @@
       "caption": "Sums cover only instrumented properties."
     }
   },
-  "shareText": "GlobalDeets Mission Control — estate summary\nGenerated 2026-10-01T18:35:55.274Z from governed evidence (probe run run-36907927881-1, observed 2026-10-01T18:35:55.274Z).\n\n• Good Flippin Design operates 25 web properties. 16 have an owner-declared status (10 active, 3 incubating, 3 aliases); 9 have none, so their intent is shown as unknown.\n• 19 of 20 properties that publish a site are responding; 3 are verified healthy end-to-end. None is failing. 1 property is blocked from view (not counted as failing). 4 domains publish nothing.\n• Estate traffic: 937,713 edge requests in the latest 28 days across 22 of 25 properties (a lower bound), with no comparable prior period yet. These are requests, not people: no source separates humans from automated traffic.\n• 2 of 20 properties report business outcomes.\n• 15 open items: 3 actionable now, 3 blocked on missing authority, 8 need a decision. First: 1 high-traffic property has no measurable business outcome.\n\nMeasurement coverage:\n  - Availability probed: 24 of 25 (96%)\n  - Independent second witness: 19 of 20 (95%)\n  - Authoritative critical path: 4 of 20 (20%)\n  - Analytics tag shipped: 19 of 20 (95%)\n  - Telemetry reception verified: 7 of 20 (35%)\n  - Audience measured: 22 of 25 (88%)\n  - Business outcomes measured: 2 of 20 (10%)\n  - Owner-declared lifecycle: 16 of 25 (64%)\n  - Owner-declared outcome: 6 of 25 (24%)\n\nAudience source: partial. Business-outcome feed: measured.\nUnknown is not zero, reachable is not healthy, and edge requests are not people.",
+  "shareText": "GlobalDeets Mission Control — estate summary\nGenerated 2026-10-02T01:04:41.208Z from governed evidence (probe run run-36949129955-1, observed 2026-10-02T01:04:41.208Z).\n\n• Good Flippin Design operates 25 web properties. 16 have an owner-declared status (10 active, 3 incubating, 3 aliases); 9 have none, so their intent is shown as unknown.\n• 19 of 20 properties that publish a site are responding; 3 are verified healthy end-to-end. None is failing. 1 property is blocked from view (not counted as failing). 4 domains publish nothing.\n• Estate traffic: 937,713 edge requests in the latest 28 days across 22 of 25 properties (a lower bound), with no comparable prior period yet. These are requests, not people: no source separates humans from automated traffic.\n• 2 of 20 properties report business outcomes.\n• 15 open items: 3 actionable now, 3 blocked on missing authority, 8 need a decision. First: 1 high-traffic property has no measurable business outcome.\n\nMeasurement coverage:\n  - Availability probed: 24 of 25 (96%)\n  - Independent second witness: 19 of 20 (95%)\n  - Authoritative critical path: 4 of 20 (20%)\n  - Analytics tag shipped: 19 of 20 (95%)\n  - Telemetry reception verified: 8 of 20 (40%)\n  - Audience measured: 22 of 25 (88%)\n  - Business outcomes measured: 2 of 20 (10%)\n  - Owner-declared lifecycle: 16 of 25 (64%)\n  - Owner-declared outcome: 6 of 25 (24%)\n\nAudience source: partial. Business-outcome feed: measured.\nUnknown is not zero, reachable is not healthy, and edge requests are not people.",
   "evidenceSummary": "6 of 6 evidence classes are live"
 }
