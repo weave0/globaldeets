@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0.0",
   "contractName": "globaldeets-diagnostics-queue",
-  "generatedAt": "2026-10-02T06:45:12.302Z",
+  "generatedAt": "2026-10-02T12:40:58.051Z",
   "agentContract": {
     "sortableFields": [
       "priority",
@@ -169,98 +169,13 @@
     ]
   },
   "summary": {
-    "open": 16,
-    "actionableNow": 4,
+    "open": 15,
+    "actionableNow": 3,
     "blockedOnAuthority": 3,
     "decisionNeeded": 8,
-    "nextUp": "criticalpath:failed:globaldeets.com"
+    "nextUp": "business-outcomes:traffic-without-outcome"
   },
   "items": [
-    {
-      "source": "derived",
-      "status": "open",
-      "polarity": "risk",
-      "confidence": "high",
-      "actionability": {
-        "state": "actionable-now",
-        "blockedBy": null
-      },
-      "id": "criticalpath:failed:globaldeets.com",
-      "subject": "globaldeets.com",
-      "subjects": [
-        "globaldeets.com"
-      ],
-      "rule": "critical-path-failed",
-      "category": "critical-path",
-      "severity": "critical",
-      "domain": "reliability",
-      "businessImpact": "high",
-      "ownerLane": "Platform",
-      "title": "GlobalDeets responds, but its critical path is failing",
-      "observed": "The authoritative critical-path contract (owner-deploy-verification) failed: mission-control-data (status-404). The homepage may look fine while the function users depend on is broken.",
-      "businessReason": "The homepage may respond while the product function investors and users depend on is broken.",
-      "evidence": [
-        {
-          "type": "critical-path-probe",
-          "ref": "globaldeets.com@2026-10-02T06:45:12.302Z",
-          "state": "measured"
-        }
-      ],
-      "nextAction": "Inspect the failing check(s) against production and the latest deploy; fix the route or correct the contract if the product intentionally changed.",
-      "escalation": {
-        "blocksInvestorClaim": false,
-        "level": "page",
-        "class": "investor-impacting-outage",
-        "escalateWhen": "Failure persists for two consecutive runs.",
-        "targetLane": "Platform"
-      },
-      "openedAt": "2026-09-28",
-      "ageDays": 4,
-      "freshness": {
-        "state": "fresh",
-        "observedAt": "2026-10-02T06:45:12.302Z",
-        "basis": "Production probes"
-      },
-      "priorityScore": 179,
-      "priorityBreakdown": [
-        {
-          "factor": "severity",
-          "points": 100,
-          "why": "Severity is critical."
-        },
-        {
-          "factor": "investor-critical",
-          "points": 25,
-          "why": "Affects an investor-critical property."
-        },
-        {
-          "factor": "strategic-tier",
-          "points": 8,
-          "why": "Affects a tier 2 property in the owner strategy."
-        },
-        {
-          "factor": "business-impact",
-          "points": 12,
-          "why": "Business impact is high."
-        },
-        {
-          "factor": "escalation",
-          "points": 12,
-          "why": "Escalation level is page."
-        },
-        {
-          "factor": "actionability",
-          "points": 20,
-          "why": "Can be worked on now."
-        },
-        {
-          "factor": "age",
-          "points": 2,
-          "why": "Open for 4 days."
-        }
-      ],
-      "priority": 1
-    },
     {
       "source": "derived",
       "status": "in-progress",
@@ -331,7 +246,7 @@
           "why": "Open for 9 days."
         }
       ],
-      "priority": 2
+      "priority": 1
     },
     {
       "source": "derived",
@@ -358,7 +273,7 @@
       "evidence": [
         {
           "type": "audience-contract",
-          "ref": "globaldeets-audience@2026-10-02T06:45:12.302Z",
+          "ref": "globaldeets-audience@2026-10-02T12:40:58.051Z",
           "state": "partial"
         }
       ],
@@ -420,7 +335,7 @@
           "why": "Open for 6 days."
         }
       ],
-      "priority": 3
+      "priority": 2
     },
     {
       "source": "derived",
@@ -465,7 +380,7 @@
       "evidence": [
         {
           "type": "business-event-contract",
-          "ref": "globaldeets-business-events@2026-10-02T06:45:12.302Z",
+          "ref": "globaldeets-business-events@2026-10-02T12:40:58.051Z",
           "state": "measured"
         }
       ],
@@ -480,7 +395,7 @@
       "ageDays": 8,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-02T06:45:30.013Z",
+        "observedAt": "2026-10-02T12:41:12.117Z",
         "basis": "Business-event feed"
       },
       "priorityScore": 97,
@@ -516,7 +431,7 @@
           "why": "Open for 8 days."
         }
       ],
-      "priority": 4
+      "priority": 3
     },
     {
       "source": "manual",
@@ -605,7 +520,7 @@
           "why": "Open for 9 days."
         }
       ],
-      "priority": 5
+      "priority": 4
     },
     {
       "source": "derived",
@@ -632,7 +547,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36975014310-1",
+          "ref": "production probe run-37008094716-1",
           "state": "measured"
         }
       ],
@@ -648,7 +563,7 @@
       "ageDays": 8,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-02T06:45:12.302Z",
+        "observedAt": "2026-10-02T12:40:58.051Z",
         "basis": "Production probes"
       },
       "priorityScore": 76,
@@ -684,7 +599,7 @@
           "why": "Open for 8 days."
         }
       ],
-      "priority": 6
+      "priority": 5
     },
     {
       "source": "derived",
@@ -712,7 +627,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-10-02T06:45:12.303Z",
+          "ref": "2026-10-02T12:40:58.052Z",
           "state": "measured"
         }
       ],
@@ -728,7 +643,7 @@
       "ageDays": 8,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-02T06:45:12.303Z",
+        "observedAt": "2026-10-02T12:40:58.052Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 52,
@@ -759,7 +674,7 @@
           "why": "Open for 8 days."
         }
       ],
-      "priority": 7
+      "priority": 6
     },
     {
       "source": "derived",
@@ -800,7 +715,7 @@
       "ageDays": 8,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-02T06:45:12.302Z",
+        "observedAt": "2026-10-02T12:40:58.051Z",
         "basis": "Historical snapshots"
       },
       "priorityScore": 47,
@@ -831,7 +746,7 @@
           "why": "Open for 8 days."
         }
       ],
-      "priority": 8
+      "priority": 7
     },
     {
       "source": "derived",
@@ -911,7 +826,7 @@
           "why": "Open for 8 days."
         }
       ],
-      "priority": 9
+      "priority": 8
     },
     {
       "source": "derived",
@@ -995,7 +910,7 @@
           "why": "Open for 8 days."
         }
       ],
-      "priority": 10
+      "priority": 9
     },
     {
       "source": "derived",
@@ -1012,7 +927,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-10-02T06:45:12.302Z",
+          "ref": "globaldeets-estate-health@2026-10-02T12:40:58.051Z",
           "state": "measured"
         }
       ],
@@ -1038,7 +953,7 @@
       "ageDays": 8,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-02T06:45:12.302Z",
+        "observedAt": "2026-10-02T12:40:58.051Z",
         "basis": "Production probes"
       },
       "priorityScore": 38,
@@ -1069,7 +984,7 @@
           "why": "Open for 8 days."
         }
       ],
-      "priority": 11
+      "priority": 10
     },
     {
       "source": "derived",
@@ -1099,7 +1014,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-10-02T06:45:12.302Z",
+          "ref": "globaldeets-estate-health@2026-10-02T12:40:58.051Z",
           "state": "measured"
         }
       ],
@@ -1115,7 +1030,7 @@
       "ageDays": 8,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-02T06:45:12.302Z",
+        "observedAt": "2026-10-02T12:40:58.051Z",
         "basis": "Production probes"
       },
       "priorityScore": 19,
@@ -1131,7 +1046,7 @@
           "why": "Open for 8 days."
         }
       ],
-      "priority": 12
+      "priority": 11
     },
     {
       "source": "derived",
@@ -1194,7 +1109,7 @@
           "why": "Open for 8 days."
         }
       ],
-      "priority": 13
+      "priority": 12
     },
     {
       "source": "derived",
@@ -1232,7 +1147,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-36975014310-1",
+          "ref": "production probe run-37008094716-1",
           "state": "measured"
         }
       ],
@@ -1248,7 +1163,7 @@
       "ageDays": 8,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-02T06:45:12.302Z",
+        "observedAt": "2026-10-02T12:40:58.051Z",
         "basis": "Production probes"
       },
       "priorityScore": 16,
@@ -1284,7 +1199,7 @@
           "why": "Open for 8 days."
         }
       ],
-      "priority": 14
+      "priority": 13
     },
     {
       "source": "derived",
@@ -1349,7 +1264,7 @@
           "why": "Open for 8 days."
         }
       ],
-      "priority": 15
+      "priority": 14
     },
     {
       "source": "derived",
@@ -1374,7 +1289,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-10-02T06:45:12.303Z",
+          "ref": "2026-10-02T12:40:58.052Z",
           "state": "measured"
         }
       ],
@@ -1390,7 +1305,7 @@
       "ageDays": 8,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-02T06:45:12.303Z",
+        "observedAt": "2026-10-02T12:40:58.052Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 15,
@@ -1411,7 +1326,93 @@
           "why": "Open for 8 days."
         }
       ],
-      "priority": 16
+      "priority": 15
+    },
+    {
+      "category": "critical-path",
+      "confidence": "high",
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-10-02T06:45:12.302Z",
+        "basis": "Production probes"
+      },
+      "source": "derived",
+      "status": "closed",
+      "polarity": "risk",
+      "actionability": {
+        "state": "closed",
+        "blockedBy": null
+      },
+      "id": "criticalpath:failed:globaldeets.com",
+      "subject": "globaldeets.com",
+      "subjects": [
+        "globaldeets.com"
+      ],
+      "rule": "critical-path-failed",
+      "severity": "critical",
+      "domain": "reliability",
+      "businessImpact": "high",
+      "ownerLane": "Platform",
+      "title": "GlobalDeets responds, but its critical path is failing",
+      "observed": "The authoritative critical-path contract (owner-deploy-verification) failed: mission-control-data (status-404). The homepage may look fine while the function users depend on is broken.",
+      "businessReason": "The homepage may respond while the product function investors and users depend on is broken.",
+      "evidence": [
+        {
+          "type": "critical-path-probe",
+          "ref": "globaldeets.com@2026-10-02T06:45:12.302Z",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Recovered; monitor. This item is retained for 7 days.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "page",
+        "class": "investor-impacting-outage",
+        "escalateWhen": "Failure persists for two consecutive runs.",
+        "targetLane": "Platform"
+      },
+      "openedAt": "2026-09-28",
+      "ageDays": 4,
+      "priorityScore": 59,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 100,
+          "why": "Severity is critical."
+        },
+        {
+          "factor": "investor-critical",
+          "points": 25,
+          "why": "Affects an investor-critical property."
+        },
+        {
+          "factor": "strategic-tier",
+          "points": 8,
+          "why": "Affects a tier 2 property in the owner strategy."
+        },
+        {
+          "factor": "business-impact",
+          "points": 12,
+          "why": "Business impact is high."
+        },
+        {
+          "factor": "escalation",
+          "points": 12,
+          "why": "Escalation level is page."
+        },
+        {
+          "factor": "actionability",
+          "points": -100,
+          "why": "Needs a decision."
+        },
+        {
+          "factor": "age",
+          "points": 2,
+          "why": "Open for 4 days."
+        }
+      ],
+      "priority": 16,
+      "closedAt": "2026-10-02T12:40:58.051Z"
     },
     {
       "source": "manual",
