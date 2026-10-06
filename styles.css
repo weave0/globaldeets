@@ -3113,3 +3113,38 @@ summary.nav-item::-webkit-details-marker {
   color: var(--neon-cyan);
   font-weight: 600;
 }
+
+/* Very narrow screens (320px reflow and below): keep the labeled header on one row without
+   overflow; targets stay at least 44px. */
+@media (max-width: 380px) {
+  header .container {
+    padding: 0 0.5rem;
+  }
+
+  header .header {
+    gap: 0.35rem;
+  }
+
+  header .site-logo-link {
+    padding: 2px 4px;
+  }
+
+  header .site-logo-mark,
+  header.scrolled .site-logo-mark {
+    height: 24px;
+  }
+
+  header .header {
+    gap: 0.25rem;
+  }
+
+  header .primary-nav {
+    gap: 2px;
+  }
+
+  header .primary-nav .nav-item {
+    min-width: 44px;
+    padding: 0.2rem 0.25rem;
+    font-size: 0.65rem;
+  }
+}

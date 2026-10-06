@@ -35,6 +35,7 @@ export default [
         fetch: 'readonly',
         Globe: 'readonly',
         Headers: 'readonly',
+        Request: 'readonly',
         gtag: 'readonly',
         history: 'readonly',
         Image: 'readonly',

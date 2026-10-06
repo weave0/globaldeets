@@ -56,7 +56,7 @@ test('the service worker installs, precaches only shipped files, and retires the
 }) => {
   // Seed the cache the previous worker version used; activation must delete it.
   await page.goto('/offline.html');
-  await page.evaluate(() => caches.open('globaldeets-cache-v3').then(cache => cache.put('/stale', new Response('old'))));
+  await page.evaluate(() => caches.open('globaldeets-cache-v4').then(cache => cache.put('/stale', new Response('old'))));
 
   await page.goto('/index.html');
   await waitForControllingWorker(page);
@@ -64,13 +64,45 @@ test('the service worker installs, precaches only shipped files, and retires the
   const state = await page.evaluate(async () => ({
     keys: await caches.keys(),
     precached: await caches
-      .open('globaldeets-cache-v4')
+      .open('globaldeets-cache-v5')
       .then(cache => Promise.all(['/world-desk.js', '/news.js', '/offline.html'].map(path => cache.match(path))))
       .then(matches => matches.every(Boolean)),
   }));
-  expect(state.keys).toContain('globaldeets-cache-v4');
-  expect(state.keys).not.toContain('globaldeets-cache-v3');
+  expect(state.keys).toContain('globaldeets-cache-v5');
+  expect(state.keys).not.toContain('globaldeets-cache-v4');
   expect(state.precached).toBe(true);
+});
+
+test('a dev server answering a stylesheet with JavaScript can never leave an unstyled cached page', async ({
+  page,
+}) => {
+  // Vite answers a generic GET /styles.css with a JS module unless the request asks for CSS. The
+  // worker must precache the real stylesheet and refuse to cache mislabeled CSS/JS.
+  await page.goto('/index.html');
+  await waitForControllingWorker(page);
+  const cached = await page.evaluate(async () => {
+    const cache = await caches.open('globaldeets-cache-v5');
+    const out = {};
+    for (const path of ['/styles.css', '/world-desk.css', '/news.js']) {
+      const response = await cache.match(path);
+      out[path] = response ? response.headers.get('content-type') : null;
+    }
+    return out;
+  });
+  expect(cached['/styles.css']).toContain('text/css');
+  expect(cached['/world-desk.css']).toContain('text/css');
+  expect(cached['/news.js']).toContain('javascript');
+
+  // With the network gone, the replayed homepage is still styled.
+  await page.context().route('**/*', route => route.abort('internetdisconnected'));
+  await page.reload();
+  const styledRules = await page.evaluate(() =>
+    [...document.styleSheets]
+      .filter(sheet => sheet.href && /\/(styles|world-desk)\.css$/.test(sheet.href))
+      .map(sheet => sheet.cssRules.length)
+  );
+  expect(styledRules.length).toBe(2);
+  for (const count of styledRules) expect(count).toBeGreaterThan(10);
 });
 
 test('offline readers get saved stories that are explicitly labeled as out of date', async ({

@@ -1,5 +1,5 @@
 // Basic service worker for offline caching
-const CACHE_NAME = 'globaldeets-cache-v4';
+const CACHE_NAME = 'globaldeets-cache-v5';
 // Precache only files that exist in the deploy artifact: cache.addAll rejects (and the worker
 // fails to install) if any entry 404s.
 const CORE_ASSETS = [
@@ -25,9 +25,33 @@ const CORE_ASSETS = [
 const OFFLINE_COPY_HEADER = 'X-GlobalDeets-Offline-Copy';
 const CACHED_AT_HEADER = 'X-GlobalDeets-Cached-At';
 
+// A stylesheet or script is cached only when the server labels it as one. Some servers (the Vite
+// dev server among them) answer a generic request for /styles.css with a JavaScript module; caching
+// that would later replay an unstyled page.
+const EXPECTED_TYPES = { '.css': 'text/css', '.js': 'javascript' };
+
+function hasExpectedType(url, response) {
+  const match = /\.(css|js)$/.exec(new URL(url, self.location.href).pathname);
+  if (!match) return true;
+  const contentType = response.headers.get('content-type') || '';
+  return contentType.includes(EXPECTED_TYPES[`.${match[1]}`]);
+}
+
+function precache(cache, path) {
+  const accept = path.endsWith('.css') ? 'text/css' : '*/*';
+  return fetch(new Request(path, { headers: { Accept: accept } })).then(response => {
+    if (!response.ok || !hasExpectedType(path, response)) {
+      throw new Error(`precache rejected ${path}: HTTP ${response.status} ${response.headers.get('content-type')}`);
+    }
+    return cache.put(path, response);
+  });
+}
+
 self.addEventListener('install', event => {
   self.skipWaiting();
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_ASSETS)));
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => Promise.all(CORE_ASSETS.map(path => precache(cache, path))))
+  );
 });
 
 self.addEventListener('activate', event => {
@@ -54,7 +78,7 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     fetch(request)
       .then(resp => {
-        if (resp.ok) {
+        if (resp.ok && hasExpectedType(request.url, resp)) {
           const copy = isApi ? stampCachedAt(resp.clone()) : Promise.resolve(resp.clone());
           copy.then(stamped => caches.open(CACHE_NAME).then(cache => cache.put(request, stamped)));
         }

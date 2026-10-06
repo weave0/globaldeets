@@ -185,3 +185,28 @@ test.describe('labeled primary navigation', () => {
     await expectNoHorizontalOverflow(page);
   });
 });
+
+test.describe('narrow reflow', () => {
+  for (const width of [320, 285]) {
+    test.describe(`${width}px`, () => {
+      test.use({ viewport: { width, height: 640 }, isMobile: true, hasTouch: true });
+
+      test('labeled header fits on one row without horizontal overflow', async ({ page }) => {
+        await mockApi(page);
+        for (const path of ['/index.html', '/news.html', '/categories.html', '/timeline.html']) {
+          await page.goto(path);
+          await expectNoHorizontalOverflow(page);
+          const more = page.locator('details.nav-more summary');
+          const box = await more.boundingBox();
+          expect(box.x + box.width, `${path} More fits`).toBeLessThanOrEqual(width);
+          expect(box.width).toBeGreaterThanOrEqual(44);
+          expect(box.height).toBeGreaterThanOrEqual(44);
+          const items = page.locator('header .primary-nav .nav-item');
+          const tops = await items.evaluateAll(nodes => nodes.map(n => Math.round(n.getBoundingClientRect().top)));
+          expect(new Set(tops).size, `${path} nav is a single row`).toBe(1);
+        }
+      });
+    });
+  }
+});
+
