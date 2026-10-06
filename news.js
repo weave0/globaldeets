@@ -25,19 +25,31 @@
     prohibited: 'Reuse prohibited',
   };
 
-  let currentRegion = 'global';
+  let currentRegion = initialRegion();
   let currentOffset = 0;
   const PAGE_SIZE = 24;
+  // The core feed gets longer than optional trust panels: a slow panel must never hold the feed.
+  const FEED_TIMEOUT_MS = 15_000;
+  const TRUST_TIMEOUT_MS = 8_000;
   const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
     ? 'https://globaldeets.com'
     : '';
   let allItems = [];
-  let loading = false;
   let searchTerm = '';
   let sourceById = new Map();
   let admissionById = new Map();
   let coverageData = null;
   let healthData = null;
+  // GD-038 (F4): every feed request carries its own generation and region. A response is applied
+  // only if it is still the newest request, so a slow earlier region can never overwrite a later
+  // selection. Region resets abort the superseded request; "load more" never runs concurrently.
+  let feedGeneration = 0;
+  let feedController = null;
+  let appendInFlight = false;
+  let feedState = 'loading'; // 'loading' | 'ready' | 'error'
+  let feedErrorKind = null;
+  // Coverage context shows "unavailable" only after both of its inputs have actually settled.
+  const coverageSettled = { coverage: false, admission: false };
 
   function init() {
     installReaderBridgeStyles();
@@ -47,6 +59,26 @@
     loadNews(true);
     hydrateTrustSurface();
     document.getElementById('load-more-btn')?.addEventListener('click', () => loadNews(false));
+  }
+
+  function initialRegion() {
+    try {
+      const requested = new URLSearchParams(location.search).get('region');
+      return REGIONS.includes(requested) ? requested : 'global';
+    } catch {
+      return 'global';
+    }
+  }
+
+  function syncRegionToUrl() {
+    try {
+      const url = new URL(location.href);
+      if (currentRegion === 'global') url.searchParams.delete('region');
+      else url.searchParams.set('region', currentRegion);
+      history.replaceState(history.state, '', url);
+    } catch {
+      // Shareable URLs are a convenience; the feed works without them.
+    }
   }
 
   function installReaderBridgeStyles() {
@@ -119,20 +151,62 @@
     }
   }
 
-  async function fetchJson(path) {
-    const response = await fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' } });
-    if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
-    return response.json();
+  class FeedRequestError extends Error {
+    constructor(kind, message) {
+      super(message);
+      this.kind = kind; // 'timeout' | 'offline' | 'upstream' | 'aborted'
+    }
   }
 
-  async function hydrateTrustSurface() {
-    const [sourcesResult, admissionResult, coverageResult, healthResult] = await Promise.allSettled([
-      fetchJson('/api/news/sources'),
-      fetchJson('/api/news/admission'),
-      fetchJson('/api/news/coverage'),
-      fetchJson('/api/news/health'),
-    ]);
+  async function fetchJson(path, { timeoutMs = TRUST_TIMEOUT_MS, signal } = {}) {
+    const controller = new AbortController();
+    let timedOut = false;
+    const timer = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, timeoutMs);
+    const onOuterAbort = () => controller.abort();
+    signal?.addEventListener('abort', onOuterAbort, { once: true });
+    try {
+      const response = await fetch(`${API_BASE}${path}`, {
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      });
+      if (!response.ok) throw new FeedRequestError('upstream', `${path}: HTTP ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      if (error instanceof FeedRequestError) throw error;
+      if (timedOut) throw new FeedRequestError('timeout', `${path}: no response in ${timeoutMs}ms`);
+      if (signal?.aborted) throw new FeedRequestError('aborted', `${path}: superseded`);
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        throw new FeedRequestError('offline', `${path}: browser is offline`);
+      }
+      throw new FeedRequestError('upstream', `${path}: ${error?.message || 'network error'}`);
+    } finally {
+      clearTimeout(timer);
+      signal?.removeEventListener('abort', onOuterAbort);
+    }
+  }
 
+  // GD-038 (F5): each trust panel resolves on its own deadline and renders as soon as it lands.
+  // A hung endpoint degrades only its own panel; it never delays the others or the core feed.
+  function hydrateTrustSurface() {
+    return Promise.allSettled([
+      settle(fetchJson('/api/news/sources'), applySources),
+      settle(fetchJson('/api/news/admission'), applyAdmission),
+      settle(fetchJson('/api/news/coverage'), applyCoverage),
+      settle(fetchJson('/api/news/health'), applyHealth),
+    ]);
+  }
+
+  function settle(promise, apply) {
+    return promise.then(
+      value => apply({ status: 'fulfilled', value }),
+      reason => apply({ status: 'rejected', reason })
+    );
+  }
+
+  function applySources(sourcesResult) {
     if (sourcesResult.status === 'fulfilled') {
       const sourceData = sourcesResult.value;
       const sources = Array.isArray(sourceData.sources) ? sourceData.sources : [];
@@ -153,7 +227,10 @@
       if (count) count.textContent = 'Source inventory temporarily unavailable';
       console.warn('GlobalDeets source inventory unavailable:', sourcesResult.reason);
     }
+    renderVisibleCards();
+  }
 
+  function applyAdmission(admissionResult) {
     if (admissionResult.status === 'fulfilled') {
       const admissionData = admissionResult.value;
       const admissions = Array.isArray(admissionData.liveAdmissions) ? admissionData.liveAdmissions : [];
@@ -162,13 +239,22 @@
     } else {
       console.warn('GlobalDeets source admission unavailable:', admissionResult.reason);
     }
+    coverageSettled.admission = true;
+    renderCoverageContext();
+    renderVisibleCards();
+  }
 
+  function applyCoverage(coverageResult) {
     if (coverageResult.status === 'fulfilled') {
       coverageData = coverageResult.value;
     } else {
       console.warn('GlobalDeets coverage context unavailable:', coverageResult.reason);
     }
+    coverageSettled.coverage = true;
+    renderCoverageContext();
+  }
 
+  function applyHealth(healthResult) {
     if (healthResult.status === 'fulfilled') {
       healthData = healthResult.value;
       const healthNode = document.getElementById('news-health-status');
@@ -182,9 +268,6 @@
       if (healthNode) healthNode.textContent = 'Health snapshot temporarily unavailable';
       console.warn('GlobalDeets health snapshot unavailable:', healthResult.reason);
     }
-
-    renderCoverageContext();
-    renderVisibleCards();
   }
 
   function renderCoverageContext() {
@@ -194,6 +277,7 @@
 
     const admissionSummary = window.__globalDeetsAdmissionSummary;
     if (!coverageData && !admissionSummary) {
+      if (!coverageSettled.coverage || !coverageSettled.admission) return;
       summary.textContent =
         'Coverage context is temporarily unavailable. Headlines and original publisher links remain available.';
       gaps.replaceChildren();
@@ -271,69 +355,171 @@
     if (!tabBar) return;
     tabBar.innerHTML = REGIONS.map(
       r => `
-      <button class="region-tab${r === currentRegion ? ' active' : ''}" data-region="${r}">${REGION_LABELS[r]}</button>`
+      <button type="button" class="region-tab${r === currentRegion ? ' active' : ''}" data-region="${r}" aria-pressed="${r === currentRegion}">${REGION_LABELS[r]}</button>`
     ).join('');
     tabBar.addEventListener('click', e => {
       const btn = e.target.closest('.region-tab');
       if (!btn || btn.classList.contains('active')) return;
       currentRegion = btn.dataset.region;
-      currentOffset = 0;
-      allItems = [];
       searchTerm = '';
       const searchInput = document.getElementById('news-search');
       if (searchInput) searchInput.value = '';
-      tabBar.querySelectorAll('.region-tab').forEach(b => b.classList.toggle('active', b === btn));
+      tabBar.querySelectorAll('.region-tab').forEach(b => {
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-pressed', String(b === btn));
+      });
+      syncRegionToUrl();
       renderCoverageContext();
       loadNews(true);
     });
   }
 
   function loadNews(reset) {
-    if (loading) return;
-    loading = true;
     const grid = document.getElementById('news-grid');
     const loadBtn = document.getElementById('load-more-btn');
-    if (reset && grid) grid.innerHTML = '<div class="news-skeleton"></div>'.repeat(6);
+
+    if (reset) {
+      // A new selection supersedes everything in flight, including an unfinished "load more".
+      feedController?.abort();
+      currentOffset = 0;
+      allItems = [];
+      appendInFlight = false;
+      feedState = 'loading';
+      if (grid) {
+        grid.setAttribute('aria-busy', 'true');
+        grid.innerHTML = '<div class="news-skeleton"></div>'.repeat(6);
+      }
+      if (loadBtn) loadBtn.classList.add('js-hidden');
+      setLoadMoreNote('');
+      updateStatus();
+    } else {
+      if (appendInFlight || feedState !== 'ready') return;
+      appendInFlight = true;
+      setLoadMoreNote('');
+    }
+
+    const generation = ++feedGeneration;
+    const request = { region: currentRegion, offset: currentOffset, reset };
+    const controller = new AbortController();
+    feedController = controller;
     if (loadBtn) loadBtn.disabled = true;
-    const url = `${API_BASE}/api/news?region=${encodeURIComponent(currentRegion)}&limit=${PAGE_SIZE}&offset=${currentOffset}`;
-    fetch(url)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
+
+    const path = `/api/news?region=${encodeURIComponent(request.region)}&limit=${PAGE_SIZE}&offset=${request.offset}`;
+    fetchJson(path, { timeoutMs: FEED_TIMEOUT_MS, signal: controller.signal })
       .then(data => {
-        const items = data.items || [];
-        allItems = reset ? items : [...allItems, ...items];
-        currentOffset += items.length;
+        if (generation !== feedGeneration || request.region !== currentRegion) return;
+        const items = Array.isArray(data?.items) ? data.items : [];
+        allItems = request.reset ? items : [...allItems, ...items];
+        currentOffset = request.offset + items.length;
+        feedState = 'ready';
         window.__globalDeetsNewsTotal = data.total;
         window.__globalDeetsNewsCached = data.cached;
         window.__globalDeetsNewsAdmissionFingerprint = data.admissionFingerprint;
         window.__globalDeetsNewsDisplayPolicyVersion = data.displayPolicyVersion;
+        window.__globalDeetsNewsRegion = request.region;
         renderVisibleCards();
         updateStatus();
         if (loadBtn) {
           loadBtn.disabled = false;
-          loadBtn.classList.toggle('js-hidden', items.length < PAGE_SIZE);
+          const total = Number.isFinite(data.total) ? data.total : null;
+          const exhausted = total != null ? currentOffset >= total : items.length < PAGE_SIZE;
+          loadBtn.classList.toggle('js-hidden', exhausted);
         }
       })
-      .catch(err => {
-        if (grid && reset) {
-          grid.innerHTML =
-            '<div class="news-error"><p>Unable to load news feed. The worker may be warming up.</p><button onclick="location.reload()">Retry</button></div>';
-        }
+      .catch(error => {
+        if (generation !== feedGeneration || error?.kind === 'aborted') return;
+        console.error('News fetch failed:', error);
         if (loadBtn) loadBtn.disabled = false;
-        console.error('News fetch failed:', err);
+        if (request.reset) {
+          feedState = 'error';
+          feedErrorKind = error?.kind || 'upstream';
+          renderVisibleCards();
+          updateStatus();
+        } else {
+          setLoadMoreNote(
+            `${failureMessage(error?.kind)} The stories already shown are unchanged.`
+          );
+        }
       })
       .finally(() => {
-        loading = false;
+        if (generation !== feedGeneration) return;
+        if (!request.reset) appendInFlight = false;
+        grid?.removeAttribute('aria-busy');
       });
+  }
+
+  function failureMessage(kind) {
+    if (kind === 'offline') return 'You appear to be offline, so new stories could not be loaded.';
+    if (kind === 'timeout') return 'The news service did not respond in time.';
+    return 'The news service returned an error.';
+  }
+
+  function setLoadMoreNote(text) {
+    let note = document.getElementById('load-more-note');
+    if (!note && text) {
+      const loadBtn = document.getElementById('load-more-btn');
+      if (!loadBtn) return;
+      note = document.createElement('p');
+      note.id = 'load-more-note';
+      note.className = 'news-load-more-note';
+      note.setAttribute('role', 'status');
+      loadBtn.insertAdjacentElement('afterend', note);
+    }
+    if (note) note.textContent = text;
+  }
+
+  function renderErrorState(grid) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'news-error';
+    wrapper.dataset.failure = feedErrorKind;
+    wrapper.setAttribute('role', 'alert');
+    const message = document.createElement('p');
+    message.textContent = `${failureMessage(feedErrorKind)} No stories are shown for ${REGION_LABELS[currentRegion]} right now. This is a loading problem, not a sign that nothing is happening.`;
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.textContent = 'Try again';
+    retry.addEventListener('click', () => loadNews(true));
+    wrapper.append(message, retry);
+    grid.replaceChildren(wrapper);
+  }
+
+  function renderEmptyState(grid) {
+    const empty = document.createElement('div');
+    empty.className = 'news-empty';
+    const message = document.createElement('p');
+    if (searchTerm && allItems.length) {
+      empty.dataset.state = 'no-matches';
+      message.textContent = `None of the ${allItems.length} loaded stories match “${searchTerm}”. The filter only searches stories already loaded on this page.`;
+      const clear = document.createElement('button');
+      clear.type = 'button';
+      clear.textContent = 'Clear filter';
+      clear.addEventListener('click', () => {
+        searchTerm = '';
+        const input = document.getElementById('news-search');
+        if (input) input.value = '';
+        renderVisibleCards();
+        updateStatus();
+        input?.focus();
+      });
+      empty.append(message, clear);
+    } else {
+      empty.dataset.state = 'empty';
+      message.textContent = `Our current sources have no recent stories routed to ${REGION_LABELS[currentRegion]}. That reflects our source coverage, not a lack of events.`;
+      empty.append(message);
+    }
+    grid.replaceChildren(empty);
   }
 
   function renderCards(grid, items, reset) {
     if (!grid) return;
+    if (feedState === 'loading') return;
+    if (feedState === 'error') {
+      renderErrorState(grid);
+      return;
+    }
     if (reset) grid.innerHTML = '';
     if (!items.length && reset) {
-      grid.innerHTML = '<p class="news-empty">No stories found for this region yet.</p>';
+      renderEmptyState(grid);
       return;
     }
     const fragment = document.createDocumentFragment();
@@ -450,6 +636,14 @@
   function updateStatus() {
     const status = document.getElementById('news-status');
     if (!status) return;
+    if (feedState === 'loading') {
+      status.textContent = `Loading ${REGION_LABELS[currentRegion]}…`;
+      return;
+    }
+    if (feedState === 'error') {
+      status.textContent = `${REGION_LABELS[currentRegion]} stories unavailable`;
+      return;
+    }
     const total = window.__globalDeetsNewsTotal ?? '?';
     const cachedNote = window.__globalDeetsNewsCached ? ' · cached' : '';
     const visibleItems = getVisibleItems();

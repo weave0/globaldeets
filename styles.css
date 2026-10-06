@@ -686,7 +686,9 @@
   color: var(--text-muted);
 }
 
-.news-error button {
+.news-error button,
+.news-empty button {
+  min-height: 44px;
   margin-top: 1rem;
   padding: 0.5rem 1.25rem;
   background: var(--neon-cyan);
@@ -695,6 +697,13 @@
   border-radius: 6px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.news-load-more-note {
+  margin: 0.75rem auto 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
 }
 
 /* Load more button */

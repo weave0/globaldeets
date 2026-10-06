@@ -19,6 +19,9 @@ module.exports = defineConfig({
   use: {
     baseURL,
     trace: 'on-first-retry',
+    // Specs mock /api/** with page.route; a controlling service worker would fetch around those
+    // mocks and silently mix live production data into fixture assertions.
+    serviceWorkers: 'block',
   },
   projects: [
     {
