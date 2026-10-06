@@ -12,6 +12,8 @@ const mobileSpecs = /mobile-(reader|secondary-surfaces)\.spec\.js/;
 
 module.exports = defineConfig({
   testDir: './tests',
+  // node:test contracts (*.test.mjs) run under `npm run test:functions`, not Playwright.
+  testMatch: '**/*.spec.js',
   timeout: 30000,
   expect: {
     timeout: 10000,

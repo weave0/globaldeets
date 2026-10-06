@@ -100,7 +100,8 @@ test('GD-029 live investor-adjacent surfaces reject portfolio-era analytics copy
   const executiveJs = readText('observatory/mission-control/mc-executive.js');
 
   assert.doesNotMatch(categories, /Data Platform Showcase/i);
-  assert.match(categories, /Source-first world information/i);
+  assert.match(categories, /Source-first world news desk/i);
+  assert.doesNotMatch(categories, /Ecosystem Categories|category-projects-list/i);
   assert.match(missionHtml, />Executive</);
   assert.match(missionHtml, />Operator</);
   assert.match(missionHtml, /evidence behind every claim/i);
