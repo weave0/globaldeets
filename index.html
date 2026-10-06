@@ -139,60 +139,33 @@
             <p class="tagline">World Desk · Original Publishers · Open Sources</p>
           </div>
           <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
-            <a href="index.html" class="nav-icon-btn active" title="Home" aria-current="page">
-              <img
-                src="assets/icons/site/nav-home.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-              />
+            <a href="index.html" class="nav-icon-btn nav-item active" aria-current="page">
+              <img src="assets/icons/site/nav-home.svg" alt="" aria-hidden="true" width="22" height="22" />
+              <span class="nav-label">Today</span>
             </a>
-            <a href="globe.html" class="nav-icon-btn" title="Globe — Live Earth">
-              <img
-                src="assets/icons/site/nav-globe.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-              />
+            <a href="news.html" class="nav-icon-btn nav-item">
+              <img src="assets/icons/site/nav-news.svg" alt="" aria-hidden="true" width="22" height="22" />
+              <span class="nav-label">News</span>
             </a>
-            <a href="news.html" class="nav-icon-btn" title="World News">
-              <img
-                src="assets/icons/site/nav-news.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-              />
+            <a href="categories.html" class="nav-icon-btn nav-item">
+              <img src="assets/icons/site/nav-list.svg" alt="" aria-hidden="true" width="22" height="22" />
+              <span class="nav-label">Browse</span>
             </a>
-<a href="knowledge.html" class="nav-icon-btn" title="Knowledge Sources">
-              <img
-                src="assets/icons/site/nav-list.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-              />
-            </a>
-            <a href="worldmap.html" class="nav-icon-btn" title="Live Webcams">
-              <img
-                src="assets/icons/site/nav-map-pin.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-              />
-            </a>
-            <a href="about.html" class="nav-icon-btn" title="About GlobalDeets">
-              <img
-                src="assets/icons/site/nav-info.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-              />
-            </a>
+            <details class="nav-more">
+              <summary class="nav-icon-btn nav-item">
+                <svg class="nav-more-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="2" fill="currentColor" /><circle cx="12" cy="12" r="2" fill="currentColor" /><circle cx="19" cy="12" r="2" fill="currentColor" /></svg>
+                <span class="nav-label">More</span>
+              </summary>
+              <ul class="nav-more-menu">
+                <li><a href="timeline.html">Timeline</a></li>
+                <li><a href="globe.html">Globe</a></li>
+                <li><a href="worldmap.html">Live webcams</a></li>
+                <li><a href="knowledge.html">Knowledge sources</a></li>
+                <li><a href="/observatory/coverage/">Coverage &amp; evidence</a></li>
+                <li><a href="about.html">About &amp; methods</a></li>
+                <li><a href="contact.html">Contact &amp; corrections</a></li>
+              </ul>
+            </details>
           </nav>
         </div>
       </div>
@@ -202,7 +175,7 @@
     <section class="globe-hero-section" aria-label="Interactive Earth Globe">
       <div id="globe-hero-container"></div>
       <div class="globe-hero-overlay">
-        <h2 class="globe-hero-title">The Earth,<br /><span>Right Now.</span></h2>
+        <h2 class="globe-hero-title">The Earth,<br /> <span>Right Now.</span></h2>
         <p class="globe-hero-tagline">
           Live headlines from publishers around the world. Every story links to the original.
         </p>
@@ -432,5 +405,6 @@
         });
       }
     </script>
+      <script src="site-nav.js" defer></script>
   </body>
 </html>

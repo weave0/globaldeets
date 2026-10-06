@@ -96,6 +96,8 @@ async function verifyNews(page) {
     { timeout: 20_000 }
   );
   await page.locator('#news-grid .news-card').first().waitFor({ state: 'visible', timeout: 30_000 });
+  // GD-038 F3: coverage detail is behind the "Sources & coverage" disclosure; stories come first.
+  await page.locator('#news-sources-coverage summary').click();
   await page.locator('#news-coverage-context').waitFor({ state: 'visible', timeout: 30_000 });
   await waitForNewsTrust(page);
 
@@ -131,11 +133,12 @@ async function verifyMobileSurface(browser, viewport, label) {
       .waitFor({ state: 'visible', timeout: 10_000 });
     await page.locator('#globe-hero-container').waitFor({ state: 'visible', timeout: 20_000 });
     await verifyNoHorizontalOverflow(page, `${label} homepage`);
-    await requireTouchTarget(page.locator('.ecosystem-toggle'), `${label} ecosystem menu`);
     await requireTouchTarget(page.locator('header .nav-icon-btn').first(), `${label} primary nav`);
 
     await page.goto(`${BASE}/news.html`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
     await page.locator('#news-grid .news-card').first().waitFor({ state: 'visible', timeout: 30_000 });
+    await requireTouchTarget(page.locator('#news-sources-coverage summary'), `${label} sources & coverage toggle`);
+    await page.locator('#news-sources-coverage summary').click();
     await page.locator('#news-coverage-context').waitFor({ state: 'visible', timeout: 30_000 });
     await waitForNewsTrust(page);
     const sourceContext = page.locator('.news-source-context').first();
@@ -153,7 +156,7 @@ async function verifyServiceWorker(page) {
   const response = await page.request.get(`${BASE}/service-worker.js`);
   requireCondition(response.ok(), `service worker returned HTTP ${response.status()}`);
   const body = await response.text();
-  requireCondition(body.includes("globaldeets-cache-v3"), 'production service worker cache version is stale');
+  requireCondition(body.includes("globaldeets-cache-v4"), 'production service worker cache version is stale');
   requireCondition(
     body.includes('self.skipWaiting()'),
     'production service worker does not activate the new shell promptly'

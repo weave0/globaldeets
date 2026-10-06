@@ -2959,46 +2959,55 @@ body.globe-page {
   }
 
   header .primary-nav {
-    display: flex;
-    flex: 1 1 auto;
-    flex-wrap: nowrap;
-    justify-content: flex-end;
+    flex: 0 1 auto;
     gap: 4px;
-    min-width: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
   }
 
-  header .primary-nav::-webkit-scrollbar {
-    display: none;
+  header .primary-nav .nav-item {
+    flex-direction: column;
+    gap: 2px;
+    min-width: 52px;
+    height: 50px;
+    padding: 0.2rem 0.45rem;
+    font-size: 0.7rem;
   }
 
-  header .primary-nav .nav-icon-btn {
-    flex: 0 0 44px;
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+  header .primary-nav .nav-item img,
+  header .primary-nav .nav-more-icon {
+    width: 20px;
+    height: 20px;
   }
 
-  header .primary-nav .nav-icon-btn img {
-    width: 22px;
-    height: 22px;
-  }
-
+  /* The globe stays as a compact identity band; the reader must reach a real headline,
+     its publisher, and its source action on the first screen (tests/gd038-first-view). */
   .globe-hero-section {
-    height: 62svh;
-    min-height: 380px;
+    height: auto;
+    min-height: 0;
+  }
+
+  .globe-hero-overlay {
+    position: relative;
+    padding: 1.1rem 1rem 1rem;
+    justify-content: flex-end;
   }
 
   .globe-hero-title {
-    font-size: clamp(1.9rem, 9vw, 2.4rem);
+    margin: 0 0 0.35rem;
+    font-size: clamp(1.6rem, 8vw, 2rem);
   }
 
-  .globe-hero-tagline {
-    font-size: 0.95rem;
+  .globe-hero-title br {
+    display: none;
+  }
+
+  .globe-hero-tagline,
+  .globe-hero-cta,
+  .news-ticker-bar {
+    display: none;
   }
 
   .globe-pin-hint {
+    margin: 0;
     font-size: 0.75rem;
   }
 
@@ -3007,4 +3016,100 @@ body.globe-page {
     align-items: flex-start;
     gap: 0.35rem;
   }
+}
+
+/* =============================================
+   LABELED PRIMARY NAVIGATION (GD-038)
+   Destinations carry visible text labels; nothing essential depends on recognizing an icon or
+   hovering for a tooltip. Secondary destinations live in a native <details> "More" menu.
+   ============================================= */
+.primary-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.primary-nav .nav-item {
+  width: auto;
+  height: auto;
+  min-width: 44px;
+  min-height: 44px;
+  gap: 0.45rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.1;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primary-nav .nav-item img,
+.primary-nav .nav-more-icon,
+.primary-nav .nav-label {
+  position: relative;
+  z-index: 1;
+}
+
+.primary-nav .nav-item:hover,
+.primary-nav .nav-item:focus-visible {
+  border-color: rgba(0, 245, 255, 0.45);
+}
+
+.primary-nav .nav-item.active {
+  border-color: var(--neon-cyan);
+  background: rgba(0, 245, 255, 0.1);
+}
+
+summary.nav-item {
+  list-style: none;
+}
+
+summary.nav-item::-webkit-details-marker {
+  display: none;
+}
+
+.nav-more {
+  position: relative;
+}
+
+.nav-more[open] > summary.nav-item {
+  border-color: var(--neon-cyan);
+}
+
+.nav-more-menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 200;
+  min-width: 230px;
+  margin: 0;
+  padding: 0.4rem;
+  list-style: none;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  background: #0f1629;
+  box-shadow: var(--shadow-lg);
+}
+
+.nav-more-menu a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.85rem;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.nav-more-menu a:hover,
+.nav-more-menu a:focus-visible {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.nav-more-menu a[aria-current='page'] {
+  color: var(--neon-cyan);
+  font-weight: 600;
 }

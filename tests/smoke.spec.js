@@ -342,6 +342,8 @@ test('news page renders feed and exposes live source transparency', async ({ pag
   await expect(page.locator('#news-grid .news-card')).toHaveCount(3);
   await expect(page.locator('.news-error')).toHaveCount(0);
   await expect(page.getByText(/Unable to load news feed/i)).toHaveCount(0);
+  // Source and coverage detail lives in the "Sources & coverage" disclosure (GD-038 F3).
+  await page.locator('#news-sources-coverage summary').click();
   await expect(page.locator('#news-source-count')).toHaveText('21 source endpoints in the live contract');
   await expect(page.locator('#news-health-status')).toContainText('20/21 endpoints healthy');
   await expect(page.locator('.news-status-bar').filter({ hasText: 'Sources:' })).toContainText(

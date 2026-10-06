@@ -90,6 +90,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="world-desk.css" />
 <!-- Canonical -->
     <link rel="canonical" href="https://globaldeets.com/news" />
 
@@ -114,103 +115,128 @@
       <div class="container">
         <div class="header">
           <div class="logo">
-            <h1>GlobalDeets</h1>
+            <a href="index.html" class="site-logo-link" aria-label="GlobalDeets — Home">
+              <img
+                src="assets/logo-mark.png"
+                alt=""
+                role="presentation"
+                class="site-logo-mark"
+                width="220"
+                height="140"
+              />
+            </a>
             <p class="tagline">World News · Source Context · Original Publishers</p>
           </div>
           <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
-            <a href="index.html" class="nav-icon-btn" title="Home"
-              ><img
-                src="assets/icons/site/nav-home.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-            /></a>
-            <a href="globe.html" class="nav-icon-btn" title="Globe — Live Earth"
-              ><img
-                src="assets/icons/site/nav-globe.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-            /></a>
-            <a href="news.html" class="nav-icon-btn active" title="World News" aria-current="page"
-              ><img
-                src="assets/icons/site/nav-news.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-            /></a>
-<a href="knowledge.html" class="nav-icon-btn" title="Knowledge Sources"
-              ><img
-                src="assets/icons/site/nav-list.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-            /></a>
-            <a href="worldmap.html" class="nav-icon-btn" title="Live Webcams"
-              ><img
-                src="assets/icons/site/nav-map-pin.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-            /></a>
-            <a href="about.html" class="nav-icon-btn" title="About GlobalDeets"
-              ><img
-                src="assets/icons/site/nav-info.svg"
-                alt=""
-                aria-hidden="true"
-                width="32"
-                height="32"
-            /></a>
+            <a href="index.html" class="nav-icon-btn nav-item">
+              <img src="assets/icons/site/nav-home.svg" alt="" aria-hidden="true" width="22" height="22" />
+              <span class="nav-label">Today</span>
+            </a>
+            <a href="news.html" class="nav-icon-btn nav-item active" aria-current="page">
+              <img src="assets/icons/site/nav-news.svg" alt="" aria-hidden="true" width="22" height="22" />
+              <span class="nav-label">News</span>
+            </a>
+            <a href="categories.html" class="nav-icon-btn nav-item">
+              <img src="assets/icons/site/nav-list.svg" alt="" aria-hidden="true" width="22" height="22" />
+              <span class="nav-label">Browse</span>
+            </a>
+            <details class="nav-more">
+              <summary class="nav-icon-btn nav-item">
+                <svg class="nav-more-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="2" fill="currentColor" /><circle cx="12" cy="12" r="2" fill="currentColor" /><circle cx="19" cy="12" r="2" fill="currentColor" /></svg>
+                <span class="nav-label">More</span>
+              </summary>
+              <ul class="nav-more-menu">
+                <li><a href="timeline.html">Timeline</a></li>
+                <li><a href="globe.html">Globe</a></li>
+                <li><a href="worldmap.html">Live webcams</a></li>
+                <li><a href="knowledge.html">Knowledge sources</a></li>
+                <li><a href="/observatory/coverage/">Coverage &amp; evidence</a></li>
+                <li><a href="about.html">About &amp; methods</a></li>
+                <li><a href="contact.html">Contact &amp; corrections</a></li>
+              </ul>
+            </details>
           </nav>
         </div>
       </div>
     </header>
 
     <main id="main-content" role="main">
-      <div class="container">
-        <!-- Page header -->
+      <div class="container news-page">
         <div class="news-page-header">
-          <h2 class="news-page-title"><span>World</span> News Feed</h2>
-          <p class="news-page-subtitle">
-            Live, source-linked headlines from 21 governed source endpoints. Open a story at its
-            original publisher; inspect provenance, reuse-rights context, and coverage limitations
-            here.
-          </p>
+          <h1 class="news-page-title"><span>World</span> News Feed</h1>
         </div>
 
-        <!-- Region filter tabs -->
-        <div id="region-tabs" class="region-tabs" role="group" aria-label="Filter by region">
-          <!-- Rendered by news.js -->
+        <!-- Reader toolbar: region and filter stay reachable; everything else is one tap away -->
+        <div class="news-toolbar">
+          <div id="region-tabs" class="region-tabs" role="group" aria-label="Filter by region">
+            <!-- Rendered by news.js -->
+          </div>
+          <div class="news-tools">
+            <label class="visually-hidden" for="news-search">Filter loaded stories</label>
+            <input
+              id="news-search"
+              class="news-search-input"
+              type="search"
+              placeholder="Filter loaded stories"
+              autocomplete="off"
+            />
+          </div>
         </div>
 
-        <div class="news-tools" aria-label="Refine live news feed">
-          <label class="visually-hidden" for="news-search">Search loaded news</label>
-          <input
-            id="news-search"
-            class="news-search-input"
-            type="search"
-            placeholder="Search loaded headlines, sources, regions..."
-            autocomplete="off"
-          />
-          <p class="news-tools-note">
-            Source-first feed. Open a story to read it at the original publisher.
-          </p>
-        </div>
-
-        <!-- Status bar -->
-        <div class="news-status-bar">
+        <!-- One status line; consequential warnings render visibly in #news-alerts -->
+        <p class="news-status-line">
           <span id="news-status" aria-live="polite">Loading…</span>
-          <span class="news-sources-note">
-            Sources: BBC · AP · Guardian · Al Jazeera · DW · France 24 · Kyiv Independent ·
-            Ukrinform · NHK · Yonhap · The Hindu · CNA · Dawn · NPR · MercoPress · ABC Australia ·
-            Premium Times · The East African · Anadolu Agency · Minnesota Reformer · CalMatters
-          </span>
-        </div>
+          <span id="news-freshness"></span>
+        </p>
+        <div id="news-alerts" class="news-alerts" role="status"></div>
+
+        <details id="news-sources-coverage" class="news-disclosure">
+          <summary>Sources &amp; coverage</summary>
+          <div class="news-disclosure-body">
+            <p class="news-page-subtitle">
+              Live, source-linked headlines from 21 governed source endpoints. Open a story at its
+              original publisher; inspect provenance, reuse-rights context, and coverage limitations
+              here.
+            </p>
+            <div id="news-trust-bar" class="news-status-bar" aria-label="Source coverage and freshness">
+              <span id="news-source-count">Source contract loading…</span>
+              <span id="news-health-status" aria-live="polite">Health snapshot loading…</span>
+              <span class="news-sources-note"
+                ><a href="/observatory/coverage/">Coverage &amp; Evidence Observatory →</a></span
+              >
+            </div>
+            <div class="news-status-bar news-source-inventory">
+              <span class="news-sources-note">
+                Sources: BBC · AP · Guardian · Al Jazeera · DW · France 24 · Kyiv Independent ·
+                Ukrinform · NHK · Yonhap · The Hindu · CNA · Dawn · NPR · MercoPress · ABC Australia ·
+                Premium Times · The East African · Anadolu Agency · Minnesota Reformer · CalMatters
+              </span>
+            </div>
+            <section
+              id="news-coverage-context"
+              class="news-context-panel"
+              aria-labelledby="news-context-title"
+            >
+              <div class="news-context-heading">
+                <div>
+                  <p class="news-context-eyebrow">Reading context</p>
+                  <h2 id="news-context-title">What this feed can — and cannot — tell you</h2>
+                </div>
+                <a href="/observatory/coverage/" class="news-context-deep-link"
+                  >Inspect full coverage →</a
+                >
+              </div>
+              <div id="news-context-summary" class="news-context-summary" aria-live="polite">
+                Governed coverage context loading…
+              </div>
+              <div id="news-context-gaps" class="news-context-gaps"></div>
+              <p class="news-context-caveat">
+                Routing region is a feed organization field, not a claim about publisher origin, story
+                locality, truth, quality, or political viewpoint.
+              </p>
+            </section>
+          </div>
+        </details>
 
         <!-- News grid -->
         <div id="news-grid" class="news-grid" aria-label="News stories">
@@ -248,5 +274,6 @@
         });
       }
     </script>
+      <script src="site-nav.js" defer></script>
   </body>
 </html>

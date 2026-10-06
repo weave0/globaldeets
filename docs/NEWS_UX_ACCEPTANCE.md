@@ -10,6 +10,8 @@ npm run test:functions
 npx playwright test
 ```
 
+The main suite blocks service workers so request mocks stay deterministic; `tests/gd038-service-worker.spec.js` re-enables them to test the real worker.
+
 Production checks run in `.github/workflows/deploy.yml` against the exact deployed artifact.
 
 ## R1: Reader reset
@@ -27,7 +29,10 @@ Production checks run in `.github/workflows/deploy.yml` against the exact deploy
 | 9 | No GFD portfolio content, sibling-product domains, or Mission Control on public pages | `gd038-world-desk.spec.js`: "public pages and the deploy root…"; production: `tools/verify-boundary-retired-prod.js` |
 | 10 | Phone widths (390, 360): no horizontal overflow; primary controls ≥ 44×44 CSS px | `mobile-reader.spec.js`, `mobile-secondary-surfaces.spec.js`; production: `verify-reader-prod.js`, `verify-secondary-mobile-prod.js` |
 | 11 | Source count shown before JavaScript matches the canonical registry | `smoke.spec.js`: "homepage raw HTML exposes the canonical live source count…" |
-| 12 | Offline readers are told they are seeing saved stories | Service worker marks offline API copies; **no automated browser test yet** |
+| 12 | Offline readers are told they are seeing saved stories; the warning stays visible with details collapsed | `gd038-service-worker.spec.js` (real worker); `gd038-first-view.spec.js` (warning placement) |
+| 12a | The service worker installs (every precached file exists) and retires the previous cache | `gd038-service-worker.spec.js` |
+| 12b | On phones (390×844, 360×800, 360×640) the first headline, its publisher, and its source action are visible without scrolling on the homepage and News | `gd038-first-view.spec.js` |
+| 12c | Primary destinations have visible labels; "More" opens and closes by keyboard and returns focus | `gd038-first-view.spec.js` |
 | 13 | Keyboard-only and screen-reader journeys | **Not automated yet** (R7) |
 | 14 | WebKit and Firefox engines | **Not automated yet** (R7; current projects are Chromium-only) |
 

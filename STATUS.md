@@ -21,10 +21,13 @@ Status of the roadmap's R1 release ("Reader reset", GD-038) on branch `feat/gd03
 | Honest globe geography | Done: pins are labeled as publisher home cities |
 | Service worker | Fixed precache (it previously named missing files); offline API copies are labeled |
 | Boundary verifier checks semantics | Done: `tools/verify-boundary-retired-prod.js` |
-| Labeled shared navigation, light mode, feed-card compaction (F3) | Not started |
+| Stories-first News page and compact cards (F3) | Implemented; first-view regression at 390×844, 360×800, 360×640 |
+| Labeled shared navigation (Today, News, Browse, More) | Implemented on all primary pages |
+| Service worker install, upgrade, labeled offline copy | Implemented; dedicated SW-enabled spec |
+| Light mode | Deferred to R7; not part of this release |
 | Production deploy of the above | Not deployed; must pass the deploy workflow's exact-artifact verification |
 
-Static/dynamic source truth (F6) is in progress on `feat/gd0260-static-source-truth` (GD-026.0), which predates GD-037 and needs to be brought onto current `main`.
+Static/dynamic source truth (F6) is already on `main` (8459811) with raw-HTML and fallback regressions; the older `feat/gd0260-static-source-truth` branch is superseded.
 
 ## Evidence state
 
@@ -32,5 +35,4 @@ Production verification is produced by the deploy workflow, not by this document
 
 ## Known engineering debt
 
-- `tests/mission-control-scheduler.test.mjs` reports seed-plane drift on Windows checkouts with `core.autocrlf=true` (line endings), not on CI.
 - Many root-level Markdown files describe the retired portfolio product and are archival.

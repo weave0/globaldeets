@@ -335,12 +335,16 @@ Updated as work lands. "Implemented" means merged code with automated tests; it 
 | R0: single public-product contract | Implemented on `feat/gd038-world-desk` | This document, `README.md`, `STATUS.md` (supersession note), route inventory below, `docs/NEWS_UX_ACCEPTANCE.md` |
 | F1: portfolio directory retired (GD-038) | Implemented | `tests/gd038-world-desk.spec.js`; `tools/verify-boundary-retired-prod.js` now checks content |
 | F2: planning docs contradict the boundary | Implemented | `README.md` and `STATUS.md` rewritten |
-| F3: implementation vocabulary before stories | Partly: homepage leads with stories; `/news` still opens with the reading-context panel | — |
+| F3: implementation vocabulary before stories | Implemented: `/news` is toolbar → status → visible warnings → stories; intro, inventory, rights statistics, and reading context sit behind "Sources & coverage" | `tests/gd038-first-view.spec.js` |
 | F4: region-switch race | Implemented | `tests/gd038-feed-reliability.spec.js` ("a slow earlier region can never overwrite…") |
 | F5: trust hydration waits on the slowest request | Implemented | `tests/gd038-feed-reliability.spec.js` ("a hung trust endpoint…") |
-| F6: static/dynamic source truth | In progress on `feat/gd0260-static-source-truth` (GD-026.0) | Needs to be brought onto current `main` |
+| F6: static/dynamic source truth | Implemented on `main` (8459811); the stale `feat/gd0260-static-source-truth` branch is superseded and left untouched | `smoke.spec.js` raw-HTML and fallback source-count tests |
 | R1 World Desk homepage | Implemented | `tests/gd038-world-desk.spec.js` |
-| R1 labeled shared navigation, light mode, card compaction | Not started | — |
+| R1 labeled shared navigation | Implemented: Today, News, Browse + a labeled "More" menu on all primary pages | `gd038-first-view.spec.js` (nav test) |
+| R1 compact readable cards | Implemented: headline → publisher/time → permitted text → "Read at"; source context collapsed | `gd038-first-view.spec.js`, `gd021`, `gd022` |
+| R1 phone first view | Implemented: first headline, publisher, and source action visible without scrolling at 390×844, 360×800, 360×640 | `gd038-first-view.spec.js` |
+| R1 service worker install/upgrade/offline labeling | Implemented with a dedicated service-worker-enabled test path | `gd038-service-worker.spec.js` |
+| R1 light mode | **Deferred** (not part of the reader-reset release; tracked under R7) | — |
 | R1 production release | Not deployed | — |
 | R2–R9 | Not started (GD-026 place work exists on `feat/gd0261-place-registry`) | — |
 

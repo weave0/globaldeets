@@ -48,6 +48,10 @@
   let appendInFlight = false;
   let feedState = 'loading'; // 'loading' | 'ready' | 'error'
   let feedErrorKind = null;
+  let feedRetrievedAt = null;
+  let feedOfflineCopyAt = null;
+  // functions/api/news.js caches the assembled feed for CACHE_TTL_SECONDS (900s).
+  const SERVER_CACHE_MAX_MINUTES = 15;
   // Coverage context shows "unavailable" only after both of its inputs have actually settled.
   const coverageSettled = { coverage: false, admission: false };
 
@@ -100,54 +104,13 @@
     });
   }
 
+  // The trust bar and coverage panel are static markup inside the "Sources & coverage"
+  // disclosure (GD-038 F3), so the raw HTML is meaningful before hydration and stories come first.
   function prepareTrustSurface() {
     const subtitle = document.querySelector('.news-page-subtitle');
     if (subtitle) {
       subtitle.textContent =
         'Live source-linked headlines across seven routing regions. Publisher links stay primary; source provenance, reuse limits, freshness and coverage gaps are inspectable.';
-    }
-    const tagline = document.querySelector('.logo .tagline');
-    if (tagline) tagline.textContent = 'World News · Source-Linked · Evidence-Aware';
-    const sourceNote = document.querySelector('.news-sources-note');
-    if (sourceNote) sourceNote.textContent = 'Source inventory loading…';
-
-    if (!document.getElementById('news-trust-bar')) {
-      const tools = document.querySelector('.news-tools');
-      if (tools) {
-        const trustBar = document.createElement('div');
-        trustBar.id = 'news-trust-bar';
-        trustBar.className = 'news-status-bar';
-        trustBar.setAttribute('aria-label', 'Source coverage and freshness');
-        trustBar.innerHTML = `
-          <span id="news-source-count">Source contract loading…</span>
-          <span id="news-health-status" aria-live="polite">Health snapshot loading…</span>
-          <span class="news-sources-note"><a href="/observatory/coverage/">Coverage & Evidence Observatory →</a></span>`;
-        tools.insertAdjacentElement('afterend', trustBar);
-      }
-    }
-
-    if (!document.getElementById('news-coverage-context')) {
-      const trustBar = document.getElementById('news-trust-bar');
-      if (trustBar) {
-        const panel = document.createElement('section');
-        panel.id = 'news-coverage-context';
-        panel.className = 'news-context-panel';
-        panel.setAttribute('aria-labelledby', 'news-context-title');
-        panel.innerHTML = `
-          <div class="news-context-heading">
-            <div>
-              <p class="news-context-eyebrow">Reading context</p>
-              <h3 id="news-context-title">What this feed can — and cannot — tell you</h3>
-            </div>
-            <a href="/observatory/coverage/" class="news-context-deep-link">Inspect full coverage →</a>
-          </div>
-          <div id="news-context-summary" class="news-context-summary" aria-live="polite">
-            Governed coverage context loading…
-          </div>
-          <div id="news-context-gaps" class="news-context-gaps"></div>
-          <p class="news-context-caveat">Routing region is a feed organization field, not a claim about publisher origin, story locality, truth, quality, or political viewpoint.</p>`;
-        trustBar.insertAdjacentElement('afterend', panel);
-      }
     }
   }
 
@@ -173,7 +136,13 @@
         signal: controller.signal,
       });
       if (!response.ok) throw new FeedRequestError('upstream', `${path}: HTTP ${response.status}`);
-      return await response.json();
+      const data = await response.json();
+      // The service worker marks API responses it replays from cache while offline.
+      const offlineCopy = response.headers.get('X-GlobalDeets-Offline-Copy');
+      if (offlineCopy && data && typeof data === 'object') {
+        Object.defineProperty(data, 'offlineCopyAt', { value: offlineCopy, enumerable: false });
+      }
+      return data;
     } catch (error) {
       if (error instanceof FeedRequestError) throw error;
       if (timedOut) throw new FeedRequestError('timeout', `${path}: no response in ${timeoutMs}ms`);
@@ -215,7 +184,7 @@
       if (count) {
         count.textContent = `${sourceData.totalSources ?? sources.length} source endpoints in the live contract`;
       }
-      const sourceNote = document.querySelector('.news-status-bar:not(#news-trust-bar) .news-sources-note');
+      const sourceNote = document.querySelector('.news-source-inventory .news-sources-note');
       if (sourceNote) {
         const names = sources.map(source => source.name).filter(Boolean);
         sourceNote.textContent = names.length
@@ -263,6 +232,7 @@
         const total = Number.isFinite(healthData.totalSources) ? healthData.totalSources : '—';
         healthNode.textContent = `${healthy}/${total} endpoints healthy · checked ${formatSnapshotTime(healthData.generatedAt)}`;
       }
+      renderAlerts();
     } else {
       const healthNode = document.getElementById('news-health-status');
       if (healthNode) healthNode.textContent = 'Health snapshot temporarily unavailable';
@@ -357,6 +327,8 @@
       r => `
       <button type="button" class="region-tab${r === currentRegion ? ' active' : ''}" data-region="${r}" aria-pressed="${r === currentRegion}">${REGION_LABELS[r]}</button>`
     ).join('');
+    // A deep-linked region may sit off-screen in the phone's single scrolling row.
+    tabBar.querySelector('.region-tab.active')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
     tabBar.addEventListener('click', e => {
       const btn = e.target.closest('.region-tab');
       if (!btn || btn.classList.contains('active')) return;
@@ -392,6 +364,7 @@
       if (loadBtn) loadBtn.classList.add('js-hidden');
       setLoadMoreNote('');
       updateStatus();
+      renderAlerts();
     } else {
       if (appendInFlight || feedState !== 'ready') return;
       appendInFlight = true;
@@ -417,8 +390,11 @@
         window.__globalDeetsNewsAdmissionFingerprint = data.admissionFingerprint;
         window.__globalDeetsNewsDisplayPolicyVersion = data.displayPolicyVersion;
         window.__globalDeetsNewsRegion = request.region;
+        feedRetrievedAt = new Date();
+        feedOfflineCopyAt = data.offlineCopyAt || null;
         renderVisibleCards();
         updateStatus();
+        renderAlerts();
         if (loadBtn) {
           loadBtn.disabled = false;
           const total = Number.isFinite(data.total) ? data.total : null;
@@ -527,6 +503,8 @@
     grid.appendChild(fragment);
   }
 
+  // Card order (GD-038 F3): headline → publisher and publication time → permitted supporting
+  // text → the publisher action. Labels appear only when they change how the card should be read.
   function buildCard(item) {
     const card = document.createElement('article');
     card.className = 'news-card';
@@ -535,35 +513,62 @@
     const headlineLinkOnly = item.displayMode === 'headline-link';
     const provenance = sourceById.get(item.sourceId) || null;
     const admission = admissionById.get(item.sourceId) || null;
+    const href = safeHref(item.sourceUrl);
+    const source = item.source || 'the publisher';
+    const headline = escapeHtml(item.headline || 'Untitled story');
+    const originalLang = escapeHtml(String(item.originalLang || '').toUpperCase());
 
-    const mtBadge = !headlineLinkOnly && item.translated
-      ? `<span class="news-mt-badge" title="Machine translated from ${escapeAttr(item.originalLang || 'original language')} · Cloudflare AI (m2m100)">MT</span>`
-      : !headlineLinkOnly && item.originalLang && item.originalLang !== 'en' && !item.translated
-        ? `<span class="news-mt-badge news-mt-badge--failed" title="Originally in ${escapeAttr(item.originalLang)}; translation unavailable">⚠ ${escapeAttr(item.originalLang.toUpperCase())}</span>`
-        : '';
-    const policyBadge = headlineLinkOnly
-      ? '<span class="news-source-badge news-source-badge--restricted" title="The reviewed source-use record does not authorize the richer card treatment">Headline/link only</span>'
-      : '<span class="news-source-badge news-source-badge--bounded" title="The reviewed source-use record permits GlobalDeets current bounded display">Bounded display</span>';
+    const flags = [];
+    if (headlineLinkOnly) {
+      flags.push(
+        '<span class="news-source-badge news-source-badge--restricted">Headline only</span>'
+      );
+    } else if (item.translated) {
+      flags.push(
+        `<span class="news-mt-badge">Machine-translated from ${originalLang || 'another language'}</span>`
+      );
+    } else if (item.originalLang && item.originalLang !== 'en') {
+      flags.push(
+        `<span class="news-mt-badge news-mt-badge--failed">Original language: ${originalLang}; not translated</span>`
+      );
+    }
     const summaryHtml =
       typeof item.summary === 'string' && item.summary.trim()
         ? `<p class="news-summary">${escapeHtml(item.summary)}</p>`
         : '';
-    const contextHtml = buildSourceContext(item, provenance, admission);
+    const regionLabel = item.region === 'global' ? 'Global' : REGION_LABELS[item.region];
 
     card.innerHTML = `
-      <div class="news-card-header">
-        <span class="news-source-badge">${escapeHtml(item.source || '')}</span>
-        ${policyBadge}${mtBadge}
-        <time class="news-time"${dateAttr}>${pubTime}</time>
-      </div>
-      <h2 class="news-headline"><a href="${escapeAttr(item.sourceUrl || '#')}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.headline || '')}</a></h2>
+      <h2 class="news-headline">${
+        href
+          ? `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">${headline}</a>`
+          : headline
+      }</h2>
+      <p class="news-card-meta">
+        <span class="news-source-name">${escapeHtml(item.source || 'Unnamed source')}</span>
+        ${pubTime ? `<time class="news-time"${dateAttr}>${pubTime}</time>` : ''}
+        ${regionLabel ? `<span class="news-region-tag">Feed: ${escapeHtml(regionLabel)}</span>` : ''}
+      </p>
+      ${flags.length ? `<p class="news-card-flags">${flags.join('')}</p>` : ''}
       ${summaryHtml}
-      ${contextHtml}
-      <div class="news-card-footer">
-        <span class="news-region-tag">${escapeHtml(REGION_LABELS[item.region] || item.region || '')}</span>
-        <a class="news-read-link" href="${escapeAttr(item.sourceUrl || '#')}" target="_blank" rel="noopener noreferrer">Read at ${escapeHtml(item.source || 'source')} →</a>
-      </div>`;
+      <div class="news-card-actions">
+        ${
+          href
+            ? `<a class="news-read-link" href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">Read at ${escapeHtml(source)} →<span class="visually-hidden"> (opens in a new tab)</span></a>`
+            : '<span class="news-read-unavailable">Publisher link unavailable</span>'
+        }
+      </div>
+      ${buildSourceContext(item, provenance, admission)}`;
     return card;
+  }
+
+  function safeHref(value) {
+    try {
+      const url = new URL(value);
+      return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : null;
+    } catch {
+      return null;
+    }
   }
 
   function buildSourceContext(item, provenance, admission) {
@@ -590,7 +595,7 @@
     }
     return `
       <details class="news-source-context">
-        <summary>Why this source is shown this way</summary>
+        <summary>Source context</summary>
         <div class="news-source-context-body">
           <p class="news-rights-state"><strong>${escapeHtml(RIGHTS_LABELS[status] || humanize(status))}.</strong> ${escapeHtml(explanation)}</p>
           ${facts.length ? `<div class="news-source-facts">${facts.join('')}</div>` : ''}
@@ -645,10 +650,64 @@
       return;
     }
     const total = window.__globalDeetsNewsTotal ?? '?';
-    const cachedNote = window.__globalDeetsNewsCached ? ' · cached' : '';
     const visibleItems = getVisibleItems();
-    const searchNote = searchTerm ? ` · ${visibleItems.length} matching search` : '';
-    status.textContent = `${allItems.length} of ${total} stories${cachedNote}${searchNote}`;
+    const searchNote = searchTerm ? ` · ${visibleItems.length} matching filter` : '';
+    status.textContent = `${allItems.length} of ${total} stories${searchNote}`;
+    updateFreshness();
+  }
+
+  // Publication time lives on each card; this line states only when this page retrieved the feed
+  // and how old the server's copy can be. It never claims the stories themselves are current.
+  function updateFreshness() {
+    const node = document.getElementById('news-freshness');
+    if (!node) return;
+    if (feedState !== 'ready' || !feedRetrievedAt) {
+      node.textContent = '';
+      return;
+    }
+    if (feedOfflineCopyAt) {
+      node.textContent = 'saved copy';
+      return;
+    }
+    const retrieved = feedRetrievedAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    node.textContent = window.__globalDeetsNewsCached
+      ? `retrieved ${retrieved} · server copy up to ${SERVER_CACHE_MAX_MINUTES} min old`
+      : `retrieved ${retrieved}`;
+  }
+
+  // Consequential conditions stay visible outside the "Sources & coverage" disclosure.
+  function renderAlerts() {
+    const container = document.getElementById('news-alerts');
+    if (!container) return;
+    const alerts = [];
+    if (feedState === 'ready' && feedOfflineCopyAt) {
+      const saved = new Date(feedOfflineCopyAt);
+      const when = Number.isNaN(saved.getTime())
+        ? 'earlier'
+        : `at ${saved.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+      alerts.push([
+        'offline',
+        `You appear to be offline. These stories were saved ${when} and may be out of date.`,
+      ]);
+    }
+    const healthy = healthData?.healthySources;
+    const totalSources = healthData?.totalSources;
+    if (Number.isFinite(healthy) && Number.isFinite(totalSources) && healthy < totalSources) {
+      const failing = totalSources - healthy;
+      alerts.push([
+        'partial',
+        `${failing} of ${totalSources} sources failed their most recent check, so some stories may be missing.`,
+      ]);
+    }
+    container.replaceChildren(
+      ...alerts.map(([kind, text]) => {
+        const item = document.createElement('p');
+        item.className = 'news-alert';
+        item.dataset.alert = kind;
+        item.textContent = text;
+        return item;
+      })
+    );
   }
 
   function escapeHtml(str) {

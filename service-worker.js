@@ -86,5 +86,7 @@ async function stampCachedAt(response) {
 async function markOfflineCopy(cached) {
   const headers = new Headers(cached.headers);
   headers.set(OFFLINE_COPY_HEADER, cached.headers.get(CACHED_AT_HEADER) || 'unknown');
+  // Readable by the page even when the API is reached cross-origin (local development).
+  headers.set('Access-Control-Expose-Headers', OFFLINE_COPY_HEADER);
   return new Response(await cached.blob(), { status: cached.status, headers });
 }
