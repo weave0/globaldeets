@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.2.0",
   "contractName": "globaldeets-mission-control-history",
-  "generatedAt": "2026-10-05T18:37:31.489Z",
+  "generatedAt": "2026-10-06T01:04:21.915Z",
   "supportedWindowsDays": [
     7,
     28,
@@ -1095,6 +1095,93 @@
         "instrumentedProperties": 2,
         "propertiesApplicable": 20,
         "feedGeneratedAt": "2026-10-05T18:37:53.036Z"
+      }
+    },
+    {
+      "snapshotId": "2026-10-06.scheduled",
+      "observedAt": "2026-10-06T01:04:21.915Z",
+      "collector": {
+        "kind": "scheduled",
+        "runId": "run-37397247032-1"
+      },
+      "estate": {
+        "activeZones": 25,
+        "rumObservedZones": 21,
+        "rumCoveragePct": 84,
+        "evidenceState": "carried-forward",
+        "inventoryObservedAt": "2026-10-06T01:04:21.917Z",
+        "comparabilityKey": "estate-rum|v1"
+      },
+      "availability": {
+        "evidenceState": "measured",
+        "probeRunId": "run-37397247032-1",
+        "probeObservedAt": "2026-10-06T01:04:21.915Z",
+        "comparabilityKey": "estate-availability|v1|properties=25",
+        "propertyCount": 25,
+        "conclusiveServiceZones": 20,
+        "availableZones": 20,
+        "degradedZones": 0,
+        "unavailableZones": 0,
+        "noServiceZones": 4,
+        "blockedZones": 1,
+        "unknownZones": 0,
+        "verifiedHealthyZones": 2,
+        "availableRatioPct": 100,
+        "dayRollup": {
+          "runs": 1,
+          "worstAvailableZones": 20,
+          "worstUnavailableZones": 0
+        }
+      },
+      "globaldeetsOperational": {
+        "observationWindow": null,
+        "edgeRequests": null,
+        "edgeVisits": null,
+        "syntheticHealthVisits": null,
+        "residualUnclassifiedVisits": null,
+        "evidenceState": "unavailable",
+        "investorSafe": false,
+        "reason": "No Canonical Gold metric is bound to globaldeets.com (registry goldBindings is empty)."
+      },
+      "certifiedAudience": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": null,
+        "certified": false,
+        "reason": "No certified audience source is connected; edge and probe traffic are not human audience."
+      },
+      "instrumentation": {
+        "evidenceState": "measured",
+        "probeRunId": "run-37397247032-1",
+        "comparabilityKey": "instrumentation|v1|properties=25",
+        "applicable": 20,
+        "activeVerified": 5,
+        "configuredUnverified": 14,
+        "configuredInvalid": 0,
+        "absent": 0,
+        "inaccessible": 1,
+        "unknown": 0
+      },
+      "audience": {
+        "evidenceState": "partial",
+        "sourceStatus": "partial",
+        "comparabilityKey": "audience|gold-1.2|properties=25|gold|1.2|28d|2026-10-03T00:00:00Z|UTC|half_open",
+        "sourceGeneratedAt": "2026-10-03T06:10:03Z",
+        "propertiesMeasured": 22,
+        "propertiesExpected": 25,
+        "edgeRequests": {
+          "7": 237263,
+          "28": 917231,
+          "90": 2407460
+        },
+        "limitations": "Edge requests, not people; includes automated traffic."
+      },
+      "businessEvents": {
+        "evidenceState": "measured",
+        "sourceStatus": "measured",
+        "instrumentedProperties": 2,
+        "propertiesApplicable": 20,
+        "feedGeneratedAt": "2026-10-06T01:04:36.451Z"
       }
     }
   ],
