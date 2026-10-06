@@ -13,8 +13,6 @@ export default [
       '.wrangler/**',
       '.vite/**',
       'assets/**',
-      'PROJECT_TEMPLATE.js',
-      'QUICK_REFERENCE.js',
     ],
   },
   js.configs.recommended,
@@ -36,6 +34,7 @@ export default [
         document: 'readonly',
         fetch: 'readonly',
         Globe: 'readonly',
+        Headers: 'readonly',
         gtag: 'readonly',
         history: 'readonly',
         Image: 'readonly',
@@ -48,7 +47,6 @@ export default [
         Node: 'readonly',
         performance: 'readonly',
         process: 'readonly',
-        projects: 'readonly',
         requestAnimationFrame: 'readonly',
         Response: 'readonly',
         require: 'readonly',
@@ -114,15 +112,6 @@ export default [
     files: ['news.js'],
     rules: {
       'no-unused-vars': ['error', { ...strictUnused, varsIgnorePattern: '^status$' }],
-    },
-  },
-  {
-    files: ['projects-render.js'],
-    rules: {
-      'no-unused-vars': [
-        'error',
-        { ...strictUnused, argsIgnorePattern: '^(?:_|projectsToCount)$' },
-      ],
     },
   },
   {

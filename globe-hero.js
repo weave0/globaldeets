@@ -5,7 +5,8 @@
 (function () {
   'use strict';
 
-  // Approximate source-to-location mapping for geo-pinning news items
+  // Approximate publisher home cities. Pins mark where a publisher is based, never where a story
+  // happened: GlobalDeets does not yet establish event location, so the globe must not imply it.
   const SOURCE_COORDS = {
     Reuters: [40.71, -74.01],
     AP: [40.71, -74.01],
@@ -172,13 +173,18 @@
       if (el) el.textContent = val || '';
     };
 
-    set('news-overlay-source', item.source);
+    set(
+      'news-overlay-source',
+      item.source ? `${item.source} · pin shows the publisher’s home city` : 'Publisher unknown'
+    );
     set('news-overlay-title', item.headline);
     set('news-overlay-summary', item.summary);
 
     const link = document.getElementById('news-overlay-link');
     if (link) {
       link.href = item.sourceUrl || '#';
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
       link.textContent = `Read at ${item.source || 'source'} →`;
     }
 

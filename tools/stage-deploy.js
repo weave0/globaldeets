@@ -44,8 +44,6 @@ const EXCLUDED_ROOT_JS = new Set([
   'build-metadata.js',
   'generate-icons.js',
   'health-prod.js',
-  'PROJECT_TEMPLATE.js',
-  'QUICK_REFERENCE.js',
   'playwright.config.js',
   'eslint.config.mjs',
 ]);

@@ -38,7 +38,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="GlobalDeets — Earth's information nerve center. Live world news geo-pinned on a 3D globe, credible source links, culture context, webcams, and public knowledge resources."
+      content="GlobalDeets is a source-first world news desk: the latest headlines from publishers around the world, each linking to the original, with source provenance and coverage limits shown openly."
     />
     <meta
       name="keywords"
@@ -49,19 +49,19 @@
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.globaldeets.com/" />
-    <meta property="og:title" content="GlobalDeets - Earth's Information Nerve Center" />
+    <meta property="og:title" content="GlobalDeets — World Desk" />
     <meta
       property="og:description"
-      content="Live world news, original-source links, culture context, webcams, and public knowledge resources organized around the globe."
+      content="The latest world reporting, linked to the original publishers, with source provenance and coverage limits shown openly."
     />
     <meta property="og:image" content="https://www.globaldeets.com/assets/og-banner.png" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="GlobalDeets - Earth's Information Nerve Center" />
+    <meta name="twitter:title" content="GlobalDeets — World Desk" />
     <meta
       name="twitter:description"
-      content="Live world news, original-source links, culture context, webcams, and public knowledge resources organized around the globe."
+      content="The latest world reporting, linked to the original publishers, with source provenance and coverage limits shown openly."
     />
     <meta name="twitter:image" content="https://www.globaldeets.com/assets/og-banner.png" />
 
@@ -73,7 +73,7 @@
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
 
-    <title>GlobalDeets — Earth's Information Nerve Center | Live World News & Analytics</title>
+    <title>GlobalDeets — World Desk: Latest Reporting From Original Publishers</title>
     <!-- Canonical -->
     <link rel="canonical" href="https://globaldeets.com/" />
 
@@ -100,63 +100,21 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="bi-ecosystem.css" />
-<!-- JSON-LD Structured Data for Google -->
+    <link rel="stylesheet" href="world-desk.css" />
+    <!-- JSON-LD Structured Data for Google -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "GlobalDeets",
-        "alternateName": "GlobalDeets World Information Platform",
         "url": "https://globaldeets.com",
-        "description": "A source-first world information platform organizing live news, public knowledge, culture context, webcams, and governed evidence around place.",
+        "description": "A source-first world news desk: live headlines that link to the original publisher, with source provenance and coverage limits shown openly.",
+        "inLanguage": "en-US",
         "publisher": {
           "@type": "Organization",
           "name": "Good Flippin Design",
           "url": "https://goodflippindesign.com"
-        },
-        "creator": {
-          "@type": "Person",
-          "name": "Brett Weaver",
-          "url": "https://goodflippindesign.com"
-        },
-        "inLanguage": "en-US",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://globaldeets.com/categories.html?search={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
         }
-      }
-    </script>
-
-    <!-- Schema: BreadcrumbList -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://globaldeets.com"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Categories",
-            "item": "https://globaldeets.com/categories.html"
-          },
-          {
-            "@type": "ListItem",
-            "position": 3,
-            "name": "Timeline",
-            "item": "https://globaldeets.com/timeline.html"
-          }
-        ]
       }
     </script>
   </head>
@@ -178,7 +136,7 @@
                 height="140"
               />
             </a>
-            <p class="tagline">Live World Desk · Source Library · Culture Atlas</p>
+            <p class="tagline">World Desk · Original Publishers · Open Sources</p>
           </div>
           <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
             <a href="index.html" class="nav-icon-btn active" title="Home" aria-current="page">
@@ -246,13 +204,15 @@
       <div class="globe-hero-overlay">
         <h2 class="globe-hero-title">The Earth,<br /><span>Right Now.</span></h2>
         <p class="globe-hero-tagline">
-          Live world news, geo-pinned on a dark/neon 3D globe. No opinion. Just signal.
+          Live headlines from publishers around the world. Every story links to the original.
         </p>
         <div class="globe-hero-cta">
-          <a href="news.html" class="btn-globe-primary">Read World News</a>
+          <a href="#world-desk" class="btn-globe-primary">Today&rsquo;s latest</a>
           <a href="globe.html" class="btn-globe-secondary">Full Globe &rarr;</a>
         </div>
-        <p class="globe-pin-hint">&#8593; Click any orange pin to read the story</p>
+        <p class="globe-pin-hint">
+          Pins mark each publisher&rsquo;s home city, not where the story happened.
+        </p>
       </div>
       <div class="news-ticker-bar" aria-label="News ticker">
         <span class="ticker-label">LIVE</span>
@@ -269,345 +229,155 @@
       <a id="news-overlay-link" target="_blank" rel="noopener noreferrer"></a>
     </div>
 
-    <!-- Neon landscape cinematic divider -->
-    <section class="neon-landscape-band" aria-label="Deep space neon cityscape">
-      <div class="neon-landscape-overlay">
-        <p class="neon-landscape-tagline">
-          <span class="nlb-word nlb-cyan">Live.</span>
-          <span class="nlb-word nlb-purple">Real&#8209;time.</span>
-          <span class="nlb-word nlb-orange">Worldwide.</span>
-        </p>
-      </div>
-    </section>
+    <main class="main-content" id="main-content" role="main" aria-label="GlobalDeets World Desk">
+      <!-- World Desk: the useful part comes first (GD-038) -->
+      <section id="world-desk" class="desk" aria-labelledby="desk-title">
+        <header class="desk-header">
+          <p class="desk-eyebrow">Today</p>
+          <h2 id="desk-title" class="desk-title">World Desk</h2>
+          <p class="desk-dateline">
+            <time id="desk-date"></time>
+            <span id="desk-updated" class="desk-updated" aria-live="polite"
+              >Loading latest reporting…</span
+            >
+          </p>
+        </header>
 
-      <!-- GlobalDeets Product Spine -->
-      <main
-        class="main-content"
-        id="main-content"
-        role="main"
-        aria-label="GlobalDeets world intelligence library"
-      >
-        <!-- Featured Product Spotlight -->
-        <section
-          class="featured-platform scroll-reveal scroll-reveal--delay-1"
-          data-platform-id="world-desk"
-        >
-          <div class="platform-grid">
-            <div class="platform-preview">
-              <div class="live-badge">
-                <span class="live-indicator"></span>
-                Live World Desk
-              </div>
-              <div class="screenshot-fallback">
-                <div class="dashboard-mock">
-                  <div class="dm-header">
-                    <span class="dm-title">Planetary Signal Board</span>
-                    <span class="dm-source">News · Culture · Sources · Places</span>
+        <div class="desk-grid">
+          <div class="desk-latest">
+            <div class="desk-section-head">
+              <h3>Latest reporting</h3>
+              <p class="desk-note">
+                Newest first from our current sources. Not ranked by importance.
+              </p>
+            </div>
+            <ol id="desk-latest" class="desk-stories" data-limit="8">
+              <li class="desk-state">
+                <noscript>
+                  Latest headlines need JavaScript. You can still
+                  <a href="news.html">open the full news feed</a>.
+                </noscript>
+              </li>
+            </ol>
+            <a class="desk-more" href="news.html">See all latest reporting →</a>
+          </div>
+
+          <aside class="desk-side" aria-label="Browse and coverage">
+            <section class="desk-panel" aria-labelledby="desk-regions-title">
+              <h3 id="desk-regions-title">Browse by feed region</h3>
+              <ul class="desk-region-links">
+                <li><a href="news.html?region=americas">Americas</a></li>
+                <li><a href="news.html?region=europe">Europe</a></li>
+                <li><a href="news.html?region=asia">Asia</a></li>
+                <li><a href="news.html?region=middle-east">Middle East</a></li>
+                <li><a href="news.html?region=africa">Africa</a></li>
+                <li><a href="news.html?region=pacific">Pacific</a></li>
+              </ul>
+              <p class="desk-caveat">
+                Feed regions group publishers. They are not the location of a story.
+              </p>
+            </section>
+
+            <section
+              class="desk-panel featured-platform"
+              aria-labelledby="desk-coverage-title"
+              data-platform-id="world-desk"
+            >
+              <h3 id="desk-coverage-title">Coverage at a glance</h3>
+              <div class="dashboard-mock desk-coverage">
+                <div class="dm-stats-row">
+                  <div class="dm-stat">
+                    <span class="dm-stat-value">21</span>
+                    <span class="dm-stat-label">Live Sources</span>
                   </div>
-                  <div class="dm-stats-row">
-                    <div class="dm-stat">
-                      <span class="dm-stat-value">21</span>
-                      <span class="dm-stat-label">Live Sources</span>
-                    </div>
-                    <div class="dm-stat">
-                      <span class="dm-stat-value">7</span>
-                      <span class="dm-stat-label">Regions</span>
-                    </div>
-                    <div class="dm-stat">
-                      <span class="dm-stat-value">22</span>
-                      <span class="dm-stat-label">Webcams</span>
-                    </div>
-                    <div class="dm-stat">
-                      <span class="dm-stat-value">0</span>
-                      <span class="dm-stat-label">Paywalls</span>
-                    </div>
+                  <div class="dm-stat">
+                    <span class="dm-stat-value">7</span>
+                    <span class="dm-stat-label">Regions</span>
                   </div>
-                  <div class="dm-chart" aria-hidden="true">
-                    <div class="dm-bar"></div>
-                    <div class="dm-bar"></div>
-                    <div class="dm-bar"></div>
-                    <div class="dm-bar"></div>
-                    <div class="dm-bar"></div>
-                    <div class="dm-bar"></div>
-                    <div class="dm-bar"></div>
-                    <div class="dm-bar"></div>
-                    <div class="dm-bar"></div>
-                    <div class="dm-bar"></div>
+                  <div class="dm-stat">
+                    <span class="dm-stat-value">—</span>
+                    <span class="dm-stat-label">Local/State Sources</span>
                   </div>
-                  <div class="dm-rows">
-                    <div class="dm-row">
-                      <span class="dm-row-label">World News</span>
-                      <div class="dm-row-track"><div class="dm-row-fill dm-fill-92"></div></div>
-                      <span class="dm-row-pct">Live</span>
-                    </div>
-                    <div class="dm-row">
-                      <span class="dm-row-label">Culture Library</span>
-                      <div class="dm-row-track"><div class="dm-row-fill dm-fill-78"></div></div>
-                      <span class="dm-row-pct">Next</span>
-                    </div>
-                    <div class="dm-row">
-                      <span class="dm-row-label">Source Directory</span>
-                      <div class="dm-row-track"><div class="dm-row-fill dm-fill-65"></div></div>
-                      <span class="dm-row-pct">Built</span>
-                    </div>
-                    <div class="dm-row">
-                      <span class="dm-row-label">Country Pages</span>
-                      <div class="dm-row-track"><div class="dm-row-fill dm-fill-71"></div></div>
-                      <span class="dm-row-pct">Roadmap</span>
-                    </div>
+                  <div class="dm-stat">
+                    <span class="dm-stat-value">—</span>
+                    <span class="dm-stat-label">Open Coverage Gaps</span>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="platform-info">
-              <div class="platform-category-badge">
-                <img
-                  src="assets/icons/site/nav-globe.svg"
-                  alt=""
-                  class="badge-icon"
-                  aria-hidden="true"
-                />
-                GlobalDeets 2030 Product Spine
-              </div>
-              <h3 class="platform-title">A Daily World Desk Built Around Place</h3>
-              <p class="platform-description">
-                Start with live, source-linked news. Expand each pin into the country, culture,
-                civic, climate, arts, public data, and hopeful progress that explain the place.
+              <p class="desk-caveat">
+                Source counts describe what we monitor, not how much of the world we cover.
               </p>
-
-              <div class="insight-preview">
-                <div class="insight-label">Product Direction:</div>
-                <p class="insight-text">
-                  GlobalDeets should be the place people visit every morning to ask: what is
-                  happening, where is it happening, who is reporting it, what culture lives there,
-                  and where can I learn more without being trapped in a feed.
-                </p>
+              <div class="platform-actions desk-actions">
+                <a href="/observatory/coverage/" class="btn-primary">Coverage &amp; Evidence Observatory</a>
+                <a href="/dossiers/santa-ynez-pipeline/" class="btn-sample">Open Evidence Dossier</a>
               </div>
-
-              <div class="platform-actions">
-                <a href="news.html" class="btn-launch">Open Live News</a>
-                <a href="knowledge.html" class="btn-sample">Browse Sources</a>
-              </div>
-
-              <div class="platform-meta">
-                <span class="meta-badge"
-                  ><img
-                    src="assets/icons/site/nav-news.svg"
-                    alt=""
-                    class="badge-icon"
-                    aria-hidden="true"
-                  />
-                  Live RSS/API Feeds</span
-                >
-                <span class="meta-badge"
-                  ><img
-                    src="assets/icons/site/nav-map-pin.svg"
-                    alt=""
-                    class="badge-icon"
-                    aria-hidden="true"
-                  />
-                  Geo-Pinned Context</span
-                >
-                <span class="meta-badge"
-                  ><img
-                    src="assets/icons/site/nav-compass.svg"
-                    alt=""
-                    class="badge-icon"
-                    aria-hidden="true"
-                  />
-                  Culture Layer</span
-                >
-                <span class="meta-badge"
-                  ><img
-                    src="assets/icons/site/nav-list.svg"
-                    alt=""
-                    class="badge-icon"
-                    aria-hidden="true"
-                  />
-                  Source Library</span
-                >
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Daily Discovery System -->
-        <section class="industries-section scroll-reveal scroll-reveal--delay-2">
-          <h2 class="section-title">Daily Discovery Paths</h2>
-          <p class="section-subtitle">
-            GlobalDeets becomes valuable when every visit offers a fast path into the world, then a
-            deeper path into why the place matters.
-          </p>
-
-          <div class="industry-grid">
-            <article
-              class="industry-card industry-card--healthcare scroll-reveal scroll-reveal--delay-3"
-            >
-              <div class="industry-icon">
-                <img src="assets/icons/site/nav-news.svg" alt="World news" class="neon-icon" />
-              </div>
-              <h3 class="industry-title industry-title--healthcare">What Happened?</h3>
-              <ul class="industry-features">
-                <li class="industry-feature">
-                  <span class="feature-check feature-check--healthcare">✓</span> Live headlines from
-                  credible regional sources
-                </li>
-                <li class="industry-feature">
-                  <span class="feature-check feature-check--healthcare">✓</span> Direct links to the
-                  original publisher
-                </li>
-                <li class="industry-feature">
-                  <span class="feature-check feature-check--healthcare">✓</span> Machine translation
-                  clearly labeled when used
-                </li>
-                <li class="industry-feature">
-                  <span class="feature-check feature-check--healthcare">✓</span> Archives and source
-                  health coming next
-                </li>
-              </ul>
-              <a href="news.html" class="industry-link industry-link--healthcare"
-                >Read the live desk →</a
-              >
-            </article>
-
-            <article
-              class="industry-card industry-card--consulting scroll-reveal scroll-reveal--delay-3"
-            >
-              <div class="industry-icon">
-                <img
-                  src="assets/icons/site/nav-compass.svg"
-                  alt="Culture atlas"
-                  class="neon-icon"
-                />
-              </div>
-              <h3 class="industry-title industry-title--consulting">What Lives There?</h3>
-              <ul class="industry-features">
-                <li class="industry-feature">
-                  <span class="feature-check feature-check--consulting">✓</span> A culture atlas
-                  layer for arts, food, language, and tradition
-                </li>
-                <li class="industry-feature">
-                  <span class="feature-check feature-check--consulting">✓</span> Country and region
-                  pages built around context, not trivia
-                </li>
-                <li class="industry-feature">
-                  <span class="feature-check feature-check--consulting">✓</span> Live webcams, maps,
-                  and primary institutions
-                </li>
-                <li class="industry-feature">
-                  <span class="feature-check feature-check--consulting">✓</span> Local arts,
-                  festivals, music, and heritage roadmap
-                </li>
-              </ul>
-              <a href="worldmap.html" class="industry-link industry-link--consulting">Explore the world map →</a>
-            </article>
-
-            <article
-              class="industry-card industry-card--manufacturing scroll-reveal scroll-reveal--delay-3"
-            >
-              <div class="industry-icon">
-                <img src="assets/icons/site/nav-list.svg" alt="Source library" class="neon-icon" />
-              </div>
-              <h3 class="industry-title industry-title--manufacturing">Where Is the Proof?</h3>
-              <ul class="industry-features">
-                <li class="industry-feature">
-                  <span class="feature-check feature-check--manufacturing">✓</span> Government,
-                  university, public health, climate, and civic sources
-                </li>
-                <li class="industry-feature">
-                  <span class="feature-check feature-check--manufacturing">✓</span> Source cards by
-                  country, category, credibility, and update rhythm
-                </li>
-                <li class="industry-feature">
-                  <span class="feature-check feature-check--manufacturing">✓</span> No rewriting as
-                  fact; always attribution-first
-                </li>
-                <li class="industry-feature">
-                  <span class="feature-check feature-check--manufacturing">✓</span> Health checks so
-                  stale feeds cannot quietly rot
-                </li>
-              </ul>
-              <a href="knowledge.html" class="industry-link industry-link--manufacturing"
-                >Browse knowledge sources →</a
-              >
-            </article>
-          </div>
-        </section>
-
-        <!-- Methodology Section -->
-        <section class="methodology-section scroll-reveal scroll-reveal--delay-4">
-          <h2 class="section-title">Source Covenant</h2>
-          <p class="section-subtitle">
-            The rules that keep GlobalDeets useful as it grows from a live news surface into a
-            planetary catalog.
-          </p>
-
-          <div class="methodology-grid">
-            <div class="method-item">
-              <div class="method-icon">
-                <img src="assets/icons/site/nav-lock.png" alt="Data Sources" class="neon-icon" />
-              </div>
-              <h4 class="method-title">Original Source First</h4>
-              <p class="method-description">
-                Headlines, cultural references, statistics, and public datasets link outward to the
-                institution or publisher that owns the record.
-              </p>
-            </div>
-
-            <div class="method-item">
-              <div class="method-icon">
-                <img src="assets/icons/site/nav-shield.png" alt="Ethical AI" class="neon-icon" />
-              </div>
-              <h4 class="method-title">No Synthetic Spin</h4>
-              <p class="method-description">
-                We organize, translate, label, and route. We do not rewrite world events into our
-                own opinion layer.
-              </p>
-            </div>
-
-            <div class="method-item">
-              <div class="method-icon">
-                <img src="assets/icons/site/nav-clock.png" alt="Freshness" class="neon-icon" />
-              </div>
-              <h4 class="method-title">Freshness Is Visible</h4>
-              <p class="method-description">
-                Feeds should show last update, cache age, source health, and failure states instead
-                of pretending everything is current.
-              </p>
-            </div>
-
-            <div class="method-item">
-              <div class="method-icon">
-                <img src="assets/icons/site/nav-users.png" alt="Human scale" class="neon-icon" />
-              </div>
-              <h4 class="method-title">Daily Human Value</h4>
-              <p class="method-description">
-                Every page should help a visitor understand a place, follow a source, learn a
-                culture, or leave with a useful thread to return to.
-              </p>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <!-- Premium Footer -->
-      <footer class="footer" role="contentinfo">
-        <p>© 2026 GlobalDeets · Live World Desk &amp; Source Library</p>
-        <div class="footer-links" aria-label="Footer navigation">
-          <a href="categories.html" aria-label="Browse categories">Categories</a>
-          <a href="timeline.html" aria-label="View project timeline">Timeline</a>
-          <a href="contact.html" aria-label="Contact us">Contact</a>
-          <a
-            href="https://goodflippindesign.com"
-            target="_blank"
-            rel="noopener"
-            aria-label="Visit Good Flippin Design"
-            class="footer-cta-link"
-            >Built by GFD →</a
-          >
+            </section>
+          </aside>
         </div>
-      </footer>
-    </div>
+      </section>
+
+      <!-- Explore: existing, working surfaces only -->
+      <section class="desk-explore" aria-labelledby="desk-explore-title">
+        <h2 id="desk-explore-title" class="desk-section-title">Explore</h2>
+        <ul class="desk-explore-grid">
+          <li>
+            <a class="desk-explore-card" href="globe.html">
+              <strong>Globe</strong>
+              <span>Latest headlines placed at each publisher&rsquo;s home city.</span>
+            </a>
+          </li>
+          <li>
+            <a class="desk-explore-card" href="worldmap.html">
+              <strong>Live webcams</strong>
+              <span>Public webcams around the world. Separate from news coverage.</span>
+            </a>
+          </li>
+          <li>
+            <a class="desk-explore-card" href="knowledge.html">
+              <strong>Knowledge sources</strong>
+              <span>Public institutions, data portals, and reference sources.</span>
+            </a>
+          </li>
+          <li>
+            <a class="desk-explore-card" href="timeline.html">
+              <strong>Timeline</strong>
+              <span>Recent reporting grouped by the day it was published.</span>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <!-- How the desk works: short, present-tense commitments -->
+      <section class="desk-method" aria-labelledby="desk-method-title">
+        <h2 id="desk-method-title" class="desk-section-title">How this desk works</h2>
+        <ul class="desk-method-list">
+          <li>
+            <strong>The publisher comes first.</strong> Every story links to the original article.
+            We show headlines and, where the publisher permits, a short excerpt.
+          </li>
+          <li>
+            <strong>No synthetic spin.</strong> We organize, label, and route reporting. We do not
+            rewrite events or score sources for truth or bias.
+          </li>
+          <li>
+            <strong>Limits are visible.</strong> Machine translation is labeled, and our
+            <a href="/observatory/coverage/">known coverage gaps</a> are published.
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+      <p>© 2026 GlobalDeets · Source-first world news desk</p>
+      <div class="footer-links" aria-label="Footer navigation">
+        <a href="about.html">About &amp; methods</a>
+        <a href="/observatory/coverage/">Coverage</a>
+        <a href="categories.html">Browse</a>
+        <a href="timeline.html">Timeline</a>
+        <a href="contact.html">Contact &amp; corrections</a>
+        <a href="donate.html">Support</a>
+      </div>
+    </footer>
 
     <!-- Loading Indicator -->
     <div id="loadingIndicator" class="loading-indicator">
@@ -647,33 +417,11 @@
       </div>
     </div>
 
-    <!-- Project Detail Modal -->
-    <div
-      id="projectModal"
-      class="modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modalHeading"
-      aria-describedby="modalBody"
-    >
-      <div class="modal-content" tabindex="-1">
-        <button class="close" type="button" aria-label="Close dialog">&times;</button>
-        <h2 id="modalHeading" class="visually-hidden">Project Details</h2>
-        <div id="modalBody">
-          <!-- Modal content will be dynamically inserted -->
-        </div>
-      </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/globe.gl@2/dist/globe.gl.min.js" defer></script>
     <script src="globe-hero.js" defer></script>
-    <script src="projects-data.js" defer></script>
-    <script src="projects-render.js" defer></script>
-    <script src="ui-effects.js" defer></script>
+    <script src="world-desk.js" defer></script>
     <script src="interactions.js" defer></script>
     <script src="app.js" defer></script>
-    <script src="ux-animations.js" defer></script>
-    <script src="platform-modal.js" defer></script>
     <script>
       // Service worker registration (progressive enhancement)
       if ('serviceWorker' in navigator) {

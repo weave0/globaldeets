@@ -1,35 +1,29 @@
 // Basic service worker for offline caching
-const CACHE_NAME = 'globaldeets-cache-v3';
+const CACHE_NAME = 'globaldeets-cache-v4';
+// Precache only files that exist in the deploy artifact: cache.addAll rejects (and the worker
+// fails to install) if any entry 404s.
 const CORE_ASSETS = [
   '/',
   'index.html',
-  'analytics.html',
+  'news.html',
   'categories.html',
   'timeline.html',
-  'bb-content.html',
   'offline.html',
   'styles.css',
-  'projects-data.js',
-  'projects-render.js',
-  'ui-effects.js',
+  'world-desk.css',
+  'world-desk.js',
+  'news.js',
   'interactions.js',
   'app.js',
-  'auth.js',
-  'data.js',
-  'pwa-install.js',
   'sw-register.js',
   'manifest.json',
-  'assets/icon-72.svg',
-  'assets/icon-96.svg',
-  'assets/icon-128.svg',
-  'assets/icon-144.svg',
-  'assets/icon-152.svg',
-  'assets/icon-192.svg',
-  'assets/icon-384.svg',
-  'assets/icon-512.svg',
-  'assets/screenshot-wide.svg',
-  'assets/screenshot-mobile.svg',
+  'assets/favicon.png',
+  'assets/icon-192.png',
+  'assets/icon-512.png',
+  'assets/logo-mark.png',
 ];
+const OFFLINE_COPY_HEADER = 'X-GlobalDeets-Offline-Copy';
+const CACHED_AT_HEADER = 'X-GlobalDeets-Cached-At';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
@@ -48,24 +42,49 @@ self.addEventListener('activate', event => {
 });
 
 // Network first, falling back to cache. Successful GET responses refresh the current cache.
+// API responses served from cache are explicitly marked as offline copies so the page can say
+// that it is showing saved stories instead of presenting them as current.
 self.addEventListener('fetch', event => {
   const { request } = event;
   if (request.method !== 'GET') return;
+  const url = new URL(request.url);
+  const isApi = url.pathname.startsWith('/api/');
   const isNav =
     request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html');
   event.respondWith(
     fetch(request)
       .then(resp => {
-        const copy = resp.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+        if (resp.ok) {
+          const copy = isApi ? stampCachedAt(resp.clone()) : Promise.resolve(resp.clone());
+          copy.then(stamped => caches.open(CACHE_NAME).then(cache => cache.put(request, stamped)));
+        }
         return resp;
       })
       .catch(() => {
         return caches.match(request).then(cached => {
+          if (cached && isApi) return markOfflineCopy(cached);
           if (cached) return cached;
+          if (isApi) {
+            return new Response(JSON.stringify({ error: 'offline' }), {
+              status: 503,
+              headers: { 'Content-Type': 'application/json' },
+            });
+          }
           if (isNav) return caches.match('offline.html');
-          return caches.match('index.html');
+          return Response.error();
         });
       })
   );
 });
+
+async function stampCachedAt(response) {
+  const headers = new Headers(response.headers);
+  headers.set(CACHED_AT_HEADER, new Date().toISOString());
+  return new Response(await response.blob(), { status: response.status, headers });
+}
+
+async function markOfflineCopy(cached) {
+  const headers = new Headers(cached.headers);
+  headers.set(OFFLINE_COPY_HEADER, cached.headers.get(CACHED_AT_HEADER) || 'unknown');
+  return new Response(await cached.blob(), { status: cached.status, headers });
+}

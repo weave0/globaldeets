@@ -56,7 +56,6 @@ async function verifyPhone(browser, viewport, label) {
     await requireTouchTarget(page.locator('.knowledge-filter-pill').first(), `${label} knowledge category filter`);
 
     await verifySurface(page, '/worldmap.html', '#main-content', `${label} world map`);
-    await requireTouchTarget(page.locator('.ecosystem-toggle'), `${label} world map ecosystem menu`);
     await requireTouchTarget(page.locator('#view-toggle'), `${label} world map view toggle`);
     await requireTouchTarget(page.locator('#panel-toggle'), `${label} world map panel toggle`);
     await requireTouchTarget(page.locator('#location-search'), `${label} world map search`);
