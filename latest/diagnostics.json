@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0.0",
   "contractName": "globaldeets-diagnostics-queue",
-  "generatedAt": "2026-10-07T01:07:44.884Z",
+  "generatedAt": "2026-10-07T06:44:56.258Z",
   "agentContract": {
     "sortableFields": [
       "priority",
@@ -165,14 +165,14 @@
       "new-production-surface",
       "no-service-published",
       "outcome-declaration-gap",
-      "probe-blocked",
-      "traffic-without-outcome"
+      "outcomes-without-audience",
+      "probe-blocked"
     ]
   },
   "summary": {
     "open": 17,
-    "actionableNow": 5,
-    "blockedOnAuthority": 3,
+    "actionableNow": 4,
+    "blockedOnAuthority": 4,
     "decisionNeeded": 8,
     "nextUp": "criticalpath:failed:globaldeets.com"
   },
@@ -203,7 +203,7 @@
       "evidence": [
         {
           "type": "critical-path-probe",
-          "ref": "globaldeets.com@2026-10-07T01:07:44.884Z",
+          "ref": "globaldeets.com@2026-10-07T06:44:56.258Z",
           "state": "measured"
         }
       ],
@@ -219,7 +219,7 @@
       "ageDays": 9,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-07T01:07:44.884Z",
+        "observedAt": "2026-10-07T06:44:56.258Z",
         "basis": "Production probes"
       },
       "priorityScore": 181,
@@ -300,7 +300,7 @@
       "subjects": [],
       "ageDays": 14,
       "freshness": {
-        "state": "stale",
+        "state": "expired",
         "observedAt": "2026-10-03T06:10:03Z",
         "basis": "Governed audience source"
       },
@@ -338,63 +338,50 @@
       "source": "derived",
       "status": "open",
       "polarity": "risk",
-      "confidence": "medium",
+      "confidence": "high",
       "actionability": {
         "state": "actionable-now",
         "blockedBy": null
       },
-      "id": "business-outcomes:traffic-without-outcome",
-      "rule": "traffic-without-outcome",
-      "category": "business-outcomes",
-      "subjects": [
-        "globaldeets.com",
-        "gflippinv.com"
-      ],
-      "severity": "medium",
-      "domain": "business",
+      "id": "evidence:audience-stale",
+      "rule": "audience-stale",
+      "category": "evidence-quality",
+      "severity": "high",
+      "domain": "measurement",
       "businessImpact": "high",
-      "ownerLane": "Product + Data",
-      "title": "2 high-traffic properties have no measurable business outcome",
-      "observed": "GlobalDeets (20.8% of edge requests); Good Flippin Vibes (alias) (10.1% of edge requests) carry at least 10% of estate traffic but report no outcome events.",
-      "businessReason": "The properties that attract the most attention are where an unmeasured conversion path costs the most.",
+      "ownerLane": "Data / analytics",
+      "title": "Audience data is expired",
+      "observed": "The governed Canonical Gold document was generated 96.6 hours ago. Audience figures are withheld from headlines.",
+      "businessReason": "Traffic figures that are days old cannot describe current usage or growth.",
       "evidence": [
         {
-          "type": "audience-contract",
-          "ref": "globaldeets-audience@2026-10-07T01:07:44.884Z",
-          "state": "partial"
+          "type": "canonical-gold",
+          "ref": "2026-10-03T06:10:03Z",
+          "state": "expired"
         }
       ],
-      "nextAction": "Instrument the primary outcome on these properties first.",
+      "nextAction": "Check the Traffic Intelligence daily pipeline (traffic-intelligence-deploy workflow) for failures.",
       "escalation": {
         "blocksInvestorClaim": false,
         "level": "medium",
-        "class": "measurement-claim-block",
-        "escalateWhen": "Traffic is quoted without outcomes.",
-        "targetLane": "Product + Data"
+        "class": "stale-evidence",
+        "escalateWhen": "Audience data expires.",
+        "targetLane": "Data / analytics"
       },
-      "openedAt": "2026-09-26",
-      "ageDays": 11,
+      "subjects": [],
+      "openedAt": "2026-10-04",
+      "ageDays": 3,
       "freshness": {
-        "state": "stale",
+        "state": "expired",
         "observedAt": "2026-10-03T06:10:03Z",
         "basis": "Governed audience source"
       },
-      "priorityScore": 108,
+      "priorityScore": 105,
       "priorityBreakdown": [
         {
           "factor": "severity",
-          "points": 40,
-          "why": "Severity is medium."
-        },
-        {
-          "factor": "investor-critical",
-          "points": 25,
-          "why": "Affects an investor-critical property."
-        },
-        {
-          "factor": "strategic-tier",
-          "points": 8,
-          "why": "Affects a tier 2 property in the owner strategy."
+          "points": 70,
+          "why": "Severity is high."
         },
         {
           "factor": "business-impact",
@@ -412,14 +399,9 @@
           "why": "Can be worked on now."
         },
         {
-          "factor": "confidence",
-          "points": -4,
-          "why": "Evidence confidence is medium."
-        },
-        {
           "factor": "age",
-          "points": 5,
-          "why": "Open for 11 days."
+          "points": 1,
+          "why": "Open for 3 days."
         }
       ],
       "priority": 3
@@ -467,7 +449,7 @@
       "evidence": [
         {
           "type": "business-event-contract",
-          "ref": "globaldeets-business-events@2026-10-07T01:07:44.884Z",
+          "ref": "globaldeets-business-events@2026-10-07T06:44:56.258Z",
           "state": "measured"
         }
       ],
@@ -482,7 +464,7 @@
       "ageDays": 13,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-07T01:07:57.083Z",
+        "observedAt": "2026-10-07T06:45:21.150Z",
         "basis": "Business-event feed"
       },
       "priorityScore": 99,
@@ -634,7 +616,7 @@
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-37555489738-1",
+          "ref": "production probe run-37583178107-1",
           "state": "measured"
         }
       ],
@@ -650,7 +632,7 @@
       "ageDays": 13,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-07T01:07:44.884Z",
+        "observedAt": "2026-10-07T06:44:56.258Z",
         "basis": "Production probes"
       },
       "priorityScore": 78,
@@ -692,78 +674,6 @@
       "source": "derived",
       "status": "open",
       "polarity": "risk",
-      "confidence": "high",
-      "actionability": {
-        "state": "actionable-now",
-        "blockedBy": null
-      },
-      "id": "evidence:audience-stale",
-      "rule": "audience-stale",
-      "category": "evidence-quality",
-      "severity": "medium",
-      "domain": "measurement",
-      "businessImpact": "high",
-      "ownerLane": "Data / analytics",
-      "title": "Audience data is stale",
-      "observed": "The governed Canonical Gold document was generated 91 hours ago.",
-      "businessReason": "Traffic figures that are days old cannot describe current usage or growth.",
-      "evidence": [
-        {
-          "type": "canonical-gold",
-          "ref": "2026-10-03T06:10:03Z",
-          "state": "stale"
-        }
-      ],
-      "nextAction": "Check the Traffic Intelligence daily pipeline (traffic-intelligence-deploy workflow) for failures.",
-      "escalation": {
-        "blocksInvestorClaim": false,
-        "level": "medium",
-        "class": "stale-evidence",
-        "escalateWhen": "Audience data expires.",
-        "targetLane": "Data / analytics"
-      },
-      "subjects": [],
-      "openedAt": "2026-10-04",
-      "ageDays": 3,
-      "freshness": {
-        "state": "stale",
-        "observedAt": "2026-10-03T06:10:03Z",
-        "basis": "Governed audience source"
-      },
-      "priorityScore": 75,
-      "priorityBreakdown": [
-        {
-          "factor": "severity",
-          "points": 40,
-          "why": "Severity is medium."
-        },
-        {
-          "factor": "business-impact",
-          "points": 12,
-          "why": "Business impact is high."
-        },
-        {
-          "factor": "escalation",
-          "points": 2,
-          "why": "Escalation level is medium."
-        },
-        {
-          "factor": "actionability",
-          "points": 20,
-          "why": "Can be worked on now."
-        },
-        {
-          "factor": "age",
-          "points": 1,
-          "why": "Open for 3 days."
-        }
-      ],
-      "priority": 7
-    },
-    {
-      "source": "derived",
-      "status": "open",
-      "polarity": "risk",
       "confidence": "medium",
       "actionability": {
         "state": "decision-needed",
@@ -786,7 +696,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-10-07T01:07:44.885Z",
+          "ref": "2026-10-07T06:44:56.259Z",
           "state": "measured"
         }
       ],
@@ -802,7 +712,7 @@
       "ageDays": 13,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-07T01:07:44.885Z",
+        "observedAt": "2026-10-07T06:44:56.259Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 54,
@@ -833,7 +743,7 @@
           "why": "Open for 13 days."
         }
       ],
-      "priority": 8
+      "priority": 7
     },
     {
       "source": "derived",
@@ -874,7 +784,7 @@
       "ageDays": 13,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-07T01:07:44.884Z",
+        "observedAt": "2026-10-07T06:44:56.258Z",
         "basis": "Historical snapshots"
       },
       "priorityScore": 49,
@@ -905,7 +815,7 @@
           "why": "Open for 13 days."
         }
       ],
-      "priority": 9
+      "priority": 8
     },
     {
       "source": "derived",
@@ -985,7 +895,7 @@
           "why": "Open for 13 days."
         }
       ],
-      "priority": 10
+      "priority": 9
     },
     {
       "source": "derived",
@@ -1069,7 +979,7 @@
           "why": "Open for 13 days."
         }
       ],
-      "priority": 11
+      "priority": 10
     },
     {
       "source": "derived",
@@ -1086,7 +996,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-10-07T01:07:44.884Z",
+          "ref": "globaldeets-estate-health@2026-10-07T06:44:56.258Z",
           "state": "measured"
         }
       ],
@@ -1112,7 +1022,7 @@
       "ageDays": 13,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-07T01:07:44.884Z",
+        "observedAt": "2026-10-07T06:44:56.258Z",
         "basis": "Production probes"
       },
       "priorityScore": 40,
@@ -1141,6 +1051,86 @@
           "factor": "age",
           "points": 6,
           "why": "Open for 13 days."
+        }
+      ],
+      "priority": 11
+    },
+    {
+      "source": "derived",
+      "status": "open",
+      "polarity": "risk",
+      "confidence": "medium",
+      "actionability": {
+        "state": "blocked-on-authority",
+        "blockedBy": "A read credential for the governed audience source"
+      },
+      "id": "business-outcomes:outcomes-without-audience",
+      "rule": "outcomes-without-audience",
+      "category": "business-outcomes",
+      "subjects": [
+        "cyancanoe.com",
+        "goodflippindesign.com"
+      ],
+      "severity": "medium",
+      "domain": "business",
+      "businessImpact": "medium",
+      "ownerLane": "Data / analytics",
+      "title": "Business outcomes are measured without audience context",
+      "observed": "Outcome events are reported for cyancanoe.com, goodflippindesign.com, but the governed audience source is not readable, so no conversion rate against traffic can be stated.",
+      "businessReason": "An outcome count without its audience cannot show whether the property converts well or merely receives little traffic.",
+      "evidence": [
+        {
+          "type": "business-event-contract",
+          "ref": "globaldeets-business-events@2026-10-07T06:44:56.258Z",
+          "state": "measured"
+        }
+      ],
+      "nextAction": "Connect the governed audience source.",
+      "escalation": {
+        "blocksInvestorClaim": false,
+        "level": "medium",
+        "class": "measurement-claim-block",
+        "escalateWhen": "Conversion rates are quoted.",
+        "targetLane": "Data / analytics"
+      },
+      "openedAt": "2026-10-07",
+      "ageDays": 0,
+      "freshness": {
+        "state": "fresh",
+        "observedAt": "2026-10-07T06:45:21.150Z",
+        "basis": "Business-event feed"
+      },
+      "priorityScore": 36,
+      "priorityBreakdown": [
+        {
+          "factor": "severity",
+          "points": 40,
+          "why": "Severity is medium."
+        },
+        {
+          "factor": "strategic-tier",
+          "points": 12,
+          "why": "Affects a tier 1 property in the owner strategy."
+        },
+        {
+          "factor": "business-impact",
+          "points": 6,
+          "why": "Business impact is medium."
+        },
+        {
+          "factor": "escalation",
+          "points": 2,
+          "why": "Escalation level is medium."
+        },
+        {
+          "factor": "actionability",
+          "points": -20,
+          "why": "Blocked on authority that is not available yet."
+        },
+        {
+          "factor": "confidence",
+          "points": -4,
+          "why": "Evidence confidence is medium."
         }
       ],
       "priority": 12
@@ -1173,7 +1163,7 @@
       "evidence": [
         {
           "type": "production-probe",
-          "ref": "globaldeets-estate-health@2026-10-07T01:07:44.884Z",
+          "ref": "globaldeets-estate-health@2026-10-07T06:44:56.258Z",
           "state": "measured"
         }
       ],
@@ -1189,7 +1179,7 @@
       "ageDays": 13,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-07T01:07:44.884Z",
+        "observedAt": "2026-10-07T06:44:56.258Z",
         "basis": "Production probes"
       },
       "priorityScore": 21,
@@ -1283,7 +1273,6 @@
       "rule": "instrumentation-unverified",
       "category": "instrumentation",
       "subjects": [
-        "globaldeets.com",
         "culturesherpa.org",
         "agentkagent.com",
         "aiaimate.com",
@@ -1303,13 +1292,13 @@
       "domain": "observability",
       "businessImpact": "medium",
       "ownerLane": "Data / analytics",
-      "title": "15 properties ship an analytics tag whose data reception is unverified",
-      "observed": "globaldeets.com, culturesherpa.org, agentkagent.com, aiaimate.com, brettleeweaver.com, cyancanoe.com, flipskillet.com, flipskillit.com, gflippinv.com, goodflippinluck.com, goodflippinnews.com, goodflippinvibes.com, goodflippinyikes.com, lowertownstpaul.org, redleopardofstpaul.com ship a real analytics tag, but nothing proves events are received. Cloudflare Web Analytics reception was checked.",
+      "title": "14 properties ship an analytics tag whose data reception is unverified",
+      "observed": "culturesherpa.org, agentkagent.com, aiaimate.com, brettleeweaver.com, cyancanoe.com, flipskillet.com, flipskillit.com, gflippinv.com, goodflippinluck.com, goodflippinnews.com, goodflippinvibes.com, goodflippinyikes.com, lowertownstpaul.org, redleopardofstpaul.com ship a real analytics tag, but nothing proves events are received. Cloudflare Web Analytics reception was checked.",
       "businessReason": "A shipped tag is configuration, not measurement; audience claims need proof that events arrive.",
       "evidence": [
         {
           "type": "served-html",
-          "ref": "production probe run-37555489738-1",
+          "ref": "production probe run-37583178107-1",
           "state": "measured"
         }
       ],
@@ -1325,7 +1314,7 @@
       "ageDays": 13,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-07T01:07:44.884Z",
+        "observedAt": "2026-10-07T06:44:56.258Z",
         "basis": "Production probes"
       },
       "priorityScore": 18,
@@ -1338,7 +1327,7 @@
         {
           "factor": "estate-wide",
           "points": 15,
-          "why": "Affects 15 properties across the estate."
+          "why": "Affects 14 properties across the estate."
         },
         {
           "factor": "business-impact",
@@ -1451,7 +1440,7 @@
       "evidence": [
         {
           "type": "cloudflare-pages-inventory",
-          "ref": "2026-10-07T01:07:44.885Z",
+          "ref": "2026-10-07T06:44:56.259Z",
           "state": "measured"
         }
       ],
@@ -1467,7 +1456,7 @@
       "ageDays": 13,
       "freshness": {
         "state": "fresh",
-        "observedAt": "2026-10-07T01:07:44.885Z",
+        "observedAt": "2026-10-07T06:44:56.259Z",
         "basis": "Cloudflare inventory"
       },
       "priorityScore": 17,
