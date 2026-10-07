@@ -1,7 +1,8 @@
 // Basic service worker for offline caching
-const CACHE_NAME = 'globaldeets-cache-v6';
-// Precache only files that exist in the deploy artifact: cache.addAll rejects (and the worker
-// fails to install) if any entry 404s.
+const CACHE_NAME = 'globaldeets-cache-v7';
+// The offline shell: every precached page plus every same-origin asset those pages load (including
+// news-reader-bridge.css, which news.js injects). tests/offline-shell-agreement.test.mjs keeps this
+// list complete and limited to shipped files; a missing file would fail the worker install.
 const CORE_ASSETS = [
   '/',
   'index.html',
@@ -11,16 +12,23 @@ const CORE_ASSETS = [
   'offline.html',
   'styles.css',
   'world-desk.css',
+  'news-reader-bridge.css',
   'world-desk.js',
   'news.js',
+  'globe-hero.js',
+  'site-nav.js',
   'interactions.js',
   'app.js',
   'sw-register.js',
   'manifest.json',
   'assets/favicon.png',
+  'assets/apple-touch-icon.png',
   'assets/icon-192.png',
   'assets/icon-512.png',
   'assets/logo-mark.png',
+  'assets/icons/site/nav-home.svg',
+  'assets/icons/site/nav-news.svg',
+  'assets/icons/site/nav-list.svg',
 ];
 const OFFLINE_COPY_HEADER = 'X-GlobalDeets-Offline-Copy';
 const CACHED_AT_HEADER = 'X-GlobalDeets-Cached-At';

@@ -57,7 +57,7 @@ test('the service worker installs, precaches only shipped files, and retires the
 }) => {
   // Seed the cache the previous worker version used; activation must delete it.
   await page.goto('/offline.html');
-  await page.evaluate(() => caches.open('globaldeets-cache-v5').then(cache => cache.put('/stale', new Response('old'))));
+  await page.evaluate(() => caches.open('globaldeets-cache-v6').then(cache => cache.put('/stale', new Response('old'))));
 
   await page.goto('/index.html');
   await waitForControllingWorker(page);
@@ -65,12 +65,12 @@ test('the service worker installs, precaches only shipped files, and retires the
   const state = await page.evaluate(async () => ({
     keys: await caches.keys(),
     precached: await caches
-      .open('globaldeets-cache-v6')
+      .open('globaldeets-cache-v7')
       .then(cache => Promise.all(['/world-desk.js', '/news.js', '/offline.html'].map(path => cache.match(path))))
       .then(matches => matches.every(Boolean)),
   }));
-  expect(state.keys).toContain('globaldeets-cache-v6');
-  expect(state.keys).not.toContain('globaldeets-cache-v5');
+  expect(state.keys).toContain('globaldeets-cache-v7');
+  expect(state.keys).not.toContain('globaldeets-cache-v6');
   expect(state.precached).toBe(true);
 });
 
@@ -82,7 +82,7 @@ test('a dev server answering a stylesheet with JavaScript can never leave an uns
   await page.goto('/index.html');
   await waitForControllingWorker(page);
   const cached = await page.evaluate(async () => {
-    const cache = await caches.open('globaldeets-cache-v6');
+    const cache = await caches.open('globaldeets-cache-v7');
     const out = {};
     for (const path of ['/styles.css', '/world-desk.css', '/news.js']) {
       const response = await cache.match(path);
@@ -214,4 +214,43 @@ test('a rejected cache write still returns the valid network response', async ({
   expect(outcome.allFulfilled, 'the write failure is contained, not propagated').toBe(true);
   expect(outcome.unhandled).toBe(0);
   expect(outcome.cached).toBe(false);
+});
+
+test('first install, then immediately offline: News keeps its styling and the More menu works', async ({
+  page,
+  context,
+}) => {
+  // One online visit installs the worker. No second controlled visit warms the runtime cache.
+  await page.goto('/index.html');
+  await page.evaluate(() => navigator.serviceWorker.ready);
+
+  await context.route('**/*', route => route.abort('internetdisconnected'));
+  await page.goto('/news.html');
+
+  const sheets = await page.evaluate(() =>
+    Object.fromEntries(
+      [...document.styleSheets]
+        .filter(sheet => sheet.href && sheet.href.startsWith(location.origin))
+        .map(sheet => {
+          let rules = -1; // a stylesheet that failed to load cannot expose its rules
+          try {
+            rules = sheet.cssRules.length;
+          } catch {}
+          return [new URL(sheet.href).pathname, rules];
+        })
+    )
+  );
+  expect(sheets['/styles.css']).toBeGreaterThan(10);
+  expect(sheets['/world-desk.css']).toBeGreaterThan(10);
+  expect(sheets['/news-reader-bridge.css'], 'news.js-injected bridge stylesheet').toBeGreaterThan(5);
+  await expect(page.getByRole('navigation', { name: 'Primary navigation' }).getByText('More')).toBeVisible();
+
+  // site-nav.js behavior: Escape closes More and returns focus to its toggle.
+  const more = page.locator('details.nav-more');
+  const toggle = more.locator('summary');
+  await toggle.click();
+  await expect(more).toHaveAttribute('open', '');
+  await page.keyboard.press('Escape');
+  await expect(more).not.toHaveAttribute('open', '');
+  await expect(toggle).toBeFocused();
 });

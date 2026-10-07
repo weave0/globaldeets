@@ -894,9 +894,11 @@ body::after {
 
 /* =============================================
    HEADER - FLOATING GLASS
+   Scoped to the site header (a direct child of <body>). Semantic <header> elements inside page
+   content, such as the World Desk dateline or a modal header, must not become sticky glass bars.
    ============================================= */
 
-header {
+body > header {
   background: rgba(15, 23, 42, 0.5);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
@@ -914,11 +916,11 @@ header {
     box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-header.scrolled {
+body > header.scrolled {
   padding: 0.75rem 0;
 }
 
-header::before {
+body > header::before {
   content: '';
   position: absolute;
   top: 0;
@@ -936,7 +938,7 @@ header::before {
   pointer-events: none;
 }
 
-header.scrolled {
+body > header.scrolled {
   background: rgba(10, 14, 26, 0.92);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
   backdrop-filter: blur(32px) saturate(200%);
@@ -945,7 +947,7 @@ header.scrolled {
     0 0 80px rgba(59, 130, 246, 0.15);
 }
 
-header.scrolled::before {
+body > header.scrolled::before {
   opacity: 1;
 }
 
@@ -1061,7 +1063,7 @@ header.scrolled::before {
     box-shadow 0.25s ease;
 }
 
-header.scrolled .site-logo-mark {
+body > header.scrolled .site-logo-mark {
   height: 54px;
 }
 
@@ -2911,60 +2913,60 @@ body.globe-page {
    reader reaches stories on the first screen.
    ============================================= */
 @media (max-width: 700px) {
-  header,
-  header.scrolled {
+  body > header,
+  body > header.scrolled {
     padding: 0.4rem 0;
   }
 
-  header .container {
+  body > header .container {
     padding: 0 0.75rem;
   }
 
-  header .header {
+  body > header .header {
     flex-wrap: nowrap;
     gap: 0.5rem;
   }
 
-  header .logo {
+  body > header .logo {
     flex: 0 0 auto;
     display: flex;
     align-items: center;
     min-width: 0;
   }
 
-  header .tagline {
+  body > header .tagline {
     display: none;
   }
 
-  header .logo h1 {
+  body > header .logo h1 {
     margin: 0;
     font-size: 1.25rem;
   }
 
-  header .site-logo-link {
+  body > header .site-logo-link {
     min-width: 0;
     padding: 2px 6px;
     border-radius: 10px;
     box-shadow: none;
   }
 
-  header .site-logo-link::before,
-  header .site-logo-link::after {
+  body > header .site-logo-link::before,
+  body > header .site-logo-link::after {
     display: none;
   }
 
-  header .site-logo-mark,
-  header.scrolled .site-logo-mark {
+  body > header .site-logo-mark,
+  body > header.scrolled .site-logo-mark {
     height: 36px;
     filter: none;
   }
 
-  header .primary-nav {
+  body > header .primary-nav {
     flex: 0 1 auto;
     gap: 4px;
   }
 
-  header .primary-nav .nav-item {
+  body > header .primary-nav .nav-item {
     flex-direction: column;
     gap: 2px;
     min-width: 52px;
@@ -2973,8 +2975,8 @@ body.globe-page {
     font-size: 0.7rem;
   }
 
-  header .primary-nav .nav-item img,
-  header .primary-nav .nav-more-icon {
+  body > header .primary-nav .nav-item img,
+  body > header .primary-nav .nav-more-icon {
     width: 20px;
     height: 20px;
   }
@@ -3118,32 +3120,32 @@ summary.nav-item::-webkit-details-marker {
 /* Very narrow screens (320px reflow and below): keep the labeled header on one row without
    overflow; targets stay at least 44px. */
 @media (max-width: 380px) {
-  header .container {
+  body > header .container {
     padding: 0 0.5rem;
   }
 
-  header .header {
+  body > header .header {
     gap: 0.35rem;
   }
 
-  header .site-logo-link {
+  body > header .site-logo-link {
     padding: 2px 4px;
   }
 
-  header .site-logo-mark,
-  header.scrolled .site-logo-mark {
+  body > header .site-logo-mark,
+  body > header.scrolled .site-logo-mark {
     height: 24px;
   }
 
-  header .header {
+  body > header .header {
     gap: 0.25rem;
   }
 
-  header .primary-nav {
+  body > header .primary-nav {
     gap: 2px;
   }
 
-  header .primary-nav .nav-item {
+  body > header .primary-nav .nav-item {
     min-width: 44px;
     padding: 0.2rem 0.25rem;
     font-size: 0.65rem;

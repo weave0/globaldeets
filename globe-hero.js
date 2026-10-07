@@ -5,8 +5,8 @@
 (function () {
   'use strict';
 
-  // Approximate publisher home cities. Pins mark where a publisher is based, never where a story
-  // happened: GlobalDeets does not yet establish event location, so the globe must not imply it.
+  // Approximate home cities for mapped publishers (locationKind 'publisher-approximate'). A pin
+  // never marks where a story happened: GlobalDeets does not yet establish event location, so the globe must not imply it.
   // Publishers missing here (e.g. Minnesota Reformer, CalMatters) are NOT given invented
   // coordinates; they fall back to a broad feed-region position and are labeled that way.
   const SOURCE_COORDS = {

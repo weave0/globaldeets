@@ -156,7 +156,7 @@ async function verifyServiceWorker(page) {
   const response = await page.request.get(`${BASE}/service-worker.js`);
   requireCondition(response.ok(), `service worker returned HTTP ${response.status()}`);
   const body = await response.text();
-  requireCondition(body.includes("globaldeets-cache-v6"), 'production service worker cache version is stale');
+  requireCondition(body.includes("globaldeets-cache-v7"), 'production service worker cache version is stale');
   requireCondition(
     body.includes('self.skipWaiting()'),
     'production service worker does not activate the new shell promptly'

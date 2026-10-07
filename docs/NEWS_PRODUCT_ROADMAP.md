@@ -356,7 +356,7 @@ Updated as work lands. "Implemented" means merged code with automated tests; it 
 | `/news` | Keep | Region deep links via `?region=` |
 | `/categories` | Replaced | Browse by feed region and publisher; topic browsing waits for a reviewed taxonomy |
 | `/timeline` | Replaced | Reporting grouped by publication day; not an event timeline |
-| `/globe` | Keep (optional lens) | Pins are publisher home cities, labeled as such |
+| `/globe` | Keep (optional lens) | Each pin carries a labeled location kind: `publisher-approximate` (near a mapped publisher's base, offset to avoid overlap) or `region-fallback` (publisher not mapped; general feed-region position). Neither is an event location |
 | `/worldmap` | Keep (optional lens) | Webcams are separate from reporting coverage |
 | `/knowledge` | Keep | Review for portfolio drift in a later pass |
 | `/about`, `/contact`, `/donate` | Keep, review copy | `donate.html` title ("Power World-Changing Tech") needs a reader-product rewrite |

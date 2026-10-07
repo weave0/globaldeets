@@ -20,7 +20,7 @@ Production checks run in `.github/workflows/deploy.yml` against the exact deploy
 | --- | --- | --- |
 | 1 | A new visitor sees dated, newest-first reporting on the homepage, explicitly not ranked by importance | `gd038-world-desk.spec.js`: "homepage leads with dated latest reporting…" |
 | 2 | Every story identifies its publisher and opens the original in a new tab; unsafe URLs never become links | same spec |
-| 3 | Routing region is labeled as a feed, never as story location; globe pins are labeled as publisher cities | `gd038-world-desk.spec.js`: "homepage no longer carries portfolio…" |
+| 3 | Routing region is labeled as a feed, never as story location. Globe pins carry an explicit `publisher-approximate` or `region-fallback` label, and neither claims story location | `gd038-release-review.spec.js`: "globe pins carry an explicit, honest location kind"; feed labels: `gd038-world-desk.spec.js`: "homepage leads with dated latest reporting…" |
 | 4 | Changing region never shows another region's stories, even when an earlier request finishes late | `gd038-feed-reliability.spec.js`: "a slow earlier region…" |
 | 5 | A region view is shareable and restorable by URL | `gd038-feed-reliability.spec.js`: "a region deep link…" |
 | 6 | A hung or failing trust service degrades only its own panel; headlines stay | `gd038-feed-reliability.spec.js`: "a hung trust endpoint…"; `smoke.spec.js`: "news trust endpoints fail open…"; `gd022-reader-evidence-bridge.spec.js`: "core headlines survive…" |
@@ -31,6 +31,8 @@ Production checks run in `.github/workflows/deploy.yml` against the exact deploy
 | 11 | Source count shown before JavaScript matches the canonical registry | `smoke.spec.js`: "homepage raw HTML exposes the canonical live source count…" |
 | 12 | Offline readers are told they are seeing saved stories; the warning stays visible with details collapsed | `gd038-service-worker.spec.js` (real worker); `gd038-first-view.spec.js` (warning placement) |
 | 12a | The service worker installs (every precached file exists) and retires the previous cache | `gd038-service-worker.spec.js` |
+| 12d | A first install followed immediately by offline navigation keeps News styling (including the injected bridge stylesheet) and More-menu behavior; the precache covers every asset the shell pages load | `gd038-service-worker.spec.js`: "first install, then immediately offline…"; `offline-shell-agreement.test.mjs` |
+| 12e | Only the site header is sticky; headers inside content (World Desk dateline, modal headers) stay in flow | `gd038-release-review.spec.js`: "only the site header is sticky…" |
 | 12b | On phones (390×844, 360×800, 360×640) the first headline, its publisher, and its source action are visible without scrolling on the homepage and News | `gd038-first-view.spec.js` |
 | 12c | Primary destinations have visible labels; "More" opens and closes by keyboard and returns focus | `gd038-first-view.spec.js` |
 | 13 | Keyboard-only and screen-reader journeys | **Not automated yet** (R7) |

@@ -166,3 +166,36 @@ test('the load-more recovery message meets WCAG AA contrast for normal text', as
   expect(colors.fontSize, 'message is not shrunk').toBeGreaterThanOrEqual(13);
   expect(ratio, `contrast ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(4.5);
 });
+
+test('only the site header is sticky; semantic headers inside content stay in flow', async ({ page }) => {
+  await routeFeed(page, Array.from({ length: 8 }, (_, i) => story(`s${i}`, new Date().toISOString())));
+  await page.goto('/index.html');
+  await expect(page.locator('#desk-latest .desk-story')).toHaveCount(8);
+
+  const positions = await page.evaluate(() =>
+    [...document.querySelectorAll('header')].map(el => ({
+      cls: el.className || '(site)',
+      siteHeader: el.parentElement === document.body,
+      position: getComputedStyle(el).position,
+    }))
+  );
+  expect(positions.filter(p => p.siteHeader)).toEqual([{ cls: '(site)', siteHeader: true, position: 'sticky' }]);
+  for (const nested of positions.filter(p => !p.siteHeader)) {
+    expect(nested.position, `${nested.cls} must not be sticky`).toBe('static');
+  }
+
+  // Scrolled into the story list, the dateline scrolls away instead of covering stories.
+  await page.evaluate(() => {
+    const desk = document.querySelector('.desk-header');
+    const top = desk.getBoundingClientRect().top + window.scrollY + desk.offsetHeight + 300;
+    window.scrollTo({ top, behavior: 'instant' });
+  });
+  const deskHeaderTop = await page.locator('.desk-header').evaluate(el => el.getBoundingClientRect().top);
+  expect(deskHeaderTop).toBeLessThan(0);
+
+  await page.goto('/worldmap.html');
+  const modalHeaderPosition = await page
+    .locator('header.modal-header')
+    .evaluate(el => getComputedStyle(el).position);
+  expect(modalHeaderPosition).toBe('static');
+});

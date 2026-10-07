@@ -26,7 +26,7 @@ GlobalDeets is not an opinion feed, not a portfolio showcase, and not the public
 | `/news` | Full news feed with region filter (`?region=`), source context, and rights-aware cards |
 | `/categories` | Browse by feed region and by publisher |
 | `/timeline` | Recent reporting grouped by publication day |
-| `/globe`, `/worldmap` | Optional discovery lenses (publisher-city pins; public webcams) |
+| `/globe`, `/worldmap` | Optional discovery lenses: globe pins at approximate publisher locations or labeled feed-region fallbacks (never story locations); public webcams |
 | `/knowledge` | Public institutions and reference sources |
 | `/observatory/coverage/` | Coverage, provenance, rights, and gap evidence |
 | `/dossiers/santa-ynez-pipeline/` | Evidence dossier: claims, evidence, contradictions, corrections |

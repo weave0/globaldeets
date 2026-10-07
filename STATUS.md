@@ -18,7 +18,7 @@ Status of the roadmap's R1 release ("Reader reset", GD-038) on branch `feat/gd03
 | Distinct failure states (loading, upstream, timeout, offline, empty, no-match, load-more failure) | Implemented and tested |
 | World Desk homepage | Implemented: dated latest reporting, feed-region entry points, coverage strip |
 | Portfolio directory retirement (F1) | Done: `projects-*`, `platform-modal.js`, templates, `bb-content.html` removed; categories/timeline rebuilt |
-| Honest globe geography | Done: pins are labeled as publisher home cities |
+| Honest globe geography | Done: each pin is labeled `publisher-approximate` or `region-fallback` (unmapped publishers such as Minnesota Reformer and CalMatters); neither claims story location |
 | Service worker | Fixed precache (it previously named missing files); offline API copies are labeled |
 | Boundary verifier checks semantics | Done: `tools/verify-boundary-retired-prod.js` |
 | Stories-first News page and compact cards (F3) | Implemented; first-view regression at 390×844, 360×800, 360×640 |
