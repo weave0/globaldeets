@@ -71,7 +71,8 @@ async function statusOf(path) {
   return response.status;
 }
 
-(async () => {
+module.exports = { RETIRED_PATHS, CORE_PAGES };
+if (require.main === module) (async () => {
   const results = await Promise.all(RETIRED_PATHS.map(async path => ({ path, status: await statusOf(path) })));
   const leaked = results.filter(result => result.status === 200);
 

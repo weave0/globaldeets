@@ -206,7 +206,8 @@
     const node = document.getElementById('desk-date');
     if (!node) return;
     const now = new Date();
-    node.setAttribute('datetime', now.toISOString().slice(0, 10));
+    // Both the machine-readable and visible date use the reader's local calendar date.
+    node.setAttribute('datetime', dayKey(now));
     node.textContent = now.toLocaleDateString('en-US', {
       weekday: 'long',
       month: 'long',
@@ -222,9 +223,18 @@
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   }
 
+  // Calendar arithmetic in the reader's local time zone. Subtracting 24h is wrong on the days
+  // daylight-saving time starts or ends (23h / 25h local days).
+  function previousLocalDay(date) {
+    const copy = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    copy.setDate(copy.getDate() - 1);
+    return copy;
+  }
+
   function dayLabel(date) {
-    const today = dayKey(new Date());
-    const yesterday = dayKey(new Date(Date.now() - 86_400_000));
+    const now = new Date();
+    const today = dayKey(now);
+    const yesterday = dayKey(previousLocalDay(now));
     const key = dayKey(date);
     if (key === today) return 'Today';
     if (key === yesterday) return 'Yesterday';

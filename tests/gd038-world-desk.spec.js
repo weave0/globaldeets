@@ -157,7 +157,7 @@ test('homepage no longer carries portfolio, pitch, or roadmap modules', async ({
   await expect(page.locator('script[src*="projects-"], script[src*="platform-modal"]')).toHaveCount(0);
   await expect(page.getByText(/Roadmap|Product Direction|2030 Product Spine|Paywalls/)).toHaveCount(0);
   await expect(page.getByText(/geo-pinned/i)).toHaveCount(0);
-  await expect(page.getByText(/not where the story happened/)).toBeVisible();
+  await expect(page.getByText(/not where stories happened/)).toBeVisible();
 });
 
 test('browse page offers regions and publishers, not sibling projects', async ({ page }) => {

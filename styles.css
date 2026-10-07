@@ -702,7 +702,8 @@
 .news-load-more-note {
   margin: 0.75rem auto 0;
   text-align: center;
-  color: var(--text-muted);
+  /* Readers must be able to read this recovery message: --text-muted is too low-contrast here. */
+  color: var(--text-secondary);
   font-size: 0.875rem;
 }
 

@@ -1,5 +1,5 @@
 // Basic service worker for offline caching
-const CACHE_NAME = 'globaldeets-cache-v5';
+const CACHE_NAME = 'globaldeets-cache-v6';
 // Precache only files that exist in the deploy artifact: cache.addAll rejects (and the worker
 // fails to install) if any entry 404s.
 const CORE_ASSETS = [
@@ -71,35 +71,54 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const { request } = event;
   if (request.method !== 'GET') return;
+  event.respondWith(respond(event, request));
+});
+
+async function respond(event, request) {
   const url = new URL(request.url);
   const isApi = url.pathname.startsWith('/api/');
   const isNav =
     request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html');
-  event.respondWith(
-    fetch(request)
-      .then(resp => {
-        if (resp.ok && hasExpectedType(request.url, resp)) {
-          const copy = isApi ? stampCachedAt(resp.clone()) : Promise.resolve(resp.clone());
-          copy.then(stamped => caches.open(CACHE_NAME).then(cache => cache.put(request, stamped)));
-        }
-        return resp;
-      })
-      .catch(() => {
-        return caches.match(request).then(cached => {
-          if (cached && isApi) return markOfflineCopy(cached);
-          if (cached) return cached;
-          if (isApi) {
-            return new Response(JSON.stringify({ error: 'offline' }), {
-              status: 503,
-              headers: { 'Content-Type': 'application/json' },
-            });
-          }
-          if (isNav) return caches.match('offline.html');
-          return Response.error();
-        });
-      })
-  );
-});
+
+  let response;
+  try {
+    response = await fetch(request);
+  } catch {
+    return fromCache(request, isApi, isNav);
+  }
+
+  if (response.ok && hasExpectedType(request.url, response)) {
+    // The write is registered with the event's lifetime (waitUntil is called while respondWith is
+    // still pending), so the worker is kept alive until it settles. A failed write is contained:
+    // the valid network response below is returned either way.
+    event.waitUntil(
+      writeToCache(request, response.clone(), isApi).catch(error =>
+        console.warn('GlobalDeets cache write failed:', request.url, error)
+      )
+    );
+  }
+  return response;
+}
+
+async function writeToCache(request, response, isApi) {
+  const stored = isApi ? await stampCachedAt(response) : response;
+  const cache = await caches.open(CACHE_NAME);
+  await cache.put(request, stored);
+}
+
+async function fromCache(request, isApi, isNav) {
+  const cached = await caches.match(request);
+  if (cached && isApi) return markOfflineCopy(cached);
+  if (cached) return cached;
+  if (isApi) {
+    return new Response(JSON.stringify({ error: 'offline' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  if (isNav) return (await caches.match('offline.html')) || Response.error();
+  return Response.error();
+}
 
 async function stampCachedAt(response) {
   const headers = new Headers(response.headers);
