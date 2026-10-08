@@ -37,8 +37,8 @@ On `feat/gd-r2-story-intelligence`, which is based on unmerged PR #80 (`18f29105
 | --- | --- |
 | Maintained story `/story/santa-ynez-pipeline/` | Implemented from the Santa Ynez dossier. The story id does not replace event ids |
 | Reader API | `GET /api/intelligence/stories` and `GET /api/intelligence/stories/santa-ynez-pipeline` |
-| Shipped record | `story.json` matches the projection so the page still reads when the API is down |
-| Headline link | "Context & sources" only when a feed item URL exactly matches the Los Angeles Times report in the dossier |
+| Shipped record | `story.json` matches the projection. Review date and content version stay visible when the API is down. The story page registers the service worker so a direct link reloads from the precache offline |
+| Headline link | "Context & sources" only when `/api/news` marks that exact article URL. The client maps are gone. The Los Angeles Times URL is not in the admitted feed, so live cards do not show it until an admitted item carries that URL |
 | Additional public stories | Not invented. One maintained story carries the single-source, multi-source, conflicting, corrected, and limited-evidence cases |
 | Incomplete-data states | Evaluation fixtures only (`functions/lib/story-evaluation-fixtures.js`). Not indexed, not linked from the desk, not real-world reporting |
 | Place pages | Not part of this slice |

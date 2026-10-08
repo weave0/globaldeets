@@ -23,6 +23,10 @@ copyFileSync(fileURLToPath(new URL('../functions/api/news/sources.js', import.me
 copyFileSync(fileURLToPath(new URL('../functions/lib/news-coverage.js', import.meta.url)), fixtureCoverageLib);
 copyFileSync(fileURLToPath(new URL('../functions/lib/news-source-provenance.js', import.meta.url)), fixtureProvenanceLib);
 copyFileSync(fileURLToPath(new URL('../functions/lib/news-source-admission.js', import.meta.url)), fixtureAdmissionLib);
+copyFileSync(
+  fileURLToPath(new URL('../functions/lib/story-membership.js', import.meta.url)),
+  join(fixtureFunctions, 'lib', 'story-membership.js')
+);
 
 const newsModule = await import(pathToFileURL(fixtureNews).href);
 const provenanceModule = await import(pathToFileURL(fixtureProvenanceLib).href);

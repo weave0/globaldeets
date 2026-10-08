@@ -17,6 +17,7 @@
     'July', 'August', 'September', 'October', 'November', 'December',
   ];
   const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+  if (!fixturePage) recordStoryMeasurement('story-opened', key);
 
   document.addEventListener('keydown', event => {
     if (event.key !== 'Escape' || !(event.target instanceof window.Element)) return;
@@ -96,6 +97,7 @@
 
   function render(view) {
     applyFixtureIdentity(view);
+    showFreshness(view);
     body.innerHTML = [
       understanding(view),
       chronology(view),
@@ -127,7 +129,7 @@
     if (latest) {
       latest.textContent = view.latestUpdate?.date
         ? `Latest record date: ${formatDate(view.latestUpdate.date)}`
-        : view.latestUpdate?.note || 'No timeline date is recorded. This page does not invent one.';
+        : view.latestUpdate?.note || 'No record date is recorded. This page does not invent one.';
     }
     const lead = document.getElementById('story-lead');
     if (lead) {
@@ -190,7 +192,8 @@
   function claimBody(claim) {
     if (!claim) return '<p class="story-note">The related claim is not in this record.</p>';
     const origin = claim.origin || {};
-    const when = claim.assertedAt ? ` · asserted ${formatDate(claim.assertedAt)}` : '';
+    const whenLabel = origin.evidenceRole === 'reporting' ? 'Publication date' : 'Stated';
+    const when = claim.assertedAt ? ` · ${whenLabel} ${formatDate(claim.assertedAt)}` : '';
     const wording = claim.sourceWording
       ? `<p class="story-note"><strong>${esc(claim.sourceWordingLabel || 'Retained wording.')}</strong> ${esc(claim.sourceWording)}</p>`
       : '';
@@ -230,7 +233,7 @@
           )
           .join('');
         return `<li>
-          <p class="story-meta">${dateText(item.date)} · timeline date</p>
+          ${dateLabelList(item.dateLabels)}
           <p class="${differs ? 'story-time-differs' : 'story-note'}">${esc(item.time ? item.time.note : '')}</p>
           <h3>${esc(item.label || '')}</h3>
           <p class="story-meta">Event: ${eventLink}</p>
@@ -295,7 +298,7 @@
         return `<article class="story-evidence" data-evidence="true">
           <p class="story-voices">${esc(item.voiceLabel || 'Primary document')}</p>
           <h3>${esc(item.documentTypeLabel || item.documentType || 'Document')}</h3>
-          <p class="story-meta"><strong>${esc(item.issuerName || 'Issuer not named')}</strong>${item.publishedAt ? ` · published ${esc(formatDate(item.publishedAt))}` : ''}</p>
+          <p class="story-meta"><strong>${esc(item.issuerName || 'Issuer not named')}</strong> · ${item.publishedAt ? `Document date: ${esc(formatDate(item.publishedAt))}` : 'Document date: not recorded'}</p>
           ${history}
           <p>${externalLink(item.url, `Open the document${item.issuerName ? ` from ${item.issuerName}` : ''}`)}</p>
         </article>`;
@@ -323,7 +326,7 @@
       .map(item => {
         const gaps = (item.unknowns || []).map(text => `<li>${esc(text)}</li>`).join('');
         return `<article class="story-correction">
-          <p class="story-voices">${esc(item.status || 'correction')} · ${esc(formatDate(item.observedAt))}</p>
+          <p class="story-voices">Correction date: ${esc(formatDate(item.observedAt))}</p>
           <p class="story-meta"><strong>${esc(item.issuerName || 'Issuer not named')}</strong></p>
           <p class="story-proposition">${esc(item.description || '')}</p>
           <p class="story-note">${esc(item.historyNote || '')}</p>
@@ -417,9 +420,26 @@
     return `<a class="story-read-link" href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(label)}<span class="visually-hidden"> (opens in a new tab)</span></a>`;
   }
 
-  function dateText(iso) {
-    if (!iso) return '<span>Date not recorded</span>';
-    if (!ISO_DATE.test(iso)) return `<span>${esc(String(iso))}</span>`;
+  function showFreshness(view) {
+    const node = document.getElementById('story-freshness');
+    if (!node) return;
+    const reviewed = view.reviewedAt && ISO_DATE.test(view.reviewedAt)
+      ? `Reviewed ${formatDate(view.reviewedAt)}`
+      : 'Review date not recorded';
+    const version = view.dossierVersion ? `Content version ${view.dossierVersion}` : 'Content version not recorded';
+    node.textContent = `${reviewed}. ${version}.`;
+  }
+
+  function dateLabelList(labels) {
+    const items = (labels || [])
+      .map(entry => `<li>${esc(entry.label || 'Date')}: ${dateValue(entry.date)}</li>`)
+      .join('');
+    return items ? `<ul class="story-date-list">${items}</ul>` : '';
+  }
+
+  function dateValue(iso) {
+    if (!iso) return 'not recorded';
+    if (!ISO_DATE.test(iso)) return `${esc(String(iso))} (not a full calendar day)`;
     return `<time datetime="${esc(iso)}">${esc(formatDate(iso))}</time>`;
   }
 
@@ -446,6 +466,29 @@
     } catch {
       return null;
     }
+  }
+
+  function recordStoryMeasurement(eventName, storyKey) {
+    if (eventName !== 'story-opened' && eventName !== 'story-context-opened') return;
+    if (typeof storyKey !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(storyKey)) return;
+    const body = JSON.stringify({ event: eventName, storyKey });
+    try {
+      if (typeof navigator.sendBeacon === 'function') {
+        const sent = navigator.sendBeacon(
+          '/api/intelligence/story-measurement',
+          new Blob([body], { type: 'text/plain' })
+        );
+        if (sent) return;
+      }
+    } catch {
+      /* A failed measurement must not affect the story. */
+    }
+    fetch('/api/intelligence/story-measurement', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body,
+      keepalive: true,
+    }).catch(() => {});
   }
 
   function setStatus(text) {

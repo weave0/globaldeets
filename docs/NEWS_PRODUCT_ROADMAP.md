@@ -346,7 +346,7 @@ Updated as work lands. "Implemented" means merged code with automated tests; it 
 | R1 service worker install/upgrade/offline labeling | Implemented with a dedicated service-worker-enabled test path | `gd038-service-worker.spec.js` |
 | R1 light mode | **Deferred** (not part of the reader-reset release; tracked under R7) | — |
 | R1 production release | Not deployed | — |
-| R2 story page | Implemented on `feat/gd-r2-story-intelligence`, which depends on unmerged PR #80 (`18f2910`). Not deployed. One public story. Incomplete-data states are evaluation fixtures, not extra public stories | `tests/story-intelligence.test.mjs`, `tests/gd-r2-story.spec.js`, `docs/story-intelligence.md` |
+| R2 story page | Implemented on `feat/gd-r2-story-intelligence`, which depends on unmerged PR #80 (`18f2910`). Not deployed and not production-certified. One public story. Server-owned exact-URL membership. Incomplete-data states are evaluation fixtures, not extra public stories | `tests/story-intelligence.test.mjs`, `tests/story-membership.test.mjs`, `tests/gd-r2-story.spec.js`, `docs/story-intelligence.md` |
 | R3–R9 | Not started (GD-026 place work exists on `feat/gd0261-place-registry`) | — |
 
 ## 10. Public route inventory (R0)

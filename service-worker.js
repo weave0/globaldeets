@@ -1,5 +1,5 @@
 // Basic service worker for offline caching
-const CACHE_NAME = 'globaldeets-cache-v7';
+const CACHE_NAME = 'globaldeets-cache-v8';
 // The offline shell: every precached page plus every same-origin asset those pages load (including
 // news-reader-bridge.css, which news.js injects). tests/offline-shell-agreement.test.mjs keeps this
 // list complete and limited to shipped files; a missing file would fail the worker install.
@@ -29,6 +29,11 @@ const CORE_ASSETS = [
   'assets/icons/site/nav-home.svg',
   'assets/icons/site/nav-news.svg',
   'assets/icons/site/nav-list.svg',
+  'story/santa-ynez-pipeline/',
+  'story/santa-ynez-pipeline/index.html',
+  'story/story.css',
+  'story/santa-ynez-pipeline/story.js',
+  'story/santa-ynez-pipeline/story.json',
 ];
 const OFFLINE_COPY_HEADER = 'X-GlobalDeets-Offline-Copy';
 const CACHED_AT_HEADER = 'X-GlobalDeets-Cached-At';

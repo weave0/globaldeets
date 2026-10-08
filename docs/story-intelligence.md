@@ -12,11 +12,15 @@ A story page is a reader projection of records GlobalDeets already keeps. It is 
 
 ## What this slice shows
 
-`/story/santa-ynez-pipeline/` projects that dossier. The story id is `story:santa-ynez-pipeline`. It references the seven event ids and does not merge them. The page is backed by the dossier module. `story.json` is that same projection, shipped with the page so original links and the record still render when `GET /api/intelligence/stories/santa-ynez-pipeline` is down.
+`/story/santa-ynez-pipeline/` projects that dossier. The story id is `story:santa-ynez-pipeline`. It references the seven event ids and does not merge them. The page is backed by the dossier module. `story.json` is that same projection, shipped with the page so original links and the record still render when `GET /api/intelligence/stories/santa-ynez-pipeline` is down. The page states the review date and content version in the HTML, so that line remains when `story.json` fails. The page registers `/service-worker.js`. After that install, reloading the story URL with the network gone still shows the reviewed record from the precache.
 
 The one public story is the Santa Ynez dossier. Inside it the record already has a single publisher report, distinct-origin corroboration, a contradiction, a correction, and named gaps. No additional public stories were invented.
 
-News cards gain "Context & sources" only when the item URL is exactly a reporting URL in the maintained story. Similar headlines are not clustered.
+News cards gain "Context & sources" only when `/api/news` attaches story membership for an exact approved article URL. The allowlist is `functions/lib/story-membership.js` (`2026-10-08.1`). The only member is the Los Angeles Times report already cited in the Santa Ynez dossier. The news and World Desk pages do not keep their own copy of that URL. A similar headline, a query string, or a forged `story` object does not open a story. Every other card still goes to the publisher.
+
+The Los Angeles Times is not an admitted live feed source, so a normal `/api/news` response still has no card for that article until an admitted item carries that exact URL. Membership does not add the article to the feed.
+
+Story discovery and reading send a first-party POST to `/api/intelligence/story-measurement` with only `story-opened` or `story-context-opened` and the story key. The request does not include the article URL, the headline, or a client id, and it sets no cookie. A failed measurement does not change the page. Evaluation fixtures are rejected.
 
 ## How incomplete records read
 
@@ -47,7 +51,7 @@ The Santa Ynez reporting source does not store the Los Angeles Times headline, s
 
 These are why Story Intelligence is still one maintained story rather than a general layer over the news feed:
 
-1. There is no maintained story membership on live headlines except the exact Los Angeles Times URL hardcoded beside the news cards.
+1. Story membership is server-owned, but the only approved article is not an admitted feed source. Live news cards will not show "Context & sources" until an admitted item uses that exact URL.
 2. The claim model can say allegation, denial, estimate, forecast, official position, or fact assertion. It has no structured charged / pleaded / convicted / sentenced states, and no structured claimed-loss / proven-loss / restitution / forfeiture states. The page does not infer them.
 3. Dossier sources do not carry `originalLang`, `translated`, or `originalHeadline`. The projector shows those only when a record includes them. The live news translation labels are not joined onto the story.
 4. Evidence, chronology, and reporting travel in one story record. There is no separate evidence-enrichment call. A failed story fetch leaves the static source links. A failed story API leaves the shipped record.

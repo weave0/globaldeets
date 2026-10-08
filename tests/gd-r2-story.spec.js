@@ -61,6 +61,12 @@ test('an exact reporting URL opens the story and any other headline does not', a
             published: '2026-08-20T12:00:00.000Z',
             displayMode: 'headline-link',
             allowedUseStatus: 'unknown',
+            story: {
+              storyId: 'story:santa-ynez-pipeline',
+              storyKey: 'santa-ynez-pipeline',
+              href: '/story/santa-ynez-pipeline/',
+              membershipVersion: '2026-10-08.1',
+            },
           },
           {
             id: 'other',
@@ -73,6 +79,23 @@ test('an exact reporting URL opens the story and any other headline does not', a
             published: '2026-08-20T13:00:00.000Z',
             displayMode: 'headline-link',
             allowedUseStatus: 'unknown',
+            story: { href: '/story/santa-ynez-pipeline/', storyKey: 'not-the-approved-story' },
+          },
+          {
+            id: 'malicious',
+            source: 'Malicious Wire',
+            sourceId: 'malicious',
+            headline: 'A card with a forged story link',
+            summary: null,
+            sourceUrl: 'https://example.com/malicious',
+            region: 'americas',
+            published: '2026-08-20T14:00:00.000Z',
+            displayMode: 'headline-link',
+            allowedUseStatus: 'unknown',
+            translated: true,
+            originalLang: 'ja" onclick="alert(1)',
+            originalHeadline: '<img src=x onerror=alert(1)>',
+            story: { href: 'javascript:alert(1)', storyKey: 'santa-ynez-pipeline', storyId: 'story:santa-ynez-pipeline' },
           },
         ],
       }),
@@ -85,9 +108,59 @@ test('an exact reporting URL opens the story and any other headline does not', a
   await expect(context).toHaveAttribute('href', '/story/santa-ynez-pipeline/');
   await expect(page.getByRole('link', { name: /Read at Los Angeles Times/ })).toHaveAttribute('href', LATIMES);
   await expect(page.getByRole('link', { name: /Read at Fixture Wire/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Read at Malicious Wire/ })).toBeVisible();
+  await expect(page.locator('#news-grid a[href^="javascript:"], #news-grid img')).toHaveCount(0);
+  await expect(page.getByText('<img src=x onerror=alert(1)>')).toBeVisible();
   await context.click();
   await expect(page).toHaveURL(/\/story\/santa-ynez-pipeline\/?$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Santa Ynez Pipeline — Evidence Dossier' })).toBeVisible();
+});
+
+test('the homepage desk uses the same server story membership', async ({ page }) => {
+  await page.route('**/api/news**', async route => {
+    const { pathname } = new URL(route.request().url());
+    if (pathname !== '/api/news') {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        total: 2,
+        items: [
+          {
+            id: 'lat',
+            source: 'Los Angeles Times',
+            headline: 'Judge allows company to continue pumping',
+            sourceUrl: LATIMES,
+            region: 'americas',
+            published: '2026-08-20T12:00:00.000Z',
+            displayMode: 'headline-link',
+            story: {
+              storyId: 'story:santa-ynez-pipeline',
+              storyKey: 'santa-ynez-pipeline',
+              href: '/story/santa-ynez-pipeline/',
+            },
+          },
+          {
+            id: 'other',
+            source: 'Fixture Wire',
+            headline: 'A different report',
+            sourceUrl: 'https://example.com/other-pipeline',
+            region: 'americas',
+            published: '2026-08-20T13:00:00.000Z',
+            displayMode: 'headline-link',
+          },
+        ],
+      }),
+    });
+  });
+  await page.goto('/index.html');
+  const context = page.locator('#desk-latest').getByRole('link', { name: 'Context & sources' });
+  await expect(context).toHaveCount(1);
+  await expect(context).toHaveAttribute('href', '/story/santa-ynez-pipeline/');
+  await expect(page.locator('#desk-latest').getByRole('link', { name: /Read at Fixture Wire/ })).toBeVisible();
 });
 
 test('chronology does not treat publication order as event order', async ({ page }) => {
@@ -96,7 +169,9 @@ test('chronology does not treat publication order as event order', async ({ page
   await expect(page.locator('.story-chrono > li')).toHaveCount(9);
   const differs = page.locator('.story-time-differs');
   await expect(differs).toHaveCount(3);
-  await expect(page.getByText('Timeline date 2026-08-20 is not the event start 2026-08-19.')).toBeVisible();
+  await expect(page.getByText('Record date 2026-08-20 is not the event date 2026-08-19.')).toBeVisible();
+  await expect(page.getByText('Document date:').first()).toBeVisible();
+  await expect(page.getByText('Correction date:').first()).toBeVisible();
   await expect(page.locator('.story-chrono time').first()).toHaveText('March 13, 2026');
   await expect(page.getByText(/Ordered by the dossier timeline date/)).toBeVisible();
 });
@@ -119,7 +194,9 @@ test('the record keeps conflict, evidence, correction, and unknowns', async ({ p
   await expect(page.getByText(/Canonical entities/)).toHaveCount(0);
   const text = await page.locator('#story').innerText();
   expect(text).toMatch(/not a truth score/i);
-  expect(text).not.toMatch(/\d+\s*%|bias score|reliability score|misinformation/i);
+  // The unresolved list prints a source URL that contains %E2%80%99. That encoding is not a score.
+  const prose = text.replace(/https?:\/\/\S+/g, '');
+  expect(prose).not.toMatch(/\d+\s*%|bias score|reliability score|misinformation/i);
   await expect(page.getByText('Evaluation fixture')).toHaveCount(0);
   await expect(page.getByText(/Machine-translated/)).toHaveCount(0);
 });
@@ -135,6 +212,9 @@ test('original links survive a failed record', async ({ page }) => {
     /energy\.gov/
   );
   await expect(page.getByText('could not be loaded')).toBeVisible();
+  await expect(page.getByText(/Content version 2026-09-03\.1/)).toBeVisible();
+  await expect(page.getByText(/Reviewed/).first()).toBeVisible();
+  await expect(page.getByText(/is not cited by a claim or a document/)).toBeVisible();
   await expect(page.locator('body[data-story-ready="true"]')).toHaveCount(0);
 });
 
@@ -345,7 +425,7 @@ test('a missing place is not filled from a publisher or feed', async ({ page }) 
 test('a missing day is not invented', async ({ page }) => {
   await openFixture(page, 'evaluation-no-time');
   await expect(page.getByText('does not invent a day or a time of day')).toBeVisible();
-  await expect(page.getByText('This update has no timeline date. No day is invented.')).toBeVisible();
+  await expect(page.getByText('This update has no record date. No day is invented.')).toBeVisible();
   await expect(page.locator('#story')).not.toContainText('August 1');
   await expect(page.locator('#story')).not.toContainText('January 1');
 });

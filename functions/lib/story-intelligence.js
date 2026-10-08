@@ -17,7 +17,7 @@
 
 import { getSantaYnezDossier } from './santa-ynez-dossier.js';
 
-export const STORY_MODEL_VERSION = '2026-10-08.2';
+export const STORY_MODEL_VERSION = '2026-10-08.3';
 
 const STORY_KEY = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -235,6 +235,14 @@ export function projectStoryFromDossier(definition, dossier) {
     });
   }
   unresolved.push(...placeGaps);
+  for (const source of statements) {
+    if (source.eventIds.length > 0) continue;
+    unresolved.push({
+      kind: 'uncited-source',
+      basis: ['source'],
+      text: `${source.name} is listed at ${source.url || 'a link that is not recorded'} and is not cited by a claim or a document. This page does not say what it asserted. The listing is not support for the other claims.`,
+    });
+  }
   if (!evidenceViews.length) {
     unresolved.push({
       kind: 'missing-primary-evidence',
@@ -296,7 +304,7 @@ export function projectStoryFromDossier(definition, dossier) {
     },
     chronology,
     chronologyNote:
-      'Ordered by the dossier timeline date. A timeline date is not treated as the real-world event order when it differs from the event start.',
+      'Ordered by the dossier timeline date. That date is the record date. It is not the event date, the document date, or a publication date unless the record says those are the same day.',
     reporting,
     statements,
     evidence: evidenceViews,
@@ -355,6 +363,7 @@ export function projectStoryFromDossier(definition, dossier) {
       'Unknown stays unknown. Corrections stay on the record.',
     ],
     detailNotes: [
+      'A listed source that no claim or document cites is not support for the rest of the record.',
       'A story groups maintained records. It does not merge events that keep their own ids.',
       'The same document cited twice is one origin, not independent corroboration.',
       'An allegation is not an adjudicated fact. Charged, pleaded, convicted, and sentenced are not interchangeable here. A claimed amount is not a proven loss.',
@@ -552,30 +561,64 @@ function presentTimelineItem(item, context) {
       issuerName: context.entityById.get(evidence.issuerEntityId)?.displayName || null,
     }));
   const claims = array(item.claimIds).map(id => context.claimViewById.get(id)).filter(Boolean);
-  const publicationDates = unique(
-    [...documents.map(document => document.publishedAt), ...claims.map(claim => claim.assertedAt)].filter(Boolean)
+  const matchedCorrections = context.corrections.filter(
+    correction => array(correction.eventIds).includes(item.eventId) && correction.observedAt === item.date
   );
-  const correctionIds = context.corrections
-    .filter(correction => array(correction.eventIds).includes(item.eventId) && correction.observedAt === item.date)
-    .map(correction => correction.id);
+  const documentDates = unique(documents.map(document => document.publishedAt).filter(Boolean));
+  const publicationDates = unique(claims.map(claim => claim.assertedAt).filter(Boolean));
   return {
     id: item.id,
     date: item.date || null,
     label: item.label,
     event: presented,
     time: timeRelation(item.date, event),
+    documentDates,
     publicationDates,
+    dateLabels: dateLabels({
+      recordDate: item.date || null,
+      eventStartedAt: event?.startedAt || null,
+      documents,
+      claims,
+      corrections: matchedCorrections,
+    }),
     documents,
     claims,
-    correctionIds,
+    correctionIds: matchedCorrections.map(correction => correction.id),
   };
+}
+
+function dateLabels({ recordDate, eventStartedAt, documents, claims, corrections }) {
+  const labels = [
+    { kind: 'record-date', label: 'Record date', date: dateValue(recordDate) },
+    { kind: 'event-date', label: 'Event date', date: dateValue(eventStartedAt) },
+  ];
+  if (documents.length) pushDates(labels, 'document-date', 'Document date', documents.map(document => document.publishedAt));
+  if (claims.length) pushDates(labels, 'publication-date', 'Publication date', claims.map(claim => claim.assertedAt));
+  for (const correction of corrections) {
+    labels.push({ kind: 'correction-date', label: 'Correction date', date: dateValue(correction.observedAt) });
+  }
+  return labels;
+}
+
+function pushDates(labels, kind, label, values) {
+  const dates = unique(values.map(dateValue).filter(Boolean));
+  if (!dates.length) {
+    labels.push({ kind, label, date: null });
+    return;
+  }
+  for (const date of dates) labels.push({ kind, label, date });
+}
+
+function dateValue(value) {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  return value.trim();
 }
 
 function timeRelation(timelineDate, event) {
   const started = event?.startedAt || null;
   const observed = event?.observedAt || null;
   if (!timelineDate) {
-    return { kind: 'timeline-date-missing', timelineDate: null, eventStartedAt: started, eventObservedAt: observed, note: 'This update has no timeline date. No day is invented.' };
+    return { kind: 'timeline-date-missing', timelineDate: null, eventStartedAt: started, eventObservedAt: observed, note: 'This update has no record date. No day is invented.' };
   }
   if (!ISO_DATE.test(timelineDate)) {
     return {
@@ -583,7 +626,7 @@ function timeRelation(timelineDate, event) {
       timelineDate,
       eventStartedAt: started,
       eventObservedAt: observed,
-      note: `The timeline date “${timelineDate}” is not a full calendar day. This page does not invent a day or a time of day.`,
+      note: `The record date “${timelineDate}” is not a full calendar day. This page does not invent a day or a time of day.`,
     };
   }
   if (!started) {
@@ -592,7 +635,7 @@ function timeRelation(timelineDate, event) {
       timelineDate,
       eventStartedAt: null,
       eventObservedAt: observed,
-      note: 'The record does not include an event start, so this date is only the timeline date.',
+      note: 'The record does not include an event date, so this date is only the record date.',
     };
   }
   if (timelineDate === started) {
@@ -601,7 +644,7 @@ function timeRelation(timelineDate, event) {
       timelineDate,
       eventStartedAt: started,
       eventObservedAt: observed,
-      note: `Timeline date matches the recorded event start (${started}).`,
+      note: `Record date matches the event date (${started}).`,
     };
   }
   return {
@@ -609,7 +652,7 @@ function timeRelation(timelineDate, event) {
     timelineDate,
     eventStartedAt: started,
     eventObservedAt: observed,
-    note: `Timeline date ${timelineDate} is not the event start ${started}. This update is ordered by the record date, not by treating publication order as the order events occurred.`,
+    note: `Record date ${timelineDate} is not the event date ${started}. This update is ordered by the record date, not by treating publication order as the order events occurred.`,
   };
 }
 
@@ -664,7 +707,7 @@ function presentSource(source, sourceEventIds, eventById) {
     translation: translationOf(source),
     note: eventIds.length
       ? null
-      : 'This source is listed in the maintained record, and no claim or evidence item cites it. What it says is not in this record.',
+      : 'Listed, not cited. No claim or document in this record uses this source. The listing does not support those claims, and this page does not say what the source asserted.',
   };
 }
 
@@ -751,7 +794,7 @@ function latestUpdate(chronology) {
       timeKind: imprecise ? 'imprecise' : null,
       note: imprecise
         ? 'The record has a timeline entry, but not a full calendar day. This page does not invent one.'
-        : 'No timeline date is recorded.',
+        : 'No record date is recorded.',
       items: [],
     };
   }
@@ -767,7 +810,7 @@ function latestUpdate(chronology) {
   return {
     date,
     timeKind: 'timeline-date',
-    note: 'Latest timeline date in the maintained record. It is the date of a recorded update, not a claim that every event happened then.',
+    note: 'Latest record date in the maintained record. It is the date of a recorded update, not a claim that every event happened then, and not a document date or a publication date.',
     items,
   };
 }

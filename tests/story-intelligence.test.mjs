@@ -79,7 +79,7 @@ test('publication time is not treated as event time when the dates differ', () =
 
   assert.equal(report.time.kind, 'timeline-differs-from-event-start');
   assert.equal(report.time.eventStartedAt, '2026-08-19');
-  assert.match(report.time.note, /not the event start/);
+  assert.match(report.time.note, /not the event date/);
   assert.equal(challenge.time.kind, 'timeline-differs-from-event-start');
   assert.equal(challenge.time.eventStartedAt, '2026-03-13');
   assert.equal(view.chronology[0].date <= view.chronology.at(-1).date, true);
@@ -363,14 +363,33 @@ test('the shipped story.json and page match the projection, including every orig
   assert.equal(page.includes('Canonical entities'), false);
 });
 
-test('headline context links are exact maintained URLs, not a clustering guess', () => {
+test('record, event, document, publication, and correction dates stay distinct', () => {
   const view = projectMaintainedStory('santa-ynez-pipeline');
-  for (const file of ['news.js', 'world-desk.js']) {
-    const source = read(file);
-    assert.ok(source.includes(view.reporting.origins[0].url), file);
-    assert.ok(source.includes(view.href), file);
-    assert.match(source, /exact URL/i);
+  for (const item of view.chronology) {
+    const kinds = item.dateLabels.map(label => label.kind);
+    assert.ok(kinds.includes('record-date'), item.id);
+    assert.ok(kinds.includes('event-date'), item.id);
+    assert.ok(item.documentDates.every(date => !item.publicationDates.includes(date) || item.dateLabels.some(label => label.kind === 'document-date' && label.date === date)));
   }
+  const differs = view.chronology.find(
+    item => item.time.kind === 'timeline-differs-from-event-start' && item.date === '2026-08-20'
+  );
+  assert.equal(differs.dateLabels.find(label => label.kind === 'record-date').date, '2026-08-20');
+  assert.equal(differs.dateLabels.find(label => label.kind === 'event-date').date, '2026-08-19');
+  assert.match(differs.time.note, /Record date 2026-08-20 is not the event date 2026-08-19/);
+  assert.ok(view.chronology.some(item => item.dateLabels.some(label => label.kind === 'document-date' && label.date)));
+  assert.ok(view.chronology.some(item => item.dateLabels.some(label => label.kind === 'publication-date')));
+  const corrected = view.chronology.find(item => item.dateLabels.some(label => label.kind === 'correction-date'));
+  assert.equal(corrected.dateLabels.find(label => label.kind === 'correction-date').date, '2026-09-03');
+  assert.ok(corrected.dateLabels.some(label => label.kind === 'event-date'));
+
+  const uncited = view.unresolved.items.filter(item => item.kind === 'uncited-source');
+  assert.equal(uncited.length, 1);
+  assert.match(uncited[0].text, /not cited by a claim or a document/);
+  assert.match(uncited[0].text, /not support/);
+  assert.match(uncited[0].text, /oag\.ca\.gov\/news\/press-releases\/attorney-general-bonta-continues/);
+  assert.equal(/corroborat/i.test(uncited[0].text), false);
+  assert.ok(view.unattachedSources.includes('source:ca-doj:2026-07-20'));
 });
 
 function escapeRegExp(value) {
