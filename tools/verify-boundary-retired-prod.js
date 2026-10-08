@@ -37,7 +37,11 @@ const RETIRED_PATHS = [
   '/bi-ecosystem.css',
 ];
 
-const CORE_PAGES = ['/', '/news', '/categories', '/timeline', '/app.js', '/world-desk.js'];
+const CORE_PAGES = [
+  '/', '/news', '/categories', '/timeline', '/globe', '/worldmap', '/knowledge',
+  '/about', '/contact', '/donate', '/offline', '/app.js', '/world-desk.js',
+  '/news.js', '/globe-hero.js',
+];
 
 const FORBIDDEN_CONTENT = [
   /projects-data\.js/,
@@ -52,6 +56,9 @@ const FORBIDDEN_CONTENT = [
   /fantasy-penpal\.globaldeets/i,
   /steveb\.globaldeets/i,
   /medical\.globaldeets/i,
+  /impact across 6 world-changing platforms/i,
+  /goodlippindesign/i,
+  /gofundme\.com/i,
 ];
 
 async function textOf(path) {
