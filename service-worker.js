@@ -32,6 +32,8 @@ const CORE_ASSETS = [
 ];
 const OFFLINE_COPY_HEADER = 'X-GlobalDeets-Offline-Copy';
 const CACHED_AT_HEADER = 'X-GlobalDeets-Cached-At';
+const OFFLINE_MISS_HEADER = 'X-GlobalDeets-Offline-Miss';
+const OFFLINE_PAGES = new Set(['index', 'news', 'categories', 'timeline', 'offline']);
 
 // A stylesheet or script is cached only when the server labels it as one. Some servers (the Vite
 // dev server among them) answer a generic request for /styles.css with a JavaScript module; caching
@@ -121,11 +123,32 @@ async function fromCache(request, isApi, isNav) {
   if (isApi) {
     return new Response(JSON.stringify({ error: 'offline' }), {
       status: 503,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', [OFFLINE_MISS_HEADER]: '1' },
     });
+  }
+  if (isNav && urlIsSameOrigin(request.url)) {
+    const page = offlinePageFor(request.url);
+    if (page) {
+      const shell = await caches.match(page);
+      if (shell) return shell;
+    }
   }
   if (isNav) return (await caches.match('offline.html')) || Response.error();
   return Response.error();
+}
+
+function urlIsSameOrigin(href) {
+  return new URL(href).origin === self.location.origin;
+}
+
+function offlinePageFor(href) {
+  const url = new URL(href);
+  if (url.origin !== self.location.origin) return null;
+  const pathname = url.pathname.replace(/\/$/, '') || '/';
+  if (pathname === '/') return 'index.html';
+  // Only known reader shells are served by offline navigation; unknown routes keep the fallback.
+  const name = pathname.slice(1).replace(/\.html$/, '');
+  return OFFLINE_PAGES.has(name) ? `${name}.html` : null;
 }
 
 async function stampCachedAt(response) {
