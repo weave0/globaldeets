@@ -8,6 +8,7 @@ import { onRequestGet, storyKeyFrom } from '../functions/api/intelligence/storie
 import { createClaim, createClaimRelation } from '../functions/lib/claim-evidence-model.js';
 import { createEntity, createEvent } from '../functions/lib/intelligence-model.js';
 import { getSantaYnezDossier } from '../functions/lib/santa-ynez-dossier.js';
+import { evaluationStoryKeys, projectEvaluationStory } from '../functions/lib/story-evaluation-fixtures.js';
 import {
   assessExplicitMemberships,
   independentCorroboration,
@@ -245,6 +246,102 @@ test('the story API serves the maintained record and refuses unknown keys', asyn
     listMaintainedStories().map(item => item.storyKey),
     ['santa-ynez-pipeline']
   );
+  for (const key of evaluationStoryKeys()) {
+    const hidden = await onRequestGet({ request, params: { storyKey: key } });
+    assert.equal(hidden.status, 404, key);
+  }
+});
+
+test('evaluation fixtures stay off the public index and render incomplete states honestly', () => {
+  const maintained = projectMaintainedStory('santa-ynez-pipeline');
+  assert.equal(maintained.fixture, false);
+  assert.equal(maintained.reporting.origins[0].translation, null);
+  assert.deepEqual(
+    listMaintainedStories().map(item => item.storyKey),
+    ['santa-ynez-pipeline']
+  );
+
+  for (const key of evaluationStoryKeys()) {
+    const view = projectEvaluationStory(key);
+    assert.equal(view.fixture, true, key);
+    assert.equal(view.graphValid, true, `${key} ${JSON.stringify(view.identityMismatch)}`);
+    assert.equal(view.understanding.proseSummary, null, key);
+    assert.equal(view.rules.truthScore, false, key);
+    assert.equal(view.grouping.isEventIdentity, false, key);
+    const raw = JSON.stringify(view);
+    assert.equal(raw.includes('javascript:'), false, key);
+    assert.equal(raw.includes('data:text/html'), false, key);
+    assert.equal(raw.includes('Oslo'), false, key);
+  }
+
+  const several = projectEvaluationStory('evaluation-several-publishers');
+  assert.equal(several.reporting.origins.length, 2);
+  assert.equal(new Set(several.reporting.origins.map(item => item.url)).size, 2);
+  assert.ok(several.evidence.length > 0);
+  assert.ok(several.chronology.length > 0);
+
+  const single = projectEvaluationStory('evaluation-single-source');
+  assert.equal(single.reporting.origins.length, 1);
+  assert.equal(single.understanding.corroborated.length, 0);
+  assert.equal(single.cases.multiSource.length, 0);
+  assert.ok(single.cases.singleSource.length > 0);
+  assert.ok(single.evidence.length > 0);
+
+  const empty = projectEvaluationStory('evaluation-no-evidence');
+  assert.equal(empty.evidence.length, 0);
+  assert.ok(empty.unresolved.items.some(item => item.kind === 'missing-primary-evidence'));
+  assert.ok(empty.understanding.conflicting.length === 0);
+  assert.ok(
+    empty.understanding.other.some(item => item.voiceLabels.includes('Allegation, not an adjudicated fact'))
+  );
+
+  const conflict = projectEvaluationStory('evaluation-conflict');
+  assert.equal(conflict.understanding.conflicting.length, 1);
+  assert.equal(conflict.understanding.conflicting[0].resolution, 'not-resolved');
+  assert.match(conflict.understanding.conflicting[0].note, /does not pick a winner/);
+  const voices = [
+    ...(conflict.understanding.conflicting[0].left?.voiceLabels || []),
+    ...(conflict.understanding.conflicting[0].right?.voiceLabels || []),
+  ];
+  assert.ok(voices.includes('Allegation, not an adjudicated fact'));
+  assert.ok(voices.includes('Denial, not a finding'));
+
+  const nowhere = projectEvaluationStory('evaluation-no-place');
+  assert.deepEqual(nowhere.places, []);
+  assert.ok(nowhere.unresolved.items.some(item => item.kind === 'unclear-location'));
+  assert.match(nowhere.unresolved.items.find(item => item.kind === 'unclear-location').text, /not in the record/);
+
+  const undated = projectEvaluationStory('evaluation-no-time');
+  assert.equal(undated.latestUpdate.date, null);
+  assert.match(undated.latestUpdate.note, /does not invent/);
+  assert.ok(undated.chronology.some(item => item.time.kind === 'timeline-date-imprecise'));
+  assert.ok(undated.chronology.some(item => item.time.kind === 'timeline-date-missing'));
+  assert.ok(undated.unresolved.items.some(item => item.kind === 'missing-event-time'));
+  assert.equal(JSON.stringify(undated).includes('August 1'), false);
+
+  const fixed = projectEvaluationStory('evaluation-corrected');
+  assert.equal(fixed.corrections[0].originalArtifactRetained, false);
+  assert.match(fixed.corrections[0].historyNote, /not retained/);
+  assert.ok(fixed.supersededClaims.some(item => /earlier fixture line/.test(item.proposition)));
+
+  const unsafe = projectEvaluationStory('evaluation-unsafe-url');
+  assert.equal(unsafe.reporting.origins.find(item => item.name === 'Fixture Ledger').url, null);
+  assert.equal(
+    unsafe.reporting.origins.find(item => item.name === 'Fixture Gazette').url,
+    'https://example.com/fixture/safe-report'
+  );
+  assert.equal(unsafe.evidence[0].url, null);
+  assert.ok(unsafe.evidence[0].provenanceRefs.every(ref => ref.startsWith('https://')));
+
+  const translated = projectEvaluationStory('evaluation-translation');
+  const japanese = translated.reporting.origins.find(item => item.translation?.lang === 'ja');
+  const arabic = translated.reporting.origins.find(item => item.translation?.lang === 'ar');
+  assert.equal(japanese.translation.status, 'machine-translated');
+  assert.match(japanese.translation.label, /not the original-language report/);
+  assert.equal(japanese.translation.originalHeadline, '評価用の見出しです');
+  assert.equal(arabic.translation.status, 'not-translated');
+  assert.match(arabic.translation.label, /Not translated/);
+  assert.equal(arabic.translation.originalHeadline, 'عنوان للتقييم فقط');
 });
 
 test('the shipped story.json and page match the projection, including every original link', () => {

@@ -17,7 +17,7 @@
 
 import { getSantaYnezDossier } from './santa-ynez-dossier.js';
 
-export const STORY_MODEL_VERSION = '2026-10-08.1';
+export const STORY_MODEL_VERSION = '2026-10-08.2';
 
 const STORY_KEY = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -50,6 +50,10 @@ const VOICE_LABELS = Object.freeze({
   unreviewed: 'Unreviewed',
   superseded: 'Superseded',
   withdrawn: 'Withdrawn',
+  allegation: 'Allegation, not an adjudicated fact',
+  denial: 'Denial, not a finding',
+  estimate: 'Estimate, not a proven figure',
+  forecast: 'Forecast, not an observed result',
 });
 
 const DOCUMENT_LABELS = Object.freeze({
@@ -231,6 +235,23 @@ export function projectStoryFromDossier(definition, dossier) {
     });
   }
   unresolved.push(...placeGaps);
+  if (!evidenceViews.length) {
+    unresolved.push({
+      kind: 'missing-primary-evidence',
+      basis: ['evidence'],
+      text: 'No primary document is attached. Missing evidence is not evidence that none exists.',
+    });
+  }
+  for (const event of events) {
+    if (event && !event.startedAt && !event.observedAt) {
+      unresolved.push({
+        kind: 'missing-event-time',
+        basis: ['event'],
+        eventId: event.id,
+        text: `No event time is recorded for “${event.title}”. This page does not invent one.`,
+      });
+    }
+  }
 
   const presentedCorrections = corrections.map(correction =>
     presentCorrection(correction, { entityById, evidenceById })
@@ -240,6 +261,7 @@ export function projectStoryFromDossier(definition, dossier) {
 
   return {
     modelVersion: STORY_MODEL_VERSION,
+    fixture: definition?.fixture === true,
     storyId: makeStableStoryId(storyKey),
     storyKey,
     href: `/story/${storyKey}/`,
@@ -330,9 +352,14 @@ export function projectStoryFromDossier(definition, dossier) {
     readingNotes: [
       'Publisher reported, stated in a linked document, and corroborated through reviewed evidence are different labels.',
       'Corroborated is an evidence state, not a truth score and not a finding that a claim is true.',
+      'Unknown stays unknown. Corrections stay on the record.',
+    ],
+    detailNotes: [
       'A story groups maintained records. It does not merge events that keep their own ids.',
       'The same document cited twice is one origin, not independent corroboration.',
-      'Unknown stays unknown. Corrections stay on the record.',
+      'An allegation is not an adjudicated fact. Charged, pleaded, convicted, and sentenced are not interchangeable here. A claimed amount is not a proven loss.',
+      'Machine translation, when a record includes it, is labeled and is not the original-language report.',
+      'Missing evidence is not evidence of absence. A publisher location, a feed region, and a language are not the event location.',
     ],
   };
 }
@@ -444,6 +471,9 @@ function presentClaim(claim, context) {
   if (claim.state === 'unreviewed') voices.push('unreviewed');
   if (claim.state === 'superseded') voices.push('superseded');
   if (claim.state === 'withdrawn') voices.push('withdrawn');
+  if (claim.type === 'allegation' || claim.type === 'denial' || claim.type === 'estimate' || claim.type === 'forecast') {
+    voices.push(claim.type);
+  }
 
   const distinctOrigins = context.corroboration.accepted
     .filter(item => item.claimId === claim.id || item.relatedClaimId === claim.id)
@@ -470,8 +500,16 @@ function presentClaim(claim, context) {
           url: safeHttpUrl(source.url),
           sourceClass: source.sourceClass,
           evidenceRole: source.evidenceRole,
+          translation: translationOf(source),
         }
-      : { sourceId: claim.originSourceId, name: null, url: safeHttpUrl(claim.originRef), sourceClass: null, evidenceRole: null },
+      : {
+          sourceId: claim.originSourceId,
+          name: null,
+          url: safeHttpUrl(claim.originRef),
+          sourceClass: null,
+          evidenceRole: null,
+          translation: null,
+        },
     sourceWording: claim.sourceWording || null,
     sourceWordingLabel: claim.sourceWording
       ? 'Wording retained with this claim. Not a republished article excerpt.'
@@ -537,7 +575,16 @@ function timeRelation(timelineDate, event) {
   const started = event?.startedAt || null;
   const observed = event?.observedAt || null;
   if (!timelineDate) {
-    return { kind: 'timeline-date-missing', timelineDate: null, eventStartedAt: started, eventObservedAt: observed, note: 'This update has no timeline date.' };
+    return { kind: 'timeline-date-missing', timelineDate: null, eventStartedAt: started, eventObservedAt: observed, note: 'This update has no timeline date. No day is invented.' };
+  }
+  if (!ISO_DATE.test(timelineDate)) {
+    return {
+      kind: 'timeline-date-imprecise',
+      timelineDate,
+      eventStartedAt: started,
+      eventObservedAt: observed,
+      note: `The timeline date “${timelineDate}” is not a full calendar day. This page does not invent a day or a time of day.`,
+    };
   }
   if (!started) {
     return {
@@ -587,14 +634,17 @@ function presentReporting(sources, sourceEventIds, eventById) {
         eventIds,
         eventTitles: eventIds.map(id => eventById.get(id)?.title).filter(Boolean),
         linkLabel: `Read at ${group[0].name}`,
+        translation: translationOf(group[0]),
       };
     })
     .sort(byName);
   return {
     note:
-      origins.length === 1
-        ? 'One publisher report is in this maintained record. Institutional releases are listed separately and are not additional publishers.'
-        : 'Each publisher below keeps its own name. Same-URL copies are not extra publishers.',
+      origins.length === 0
+        ? 'No publisher report is linked in this maintained record.'
+        : origins.length === 1
+          ? 'One publisher report is in this maintained record. Institutional releases are listed separately and are not additional publishers.'
+          : 'Each publisher below keeps its own name. Same-URL copies are not extra publishers.',
     origins,
     distinctUrls: origins.filter(item => item.url).length,
   };
@@ -611,6 +661,7 @@ function presentSource(source, sourceEventIds, eventById) {
     eventIds,
     eventTitles: eventIds.map(id => eventById.get(id)?.title).filter(Boolean),
     linkLabel: `Open at ${source.name}`,
+    translation: translationOf(source),
     note: eventIds.length
       ? null
       : 'This source is listed in the maintained record, and no claim or evidence item cites it. What it says is not in this record.',
@@ -637,7 +688,7 @@ function presentEvidence(item, context) {
     eventIds: unique(item.eventIds),
     supersedes: unique(item.supersedesEvidenceIds),
     supersededBy,
-    provenanceRefs: array(item.provenanceRefs).filter(ref => typeof ref === 'string'),
+    provenanceRefs: array(item.provenanceRefs).map(ref => safeHttpUrl(ref)).filter(Boolean),
   };
 }
 
@@ -694,10 +745,13 @@ function collectStoryPlaces(dossier, entityById, events) {
 function latestUpdate(chronology) {
   const dated = chronology.filter(item => ISO_DATE.test(item.date || ''));
   if (!dated.length) {
+    const imprecise = chronology.some(item => item.date);
     return {
       date: null,
-      timeKind: null,
-      note: 'No timeline date is recorded.',
+      timeKind: imprecise ? 'imprecise' : null,
+      note: imprecise
+        ? 'The record has a timeline entry, but not a full calendar day. This page does not invent one.'
+        : 'No timeline date is recorded.',
       items: [],
     };
   }
@@ -754,6 +808,23 @@ function isReporting(source) {
 
 function isPrimaryRecord(source) {
   return Boolean(source && (PRIMARY_ROLES.has(source.evidenceRole) || ['court-record', 'regulatory-record', 'corporate-filing'].includes(source.sourceClass)));
+}
+
+function translationOf(source) {
+  if (!source || typeof source !== 'object') return null;
+  const lang = typeof source.originalLang === 'string' ? source.originalLang.trim() : '';
+  const translated = source.translated === true;
+  const nonEnglish = Boolean(lang) && lang.toLowerCase() !== 'en';
+  if (!translated && !nonEnglish) return null;
+  const code = lang ? lang.toUpperCase() : 'another language';
+  return {
+    status: translated ? 'machine-translated' : 'not-translated',
+    lang: lang || null,
+    label: translated
+      ? `Machine-translated from ${code}. This is not the original-language report.`
+      : `Original language: ${code}. Not translated.`,
+    originalHeadline: textOrNull(source.originalHeadline),
+  };
 }
 
 function safeHttpUrl(value) {

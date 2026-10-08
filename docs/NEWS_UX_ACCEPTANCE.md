@@ -51,6 +51,12 @@ The first story is the maintained Santa Ynez dossier, not a generated summary an
 | 19 | Story grouping is not event identity. Same-origin and same-URL copies are not corroboration. Places are not inferred from a publisher | `story-intelligence.test.mjs` |
 | 20 | A news card links to a story only for an exact maintained reporting URL | `story-intelligence.test.mjs`: "headline context links are exact maintained URLs" |
 | 21 | Phone widths 390, 360, and 320 do not overflow, and the first screen is the story rather than a stat grid | `gd-r2-story.spec.js` |
+| 22 | Keyboard reaches the publisher action with a visible focus, disclosures open and Escape returns focus, and headings do not skip a level | `gd-r2-story.spec.js`: "keyboard use, visible focus, disclosure, and Escape" |
+| 23 | A slow record and a hung story API leave the title, reporting, and original links readable | same spec: "a slow record shows loading copy" and "a hung story API" |
+| 24 | Unsafe URLs and injected markup are not clickable or rendered as HTML | same spec: "malformed urls and markup" |
+| 25 | Several publishers stay separate from primary documents. One publisher is not shown as corroboration. An empty evidence list says so | same spec, backed by `story-intelligence.test.mjs` evaluation fixtures |
+| 26 | Conflicting accounts, a missing place, a missing day, and a correction stay honest. No place is inferred and no day is invented | same spec |
+| 27 | Machine translation is labeled and is not the original-language report. A long title wraps without shrinking below the story type size | same spec |
 
 ## Release evidence
 

@@ -2,10 +2,12 @@
  * Renders a maintained story from the shipped record (story.json).
  * A live API copy is used only when it keeps the same story id and the
  * no-summary, no-truth-score rules. Original links in the page stay either way.
+ * Evaluation fixtures use the same renderer and are not public stories.
  */
 (function () {
   'use strict';
 
+  const fixturePage = document.body.dataset.storyFixture === 'true';
   const key = document.body.dataset.storyKey;
   const body = document.getElementById('story-body');
   const fallback = document.getElementById('story-fallback');
@@ -14,10 +16,23 @@
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December',
   ];
+  const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !(event.target instanceof window.Element)) return;
+    const details = event.target.closest('details.story-disclosure[open]');
+    if (!details) return;
+    event.preventDefault();
+    details.open = false;
+    details.querySelector('summary')?.focus();
+  });
 
   load();
 
   async function load() {
+    const slowTimer = setTimeout(() => {
+      setStatus('Loading the detailed record. Original links above remain available.');
+    }, 300);
     let shipped;
     try {
       const response = await fetch('./story.json', { headers: { Accept: 'application/json' } });
@@ -25,16 +40,17 @@
       shipped = await response.json();
       if (!acceptable(shipped)) throw new Error('shipped record rejected');
     } catch {
-      if (status) {
-        status.textContent = 'The detailed record could not be loaded. Original links below remain available.';
-      }
+      clearTimeout(slowTimer);
+      setStatus('The detailed record could not be loaded. Original links below remain available.');
+      if (body) body.setAttribute('aria-busy', 'false');
       return;
     }
+    clearTimeout(slowTimer);
     render(shipped);
     if (fallback) fallback.hidden = true;
-    if (status) status.textContent = 'Showing the reviewed record shipped with this page.';
+    setStatus('Detailed record loaded.');
     document.body.dataset.storyReady = 'true';
-    refresh(shipped);
+    if (!fixturePage) refresh(shipped);
   }
 
   async function refresh(shipped) {
@@ -48,26 +64,22 @@
       if (!response.ok) return;
       const live = await response.json();
       if (!acceptable(live) || live.storyId !== shipped.storyId) {
-        if (status) {
-          status.textContent =
-            'A newer copy was rejected because it broke the story rules. Showing the reviewed record shipped with this page.';
-        }
+        setStatus('A newer copy was rejected because it broke the story rules. Showing the reviewed record.');
         return;
       }
       if (live.dossierVersion === shipped.dossierVersion && live.reviewedAt === shipped.reviewedAt) return;
       render(live);
-      if (status) status.textContent = 'Showing the maintained record from the story API.';
+      setStatus('Updated from the maintained record.');
     } catch {
-      /* The shipped record is already on the page. */
+      /* The shipped record is already on the page. A failed refresh does not remove it. */
     } finally {
       clearTimeout(timer);
     }
   }
 
   function acceptable(view) {
-    return Boolean(
+    const rulesOk = Boolean(
       view &&
-        view.storyKey === key &&
         view.rules &&
         view.rules.truthScore === false &&
         view.rules.editorialVerdict === false &&
@@ -77,9 +89,13 @@
         view.grouping &&
         view.grouping.isEventIdentity === false
     );
+    if (!rulesOk) return false;
+    if (fixturePage) return view.fixture === true;
+    return view.storyKey === key && view.fixture !== true;
   }
 
   function render(view) {
+    applyFixtureIdentity(view);
     body.innerHTML = [
       understanding(view),
       chronology(view),
@@ -91,40 +107,82 @@
       context(view),
       notes(view),
     ].join('');
+    body.setAttribute('aria-busy', 'false');
+  }
+
+  function applyFixtureIdentity(view) {
+    if (!fixturePage) return;
+    const title = document.getElementById('story-title');
+    if (title) title.textContent = view.title || 'Untitled maintained record';
+    const kicker = document.getElementById('story-kicker');
+    if (kicker) kicker.textContent = view.statusLabel || 'Status not recorded';
+    const places = document.getElementById('story-places');
+    if (places) {
+      const names = (view.places || []).map(place => place.name).filter(Boolean);
+      places.textContent = names.length
+        ? `Places named in this record: ${names.join(', ')}. These are record places, not a publisher’s location.`
+        : 'No event location is recorded. This page does not infer one from a publisher, a feed region, or a language.';
+    }
+    const latest = document.getElementById('story-latest');
+    if (latest) {
+      latest.textContent = view.latestUpdate?.date
+        ? `Latest record date: ${formatDate(view.latestUpdate.date)}`
+        : view.latestUpdate?.note || 'No timeline date is recorded. This page does not invent one.';
+    }
+    const lead = document.getElementById('story-lead');
+    if (lead) {
+      const origin = (view.reporting?.origins || []).find(item => item.url) || view.reporting?.origins?.[0];
+      lead.innerHTML = origin
+        ? externalLink(origin.url, origin.linkLabel || `Read at ${origin.name || 'the publisher'}`)
+        : '<span class="story-missing-link">No publisher link is recorded.</span>';
+    }
+    const dek = document.getElementById('story-dek');
+    if (dek) dek.textContent = view.dek ? `Maintained record description: ${view.dek}` : '';
+    if (view.title) document.title = `${view.title} | GlobalDeets`;
   }
 
   function understanding(view) {
     const block = view.understanding;
     const conflict = (block.conflicting || [])
       .map(pair => {
-        return `<article class="story-claim">
+        return `<article class="story-claim" data-claim-state="contradicted">
           <p class="story-voices">Not yet resolved</p>
           <h3>Conflicting accounts</h3>
           ${claimBody(pair.left)}
           ${claimBody(pair.right)}
-          <p class="story-note">${esc(pair.note || '')}</p>
+          <p class="story-note">${esc(pair.note || 'These accounts disagree. This page does not pick a winner.')}</p>
         </article>`;
       })
       .join('');
+    const other = block.other || [];
+    const single = other.filter(claim => claim.state === 'single-source');
+    const rest = other.filter(claim => claim.state !== 'single-source');
+    const corroborated = block.corroborated || [];
+    const agreement = corroborated.length
+      ? ''
+      : '<p class="story-note">No claim in this record is marked corroborated. A single source is not shown as agreement between publishers.</p>';
     return section(
       'understanding-heading',
       'Latest understanding',
       `<p class="story-note">${esc(block.reason || '')}</p>
        <p class="story-note">${esc(block.sort || '')}</p>
+       ${agreement}
        ${conflict}
-       ${claimGroup('Reviewed evidence record', block.corroborated)}
-       ${claimGroup('Other attributed claims', block.other)}`
+       ${claimGroup('Reviewed evidence record', corroborated, 'Corroborated here means distinct origins in the evidence record. It is not a truth score.')}
+       ${claimGroup('Single source, not corroboration', single, 'One source stated this. That is not agreement from a second origin.')}
+       ${claimGroup('Other attributed claims', rest)}`
     );
   }
 
-  function claimGroup(title, claims) {
+  function claimGroup(title, claims, note) {
     if (!claims || !claims.length) return '';
-    return `<h3>${esc(title)}</h3>${claims.map(claimCard).join('')}`;
+    const noteHtml = note ? `<p class="story-note">${esc(note)}</p>` : '';
+    return `<h3>${esc(title)}</h3>${noteHtml}${claims.map(claimCard).join('')}`;
   }
 
   function claimCard(claim) {
     if (!claim) return '';
-    return `<article class="story-claim" data-claim-id="${esc(claim.id)}">
+    return `<article class="story-claim" data-claim-id="${esc(claim.id)}" data-claim-state="${esc(claim.state || '')}">
       ${claimBody(claim)}
     </article>`;
   }
@@ -149,6 +207,7 @@
     return `<p class="story-voices">${esc((claim.voiceLabels || []).join(' · ') || 'Attributed claim')}</p>
       <p class="story-proposition">${esc(claim.proposition || '')}</p>
       <p class="story-meta"><strong>${esc(origin.name || 'Source not named')}</strong>${esc(when)}</p>
+      ${translationBlock(origin.translation)}
       ${wording}${state}
       <p>${publisher}${docs}</p>`;
   }
@@ -157,7 +216,8 @@
     const items = (view.chronology || [])
       .map(item => {
         const event = item.event;
-        const differs = item.time && item.time.kind === 'timeline-differs-from-event-start';
+        const kind = item.time && item.time.kind;
+        const differs = kind && kind !== 'timeline-matches-event-start';
         const eventLink = event
           ? `<a href="#${esc(event.anchor)}">${esc(event.title)}</a>`
           : 'Event not in this record';
@@ -170,18 +230,22 @@
           )
           .join('');
         return `<li>
-          <p class="story-meta"><time datetime="${esc(item.date || '')}">${esc(formatDate(item.date))}</time> · timeline date</p>
+          <p class="story-meta">${dateText(item.date)} · timeline date</p>
           <p class="${differs ? 'story-time-differs' : 'story-note'}">${esc(item.time ? item.time.note : '')}</p>
           <h3>${esc(item.label || '')}</h3>
-          <p class="story-meta">Event: ${eventLink}${event ? ` · ${esc(event.statusLabel || '')}` : ''}${item.correctionIds && item.correctionIds.length ? ' · correction recorded' : ''}</p>
+          <p class="story-meta">Event: ${eventLink}</p>
+          <p class="story-meta">${event ? esc(event.statusLabel || '') : ''}${item.correctionIds && item.correctionIds.length ? `${event ? ' · ' : ''}correction recorded` : ''}</p>
           <p>${links}</p>
         </li>`;
       })
       .join('');
+    const bodyHtml = items
+      ? `<ol class="story-chrono">${items}</ol>`
+      : '<p class="story-note">No chronology is recorded. This page does not invent times.</p>';
     return section(
       'chronology-heading',
       'Chronology',
-      `<p class="story-note">${esc(view.chronologyNote || '')}</p><ol class="story-chrono">${items}</ol>`
+      `<p class="story-note">${esc(view.chronologyNote || '')}</p>${bodyHtml}`
     );
   }
 
@@ -189,9 +253,10 @@
     const block = view.reporting || { origins: [] };
     const items = (block.origins || [])
       .map(origin => {
-        return `<article class="story-source">
+        return `<article class="story-source" data-reporting="true">
           <h3>${esc(origin.name || 'Unnamed publisher')}</h3>
-          <p class="story-note">${origin.syndicated ? esc(origin.note || '') : 'Publisher reported. The original headline is not copied into this record.'}</p>
+          <p class="story-note">${origin.syndicated ? esc(origin.note || '') : 'Publisher reported. The original headline is not copied into this record unless the record itself includes it.'}</p>
+          ${translationBlock(origin.translation)}
           <p class="story-meta">${esc((origin.eventTitles || []).join('; ') || 'No event is attached.')}</p>
           <p>${externalLink(origin.url, origin.linkLabel || `Read at ${origin.name || 'the publisher'}`)}</p>
         </article>`;
@@ -207,6 +272,7 @@
           <h3>${esc(source.name || 'Unnamed source')}</h3>
           <p class="story-meta">${esc(source.evidenceRole || 'role not recorded')}${source.eventTitles && source.eventTitles.length ? ` · ${esc(source.eventTitles.join('; '))}` : ''}</p>
           ${source.note ? `<p class="story-note">${esc(source.note)}</p>` : ''}
+          ${translationBlock(source.translation)}
           <p>${externalLink(source.url, source.linkLabel || `Open at ${source.name || 'the source'}`)}</p>
         </article>`;
       })
@@ -226,7 +292,7 @@
           item.supersedes && item.supersedes.length
             ? `<p class="story-note">Supersedes an earlier evidence record. Both remain in the record.</p>`
             : '';
-        return `<article class="story-evidence">
+        return `<article class="story-evidence" data-evidence="true">
           <p class="story-voices">${esc(item.voiceLabel || 'Primary document')}</p>
           <h3>${esc(item.documentTypeLabel || item.documentType || 'Document')}</h3>
           <p class="story-meta"><strong>${esc(item.issuerName || 'Issuer not named')}</strong>${item.publishedAt ? ` · published ${esc(formatDate(item.publishedAt))}` : ''}</p>
@@ -235,20 +301,20 @@
         </article>`;
       })
       .join('');
-    return section(
-      'evidence-heading',
-      'Evidence',
-      `<p class="story-note">These are primary documents in the evidence record. They are distinct from publisher reporting above.</p>${items}`
-    );
+    const intro = items
+      ? 'These are primary documents in the evidence record. They are distinct from publisher reporting above. A document here is not another publisher.'
+      : 'No evidence records are currently attached. Missing evidence is not evidence that none exists.';
+    return section('evidence-heading', 'Evidence', `<p class="story-note">${esc(intro)}</p>${items}`);
   }
 
   function unresolved(view) {
     const block = view.unresolved || { items: [] };
     const items = (block.items || []).map(item => `<li>${esc(item.text || '')}</li>`).join('');
+    const list = items ? `<ul class="story-unknowns">${items}</ul>` : '<p class="story-note">Nothing in this record is marked unresolved.</p>';
     return section(
       'unresolved-heading',
       'What remains unresolved',
-      `<p class="story-note">${esc(block.intro || '')}</p><ul class="story-unknowns">${items}</ul>`
+      `<p class="story-note">${esc(block.intro || 'We do not know yet.')}</p>${list}`
     );
   }
 
@@ -267,7 +333,7 @@
       })
       .join('');
     const superseded = (view.supersededClaims || [])
-      .map(claim => `<article class="story-claim"><p class="story-voices">Superseded</p><p class="story-proposition">${esc(claim.proposition || '')}</p></article>`)
+      .map(claim => `<article class="story-claim" data-claim-state="superseded"><p class="story-voices">Superseded</p><p class="story-proposition">${esc(claim.proposition || '')}</p></article>`)
       .join('');
     const empty = items || superseded ? '' : '<p class="story-note">No correction is recorded in this maintained story.</p>';
     return section(
@@ -287,11 +353,14 @@
         return `<li><strong>${esc(place.name)}</strong> — ${esc(basis + parent + country + page)}</li>`;
       })
       .join('');
+    const placeBlock = places
+      ? `<ul class="story-place-list">${places}</ul>`
+      : '<p class="story-note">No event location is recorded. This page does not infer one from a publisher, a feed region, or a language.</p>';
     const events = (view.events || [])
       .map(event => {
-        const start = event.startedAt ? `Event start ${formatDate(event.startedAt)}` : 'Event start not recorded';
+        const start = describeWhen(event.startedAt, 'Event start');
         const observed =
-          event.observedAt && event.observedAt !== event.startedAt ? `; observed ${formatDate(event.observedAt)}` : '';
+          event.observedAt && event.observedAt !== event.startedAt ? `; ${describeWhen(event.observedAt, 'observed')}` : '';
         return `<li id="${esc(event.anchor)}"><strong>${esc(event.title)}</strong> — ${esc(event.statusLabel || '')}. ${esc(start + observed)}.</li>`;
       })
       .join('');
@@ -303,7 +372,7 @@
       'Places and entities',
       `<p class="story-note">${esc(view.placeNote || '')}</p>
        <p class="story-note">${esc(view.grouping ? view.grouping.note : '')}</p>
-       <ul class="story-place-list">${places}</ul>
+       ${placeBlock}
        <h3>Distinct events in this story</h3>
        <ul class="story-entity-list">${events}</ul>
        <h3>Other entities named in the record</h3>
@@ -312,14 +381,30 @@
   }
 
   function notes(view) {
-    const items = (view.readingNotes || []).map(note => `<li>${esc(note)}</li>`).join('');
+    const visible = (view.readingNotes || []).map(note => `<li>${esc(note)}</li>`).join('');
+    const extra = (view.detailNotes || []).map(note => `<li>${esc(note)}</li>`).join('');
+    const disclosure = extra
+      ? `<details class="story-disclosure"><summary>Further notes on this record</summary><ul class="story-notes">${extra}</ul></details>`
+      : '';
+    const graph = fixturePage
+      ? ''
+      : '<a class="story-context-link" href="/dossiers/santa-ynez-pipeline/">Open the evidence graph</a>';
     return section(
       'notes-heading',
       'How to read this',
-      `<ul class="story-notes">${items}</ul>
-       <p><a class="story-context-link" href="/dossiers/santa-ynez-pipeline/">Open the evidence graph</a>
-       <a class="story-context-link" href="/">Back to the World Desk</a></p>`
+      `<ul class="story-notes">${visible}</ul>
+       ${disclosure}
+       <p>${graph}<a class="story-context-link" href="/">Back to the World Desk</a></p>`
     );
+  }
+
+  function translationBlock(translation) {
+    if (!translation || !translation.label) return '';
+    const lang = translation.lang ? ` lang="${esc(translation.lang)}"` : '';
+    const original = translation.originalHeadline
+      ? `<p class="story-original" dir="auto"${lang}><strong>Original headline.</strong> ${esc(translation.originalHeadline)}</p>`
+      : '';
+    return `<p class="story-note">${esc(translation.label)}</p>${original}`;
   }
 
   function section(id, title, inner) {
@@ -327,8 +412,21 @@
   }
 
   function externalLink(url, label) {
-    if (!url) return '<span class="story-missing-link">Link not recorded</span>';
-    return `<a class="story-read-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(label)}<span class="visually-hidden"> (opens in a new tab)</span></a>`;
+    const href = safeHttpUrl(url);
+    if (!href) return '<span class="story-missing-link">Link not recorded</span>';
+    return `<a class="story-read-link" href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(label)}<span class="visually-hidden"> (opens in a new tab)</span></a>`;
+  }
+
+  function dateText(iso) {
+    if (!iso) return '<span>Date not recorded</span>';
+    if (!ISO_DATE.test(iso)) return `<span>${esc(String(iso))}</span>`;
+    return `<time datetime="${esc(iso)}">${esc(formatDate(iso))}</time>`;
+  }
+
+  function describeWhen(iso, label) {
+    if (!iso) return `${label} not recorded`;
+    if (!ISO_DATE.test(iso)) return `${label} recorded only as ${iso}. No day is invented`;
+    return `${label} ${formatDate(iso)}`;
   }
 
   function formatDate(iso) {
@@ -337,6 +435,21 @@
     const month = MONTHS[Number(match[2]) - 1];
     if (!month) return iso;
     return `${month} ${Number(match[3])}, ${match[1]}`;
+  }
+
+  function safeHttpUrl(value) {
+    if (typeof value !== 'string' || !value.trim()) return null;
+    try {
+      const url = new URL(value.trim());
+      if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
+      return url.href;
+    } catch {
+      return null;
+    }
+  }
+
+  function setStatus(text) {
+    if (status) status.textContent = text;
   }
 
   function esc(value) {

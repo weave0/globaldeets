@@ -40,6 +40,7 @@ On `feat/gd-r2-story-intelligence`, which is based on unmerged PR #80 (`18f29105
 | Shipped record | `story.json` matches the projection so the page still reads when the API is down |
 | Headline link | "Context & sources" only when a feed item URL exactly matches the Los Angeles Times report in the dossier |
 | Additional public stories | Not invented. One maintained story carries the single-source, multi-source, conflicting, corrected, and limited-evidence cases |
+| Incomplete-data states | Evaluation fixtures only (`functions/lib/story-evaluation-fixtures.js`). Not indexed, not linked from the desk, not real-world reporting |
 | Place pages | Not part of this slice |
 
 ## Evidence state
