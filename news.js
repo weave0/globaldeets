@@ -135,7 +135,13 @@
         headers: { Accept: 'application/json' },
         signal: controller.signal,
       });
-      if (!response.ok) throw new FeedRequestError('upstream', `${path}: HTTP ${response.status}`);
+      if (!response.ok) {
+        // A worker-generated cache miss is not an upstream 503, even if navigator.onLine is true.
+        if (response.headers.get('X-GlobalDeets-Offline-Miss') === '1') {
+          throw new FeedRequestError('offline', `${path}: offline with no saved copy`);
+        }
+        throw new FeedRequestError('upstream', `${path}: HTTP ${response.status}`);
+      }
       const data = await response.json();
       // The service worker marks API responses it replays from cache while offline.
       const offlineCopy = response.headers.get('X-GlobalDeets-Offline-Copy');
