@@ -254,3 +254,47 @@ test('first install, then immediately offline: News keeps its styling and the Mo
   await expect(more).not.toHaveAttribute('open', '');
   await expect(toggle).toBeFocused();
 });
+
+test('first-install offline navigation preserves known clean routes and region queries', async ({ page, context }) => {
+  await page.goto('/index.html');
+  await page.evaluate(() => navigator.serviceWorker.ready);
+  await context.route('**/*', route => route.abort('internetdisconnected'));
+  const cases = [
+    ['/', 'GlobalDeets — World Desk'],
+    ['/news', 'World News Feed'],
+    ['/news?region=europe', 'World News Feed'],
+    ['/news.html?region=asia', 'World News Feed'],
+    ['/categories', 'Browse by Region'],
+    ['/timeline', 'Reporting Timeline'],
+  ];
+  for (const [path, title] of cases) {
+    await page.goto(path);
+    await expect(page).toHaveTitle(new RegExp(title));
+    expect(new URL(page.url()).pathname + new URL(page.url()).search).toBe(path);
+  }
+  await page.goto('/this-page-does-not-exist');
+  await expect(page).toHaveTitle(/Offline/);
+});
+
+test('a service-worker API cache miss is distinct from a genuine upstream 503', async ({ page, context }) => {
+  await page.goto('/index.html');
+  await waitForControllingWorker(page);
+  const missing = '/api/news?region=africa&limit=3&offset=999999';
+  await context.route('**/api/news?region=africa&limit=3&offset=999999', route =>
+    route.abort('internetdisconnected')
+  );
+  const miss = await page.evaluate(async path => {
+    const response = await fetch(path);
+    return { status: response.status, marker: response.headers.get('X-GlobalDeets-Offline-Miss') };
+  }, missing);
+  expect(miss).toEqual({ status: 503, marker: '1' });
+  await context.unroute('**/api/news?region=africa&limit=3&offset=999999');
+  await context.route('**/api/news?region=africa&limit=3&offset=999999', route =>
+    route.fulfill({ status: 503, contentType: 'application/json', body: '{"error":"upstream"}' })
+  );
+  const upstream = await page.evaluate(async path => {
+    const response = await fetch(path);
+    return { status: response.status, marker: response.headers.get('X-GlobalDeets-Offline-Miss') };
+  }, missing);
+  expect(upstream).toEqual({ status: 503, marker: null });
+});
