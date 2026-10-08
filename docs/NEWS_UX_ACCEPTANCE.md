@@ -38,6 +38,20 @@ Production checks run in `.github/workflows/deploy.yml` against the exact deploy
 | 13 | Keyboard-only and screen-reader journeys | **Not automated yet** (R7) |
 | 14 | WebKit and Firefox engines | **Not automated yet** (R7; current projects are Chromium-only) |
 
+## R2: Story intelligence
+
+The first story is the maintained Santa Ynez dossier, not a generated summary and not a cluster of live headlines. Automated checks live in `tests/story-intelligence.test.mjs` and `tests/gd-r2-story.spec.js`.
+
+| # | Reader journey / invariant | Automated check |
+| --- | --- | --- |
+| 15 | A stable story URL opens a maintained record: title, developing status, record places, latest record date, and the publisher action | `gd-r2-story.spec.js`: "story identity is on the first phone screen" |
+| 16 | Chronology separates a timeline date from an earlier event start | same spec: "chronology does not treat publication order as event order" |
+| 17 | Reporting, primary documents, contradictions, corrections, and unresolved items stay distinct. Unknown stays unknown | same spec: "the record keeps conflict, evidence, correction, and unknowns" |
+| 18 | Original links remain when the shipped record or the story API fails, and a copy that adds a truth score or a prose summary is rejected | same spec: "original links survive a failed record" and "a rule-breaking API copy is rejected" |
+| 19 | Story grouping is not event identity. Same-origin and same-URL copies are not corroboration. Places are not inferred from a publisher | `story-intelligence.test.mjs` |
+| 20 | A news card links to a story only for an exact maintained reporting URL | `story-intelligence.test.mjs`: "headline context links are exact maintained URLs" |
+| 21 | Phone widths 390, 360, and 320 do not overflow, and the first screen is the story rather than a stat grid | `gd-r2-story.spec.js` |
+
 ## Release evidence
 
 A release is accepted only with: green CI for the merge commit, green deploy-workflow verifiers against the deployed artifact, and a recorded rollback target (the previous Pages deployment). "Looks good" is not evidence.

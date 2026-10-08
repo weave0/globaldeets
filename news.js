@@ -17,6 +17,12 @@
     pacific: 'Pacific',
     africa: 'Africa',
   };
+  // Exact URL membership only. A headline is not clustered into a story by resemblance.
+  const STORY_CONTEXT_BY_URL = {
+    'https://www.latimes.com/environment/story/2026-08-20/judge-allows-controversial-oil-company-continue-pumping':
+      '/story/santa-ynez-pipeline/',
+  };
+
   const RIGHTS_LABELS = {
     'verified-public-use': 'Bounded reuse reviewed',
     'permission-required': 'Publisher permission required',
@@ -556,6 +562,11 @@
           href
             ? `<a class="news-read-link" href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">Read at ${escapeHtml(source)} →<span class="visually-hidden"> (opens in a new tab)</span></a>`
             : '<span class="news-read-unavailable">Publisher link unavailable</span>'
+        }
+        ${
+          href && STORY_CONTEXT_BY_URL[href]
+            ? `<a class="news-context-link" href="${escapeAttr(STORY_CONTEXT_BY_URL[href])}">Context &amp; sources</a>`
+            : ''
         }
       </div>
       ${buildSourceContext(item, provenance, admission)}`;

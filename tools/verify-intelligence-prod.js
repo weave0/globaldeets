@@ -44,7 +44,7 @@ function requireCondition(condition, message) {
 }
 
 (async () => {
-  const [coverage, sources, admission, schema, evidenceSchema, acquisition, dossier, dossierPage] =
+  const [coverage, sources, admission, schema, evidenceSchema, acquisition, dossier, dossierPage, storyList, story, storyPage] =
     await Promise.all([
       fetchJson('/api/news/coverage'),
       fetchJson('/api/news/sources'),
@@ -54,6 +54,9 @@ function requireCondition(condition, message) {
       fetchJson('/api/intelligence/acquisition/eurostat-density'),
       fetchJson('/api/intelligence/dossiers/santa-ynez-pipeline'),
       fetchText('/dossiers/santa-ynez-pipeline/'),
+      fetchJson('/api/intelligence/stories'),
+      fetchJson('/api/intelligence/stories/santa-ynez-pipeline'),
+      fetchText('/story/santa-ynez-pipeline/'),
     ]);
 
   requireCondition(typeof coverage.sourceFingerprint === 'string', 'coverage fingerprint missing');
@@ -222,6 +225,21 @@ function requireCondition(condition, message) {
   requireCondition(
     dossierPage.includes('id="dossier-app"') && dossierPage.includes('Evidence dossier'),
     'Santa Ynez dossier page shell missing'
+  );
+  requireCondition(storyList?.stories?.length === 1, 'maintained story index missing');
+  requireCondition(storyList.stories[0].storyId === 'story:santa-ynez-pipeline', 'story index identity changed');
+  requireCondition(story?.storyId === 'story:santa-ynez-pipeline', 'story identity changed');
+  requireCondition(story.grouping?.isEventIdentity === false, 'story grouping was treated as event identity');
+  requireCondition(story.grouping?.distinctEventCount === 7, 'story event count changed');
+  requireCondition(story.rules?.truthScore === false, 'story truth score must remain disabled');
+  requireCondition(story.rules?.editorialVerdict === false, 'story editorial verdict must remain disabled');
+  requireCondition(story.understanding?.proseSummary === null, 'story invented a prose summary');
+  requireCondition(Array.isArray(story.corrections) && story.corrections.length === 1, 'story correction missing');
+  requireCondition(story.corrections[0].originalArtifactRetained === false, 'story correction history changed');
+  requireCondition(Array.isArray(story.unresolved?.items) && story.unresolved.items.length > 0, 'story unknowns missing');
+  requireCondition(
+    storyPage.includes('data-story-key="santa-ynez-pipeline"') && storyPage.includes('Read at Los Angeles Times'),
+    'story page shell missing'
   );
 
   console.log(

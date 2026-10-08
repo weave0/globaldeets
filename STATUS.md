@@ -29,6 +29,19 @@ Status of the roadmap's R1 release ("Reader reset", GD-038) on branch `feat/gd03
 
 Static/dynamic source truth (F6) is already on `main` (8459811) with raw-HTML and fallback regressions; the older `feat/gd0260-static-source-truth` branch is superseded.
 
+## R2 story intelligence
+
+On `feat/gd-r2-story-intelligence`, which is based on unmerged PR #80 (`18f29105baed6fa9b8b98f1ddc4cad090e017394`) and is not deployed:
+
+| Item | State |
+| --- | --- |
+| Maintained story `/story/santa-ynez-pipeline/` | Implemented from the Santa Ynez dossier. The story id does not replace event ids |
+| Reader API | `GET /api/intelligence/stories` and `GET /api/intelligence/stories/santa-ynez-pipeline` |
+| Shipped record | `story.json` matches the projection so the page still reads when the API is down |
+| Headline link | "Context & sources" only when a feed item URL exactly matches the Los Angeles Times report in the dossier |
+| Additional public stories | Not invented. One maintained story carries the single-source, multi-source, conflicting, corrected, and limited-evidence cases |
+| Place pages | Not part of this slice |
+
 ## Evidence state
 
 Production verification is produced by the deploy workflow, not by this document. When this file and a live check disagree, the live check wins. Operational edge telemetry is not certified human audience; no reader-retention baseline exists yet (roadmap R9).

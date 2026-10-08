@@ -13,6 +13,12 @@
 (function () {
   'use strict';
 
+  // Exact URL membership only. A headline is not clustered into a story by resemblance.
+  const STORY_CONTEXT_BY_URL = {
+    'https://www.latimes.com/environment/story/2026-08-20/judge-allows-controversial-oil-company-continue-pumping':
+      '/story/santa-ynez-pipeline/',
+  };
+
   const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
     ? 'https://globaldeets.com'
     : '';
@@ -136,6 +142,9 @@
           el('span', { className: 'visually-hidden' }, ` (opens ${source} in a new tab)`)
         )
       );
+    }
+    if (href && STORY_CONTEXT_BY_URL[href]) {
+      row.append(el('a', { className: 'desk-story-context', href: STORY_CONTEXT_BY_URL[href] }, 'Context & sources'));
     }
     return row;
   }
