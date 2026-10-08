@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -55,4 +55,27 @@ test('every route health-prod expects to be 404 is genuinely absent from the rep
     route => route.path
   );
   assert.deepEqual(present, [], 'a route expected to 404 still has a shipped file');
+});
+
+test('Pages CSP permits the same-origin service worker without removing the existing policy', () => {
+  const headers = readFileSync(join(ROOT, '_headers'), 'utf8');
+  const publicPolicy = headers.split('/*')[1]?.split('/*.html')[0] || '';
+  assert.match(publicPolicy, /worker-src 'self' blob:/);
+  assert.match(publicPolicy, /frame-ancestors 'none'/);
+});
+
+test('every healthy public HTML page is included in the portfolio boundary scan', () => {
+  const { CORE_PAGES } = require('../tools/verify-boundary-retired-prod.js');
+  const inspected = new Set(CORE_PAGES.map(canonical));
+  const missing = ROUTES.filter(route => route.expect === 200 && route.type === 'text/html')
+    .map(route => canonical(route.path))
+    .filter(path => !inspected.has(path));
+  assert.deepEqual(missing, [], 'public pages escaped the semantic boundary scan');
+});
+
+test('public support page contains no stale portfolio fundraising checkout', () => {
+  const support = readFileSync(join(ROOT, 'donate.html'), 'utf8');
+  assert.match(support, /GlobalDeets/);
+  assert.match(support, /Donations are not being accepted through this page/);
+  assert.doesNotMatch(support, /GoFundMe|PayPal\.Me|Stripe\(|Good Flippin Design|world-changing platforms/i);
 });
