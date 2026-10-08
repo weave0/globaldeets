@@ -335,7 +335,7 @@
       .sort((a, b) => a.name.localeCompare(b.name));
     sourceList.replaceChildren(
       ...entries.map(source => {
-        const about = safeUrl(Array.isArray(source.evidenceUrls) ? source.evidenceUrls[0] : null);
+        const evidenceUrl = safeUrl(Array.isArray(source.evidenceUrls) ? source.evidenceUrls[0] : null);
         const languages = Array.isArray(source.sourceLanguages) ? source.sourceLanguages : [];
         const facts = [
           source.organizationName && source.organizationName !== source.name ? source.organizationName : null,
@@ -348,12 +348,12 @@
           { className: 'browse-source' },
           el('span', { className: 'browse-source-name' }, source.name),
           facts.length ? el('span', { className: 'browse-source-facts' }, facts.join(' · ')) : null,
-          about
+          evidenceUrl
             ? el(
                 'a',
-                { className: 'browse-source-about', href: about, target: '_blank', rel: 'noopener noreferrer' },
-                `About ${source.name}`,
-                el('span', { className: 'visually-hidden' }, ' (publisher page, opens in a new tab)')
+                { className: 'browse-source-about', href: evidenceUrl, target: '_blank', rel: 'noopener noreferrer' },
+                `Publisher documentation for ${source.name}`,
+                el('span', { className: 'visually-hidden' }, ' (publisher documentation, opens in a new tab)')
               )
             : null
         );
