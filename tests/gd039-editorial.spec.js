@@ -42,16 +42,16 @@ test('midnight reader contrast and masthead density hold on desktop', async ({ p
         const right = luminance(rgb(b));
         return (Math.max(left, right) + .05) / (Math.min(left, right) + .05);
       };
-      const body = getComputedStyle(document.body);
-      const title = getComputedStyle(document.querySelector(location.pathname.includes('news') ? '.news-page-title' : '.desk-title'));
-      const nav = getComputedStyle(document.querySelector('.primary-nav .nav-item'));
+      const body = window.getComputedStyle(document.body);
+      const title = window.getComputedStyle(document.querySelector(location.pathname.includes('news') ? '.news-page-title' : '.desk-title'));
+      const nav = window.getComputedStyle(document.querySelector('.primary-nav .nav-item'));
       const input = location.pathname.includes('news') ? document.querySelector('.news-search-input') : null;
       return {
         background: body.backgroundColor,
         textContrast: contrast(body.color, body.backgroundColor),
         titleContrast: contrast(title.color, body.backgroundColor),
         navContrast: contrast(nav.color, body.backgroundColor),
-        inputContrast: input ? contrast(getComputedStyle(input).color, getComputedStyle(input).backgroundColor) : null,
+        inputContrast: input ? contrast(window.getComputedStyle(input).color, window.getComputedStyle(input).backgroundColor) : null,
         headerHeight: document.querySelector('body > header').getBoundingClientRect().height,
       };
     });
