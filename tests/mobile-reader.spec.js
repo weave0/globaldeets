@@ -143,7 +143,7 @@ test('mobile homepage fits, exposes governed metrics, and keeps navigation reach
 test('mobile news reader fits and keeps evidence controls usable', async ({ page }) => {
   await page.goto('/news.html');
 
-  await expect(page.getByRole('heading', { name: /World News Feed/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Latest reporting/i })).toBeVisible();
   await expect(page.locator('#news-grid .news-card')).toHaveCount(3);
   // Coverage detail sits behind the "Sources & coverage" disclosure so stories come first.
   const disclosureToggle = page.locator('#news-sources-coverage summary');
