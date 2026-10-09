@@ -96,3 +96,17 @@ test('the public dossier and coverage observatory are included in the boundary v
   assert.ok(CORE_PAGES.includes('/dossiers/santa-ynez-pipeline/'));
   assert.ok(CORE_PAGES.includes('/observatory/coverage/'));
 });
+
+test('the owner-domain URL appears only in the two reviewed About operator credits', () => {
+  const domain = /goodflippindesign\.com/gi;
+  for (const file of readdirSync(ROOT).filter(name => name.endsWith('.html') && name !== 'about.html')) {
+    assert.doesNotMatch(readFileSync(join(ROOT, file), 'utf8'), domain, `${file} must not link to the unrelated owner site`);
+  }
+  const about = readFileSync(join(ROOT, 'about.html'), 'utf8');
+  assert.equal([...about.matchAll(domain)].length, 2, 'exactly two operator credits are allowed on About');
+  assert.equal(
+    [...about.matchAll(/href="https:\/\/goodflippindesign\.com"/gi)].length,
+    2,
+    'owner-domain references must be intentional external attribution links'
+  );
+});
