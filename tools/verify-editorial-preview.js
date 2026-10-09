@@ -38,13 +38,15 @@ async function main() {
       return {
         deskBeforeGlobe: !!(desk.compareDocumentPosition(globe) & Node.DOCUMENT_POSITION_FOLLOWING),
         globeInMain: document.querySelector('main').contains(globe),
-        paper: window.getComputedStyle(document.body).backgroundColor,
+        canvas: window.getComputedStyle(document.body).backgroundColor,
+        headerHeight: document.querySelector('body > header').getBoundingClientRect().height,
         evidenceVisible: evidence && window.getComputedStyle(evidence).display !== 'none',
         overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
       };
     });
     assert(placement.deskBeforeGlobe && placement.globeInMain, 'globe appears ahead of reporting');
-    assert(placement.paper === 'rgb(247, 245, 239)', 'editorial reading palette not applied');
+    assert(placement.canvas === 'rgb(11, 17, 26)' && placement.headerHeight < 120,
+      'compact midnight editorial reading palette was not applied');
     assert(placement.evidenceVisible && !placement.overflow, 'home navigation/layout not editorial');
     await page.screenshot({ path: resolve(out, 'desktop-home.png'), animations: 'disabled' });
 
@@ -78,7 +80,7 @@ async function main() {
     await phone.screenshot({ path: resolve(out, 'mobile-news-asia.png'), animations: 'disabled' });
     await mobile.close();
 
-    console.log('GD-039 Pages preview verified: exact SHA, editorial CSS MIME, source-first hierarchy, labeled navigation, 390px reflow.');
+    console.log('GD-039 Pages preview verified: exact SHA, midnight CSS MIME, reduced masthead, source-first hierarchy, labeled navigation, 390px reflow.');
     console.log('Screenshots: design-previews/desktop-home.png, desktop-news-asia.png, mobile-news-asia.png');
     console.log('Preview URL: ' + BASE);
   } finally {

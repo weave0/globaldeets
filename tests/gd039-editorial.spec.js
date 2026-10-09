@@ -20,8 +20,48 @@ test('the home reader leads with reporting, with the immersive globe below it', 
   });
   expect(order.globeInMain).toBe(true);
   expect(order.globeAfterDesk).toBe(true);
-  expect(order.background).toBe('rgb(247, 245, 239)');
+  expect(order.background).toBe('rgb(11, 17, 26)');
   expect(order.loadedStyles).toBe(true);
+});
+
+test('midnight reader contrast and masthead density hold on desktop', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  for (const path of ['/index.html', '/news.html']) {
+    await page.goto(path);
+    const appearance = await page.evaluate(() => {
+      const rgb = str => [...str.matchAll(/[\\d.]+/g)].slice(0, 3).map(part => +part[0]);
+      const luminance = parts => {
+        const channels = parts.map(n => {
+          const s = n / 255;
+          return s <= .04045 ? s / 12.92 : ((s + .055) / 1.055) ** 2.4;
+        });
+        return channels[0] * .2126 + channels[1] * .7152 + channels[2] * .0722;
+      };
+      const contrast = (a, b) => {
+        const left = luminance(rgb(a));
+        const right = luminance(rgb(b));
+        return (Math.max(left, right) + .05) / (Math.min(left, right) + .05);
+      };
+      const body = getComputedStyle(document.body);
+      const title = getComputedStyle(document.querySelector(path.includes('news') ? '.news-page-title' : '.desk-title'));
+      const nav = getComputedStyle(document.querySelector('.primary-nav .nav-item'));
+      const input = path.includes('news') ? document.querySelector('.news-search-input') : null;
+      return {
+        background: body.backgroundColor,
+        textContrast: contrast(body.color, body.backgroundColor),
+        titleContrast: contrast(title.color, body.backgroundColor),
+        navContrast: contrast(nav.color, body.backgroundColor),
+        inputContrast: input ? contrast(getComputedStyle(input).color, getComputedStyle(input).backgroundColor) : null,
+        headerHeight: document.querySelector('body > header').getBoundingClientRect().height,
+      };
+    });
+    expect(appearance.background).toBe('rgb(11, 17, 26)');
+    expect(appearance.textContrast).toBeGreaterThanOrEqual(4.5);
+    expect(appearance.titleContrast).toBeGreaterThanOrEqual(4.5);
+    expect(appearance.navContrast).toBeGreaterThanOrEqual(4.5);
+    if (appearance.inputContrast !== null) expect(appearance.inputContrast).toBeGreaterThanOrEqual(4.5);
+    expect(appearance.headerHeight).toBeLessThan(120);
+  }
 });
 
 test('the editorial masthead makes Evidence discoverable without hiding provenance in the menu', async ({ page }) => {
