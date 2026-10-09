@@ -137,7 +137,7 @@ test('region errors clear the previous region saved-copy freshness even during l
     if (region === 'global') {
       await route.fulfill({
         ...json(feed('global', 2)),
-        headers: { 'X-GlobalDeets-Offline-Copy': new Date().toISOString() },
+        headers: { 'X-GlobalDeets-Offline-Copy': new Date().toISOString(), 'Access-Control-Expose-Headers': 'X-GlobalDeets-Offline-Copy' },
       });
       return true;
     }
