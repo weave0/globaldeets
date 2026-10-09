@@ -84,9 +84,29 @@ async function checkPreview() {
     assert(state.cacheNames.includes('globaldeets-cache-v8') && state.complete,
       'Pages preview did not install a complete v8 reader cache');
 
-    await context.route('**/*', route => route.abort('internetdisconnected'));
+    // Route-level aborts can cancel browser navigation before its service worker sees it.
+    // Instead, fail the worker's own same-origin network fetch so the real fallback path runs.
+    const swTarget = context.serviceWorkers().find(item =>
+      new URL(item.url()).pathname === '/service-worker.js'
+    );
+    assert(swTarget, 'installed service worker target is not inspectable');
+    await swTarget.evaluate(() => {
+      const onlineFetch = self.fetch.bind(self);
+      self.__gdOfflineProbeCount = 0;
+      self.fetch = (...args) => {
+        const value = args[0];
+        const target = new URL(typeof value === 'string' ? value : value.url, self.location.href);
+        if (target.origin === self.location.origin) {
+          self.__gdOfflineProbeCount += 1;
+          return Promise.reject(new TypeError('simulated worker network loss'));
+        }
+        return onlineFetch(...args);
+      };
+    });
     await page.goto(BASE + '/news?region=europe',
       { waitUntil: 'domcontentloaded', timeout: 30000 });
+    const offlineRequests = await swTarget.evaluate(() => self.__gdOfflineProbeCount);
+    assert(offlineRequests > 0, 'navigation did not exercise the worker network-failure fallback');
     assert((await page.title()).includes('World News Feed'),
       'offline preview did not serve News for the clean route');
     assert(new URL(page.url()).searchParams.get('region') === 'europe',
