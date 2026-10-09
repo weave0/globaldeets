@@ -144,7 +144,13 @@
         headers: { Accept: 'application/json' },
         signal: controller.signal,
       });
-      if (!response.ok) throw new FeedRequestError('upstream', `${path}: HTTP ${response.status}`);
+      if (!response.ok) {
+        // A worker-generated cache miss is not an upstream 503, even if navigator.onLine is true.
+        if (response.headers.get('X-GlobalDeets-Offline-Miss') === '1') {
+          throw new FeedRequestError('offline', `${path}: offline with no saved copy`);
+        }
+        throw new FeedRequestError('upstream', `${path}: HTTP ${response.status}`);
+      }
       const data = await response.json();
       // The service worker marks API responses it replays from cache while offline.
       const offlineCopy = response.headers.get('X-GlobalDeets-Offline-Copy');
@@ -366,6 +372,10 @@
       allItems = [];
       appendInFlight = false;
       feedState = 'loading';
+      // A region switch must not retain the previous region's saved-copy or retrieval label.
+      feedRetrievedAt = null;
+      feedOfflineCopyAt = null;
+      feedErrorKind = null;
       if (grid) {
         grid.setAttribute('aria-busy', 'true');
         grid.innerHTML = '<div class="news-skeleton"></div>'.repeat(6);
@@ -700,6 +710,7 @@
 
   function updateStatus() {
     const status = document.getElementById('news-status');
+    updateFreshness();
     if (!status) return;
     if (feedState === 'loading') {
       status.textContent = `Loading ${REGION_LABELS[currentRegion]}…`;
@@ -713,7 +724,6 @@
     const visibleItems = getVisibleItems();
     const searchNote = searchTerm ? ` · ${visibleItems.length} matching filter` : '';
     status.textContent = `${allItems.length} of ${total} stories${searchNote}`;
-    updateFreshness();
   }
 
   // Publication time lives on each card; this line states only when this page retrieved the feed
