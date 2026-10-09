@@ -579,7 +579,8 @@ body.gd-editorial .timeline-day { background: var(--paper); color: var(--ink); }
   body.gd-editorial .globe-pin-hint { max-width: 40ch; }
   body.gd-editorial .news-page .news-page-header { padding: 1.15rem 0 .65rem; }
   body.gd-editorial .news-page .news-page-title { font-size: 1.95rem; }
-  body.gd-editorial .news-page-intro { font-size: .82rem; margin-top: .3rem; }
+  /* Preserve the newsroom promise and first story within a short-phone first view. */
+  body.gd-editorial .news-page-intro { display: none; }
   body.gd-editorial .news-toolbar { grid-template-columns: minmax(0,1fr); gap: .5rem; padding-top: .6rem; }
   body.gd-editorial .news-page .region-tabs {
     display: flex;
@@ -604,4 +605,10 @@ body.gd-editorial .timeline-day { background: var(--paper); color: var(--ink); }
   body.gd-editorial *,
   body.gd-editorial *::before,
   body.gd-editorial *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+@media (max-width: 330px) {
+  body.gd-editorial .editorial-wordmark { font-size: .9rem; letter-spacing: -.09em; }
+  body.gd-editorial > header .header { gap: .15rem; }
+  body.gd-editorial .primary-nav .nav-item { min-width: 44px; padding-inline: .12rem; }
 }
