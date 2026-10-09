@@ -351,12 +351,14 @@ test('News shows offline/no-saved-copy distinctly from a genuine upstream 503', 
   await expect(page.locator('#news-grid .news-card')).toHaveCount(0);
 });
 
-test('private session and unrelated APIs never enter the offline cache', async ({ page, context }) => {
+test('private sessions, trust snapshots and unrelated APIs never enter the offline cache', async ({ page, context }) => {
   await page.goto('/index.html');
   await waitForControllingWorker(page);
   const cases = [
     ['/get-session?session_id=fixture-private', { 'Cache-Control': 'no-store' }],
     ['/api/deploy?test=fixture-private', { 'Cache-Control': 'public, max-age=60' }],
+    ['/api/news/health?test=fixture-private', { 'Cache-Control': 'public, max-age=60' }],
+    ['/api/news/sources?test=fixture-private', { 'Cache-Control': 'public, max-age=60' }],
   ];
   for (const [path, headers] of cases) {
     await context.route('**' + path, route => route.fulfill({
