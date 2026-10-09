@@ -7,10 +7,20 @@ const flag = name => process.argv.find(arg => arg.startsWith(name + '='))?.slice
 const BASE = flag('--base').replace(/\/$/, '');
 const SHA = flag('--expected-commit');
 function assert(ok, message) { if (!ok) throw new Error(message); }
-async function getJson(path) {
-  const response = await fetch(BASE + path, { cache: 'no-store' });
-  assert(response.ok, path + ' HTTP ' + response.status);
-  return response.json();
+async function getJson(path, { retries = 1 } = {}) {
+  let detail = '';
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(BASE + path, { cache: 'no-store', signal: AbortSignal.timeout(20000) });
+      if (response.ok) return response.json();
+      detail = path + ' HTTP ' + response.status + ': ' + (await response.text()).slice(0, 140);
+    } catch (error) {
+      detail = path + ' request failed: ' + String(error);
+    }
+    console.warn('GD040_PREVIEW_ENDPOINT_NOT_READY attempt ' + attempt + '/' + retries + ' ' + detail);
+    if (attempt < retries) await new Promise(resolve => setTimeout(resolve, 3000));
+  }
+  throw new Error('Preview API readiness exhausted; cannot certify hosted source diversity: ' + detail);
 }
 async function main() {
   assert(/^https:\/\/[a-z0-9.-]+\.pages\.dev$/.test(BASE) && !BASE.startsWith('https://globaldeets.pages.dev'),
@@ -25,8 +35,8 @@ async function main() {
     }
   }
   assert(metadata.commit === SHA, 'preview deploy does not match exact head');
-  const chrono = await getJson('/api/news?region=global&limit=100');
-  const diverse = await getJson('/api/news?region=global&limit=100&mode=diverse');
+  const chrono = await getJson('/api/news?region=global&limit=100', { retries: 10 });
+  const diverse = await getJson('/api/news?region=global&limit=100&mode=diverse', { retries: 10 });
   assert(chrono.selection?.mode === 'chronological', 'default mode changed');
   assert(diverse.selection?.mode === 'diverse' &&
     diverse.selection.policyVersion === 'gd040-publisher-region-rotation-v1', 'diversity policy not deployed');
