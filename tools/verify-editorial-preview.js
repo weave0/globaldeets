@@ -38,8 +38,8 @@ async function main() {
       return {
         deskBeforeGlobe: !!(desk.compareDocumentPosition(globe) & Node.DOCUMENT_POSITION_FOLLOWING),
         globeInMain: document.querySelector('main').contains(globe),
-        paper: getComputedStyle(document.body).backgroundColor,
-        evidenceVisible: evidence && getComputedStyle(evidence).display !== 'none',
+        paper: window.getComputedStyle(document.body).backgroundColor,
+        evidenceVisible: evidence && window.getComputedStyle(evidence).display !== 'none',
         overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
       };
     });
