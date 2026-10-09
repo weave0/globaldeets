@@ -60,6 +60,9 @@ function hasExpectedType(url, response) {
 async function normalizeHtmlResponse(response) {
   if (!response.redirected) return response;
   const headers = new Headers(response.headers);
+  // Fetch exposes decoded bytes; do not retain the upstream wire-encoding/length metadata.
+  headers.delete('content-encoding');
+  headers.delete('content-length');
   // Cloning the actual bytes into a new Response removes the redirect chain and URL.
   return new Response(await response.blob(), { status: response.status, headers });
 }
