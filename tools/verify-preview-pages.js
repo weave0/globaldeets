@@ -93,18 +93,48 @@ async function checkPreview() {
     await swTarget.evaluate(() => {
       const onlineFetch = self.fetch.bind(self);
       self.__gdOfflineProbeCount = 0;
+      self.__gdOfflineUrls = [];
+      self.__gdFetchEvents = [];
+      self.addEventListener('fetch', event => {
+        self.__gdFetchEvents.push({
+          url: event.request.url,
+          mode: event.request.mode,
+          destination: event.request.destination,
+        });
+      });
       self.fetch = (...args) => {
         const value = args[0];
         const target = new URL(typeof value === 'string' ? value : value.url, self.location.href);
         if (target.origin === self.location.origin) {
           self.__gdOfflineProbeCount += 1;
+          self.__gdOfflineUrls.push(target.href);
           return Promise.reject(new TypeError('simulated worker network loss'));
         }
         return onlineFetch(...args);
       };
     });
-    await page.goto(BASE + '/news?region=europe',
-      { waitUntil: 'domcontentloaded', timeout: 30000 });
+    try {
+      await page.goto(BASE + '/news?region=europe',
+        { waitUntil: 'domcontentloaded', timeout: 30000 });
+    } catch (navigationError) {
+      const probe = await swTarget.evaluate(async () => {
+        const candidate = self.location.origin + '/news?region=europe';
+        const paths = ['news.html', '/news.html', 'offline.html', candidate];
+        const available = await Promise.all(paths.map(async path => ({
+          path, cached: Boolean(await caches.match(path)),
+        })));
+        return {
+          serviceWorkerOrigin: self.location.origin,
+          scope: self.registration.scope,
+          count: self.__gdOfflineProbeCount,
+          urls: self.__gdOfflineUrls,
+          events: self.__gdFetchEvents,
+          available,
+        };
+      }).catch(error => ({ diagnosticError: String(error) }));
+      console.error('GD038_PREVIEW_OFFLINE_DIAGNOSTIC ' + JSON.stringify(probe));
+      throw navigationError;
+    }
     const offlineRequests = await swTarget.evaluate(() => self.__gdOfflineProbeCount);
     assert(offlineRequests > 0, 'navigation did not exercise the worker network-failure fallback');
     assert((await page.title()).includes('World News Feed'),
