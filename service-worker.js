@@ -43,6 +43,9 @@ const OFFLINE_PAGES = new Set(['index', 'news', 'categories', 'timeline', 'offli
 // Only the actual story feed is rendered with an explicit "saved copy" warning.
 // Source authority, admissions, coverage and health must remain live-only or visibly unavailable.
 const PUBLIC_NEWS_API_PATHS = new Set(['/api/news']);
+// The one publicly reviewed, shipped story record is an offline data dependency.
+// Never extend this allowance to private, operator or intelligence API responses.
+const PUBLIC_STORY_RECORDS = new Set(['/story/santa-ynez-pipeline/story.json']);
 const PUBLIC_PAGES = new Set([
   '/', '/index.html', '/news', '/news.html', '/categories', '/categories.html',
   '/timeline', '/timeline.html', '/offline', '/offline.html', '/globe', '/globe.html',
@@ -115,13 +118,14 @@ self.addEventListener('fetch', event => {
   // Do not intercept external origins or non-news functions (including payment sessions).
   if (url.origin !== self.location.origin) return;
   const isApi = PUBLIC_NEWS_API_PATHS.has(url.pathname);
+  const isStoryRecord = PUBLIC_STORY_RECORDS.has(url.pathname);
   if (url.pathname.startsWith('/api/') && !isApi) return;
   if (url.pathname === '/get-session' || url.pathname === '/create-checkout') return;
   const isNav =
     request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html');
   // Fetch/XHR outside the public news API has no offline cache semantics. Bypass the worker.
-  if (!isApi && !isNav && !PUBLIC_ASSET_DESTINATIONS.has(request.destination)) return;
-  const cacheable = isApi || (isNav
+  if (!isApi && !isStoryRecord && !isNav && !PUBLIC_ASSET_DESTINATIONS.has(request.destination)) return;
+  const cacheable = isApi || isStoryRecord || (isNav
     ? PUBLIC_PAGES.has(url.pathname)
     : PUBLIC_ASSET_DESTINATIONS.has(request.destination));
   event.respondWith(respond(event, request, { isApi, isNav, cacheable }));
