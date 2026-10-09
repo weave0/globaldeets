@@ -336,7 +336,7 @@ test('homepage loads the primary GlobalDeets surface', async ({ page }) => {
 test('news page renders feed and exposes live source transparency', async ({ page }) => {
   await page.goto('/news.html');
 
-  await expect(page.getByRole('heading', { name: /World News Feed/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Latest reporting/i })).toBeVisible();
   await expect(page.locator('#region-tabs')).toBeVisible();
   await expect(page.locator('#news-status')).toContainText(/3 of 3 stories/);
   await expect(page.locator('#news-grid .news-card')).toHaveCount(3);
