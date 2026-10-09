@@ -74,7 +74,7 @@ const sources = {
       sourceClass: 'nonprofit-newsroom',
       primaryCountry: 'US',
       sourceLanguages: ['en'],
-      evidenceUrls: ['https://calmatters.org/about/'],
+      evidenceUrls: ['https://example.org/publisher/privacy'],
     },
   ],
 };
@@ -173,10 +173,17 @@ test('browse page offers regions and publishers, not sibling projects', async ({
   const nhk = page.locator('.browse-source').filter({ hasText: 'NHK' });
   await expect(nhk).toContainText('Publisher based in JP');
   await expect(nhk).toContainText('Language: JA');
-  await expect(nhk.getByRole('link', { name: /About NHK/ })).toHaveAttribute(
+  await expect(nhk.getByRole('link', { name: /Publisher documentation for NHK/ })).toHaveAttribute(
     'href',
     'https://www.nhk.or.jp/corporateinfo/'
   );
+  // Some evidence URLs are privacy/policy pages, not verified About pages.
+  const privacyFirst = page.locator('.browse-source').filter({ hasText: 'CalMatters' });
+  await expect(privacyFirst.getByRole('link', { name: /Publisher documentation for CalMatters/ })).toHaveAttribute(
+    'href',
+    'https://example.org/publisher/privacy'
+  );
+  await expect(privacyFirst.getByRole('link', { name: /About CalMatters/ })).toHaveCount(0);
   await expect(page.locator('.category-projects-list')).toHaveCount(0);
 });
 

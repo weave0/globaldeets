@@ -37,7 +37,12 @@ const RETIRED_PATHS = [
   '/bi-ecosystem.css',
 ];
 
-const CORE_PAGES = ['/', '/news', '/categories', '/timeline', '/app.js', '/world-desk.js'];
+const CORE_PAGES = [
+  '/', '/news', '/categories', '/timeline', '/globe', '/worldmap', '/knowledge',
+  '/about', '/contact', '/donate', '/offline', '/app.js', '/world-desk.js',
+  '/news.js', '/globe-hero.js', '/404.html',
+  '/dossiers/santa-ynez-pipeline/', '/observatory/coverage/',
+];
 
 const FORBIDDEN_CONTENT = [
   /projects-data\.js/,
@@ -52,6 +57,8 @@ const FORBIDDEN_CONTENT = [
   /fantasy-penpal\.globaldeets/i,
   /steveb\.globaldeets/i,
   /medical\.globaldeets/i,
+  /impact across 6 world-changing platforms/i,
+  /gofundme\.com/i,
 ];
 
 async function textOf(path) {
@@ -86,6 +93,21 @@ if (require.main === module) (async () => {
   const drift = pages.flatMap(({ path, body }) =>
     FORBIDDEN_CONTENT.filter(pattern => pattern.test(body)).map(pattern => `${path} matches ${pattern}`)
   );
+  // Owner identification is legitimate on About, but the publisher's unrelated portfolio
+  // destination does not belong on the news-reading and source-browsing surfaces. The About
+  // exception is intentionally narrow: exactly two checked operator-credit links, no directory.
+  const OWNER_DOMAIN = /goodflippindesign\.com/gi;
+  for (const { path, body } of pages) {
+    const occurrences = [...body.matchAll(OWNER_DOMAIN)].length;
+    if (path === '/about') {
+      const aboutCredits = [...body.matchAll(/href="https:\/\/goodflippindesign\.com"/gi)].length;
+      if (occurrences !== 2 || aboutCredits !== 2) {
+        drift.push(`${path} operator attribution is not limited to its two reviewed About links`);
+      }
+    } else if (occurrences > 0) {
+      drift.push(`${path} links to the unrelated owner-domain portfolio`);
+    }
+  }
   if (drift.length > 0) {
     throw new Error(`GFD portfolio content has re-entered public pages: ${drift.join(', ')}`);
   }
