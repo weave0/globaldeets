@@ -91,6 +91,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="world-desk.css" />
+    <link rel="stylesheet" href="editorial-reader.css" />
 <!-- Canonical -->
     <link rel="canonical" href="https://globaldeets.com/news" />
 
@@ -107,7 +108,7 @@
     </script>
   </head>
 
-  <body>
+  <body class="gd-editorial">
 <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <!-- Header -->
@@ -124,8 +125,9 @@
                 width="220"
                 height="140"
               />
+            <span class="editorial-wordmark">GlobalDeets</span>
             </a>
-            <p class="tagline">World News · Source Context · Original Publishers</p>
+            <p class="tagline">Original reporting · Open evidence</p>
           </div>
           <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
             <a href="index.html" class="nav-icon-btn nav-item">
@@ -140,7 +142,10 @@
               <img src="assets/icons/site/nav-list.svg" alt="" aria-hidden="true" width="22" height="22" />
               <span class="nav-label">Browse</span>
             </a>
-            <details class="nav-more">
+            <a href="/observatory/coverage/" class="nav-icon-btn nav-item nav-evidence">
+                <span class="nav-label">Evidence</span>
+              </a>
+              <details class="nav-more">
               <summary class="nav-icon-btn nav-item">
                 <svg class="nav-more-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="2" fill="currentColor" /><circle cx="12" cy="12" r="2" fill="currentColor" /><circle cx="19" cy="12" r="2" fill="currentColor" /></svg>
                 <span class="nav-label">More</span>
@@ -163,7 +168,8 @@
     <main id="main-content" role="main">
       <div class="container news-page">
         <div class="news-page-header">
-          <h1 class="news-page-title"><span>World</span> News Feed</h1>
+          <h1 class="news-page-title">Latest reporting</h1>
+          <p class="news-page-intro">Headlines from original publishers, newest first. Browse a feed region or view them together; stories are not ranked by importance.</p>
         </div>
 
         <!-- Reader toolbar: region and filter stay reachable; everything else is one tap away -->
