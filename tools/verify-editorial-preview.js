@@ -11,6 +11,22 @@ const SHA = arg('--expected-commit');
 const out = resolve(process.cwd(), 'design-previews');
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
 
+async function waitForPopulatedReporting(page, selector, label) {
+  for (let attempt = 1; attempt <= 6; attempt++) {
+    try {
+      await page.locator(selector).first().waitFor({ state: 'visible', timeout: 6000 });
+      return;
+    } catch {
+      const status = await page.locator('#desk-updated, #news-status').allTextContents().catch(() => []);
+      console.warn('GD039_PREVIEW_FEED_NOT_READY ' + JSON.stringify({ label, attempt, status }));
+      if (attempt === 6) break;
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
+    }
+  }
+  throw new Error(label + ' has no rendered governed source-linked reporting after six bounded attempts');
+}
+
 async function main() {
   assert(/^https:\/\/[a-z0-9.-]+\.pages\.dev$/.test(BASE), 'expected isolated Pages preview URL');
   assert(/^[a-f0-9]{40}$/.test(SHA), 'expected exact source SHA');
@@ -30,7 +46,7 @@ async function main() {
     const page = await desktop.newPage();
     let res = await page.goto(BASE + '/', { waitUntil: 'domcontentloaded', timeout: 30000 });
     assert(res?.ok(), 'home failed to load');
-    await page.waitForTimeout(1400);
+    await waitForPopulatedReporting(page, '#desk-latest .desk-story', 'desktop homepage');
     const placement = await page.evaluate(() => {
       const desk = document.querySelector('#world-desk');
       const globe = document.querySelector('.globe-hero-section');
@@ -52,7 +68,7 @@ async function main() {
 
     res = await page.goto(BASE + '/news?region=asia', { waitUntil: 'domcontentloaded', timeout: 30000 });
     assert(res?.ok(), 'news Asia page failed to load');
-    await page.waitForTimeout(1400);
+    await waitForPopulatedReporting(page, '#news-grid .news-card', 'desktop Asia feed');
     const title = await page.locator('h1.news-page-title').textContent();
     assert(title?.trim() === 'Latest reporting', 'news edition headline was not deployed');
     assert(await page.locator('header .nav-evidence').count(), 'prominent evidence nav missing');
@@ -66,7 +82,7 @@ async function main() {
     const phone = await mobile.newPage();
     res = await phone.goto(BASE + '/news?region=asia', { waitUntil: 'domcontentloaded', timeout: 30000 });
     assert(res?.ok(), 'mobile news Asia page failed to load');
-    await phone.waitForTimeout(1400);
+    await waitForPopulatedReporting(phone, '#news-grid .news-card', 'mobile Asia feed');
     const mobileLayout = await phone.evaluate(() => {
       const more = document.querySelector('header details.nav-more summary').getBoundingClientRect();
       return {
@@ -80,7 +96,7 @@ async function main() {
     await phone.screenshot({ path: resolve(out, 'mobile-news-asia.png'), animations: 'disabled' });
     await mobile.close();
 
-    console.log('GD-039 Pages preview verified: exact SHA, midnight CSS MIME, reduced masthead, source-first hierarchy, labeled navigation, 390px reflow.');
+    console.log('GD-039 Pages preview verified: exact SHA, midnight CSS MIME, reduced masthead, populated source-first hierarchy, labeled navigation, 390px reflow.');
     console.log('Screenshots: design-previews/desktop-home.png, desktop-news-asia.png, mobile-news-asia.png');
     console.log('Preview URL: ' + BASE);
   } finally {
