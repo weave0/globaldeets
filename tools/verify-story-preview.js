@@ -8,10 +8,20 @@ const BASE = flag('--base').replace(/\/$/, '');
 const SHA = flag('--expected-commit');
 const STORY = '/story/santa-ynez-pipeline/';
 const assert = (ok, msg) => { if (!ok) throw new Error(msg); };
-async function response(path) {
-  const res = await fetch(BASE + path, { cache: 'no-store' });
-  assert(res.ok, path + ' returned HTTP ' + res.status);
-  return res;
+async function response(path, { retries = 1 } = {}) {
+  let detail = 'no response';
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(BASE + path, { cache: 'no-store', signal: AbortSignal.timeout(20000) });
+      if (res.ok) return res;
+      detail = path + ' HTTP ' + res.status + ': ' + (await res.text()).slice(0, 180);
+    } catch (error) {
+      detail = path + ' fetch failed: ' + String(error);
+    }
+    console.warn('GD_R2_PREVIEW_API_NOT_READY ' + attempt + '/' + retries + ' ' + detail);
+    if (attempt < retries) await new Promise(resolve => setTimeout(resolve, 3000));
+  }
+  throw new Error('Cannot certify hosted maintained story after bounded retries: ' + detail);
 }
 async function main() {
   assert(/^https:\/\/[a-z0-9.-]+\.pages\.dev$/.test(BASE) && !BASE.startsWith('https://globaldeets.pages.dev'),
@@ -27,8 +37,8 @@ async function main() {
   }
   assert(meta.commit === SHA, 'deployment source differs from exact PR head');
   const [index, api, shipped] = await Promise.all([
-    response('/api/intelligence/stories').then(r => r.json()),
-    response('/api/intelligence/stories/santa-ynez-pipeline').then(r => r.json()),
+    response('/api/intelligence/stories', { retries: 10 }).then(r => r.json()),
+    response('/api/intelligence/stories/santa-ynez-pipeline', { retries: 10 }).then(r => r.json()),
     response(STORY + 'story.json').then(r => r.json()),
   ]);
   assert(index.stories?.length === 1 && index.stories[0]?.storyId === 'story:santa-ynez-pipeline',
