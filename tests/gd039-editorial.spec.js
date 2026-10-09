@@ -54,10 +54,19 @@ test('the editorial masthead has no horizontal overflow at reader phone widths',
           moreWidth: more.width,
           moreHeight: more.height,
           navTop: nav.top,
+          culprits: [...document.querySelectorAll('body *')]
+            .map(el => {
+              const rect = el.getBoundingClientRect();
+              return { tag: el.tagName, cls: (el.className?.baseVal || el.className || '').toString().slice(0, 75),
+                right: Math.round(rect.right), width: Math.round(rect.width) };
+            })
+            .filter(item => item.right > document.documentElement.clientWidth + 1 && item.width > 0)
+            .sort((a, b) => b.right - a.right)
+            .slice(0, 7),
         };
       });
-      expect(snapshot.scroll, `${width}px ${path} overflow`).toBeLessThanOrEqual(width + 1);
-      expect(snapshot.moreRight, `${width}px ${path} More boundary`).toBeLessThanOrEqual(width);
+      expect(snapshot.scroll, `${width}px ${path} overflow: ${JSON.stringify(snapshot.culprits)}`).toBeLessThanOrEqual(width + 1);
+      expect(snapshot.moreRight, `${width}px ${path} More boundary: ${JSON.stringify(snapshot.culprits)}`).toBeLessThanOrEqual(width);
       expect(snapshot.moreWidth).toBeGreaterThanOrEqual(44);
       expect(snapshot.moreHeight).toBeGreaterThanOrEqual(44);
     }
