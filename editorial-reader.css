@@ -61,10 +61,18 @@ body.gd-editorial .site-logo-link {
   box-shadow: none;
   border-radius: 0;
   justify-content: flex-start;
+  gap: .38rem;
 }
 body.gd-editorial .site-logo-link::before,
 body.gd-editorial .site-logo-link::after { display: none; }
-body.gd-editorial .site-logo-mark { display: none; }
+body.gd-editorial .site-logo-mark {
+  display: block;
+  height: 30px;
+  width: auto;
+  filter: none;
+  box-shadow: none;
+  transition: none;
+}
 body.gd-editorial .editorial-wordmark {
   color: var(--ink);
   font-family: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
@@ -85,6 +93,21 @@ body.gd-editorial .logo .tagline {
   text-transform: uppercase;
 }
 body.gd-editorial .primary-nav { gap: .15rem; }
+body.gd-editorial .primary-nav .nav-evidence {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: .55rem .72rem;
+  border: 0;
+  border-radius: 0;
+  color: var(--ink-soft);
+  background: transparent;
+  font-size: .84rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+body.gd-editorial .primary-nav .nav-evidence:hover,
+body.gd-editorial .primary-nav .nav-evidence:focus-visible { background: #e9f0f0; color: var(--ink); }
 body.gd-editorial .primary-nav .nav-item {
   min-height: 44px;
   min-width: 44px;
@@ -548,6 +571,7 @@ body.gd-editorial .timeline-day { background: var(--paper); color: var(--ink); }
   body.gd-editorial > header .container { padding-inline: .65rem; }
   body.gd-editorial .editorial-wordmark { font-size: clamp(1.3rem,5vw,1.7rem); }
   body.gd-editorial .logo .tagline { display: none; }
+  body.gd-editorial .site-logo-mark { display: none; }
   body.gd-editorial .primary-nav .nav-item {
     flex-direction: row;
     padding: .25rem .45rem;
@@ -564,7 +588,7 @@ body.gd-editorial .timeline-day { background: var(--paper); color: var(--ink); }
   body.gd-editorial .desk-story-headline { font-size: 1.1rem; }
   body.gd-editorial .desk-story:first-child .desk-story-headline { font-size: 1.34rem; }
   body.gd-editorial .desk-story-read {
-    min-height: 40px;
+    min-height: 44px;
     padding-block: .35rem;
     justify-self: start;
   }
@@ -577,11 +601,11 @@ body.gd-editorial .timeline-day { background: var(--paper); color: var(--ink); }
   body.gd-editorial .globe-hero-overlay { justify-content: flex-end; padding: 1.1rem; }
   body.gd-editorial .globe-hero-title { font-size: 1.65rem; }
   body.gd-editorial .globe-pin-hint { max-width: 40ch; }
-  body.gd-editorial .news-page .news-page-header { padding: 1.15rem 0 .65rem; }
-  body.gd-editorial .news-page .news-page-title { font-size: 1.95rem; }
+  body.gd-editorial .news-page .news-page-header { padding: .55rem 0 .3rem; }
+  body.gd-editorial .news-page .news-page-title { font-size: 1.72rem; }
   /* Preserve the newsroom promise and first story within a short-phone first view. */
   body.gd-editorial .news-page-intro { display: none; }
-  body.gd-editorial .news-toolbar { grid-template-columns: minmax(0,1fr); gap: .5rem; padding-top: .6rem; }
+  body.gd-editorial .news-toolbar { grid-template-columns: minmax(0,1fr); gap: .35rem; padding-top: .2rem; }
   body.gd-editorial .news-page .region-tabs {
     display: flex;
     flex-wrap: nowrap;
@@ -591,10 +615,12 @@ body.gd-editorial .timeline-day { background: var(--paper); color: var(--ink); }
   }
   body.gd-editorial .news-page .region-tab { flex: 0 0 auto; min-height: 44px; }
   body.gd-editorial .news-page .news-grid { grid-template-columns: minmax(0,1fr); }
-  body.gd-editorial .news-page .news-card { padding: 1rem 0; }
-  body.gd-editorial .news-page .news-card:first-child { grid-column: auto; padding: 1.1rem 0; }
+  body.gd-editorial .news-page .news-card { padding: .8rem 0; }
+  body.gd-editorial .news-status-line { margin: .35rem 0 .25rem; }
+  body.gd-editorial .news-disclosure { margin-bottom: .45rem; }
+  body.gd-editorial .news-page .news-card:first-child { grid-column: auto; padding: .75rem 0; }
   body.gd-editorial .news-page .news-headline { font-size: 1.16rem; }
-  body.gd-editorial .news-page .news-card:first-child .news-headline { font-size: 1.36rem; }
+  body.gd-editorial .news-page .news-card:first-child .news-headline { font-size: 1.2rem; }
 }
 @media (max-width: 385px) {
   body.gd-editorial > header .container { padding-inline: .35rem; }
