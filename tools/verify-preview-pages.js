@@ -84,7 +84,7 @@ async function checkPreview() {
       return { cacheNames, complete: assets.every(Boolean) };
     });
     assert(state.cacheNames.includes('globaldeets-cache-v9') && state.complete,
-      'Pages preview did not install a complete v9 reader cache');
+      'Pages preview did not install a complete v8 reader cache');
 
     // Route-level aborts can cancel browser navigation before its service worker sees it.
     // Instead, fail the worker's own same-origin network fetch so the real fallback path runs.
