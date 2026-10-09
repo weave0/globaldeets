@@ -29,7 +29,7 @@ test('midnight reader contrast and masthead density hold on desktop', async ({ p
   for (const path of ['/index.html', '/news.html']) {
     await page.goto(path);
     const appearance = await page.evaluate(() => {
-      const rgb = str => [...str.matchAll(/[\\d.]+/g)].slice(0, 3).map(part => +part[0]);
+      const rgb = str => (str.match(/[0-9.]+/g) || []).slice(0, 3).map(Number);
       const luminance = parts => {
         const channels = parts.map(n => {
           const s = n / 255;
@@ -43,9 +43,9 @@ test('midnight reader contrast and masthead density hold on desktop', async ({ p
         return (Math.max(left, right) + .05) / (Math.min(left, right) + .05);
       };
       const body = getComputedStyle(document.body);
-      const title = getComputedStyle(document.querySelector(path.includes('news') ? '.news-page-title' : '.desk-title'));
+      const title = getComputedStyle(document.querySelector(location.pathname.includes('news') ? '.news-page-title' : '.desk-title'));
       const nav = getComputedStyle(document.querySelector('.primary-nav .nav-item'));
-      const input = path.includes('news') ? document.querySelector('.news-search-input') : null;
+      const input = location.pathname.includes('news') ? document.querySelector('.news-search-input') : null;
       return {
         background: body.backgroundColor,
         textContrast: contrast(body.color, body.backgroundColor),
