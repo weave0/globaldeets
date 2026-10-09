@@ -127,6 +127,44 @@ test('feed failure is labeled and recoverable without a page reload', async ({ p
   await expect(page.locator('.news-error')).toHaveCount(0);
 });
 
+
+test('region errors clear the previous region saved-copy freshness even during loading', async ({ page }) => {
+  let releaseEurope;
+  const europeGate = new Promise(resolve => { releaseEurope = resolve; });
+  await routeNews(page, async (url, route) => {
+    if (url.pathname !== '/api/news') return undefined;
+    const region = url.searchParams.get('region');
+    if (region === 'global') {
+      await route.fulfill({
+        ...json(feed('global', 2)),
+        headers: { 'X-GlobalDeets-Offline-Copy': new Date().toISOString() },
+      });
+      return true;
+    }
+    if (region === 'europe') {
+      await europeGate;
+      await route.fulfill({ status: 503, contentType: 'application/json', body: '{}' }).catch(() => {});
+      return true;
+    }
+    await route.fulfill(json(feed(region, 1)));
+    return true;
+  });
+  await page.goto('/news.html');
+  await expect(page.locator('#news-freshness')).toHaveText('saved copy');
+  await expect(page.locator('.news-alert[data-alert="offline"]')).toContainText('may be out of date');
+
+  await page.getByRole('button', { name: 'Europe' }).click();
+  await expect(page.locator('#news-status')).toHaveText('Loading Europe…');
+  await expect(page.locator('#news-freshness')).toHaveText('');
+  await expect(page.locator('.news-alert[data-alert="offline"]')).toHaveCount(0);
+
+  releaseEurope();
+  await expect(page.locator('.news-error')).toHaveAttribute('data-failure', 'upstream');
+  await expect(page.locator('#news-status')).toHaveText('Europe stories unavailable');
+  await expect(page.locator('#news-freshness')).toHaveText('');
+  await expect(page.locator('#news-grid .news-card')).toHaveCount(0);
+});
+
 test('a true empty region and a no-match filter are different states', async ({ page }) => {
   await routeNews(page, async (url, route) => {
     if (url.pathname !== '/api/news') return undefined;
