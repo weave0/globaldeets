@@ -14,7 +14,7 @@ test('the home reader leads with reporting, with the immersive globe below it', 
     return {
       globeInMain: container.contains(globe),
       globeAfterDesk: Boolean(desk.compareDocumentPosition(globe) & Node.DOCUMENT_POSITION_FOLLOWING),
-      background: getComputedStyle(document.body).backgroundColor,
+      background: window.getComputedStyle(document.body).backgroundColor,
       loadedStyles: [...document.styleSheets].some(sheet => sheet.href?.endsWith('/editorial-reader.css')),
     };
   });
