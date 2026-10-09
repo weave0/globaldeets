@@ -57,13 +57,22 @@ function hasExpectedType(url, response) {
   return contentType.includes(EXPECTED_TYPES[`.${match[1]}`]);
 }
 
+async function normalizeHtmlResponse(response) {
+  if (!response.redirected) return response;
+  const headers = new Headers(response.headers);
+  // Cloning the actual bytes into a new Response removes the redirect chain and URL.
+  return new Response(await response.blob(), { status: response.status, headers });
+}
+
 function precache(cache, path) {
   const accept = path.endsWith('.css') ? 'text/css' : '*/*';
-  return fetch(new Request(path, { headers: { Accept: accept } })).then(response => {
+  return fetch(new Request(path, { headers: { Accept: accept } })).then(async response => {
     if (!response.ok || !hasExpectedType(path, response)) {
       throw new Error(`precache rejected ${path}: HTTP ${response.status} ${response.headers.get('content-type')}`);
     }
-    return cache.put(path, response);
+    // Pages redirects .html requests to clean URLs. A redirected Response cannot
+    // satisfy a different offline navigation URL; cache a URL-neutral HTML response.
+    return cache.put(path, path.endsWith('.html') ? await normalizeHtmlResponse(response) : response);
   });
 }
 
@@ -137,13 +146,14 @@ async function respond(event, request, { isApi, isNav, cacheable }) {
 async function writeToCache(request, response, isApi) {
   const stored = isApi ? await stampCachedAt(response) : response;
   const cache = await caches.open(CACHE_NAME);
-  await cache.put(request, stored);
+  await cache.put(request, !isApi && (request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html'))
+    ? await normalizeHtmlResponse(stored) : stored);
 }
 
 async function fromCache(request, isApi, isNav) {
   const cached = await caches.match(request);
   if (cached && isApi) return markOfflineCopy(cached);
-  if (cached) return cached;
+  if (cached) return isNav ? normalizeHtmlResponse(cached) : cached;
   if (isApi) {
     return new Response(JSON.stringify({ error: 'offline' }), {
       status: 503,
