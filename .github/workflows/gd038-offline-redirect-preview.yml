@@ -1,0 +1,65 @@
+name: GD-038 offline redirect preview
+
+# A stacked PR against feat/gd038-world-desk does not trigger CI's main-only
+# pull_request workflow. Prove this exact repair head in an isolated Pages preview.
+on:
+  push:
+    branches:
+      - fix/gd038-cloudflare-redirected-offline-html
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gd038-offline-redirect-preview
+  cancel-in-progress: true
+
+jobs:
+  verify-redirect-fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact repair commit
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Check JavaScript
+        run: npm run lint
+
+      - name: Run function and governance contracts
+        run: npm run test:functions
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run reader, mobile and service-worker regressions
+        run: npx playwright test
+
+      - name: Stage isolated Cloudflare Pages artifact
+        run: npm run stage:deploy
+        env:
+          NODE_ENV: production
+          CF_PAGES_BRANCH: gd038-offline-fix-preview
+          CF_PAGES_COMMIT_SHA: ${{ github.sha }}
+
+      - name: Deploy offline-fix preview (not production)
+        id: preview
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.131.1'
+          command: pages deploy dist --project-name globaldeets --branch gd038-offline-fix-preview --commit-hash ${{ github.sha }} --commit-dirty=false
+
+      - name: Verify exact deployed SHA, MIME, CSP and redirected offline navigation
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.deployment-url }}
+          EXPECTED_COMMIT: ${{ github.sha }}
+        run: node tools/verify-preview-pages.js --base="$PREVIEW_URL" --expected-commit="$EXPECTED_COMMIT"
