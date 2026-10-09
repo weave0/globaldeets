@@ -113,6 +113,37 @@ async function checkPreview() {
         return onlineFetch(...args);
       };
     });
+    const responseInspection = await swTarget.evaluate(async () => {
+      const candidate = self.location.origin + '/news?region=europe';
+      const cached = await caches.match('news.html');
+      const describe = async response => response ? {
+        status: response.status,
+        type: response.type,
+        url: response.url,
+        redirected: response.redirected,
+        contentType: response.headers.get('content-type'),
+        contentLength: response.headers.get('content-length'),
+        contentEncoding: response.headers.get('content-encoding'),
+        location: response.headers.get('location'),
+        vary: response.headers.get('vary'),
+        bodyStart: (await response.clone().text()).slice(0, 110),
+      } : null;
+      let manual;
+      try {
+        manual = typeof fromCache === 'function'
+          ? await describe(await fromCache(new Request(candidate, { headers: { Accept: 'text/html' } }), false, true))
+          : 'fromCache unavailable to evaluator';
+      } catch (error) {
+        manual = { error: String(error) };
+      }
+      return {
+        base: self.location.href,
+        route: typeof offlinePageFor === 'function' ? offlinePageFor(candidate) : null,
+        cached: await describe(cached),
+        manual,
+      };
+    });
+    console.error('GD038_PREVIEW_FALLBACK_INSPECTION ' + JSON.stringify(responseInspection));
     try {
       await page.goto(BASE + '/news?region=europe',
         { waitUntil: 'domcontentloaded', timeout: 30000 });
