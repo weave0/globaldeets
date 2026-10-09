@@ -208,11 +208,31 @@ async function verifyServiceWorker(browser) {
     requireCondition(cached.names.includes('globaldeets-cache-v8'), 'production cache v8 did not install');
     requireCondition(cached.complete, 'the production offline shell is incomplete after first install');
 
-    await context.route('**/*', route => route.abort('internetdisconnected'));
+    // Browser-context route aborts can prevent navigation before the controlling worker
+    // handles the request. Fail the network fetch *inside* the worker to prove its fallback.
+    const swTarget = context.serviceWorkers().find(item =>
+      new URL(item.url()).pathname === '/service-worker.js'
+    );
+    requireCondition(swTarget, 'production service worker target is not inspectable');
+    await swTarget.evaluate(() => {
+      const onlineFetch = self.fetch.bind(self);
+      self.__gdOfflineProbeCount = 0;
+      self.fetch = (...args) => {
+        const value = args[0];
+        const target = new URL(typeof value === 'string' ? value : value.url, self.location.href);
+        if (target.origin === self.location.origin) {
+          self.__gdOfflineProbeCount += 1;
+          return Promise.reject(new TypeError('simulated worker network loss'));
+        }
+        return onlineFetch(...args);
+      };
+    });
     await page.goto(`${BASE}/news?region=europe`, {
       waitUntil: 'domcontentloaded',
       timeout: 30_000,
     });
+    const offlineRequests = await swTarget.evaluate(() => self.__gdOfflineProbeCount);
+    requireCondition(offlineRequests > 0, 'production offline fallback did not run');
     requireCondition(
       (await page.title()).includes('World News Feed'),
       'offline clean-route navigation did not load the precached News page'
