@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* global fromCache, offlinePageFor */
 // GD-038: prove Cloudflare Pages preview behavior with the headers that Pages actually serves.
 // This is an isolated branch preview, not a main/production deployment.
 const { chromium } = require('@playwright/test');
