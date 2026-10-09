@@ -152,19 +152,107 @@ async function verifyMobileSurface(browser, viewport, label) {
   }
 }
 
-async function verifyServiceWorker(page) {
-  const response = await page.request.get(`${BASE}/service-worker.js`);
-  requireCondition(response.ok(), `service worker returned HTTP ${response.status()}`);
-  const body = await response.text();
-  requireCondition(body.includes("globaldeets-cache-v8"), 'production service worker cache version is stale');
-  requireCondition(
-    body.includes('self.skipWaiting()'),
-    'production service worker does not activate the new shell promptly'
-  );
-  requireCondition(
-    body.includes('self.clients.claim()'),
-    'production service worker does not claim existing clients'
-  );
+async function verifyServiceWorker(browser) {
+  // Do not certify a PWA just because the JS file contains the expected cache version. A fresh
+  // production browser must receive real Pages headers, register, control and replay its shell.
+  const context = await browser.newContext({ serviceWorkers: 'allow' });
+  const page = await context.newPage();
+  try {
+    const types = [
+      ['/styles.css', 'text/css'],
+      ['/world-desk.css', 'text/css'],
+      ['/news.js', 'javascript'],
+      ['/site-nav.js', 'javascript'],
+      ['/service-worker.js', 'javascript'],
+    ];
+    for (const [path, expectedType] of types) {
+      const response = await page.request.get(`${BASE}${path}`);
+      requireCondition(response.ok(), `${path} returned HTTP ${response.status()}`);
+      const actualType = response.headers()['content-type'] || '';
+      requireCondition(actualType.includes(expectedType), `${path} served ${actualType}, expected ${expectedType}`);
+    }
+
+    const response = await page.goto(`${BASE}/index.html`, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30_000,
+    });
+    requireCondition(response?.ok(), 'production homepage did not load for service-worker certification');
+    const csp = response.headers()['content-security-policy'] || '';
+    requireCondition(
+      /worker-src\s+[^;]*'self'/.test(csp),
+      'production CSP does not permit same-origin service-worker registration'
+    );
+
+    const workerUrl = await page.evaluate(async () => {
+      if (!('serviceWorker' in navigator)) return null;
+      return Promise.race([
+        navigator.serviceWorker.ready.then(registration => registration.active?.scriptURL || null),
+        new Promise(resolve => setTimeout(() => resolve(null), 15_000)),
+      ]);
+    });
+    requireCondition(
+      workerUrl && new URL(workerUrl).pathname === '/service-worker.js',
+      'production browser did not register the same-origin service worker'
+    );
+    await page.waitForFunction(
+      () => navigator.serviceWorker.controller?.scriptURL?.endsWith('/service-worker.js'),
+      undefined,
+      { timeout: 15_000 }
+    );
+    const cached = await page.evaluate(async () => {
+      const names = await caches.keys();
+      const cache = await caches.open('globaldeets-cache-v9');
+      const shell = await Promise.all(['/index.html', '/news.html', '/styles.css', '/news.js'].map(path => cache.match(path)));
+      return { names, complete: shell.every(Boolean) };
+    });
+    requireCondition(cached.names.includes('globaldeets-cache-v9'), 'production cache v9 did not install');
+    requireCondition(cached.complete, 'the production offline shell is incomplete after first install');
+
+    // Browser-context route aborts can prevent navigation before the controlling worker
+    // handles the request. Fail the network fetch *inside* the worker to prove its fallback.
+    const swTarget = context.serviceWorkers().find(item =>
+      new URL(item.url()).pathname === '/service-worker.js'
+    );
+    requireCondition(swTarget, 'production service worker target is not inspectable');
+    await swTarget.evaluate(() => {
+      const onlineFetch = self.fetch.bind(self);
+      self.__gdOfflineProbeCount = 0;
+      self.fetch = (...args) => {
+        const value = args[0];
+        const target = new URL(typeof value === 'string' ? value : value.url, self.location.href);
+        if (target.origin === self.location.origin) {
+          self.__gdOfflineProbeCount += 1;
+          return Promise.reject(new TypeError('simulated worker network loss'));
+        }
+        return onlineFetch(...args);
+      };
+    });
+    await page.goto(`${BASE}/news?region=europe`, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30_000,
+    });
+    const offlineRequests = await swTarget.evaluate(() => self.__gdOfflineProbeCount);
+    requireCondition(offlineRequests > 0, 'production offline fallback did not run');
+    requireCondition(
+      (await page.title()).includes('World News Feed'),
+      'offline clean-route navigation did not load the precached News page'
+    );
+    requireCondition(
+      new URL(page.url()).searchParams.get('region') === 'europe',
+      'offline navigation discarded the region query'
+    );
+    const stylesApplied = await page.evaluate(() =>
+      [...document.styleSheets]
+        .filter(sheet => sheet.href && /\/(styles|world-desk)\.css$/.test(sheet.href))
+        .map(sheet => sheet.cssRules.length)
+    );
+    requireCondition(
+      stylesApplied.length === 2 && stylesApplied.every(n => n > 10),
+      'offline production News did not retain the expected stylesheets'
+    );
+  } finally {
+    await context.close();
+  }
 }
 
 (async () => {
@@ -175,11 +263,11 @@ async function verifyServiceWorker(page) {
   try {
     await verifyHomepage(page);
     await verifyNews(page);
-    await verifyServiceWorker(page);
+    await verifyServiceWorker(browser);
     await verifyMobileSurface(browser, { width: 390, height: 844 }, 'iPhone-class');
     await verifyMobileSurface(browser, { width: 360, height: 800 }, 'narrow Android-class');
     console.log(
-      'Production reader verification passed: desktop + mobile rendered surfaces, visible governed metrics, 44px touch targets, raw news HTML, evidence bridge, and PWA shell are current.'
+      'Production reader verification passed: desktop + mobile rendered surfaces, visible governed metrics, 44px touch targets, raw news HTML, evidence bridge, and live MIME/CSP/service-worker registration/offline shell are current.'
     );
   } finally {
     await context.close();
