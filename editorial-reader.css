@@ -567,14 +567,14 @@ body.gd-editorial .timeline-day { background: var(--paper); color: var(--ink); }
 @media (max-width: 700px) {
   body.gd-editorial > header,
   body.gd-editorial > header.scrolled { padding: .48rem 0; }
-  body.gd-editorial > header .header { gap: .35rem; }
+  body.gd-editorial > header .header { gap: .12rem; }
   body.gd-editorial > header .container { padding-inline: .65rem; }
-  body.gd-editorial .editorial-wordmark { font-size: clamp(1.3rem,5vw,1.7rem); }
+  body.gd-editorial .editorial-wordmark { font-size: clamp(1.1rem,4.2vw,1.35rem); }
   body.gd-editorial .logo .tagline { display: none; }
   body.gd-editorial .site-logo-mark { display: none; }
   body.gd-editorial .primary-nav .nav-item {
     flex-direction: row;
-    padding: .25rem .45rem;
+    padding: .25rem .18rem;
     min-height: 44px;
     min-width: 44px;
     height: auto;
@@ -634,7 +634,21 @@ body.gd-editorial .timeline-day { background: var(--paper); color: var(--ink); }
 }
 
 @media (max-width: 330px) {
-  body.gd-editorial .editorial-wordmark { font-size: .9rem; letter-spacing: -.09em; }
-  body.gd-editorial > header .header { gap: .15rem; }
+  /* A deliberate two-tier edition masthead is more legible than clipped tiny labels.
+     All four primary destinations still share one nav row and retain 44px touch targets. */
+  body.gd-editorial > header .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: .2rem;
+  }
+  body.gd-editorial > header .logo { justify-content: center; }
+  body.gd-editorial .editorial-wordmark { font-size: 1.15rem; letter-spacing: -.075em; }
+  body.gd-editorial > header .primary-nav {
+    display: flex;
+    flex: 0 0 auto;
+    width: 100%;
+    justify-content: space-between;
+    gap: 0;
+  }
   body.gd-editorial .primary-nav .nav-item { min-width: 44px; padding-inline: .12rem; }
 }
