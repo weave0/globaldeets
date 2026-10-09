@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -78,4 +78,21 @@ test('public support page contains no stale portfolio fundraising checkout', () 
   assert.match(support, /GlobalDeets/);
   assert.match(support, /Donations are not being accepted through this page/);
   assert.doesNotMatch(support, /GoFundMe|PayPal\.Me|Stripe\(|Good Flippin Design|world-changing platforms/i);
+});
+
+test('every root public HTML file is included in the boundary verification', () => {
+  const { CORE_PAGES } = require('../tools/verify-boundary-retired-prod.js');
+  const inspected = new Set(CORE_PAGES.map(canonical));
+  const rootHtml = readdirSync(ROOT)
+    .filter(file => file.endsWith('.html'))
+    .map(file => canonical('/' + file))
+    .filter(path => path !== '/index');
+  const missing = rootHtml.filter(path => !inspected.has(path));
+  assert.deepEqual(missing, [], 'a shipped root HTML page escaped boundary inspection');
+});
+
+test('the public dossier and coverage observatory are included in the boundary verification', () => {
+  const { CORE_PAGES } = require('../tools/verify-boundary-retired-prod.js');
+  assert.ok(CORE_PAGES.includes('/dossiers/santa-ynez-pipeline/'));
+  assert.ok(CORE_PAGES.includes('/observatory/coverage/'));
 });
