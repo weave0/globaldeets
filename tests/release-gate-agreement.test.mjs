@@ -59,7 +59,7 @@ test('every route health-prod expects to be 404 is genuinely absent from the rep
 
 test('Pages CSP permits the same-origin service worker without removing the existing policy', () => {
   const headers = readFileSync(join(ROOT, '_headers'), 'utf8');
-  const publicPolicy = headers.split('/*')[1]?.split('/*.html')[0] || '';
+  const publicPolicy = headers.split(/\r?\n/).find(line => line.trimStart().startsWith('Content-Security-Policy:')) || '';
   assert.match(publicPolicy, /worker-src 'self' blob:/);
   assert.match(publicPolicy, /frame-ancestors 'none'/);
 });
