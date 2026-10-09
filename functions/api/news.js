@@ -322,12 +322,14 @@ export async function onRequestGet({ env, request }) {
   const selection = mode === 'diverse'
     ? {
         mode,
+        scope: region === 'global' ? 'all publisher feed regions' : `only publishers assigned to ${region}`,
         policyVersion: NEWS_SELECTION_POLICY_VERSION,
         freshnessWindowHours: DIVERSE_FRESHNESS_HOURS,
         explanation: 'Rotate among publishers within each feed region, then among feed regions, for articles within 36 hours of the newest available article; append older items by publication date. Feed region is not event location. This is not an importance, truth, or bias score.',
       }
     : {
         mode,
+        scope: region === 'global' ? 'all publisher feed regions' : `only publishers assigned to ${region}`,
         policyVersion: NEWS_SELECTION_POLICY_VERSION,
         explanation: 'Publisher items shown by publication timestamp, newest first; not ranked by importance.',
       };
@@ -763,5 +765,9 @@ export function orderNewsForDisplay(items, mode = 'chronological') {
 
 function filterByRegion(items, region) {
   if (region === 'global') return items;
-  return items.filter(item => item.region === region || item.region === 'global');
+  // A feed region groups publisher channels, NOT the geographic location of
+  // their events. Including "global" channels in every regional tab previously
+  // made Asia/Pacific/Africa views lead with unrelated global-source reports.
+  // Readers wanting the full cross-region list can choose All Regions.
+  return items.filter(item => item.region === region);
 }

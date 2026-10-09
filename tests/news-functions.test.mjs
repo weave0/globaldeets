@@ -197,7 +197,14 @@ test('explicit unknown selection mode fails back to chronological, and regional 
   assert.equal(unknown.selection.mode, 'chronological');
   assert.deepEqual(unknown.items.map(item => item.id), ['e', 'p', 'g']);
   const europe = await (await getNews({ env, request: request('/api/news?region=europe&mode=diverse') })).json();
-  assert.deepEqual(europe.items.map(item => item.id).sort(), ['e', 'g']);
+  assert.deepEqual(europe.items.map(item => item.id), ['e']);
+  assert.equal(europe.total, 1);
+  assert.match(europe.selection.scope, /only publishers assigned to europe/);
+  const pacific = await (await getNews({ env, request: request('/api/news?region=pacific&mode=diverse') })).json();
+  assert.deepEqual(pacific.items.map(item => item.id), ['p']);
+  const asia = await (await getNews({ env, request: request('/api/news?region=asia') })).json();
+  assert.equal(asia.total, 0, 'unrelated globally-routed items must not pad an empty regional feed');
+  assert.equal(unknown.selection.scope, 'all publisher feed regions');
 });
 
 test('source and admission fingerprints deterministically version the feed cache', () => {

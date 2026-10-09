@@ -36,3 +36,9 @@ The homepage is not a newsroom-produced Top Stories, a universal fairness/bias i
 ## Next differentiated-intelligence step
 
 Collect nonidentifying diagnostics: proportion of first eight headlines by publisher/region, age distribution, available-source count, feed failures, source opens, and Story Intelligence context opens. This is coverage-selection accountability, not a score assigning trust, political bias, or importance to individual outlets. Compare these signals before/after launch with the same admission list and source health. The separate GD-R2.1 dossier remains the only maintained article-to-story association until reviewed membership expands.
+
+## Regional feed integrity
+
+The screenshot review of the dark editorial Asia feed found a misleading presentation: it displayed Guardian (global-source, Mexico story) and BBC World (global-source, Panama story) as the first Asia results. The older endpoint had silently appended **globally routed publisher channels** to every regional selection. This does not establish those stories' event location or Asian-publisher coverage.
+
+GD-040 now makes the source-routing meaning consistent: `region=global` means **All Regions**, and `region=asia|pacific|europe|americas|middle-east|africa` returns only items from publishers assigned to that feed region. The API includes `selection.scope` so consumers can explain it. This is not an event-region filter: even an Asian publisher can report on events elsewhere. If a region has no current publisher items, say so instead of padding it with global-source headlines. The chronological and diverse ordering modes both preserve this strict regional scope and source-use governance.
