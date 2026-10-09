@@ -37,7 +37,13 @@ async function main() {
   assert(metadata.commit === SHA, 'preview deploy does not match exact head');
   const chrono = await getJson('/api/news?region=global&limit=100', { retries: 10 });
   const diverse = await getJson('/api/news?region=global&limit=100&mode=diverse', { retries: 10 });
+  const asia = await getJson('/api/news?region=asia&limit=100&mode=diverse', { retries: 10 });
   assert(chrono.selection?.mode === 'chronological', 'default mode changed');
+  assert(asia.selection?.mode === 'diverse' &&
+    asia.selection.scope === 'only publishers assigned to asia',
+    'region does not declare strict publisher routing');
+  assert(asia.items.every(item => item.region === 'asia'),
+    'global or unrelated publisher feed leaked into Asia region');
   assert(diverse.selection?.mode === 'diverse' &&
     diverse.selection.policyVersion === 'gd040-publisher-region-rotation-v1', 'diversity policy not deployed');
   assert(diverse.total === chrono.total, 'selection changed governed item count');
@@ -64,6 +70,7 @@ async function main() {
   } finally { await browser.close(); }
   console.log(JSON.stringify({
     outcome: 'GD040_TECHNICAL_PREVIEW_PASSED', commit: SHA, preview: BASE,
+    asiaFeedItems: asia.total,
     itemsAvailable: chrono.total, publishersInFirstEight: observed.size,
     publishersInObservedFreshWindow: windowSources.size,
     caveat: 'Counts reflect available feeds, not guaranteed global coverage',
