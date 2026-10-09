@@ -110,3 +110,10 @@ test('the owner-domain URL appears only in the two reviewed About operator credi
     'owner-domain references must be intentional external attribution links'
   );
 });
+
+test('the knowledge page does not deny analytics while loading Google Analytics', () => {
+  const page = readFileSync(join(ROOT, 'knowledge.html'), 'utf8');
+  assert.match(page, /googletagmanager\.com\/gtag\/js/);
+  assert.doesNotMatch(page, /No tracking\./i, 'public privacy copy must agree with active analytics scripts');
+  assert.match(page, /This site uses analytics\./);
+});
