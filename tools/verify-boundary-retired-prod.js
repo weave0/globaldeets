@@ -58,7 +58,6 @@ const FORBIDDEN_CONTENT = [
   /steveb\.globaldeets/i,
   /medical\.globaldeets/i,
   /impact across 6 world-changing platforms/i,
-  /goodlippindesign/i,
   /gofundme\.com/i,
 ];
 
@@ -94,6 +93,21 @@ if (require.main === module) (async () => {
   const drift = pages.flatMap(({ path, body }) =>
     FORBIDDEN_CONTENT.filter(pattern => pattern.test(body)).map(pattern => `${path} matches ${pattern}`)
   );
+  // Owner identification is legitimate on About, but the publisher's unrelated portfolio
+  // destination does not belong on the news-reading and source-browsing surfaces. The About
+  // exception is intentionally narrow: exactly two checked operator-credit links, no directory.
+  const OWNER_DOMAIN = /goodflippindesign\.com/gi;
+  for (const { path, body } of pages) {
+    const occurrences = [...body.matchAll(OWNER_DOMAIN)].length;
+    if (path === '/about') {
+      const aboutCredits = [...body.matchAll(/href="https:\/\/goodflippindesign\.com"/gi)].length;
+      if (occurrences !== 2 || aboutCredits !== 2) {
+        drift.push(`${path} operator attribution is not limited to its two reviewed About links`);
+      }
+    } else if (occurrences > 0) {
+      drift.push(`${path} links to the unrelated owner-domain portfolio`);
+    }
+  }
   if (drift.length > 0) {
     throw new Error(`GFD portfolio content has re-entered public pages: ${drift.join(', ')}`);
   }
