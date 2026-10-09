@@ -170,3 +170,25 @@ jobs:
 
       - name: Stage deploy artifact
         run: npm run stage:deploy
+        env:
+          NODE_ENV: production
+          CF_PAGES_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          CF_PAGES_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      # Only this owner's review branch may publish this isolated preview. Production stays on main.
+      - name: Deploy isolated GD-038 Cloudflare Pages preview
+        id: gd038-preview
+        if: github.event_name == 'pull_request' && github.event.pull_request.number == 80 && github.event.pull_request.head.repo.full_name == github.repository
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.131.1"
+          command: pages deploy dist --project-name globaldeets --branch gd038-reader-reset-preview --commit-hash ${{ github.event.pull_request.head.sha }} --commit-dirty=false
+
+      - name: Verify live Cloudflare Pages preview headers and offline shell
+        if: github.event_name == 'pull_request' && github.event.pull_request.number == 80 && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          PREVIEW_URL: ${{ steps.gd038-preview.outputs.deployment-url }}
+          EXPECTED_COMMIT: ${{ github.event.pull_request.head.sha }}
+        run: node tools/verify-preview-pages.js --base="$PREVIEW_URL" --expected-commit="$EXPECTED_COMMIT"
