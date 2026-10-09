@@ -301,6 +301,43 @@ test('a service-worker API cache miss is distinct from a genuine upstream 503', 
   expect(upstream).toEqual({ status: 503, marker: null });
 });
 
+
+test('News shows offline/no-saved-copy distinctly from a genuine upstream 503', async ({ page, context }) => {
+  // Dev's news.js uses the production API hostname for localhost, whereas the deployed reader
+  // fetches same-origin /api/news. Rewrite only that dev-only API prefix so this browser check
+  // exercises the actual production same-origin service-worker path and reader classification.
+  await page.addInitScript(() => {
+    const nativeFetch = window.fetch.bind(window);
+    window.fetch = (input, init) => {
+      if (typeof input === 'string' && input.startsWith('https://globaldeets.com/api/')) {
+        const url = new URL(input);
+        return nativeFetch(url.pathname + url.search, init);
+      }
+      return nativeFetch(input, init);
+    };
+  });
+  await page.goto('/index.html');
+  await waitForControllingWorker(page);
+
+  let failNetwork = true;
+  await context.route('**/api/news**', route => {
+    if (failNetwork) return route.abort('internetdisconnected');
+    return route.fulfill({ status: 503, contentType: 'application/json', body: '{"error":"upstream"}' });
+  });
+
+  await page.goto('/news.html?region=africa');
+  await expect(page.locator('.news-error')).toHaveAttribute('data-failure', 'offline');
+  await expect(page.locator('.news-error')).toContainText('offline');
+  await expect(page.locator('#news-grid .news-card')).toHaveCount(0);
+  expect(await page.evaluate(() => navigator.onLine)).toBe(true);
+
+  failNetwork = false;
+  await page.reload();
+  await expect(page.locator('.news-error')).toHaveAttribute('data-failure', 'upstream');
+  await expect(page.locator('.news-error')).toContainText('service returned an error');
+  await expect(page.locator('#news-grid .news-card')).toHaveCount(0);
+});
+
 test('actual Pages CSP allows service worker first-install and offline News navigation', async ({ page, context }) => {
   // Apply the checked-in Pages header to the *document*, where worker-src is enforced.
   // This test is intentionally independent of Vite's default (CSP-free) response.
