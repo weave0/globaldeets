@@ -104,6 +104,109 @@ const story = {
   displayMode: 'current-use',
 };
 
+
+test('diverse selection prevents one prolific publisher from owning the World Desk', async () => {
+  const latest = Date.parse('2026-09-02T12:00:00.000Z');
+  const prolific = Array.from({ length: 16 }, (_, i) =>
+    rawStory('ABC Australia', {
+      id: 'abc-' + i, sourceId: 'abc-australia', region: 'pacific',
+      published: new Date(latest - i * 1000).toISOString(),
+    })
+  );
+  const varied = [
+    ['BBC World', 'bbc-world', 'global'],
+    ['DW', 'dw', 'europe'],
+    ['NPR', 'npr', 'americas'],
+    ['CNA', 'cna', 'asia'],
+    ['Premium Times', 'premium-times', 'africa'],
+    ['Guardian', 'guardian', 'global'],
+  ].map(([source, sourceId, region], i) => rawStory(source, {
+    id: 'other-' + i, sourceId, region,
+    published: new Date(latest - (i + 1) * 20000).toISOString(),
+  }));
+  const input = [...prolific, ...varied].sort((a, b) => Date.parse(b.published) - Date.parse(a.published));
+  const before = JSON.stringify(input);
+  const kv = makeKv(new Map([[CACHE_KEY, input]]));
+
+  const newest = await (await getNews({
+    env: { NEWS_CACHE: kv }, request: request('/api/news?limit=8'),
+  })).json();
+  assert.equal(newest.selection.mode, 'chronological');
+  assert.ok(newest.items.every(item => item.sourceId === 'abc-australia'));
+
+  const mixed = await (await getNews({
+    env: { NEWS_CACHE: kv }, request: request('/api/news?limit=8&mode=diverse'),
+  })).json();
+  assert.equal(mixed.selection.mode, 'diverse');
+  assert.equal(mixed.selection.policyVersion, newsModule.NEWS_SELECTION_POLICY_VERSION);
+  assert.equal(mixed.selection.freshnessWindowHours, 36);
+  assert.match(mixed.selection.explanation, /not event location/i);
+  assert.equal(mixed.total, input.length);
+  assert.ok(new Set(mixed.items.slice(0, 6).map(item => item.sourceId)).size >= 5);
+  assert.ok(new Set(mixed.items.slice(0, 6).map(item => item.region)).size >= 5);
+  assert.deepEqual(mixed.items.map(item => item.id), newsModule.orderNewsForDisplay(input, 'diverse').slice(0, 8).map(item => item.id));
+
+  const next = await (await getNews({
+    env: { NEWS_CACHE: kv }, request: request('/api/news?limit=8&offset=8&mode=diverse'),
+  })).json();
+  assert.equal(next.total, input.length);
+  const combined = [...mixed.items, ...next.items].map(item => item.id);
+  assert.equal(new Set(combined).size, 16, 'diverse pagination must never repeat an article');
+  assert.deepEqual(combined, newsModule.orderNewsForDisplay(input, 'diverse').slice(0, 16).map(item => item.id));
+  assert.equal(JSON.stringify(input), before, 'selection must not mutate the governed KV snapshot');
+});
+
+test('diversity never elevates out-of-window stories ahead of fresher reporting', () => {
+  const top = '2026-09-02T12:00:00.000Z';
+  const items = [
+    rawStory('ABC Australia', { id: 'a1', sourceId: 'abc', region: 'pacific', published: top }),
+    rawStory('ABC Australia', { id: 'a2', sourceId: 'abc', region: 'pacific', published: '2026-09-02T11:00:00.000Z' }),
+    rawStory('DW', { id: 'e1', sourceId: 'dw', region: 'europe', published: '2026-09-02T10:00:00.000Z' }),
+    rawStory('NPR', { id: 'old', sourceId: 'npr', region: 'americas', published: '2026-08-30T08:00:00.000Z' }),
+  ];
+  const selected = newsModule.orderNewsForDisplay(items, 'diverse');
+  assert.deepEqual(selected.map(item => item.id), ['a1', 'e1', 'a2', 'old']);
+  assert.deepEqual(newsModule.orderNewsForDisplay(items), items, 'default stays chronological');
+  assert.deepEqual(newsModule.orderNewsForDisplay([], 'diverse'), []);
+});
+
+test('publisher-diverse order is stable across input permutations, missing dates and same-time ties', () => {
+  const tie = '2026-09-02T12:00:00.000Z';
+  const list = [
+    rawStory('ABC Australia', { id: 'z', sourceId: 'abc', region: 'pacific', published: tie }),
+    rawStory('ABC Australia', { id: 'a', sourceId: 'abc', region: 'pacific', published: tie }),
+    rawStory('DW', { id: 'e', sourceId: 'dw', region: 'europe', published: tie }),
+    rawStory('Guardian', { id: 'g', sourceId: 'guardian', region: 'global', published: tie }),
+    rawStory('Unknown', { id: 'unknown', region: 'unassigned', published: '' }),
+  ];
+  const a = newsModule.orderNewsForDisplay(list, 'diverse').map(item => item.id);
+  const b = newsModule.orderNewsForDisplay([...list].reverse(), 'diverse').map(item => item.id);
+  assert.deepEqual(a, b);
+  assert.equal(a.at(-1), 'unknown');
+  assert.deepEqual([...a].sort(), list.map(item => item.id).sort(), 'no invented or dropped items');
+});
+
+test('explicit unknown selection mode fails back to chronological, and regional feed filtering survives', async () => {
+  const regional = [
+    rawStory('DW', { id: 'e', sourceId: 'dw', region: 'europe', published: '2026-09-02T12:00:00.000Z' }),
+    rawStory('ABC Australia', { id: 'p', sourceId: 'abc', region: 'pacific', published: '2026-09-02T11:00:00.000Z' }),
+    rawStory('BBC World', { id: 'g', sourceId: 'bbc', region: 'global', published: '2026-09-02T10:00:00.000Z' }),
+  ];
+  const env = { NEWS_CACHE: makeKv(new Map([[CACHE_KEY, regional]])) };
+  const unknown = await (await getNews({ env, request: request('/api/news?mode=unreviewed') })).json();
+  assert.equal(unknown.selection.mode, 'chronological');
+  assert.deepEqual(unknown.items.map(item => item.id), ['e', 'p', 'g']);
+  const europe = await (await getNews({ env, request: request('/api/news?region=europe&mode=diverse') })).json();
+  assert.deepEqual(europe.items.map(item => item.id), ['e']);
+  assert.equal(europe.total, 1);
+  assert.match(europe.selection.scope, /only publishers assigned to europe/);
+  const pacific = await (await getNews({ env, request: request('/api/news?region=pacific&mode=diverse') })).json();
+  assert.deepEqual(pacific.items.map(item => item.id), ['p']);
+  const asia = await (await getNews({ env, request: request('/api/news?region=asia') })).json();
+  assert.equal(asia.total, 0, 'unrelated globally-routed items must not pad an empty regional feed');
+  assert.equal(unknown.selection.scope, 'all publisher feed regions');
+});
+
 test('source and admission fingerprints deterministically version the feed cache', () => {
   assert.equal(getSourceFingerprint(SOURCES), SOURCE_FINGERPRINT);
   assert.equal(getSourceFingerprint(SOURCES), getSourceFingerprint(SOURCES.map(source => ({ ...source }))));
