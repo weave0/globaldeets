@@ -1,5 +1,7 @@
 /* global ExtendableEvent, Cache */
 const { expect, test } = require('@playwright/test');
+const { readFileSync } = require('node:fs');
+const { join } = require('node:path');
 
 // The rest of the suite blocks service workers so page.route mocks stay deterministic. This file is
 // the separate path that exercises the real worker: install (which fails if any precached file is
@@ -297,4 +299,38 @@ test('a service-worker API cache miss is distinct from a genuine upstream 503', 
     return { status: response.status, marker: response.headers.get('X-GlobalDeets-Offline-Miss') };
   }, missing);
   expect(upstream).toEqual({ status: 503, marker: null });
+});
+
+test('actual Pages CSP allows service worker first-install and offline News navigation', async ({ page, context }) => {
+  // Apply the checked-in Pages header to the *document*, where worker-src is enforced.
+  // This test is intentionally independent of Vite's default (CSP-free) response.
+  const rawHeaders = readFileSync(join(__dirname, '..', '_headers'), 'utf8');
+  const headerLine = rawHeaders.split(/\r?\n/).find(line =>
+    line.trimStart().startsWith('Content-Security-Policy:')
+  );
+  expect(headerLine, 'missing Pages Content-Security-Policy').toBeTruthy();
+  const policy = headerLine.trim().replace(/^Content-Security-Policy:\s*/, '');
+  expect(policy).toContain("worker-src 'self' blob:");
+
+  await page.route('**/index.html', async route => {
+    const response = await route.fetch();
+    await route.fulfill({
+      response,
+      headers: { ...response.headers(), 'content-security-policy': policy },
+    });
+  });
+
+  const response = await page.goto('/index.html');
+  expect(response.headers()['content-security-policy']).toBe(policy);
+  const registeredWorker = await page.evaluate(async () => {
+    const registration = await navigator.serviceWorker.ready;
+    return registration.active?.scriptURL || null;
+  });
+  expect(registeredWorker).toMatch(/\/service-worker\.js$/);
+  await expect.poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBe(true);
+
+  await context.route('**/*', route => route.abort('internetdisconnected'));
+  await page.goto('/news?region=europe');
+  await expect(page).toHaveTitle(/World News Feed — GlobalDeets/);
+  expect(new URL(page.url()).searchParams.get('region')).toBe('europe');
 });
