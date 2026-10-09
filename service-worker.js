@@ -1,5 +1,5 @@
 // Basic service worker for offline caching
-const CACHE_NAME = 'globaldeets-cache-v8';
+const CACHE_NAME = 'globaldeets-cache-v9';
 // The offline shell: every precached page plus every same-origin asset those pages load (including
 // news-reader-bridge.css, which news.js injects). tests/offline-shell-agreement.test.mjs keeps this
 // list complete and limited to shipped files; a missing file would fail the worker install.
@@ -29,6 +29,12 @@ const CORE_ASSETS = [
   'assets/icons/site/nav-home.svg',
   'assets/icons/site/nav-news.svg',
   'assets/icons/site/nav-list.svg',
+  // Public maintained story shell. No private responses or claims are precached.
+  'story/santa-ynez-pipeline/',
+  'story/santa-ynez-pipeline/index.html',
+  'story/story.css',
+  'story/santa-ynez-pipeline/story.js',
+  'story/santa-ynez-pipeline/story.json',
 ];
 const OFFLINE_COPY_HEADER = 'X-GlobalDeets-Offline-Copy';
 const CACHED_AT_HEADER = 'X-GlobalDeets-Cached-At';
@@ -37,11 +43,15 @@ const OFFLINE_PAGES = new Set(['index', 'news', 'categories', 'timeline', 'offli
 // Only the actual story feed is rendered with an explicit "saved copy" warning.
 // Source authority, admissions, coverage and health must remain live-only or visibly unavailable.
 const PUBLIC_NEWS_API_PATHS = new Set(['/api/news']);
+// The one publicly reviewed, shipped story record is an offline data dependency.
+// Never extend this allowance to private, operator or intelligence API responses.
+const PUBLIC_STORY_RECORDS = new Set(['/story/santa-ynez-pipeline/story.json']);
 const PUBLIC_PAGES = new Set([
   '/', '/index.html', '/news', '/news.html', '/categories', '/categories.html',
   '/timeline', '/timeline.html', '/offline', '/offline.html', '/globe', '/globe.html',
   '/worldmap', '/worldmap.html', '/about', '/about.html', '/contact', '/contact.html',
   '/knowledge', '/knowledge.html', '/donate', '/donate.html',
+  '/story/santa-ynez-pipeline', '/story/santa-ynez-pipeline/',
 ]);
 const PUBLIC_ASSET_DESTINATIONS = new Set(['script', 'style', 'image', 'font', 'manifest']);
 
@@ -75,7 +85,8 @@ function precache(cache, path) {
     }
     // Pages redirects .html requests to clean URLs. A redirected Response cannot
     // satisfy a different offline navigation URL; cache a URL-neutral HTML response.
-    return cache.put(path, path.endsWith('.html') ? await normalizeHtmlResponse(response) : response);
+    return cache.put(path, (path.endsWith('.html') || (response.headers.get('content-type') || '').includes('text/html'))
+      ? await normalizeHtmlResponse(response) : response);
   });
 }
 
@@ -107,13 +118,14 @@ self.addEventListener('fetch', event => {
   // Do not intercept external origins or non-news functions (including payment sessions).
   if (url.origin !== self.location.origin) return;
   const isApi = PUBLIC_NEWS_API_PATHS.has(url.pathname);
+  const isStoryRecord = PUBLIC_STORY_RECORDS.has(url.pathname);
   if (url.pathname.startsWith('/api/') && !isApi) return;
   if (url.pathname === '/get-session' || url.pathname === '/create-checkout') return;
   const isNav =
     request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html');
   // Fetch/XHR outside the public news API has no offline cache semantics. Bypass the worker.
-  if (!isApi && !isNav && !PUBLIC_ASSET_DESTINATIONS.has(request.destination)) return;
-  const cacheable = isApi || (isNav
+  if (!isApi && !isStoryRecord && !isNav && !PUBLIC_ASSET_DESTINATIONS.has(request.destination)) return;
+  const cacheable = isApi || isStoryRecord || (isNav
     ? PUBLIC_PAGES.has(url.pathname)
     : PUBLIC_ASSET_DESTINATIONS.has(request.destination));
   event.respondWith(respond(event, request, { isApi, isNav, cacheable }));
@@ -183,6 +195,7 @@ function offlinePageFor(href) {
   if (url.origin !== self.location.origin) return null;
   const pathname = url.pathname.replace(/\/$/, '') || '/';
   if (pathname === '/') return 'index.html';
+  if (pathname === '/story/santa-ynez-pipeline') return 'story/santa-ynez-pipeline/index.html';
   // Only known reader shells are served by offline navigation; unknown routes keep the fallback.
   const name = pathname.slice(1).replace(/\.html$/, '');
   return OFFLINE_PAGES.has(name) ? `${name}.html` : null;

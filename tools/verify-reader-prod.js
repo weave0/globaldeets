@@ -201,11 +201,11 @@ async function verifyServiceWorker(browser) {
     );
     const cached = await page.evaluate(async () => {
       const names = await caches.keys();
-      const cache = await caches.open('globaldeets-cache-v8');
+      const cache = await caches.open('globaldeets-cache-v9');
       const shell = await Promise.all(['/index.html', '/news.html', '/styles.css', '/news.js'].map(path => cache.match(path)));
       return { names, complete: shell.every(Boolean) };
     });
-    requireCondition(cached.names.includes('globaldeets-cache-v8'), 'production cache v8 did not install');
+    requireCondition(cached.names.includes('globaldeets-cache-v9'), 'production cache v9 did not install');
     requireCondition(cached.complete, 'the production offline shell is incomplete after first install');
 
     // Browser-context route aborts can prevent navigation before the controlling worker

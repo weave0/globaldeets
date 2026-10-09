@@ -1,5 +1,7 @@
 // functions/api/news.js
 // Cloudflare Pages Function — GET /api/news
+
+import { STORY_MEMBERSHIP_VERSION, withStoryMembership } from '../lib/story-membership.js';
 //
 // Params:
 //   ?region=global|middle-east|europe|asia|americas|pacific|africa
@@ -226,9 +228,10 @@ export function getFeedCacheIdentity(admissionFingerprint) {
     throw new TypeError('admission fingerprint is required');
   }
   return {
-    cacheKey: `${CACHE_KEY_PREFIX}_${admissionFingerprint}`,
+    cacheKey: `${CACHE_KEY_PREFIX}_${STORY_MEMBERSHIP_VERSION}_${admissionFingerprint}`,
     admissionFingerprint,
     displayPolicyVersion: DISPLAY_POLICY_VERSION,
+    storyMembershipVersion: STORY_MEMBERSHIP_VERSION,
   };
 }
 
@@ -286,7 +289,14 @@ export async function applyAdmissionPolicy(items, contract = null) {
       governed.summary = null;
       governed.translated = false;
       governed.originalLang = item.lang;
-    } else {
+    } else if (
+      item.translated === true &&
+      typeof item.originalHeadline === 'string' &&
+      item.originalHeadline.trim()
+    ) {
+      governed.originalHeadline = item.originalHeadline.trim();
+    }
+    if (decision.displayMode !== 'headline-link') {
       const permitsExcerpt = Array.isArray(admission?.permittedUse)
         ? admission.permittedUse.includes('excerpt')
         : false;
@@ -300,7 +310,7 @@ export async function applyAdmissionPolicy(items, contract = null) {
       }
     }
 
-    governedItems.push(governed);
+    governedItems.push(withStoryMembership(governed));
   }
 
   return { items: governedItems, admissionById };
@@ -328,12 +338,13 @@ export async function onRequestGet({ env, request }) {
     const page = filtered.slice(offset, offset + limit);
     return new Response(
       JSON.stringify({
-        items: page,
+        items: page.map(withStoryMembership),
         cached: true,
         total: filtered.length,
         sourceFingerprint: SOURCE_FINGERPRINT,
         admissionFingerprint: cacheIdentity.admissionFingerprint,
         displayPolicyVersion: cacheIdentity.displayPolicyVersion,
+        storyMembershipVersion: STORY_MEMBERSHIP_VERSION,
       }),
       { headers }
     );
@@ -344,12 +355,13 @@ export async function onRequestGet({ env, request }) {
   const page = filtered.slice(offset, offset + limit);
   return new Response(
     JSON.stringify({
-      items: page,
+      items: page.map(withStoryMembership),
       cached: false,
       total: filtered.length,
       sourceFingerprint: SOURCE_FINGERPRINT,
       admissionFingerprint: cacheIdentity.admissionFingerprint,
       displayPolicyVersion: cacheIdentity.displayPolicyVersion,
+      storyMembershipVersion: STORY_MEMBERSHIP_VERSION,
     }),
     { headers }
   );
@@ -451,6 +463,7 @@ export async function translateNonEnglish(items, env, admissionById = new Map())
     selected.map(async item => {
       const sourceLang = LANG_NAMES[item.lang] || item.lang;
       try {
+        const originalHeadline = typeof item.headline === 'string' ? item.headline : '';
         const [headlineRes, summaryRes] = await Promise.all([
           env.AI.run('@cf/meta/m2m100-1.2b', {
             text: item.headline,
@@ -466,9 +479,16 @@ export async function translateNonEnglish(items, env, admissionById = new Map())
             : Promise.resolve(null),
         ]);
 
-        item.headline = headlineRes?.translated_text || item.headline;
+        const translatedHeadline = headlineRes?.translated_text;
+        if (typeof translatedHeadline === 'string' && translatedHeadline.trim() && originalHeadline.trim()) {
+          item.originalHeadline = originalHeadline;
+          item.headline = translatedHeadline;
+          item.translated = true;
+        } else {
+          item.translated = false;
+          delete item.originalHeadline;
+        }
         item.summary = summaryRes?.translated_text || item.summary;
-        item.translated = true;
         item.originalLang = item.lang;
       } catch (error) {
         item.translated = false;

@@ -76,13 +76,13 @@ async function checkPreview() {
       undefined, { timeout: 15000 });
     const state = await page.evaluate(async () => {
       const cacheNames = await caches.keys();
-      const cache = await caches.open('globaldeets-cache-v8');
+      const cache = await caches.open('globaldeets-cache-v9');
       const assets = await Promise.all(
         ['/index.html', '/news.html', '/styles.css', '/news.js'].map(x => cache.match(x))
       );
       return { cacheNames, complete: assets.every(Boolean) };
     });
-    assert(state.cacheNames.includes('globaldeets-cache-v8') && state.complete,
+    assert(state.cacheNames.includes('globaldeets-cache-v9') && state.complete,
       'Pages preview did not install a complete v8 reader cache');
 
     // Route-level aborts can cancel browser navigation before its service worker sees it.

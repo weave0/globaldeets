@@ -13,6 +13,9 @@
 (function () {
   'use strict';
 
+  // Story membership arrives on the news item. This only checks that the server
+  // sent a same-site story path. It does not decide which articles belong.
+
   const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
     ? 'https://globaldeets.com'
     : '';
@@ -126,7 +129,27 @@
       meta.append(el('span', { className: 'desk-story-flag' }, 'Headline only'));
     }
 
-    const row = el('li', { className: 'desk-story' }, el('h4', { className: 'desk-story-headline' }, headlineNode), meta);
+    const originalHeadline =
+      item.translated === true && typeof item.originalHeadline === 'string' && item.originalHeadline.trim()
+        ? item.originalHeadline.trim()
+        : '';
+    const originalLangCode = /^[a-z]{2,3}$/i.test(item.originalLang || '') ? item.originalLang : '';
+    const original = originalHeadline
+      ? el(
+          'p',
+          { className: 'desk-original', dir: 'auto', ...(originalLangCode ? { lang: originalLangCode } : {}) },
+          el('span', { className: 'visually-hidden' }, 'Original headline. '),
+          originalHeadline
+        )
+      : null;
+
+    const row = el(
+      'li',
+      { className: 'desk-story' },
+      el('h4', { className: 'desk-story-headline' }, headlineNode),
+      meta,
+      original
+    );
     if (href) {
       row.append(
         el(
@@ -137,7 +160,52 @@
         )
       );
     }
+    const storyHref = storyContextHref(item);
+    if (href && storyHref) {
+      row.append(
+        el(
+          'a',
+          { className: 'desk-story-context', href: storyHref, 'data-story-key': item.story.storyKey },
+          'Context & sources'
+        )
+      );
+    }
     return row;
+  }
+
+  function storyContextHref(item) {
+    const story = item && item.story;
+    if (!story || typeof story !== 'object') return null;
+    const key = story.storyKey;
+    const href = story.href;
+    if (typeof key !== 'string' || typeof href !== 'string') return null;
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(key)) return null;
+    if (href !== `/story/${key}/`) return null;
+    if (story.storyId != null && story.storyId !== `story:${key}`) return null;
+    return href;
+  }
+
+  function recordStoryMeasurement(eventName, storyKey) {
+    if (eventName !== 'story-context-opened' && eventName !== 'story-opened') return;
+    if (typeof storyKey !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(storyKey)) return;
+    const body = JSON.stringify({ event: eventName, storyKey });
+    try {
+      if (typeof navigator.sendBeacon === 'function') {
+        const sent = navigator.sendBeacon(
+          '/api/intelligence/story-measurement',
+          new Blob([body], { type: 'text/plain' })
+        );
+        if (sent) return;
+      }
+    } catch {
+      /* A failed measurement must not affect the row. */
+    }
+    fetch('/api/intelligence/story-measurement', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body,
+      keepalive: true,
+    }).catch(() => {});
   }
 
   function failureNode(message, retry) {
@@ -363,6 +431,12 @@
   }
 
   function init() {
+    document.addEventListener('click', event => {
+      const target = event.target instanceof window.Element ? event.target : event.target?.parentElement;
+      const link = target?.closest?.('a.desk-story-context');
+      if (!link) return;
+      recordStoryMeasurement('story-context-opened', link.getAttribute('data-story-key'));
+    });
     renderDateline();
     const latest = document.getElementById('desk-latest');
     if (latest) renderLatest(latest);

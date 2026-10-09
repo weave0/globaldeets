@@ -30,6 +30,14 @@ const REQUIRED_DEPLOY_FILES = [
   'dossiers/santa-ynez-pipeline/index.html',
   'dossiers/santa-ynez-pipeline/dossier.js',
   'dossiers/dossier.css',
+  'story/story.css',
+  'story/santa-ynez-pipeline/index.html',
+  'story/santa-ynez-pipeline/story.js',
+  'story/santa-ynez-pipeline/story.json',
+  'functions/lib/story-intelligence.js',
+  'functions/lib/story-membership.js',
+  'functions/api/intelligence/stories/[[storyKey]].js',
+  'functions/api/intelligence/story-measurement.js',
   'observatory/coverage/index.html',
   'observatory/coverage/observatory.js',
   'observatory/coverage/observatory.css',
@@ -37,7 +45,7 @@ const REQUIRED_DEPLOY_FILES = [
   'functions/lib/coverage-evidence-observatory.js',
 ];
 
-const PUBLIC_DIRECTORIES = ['assets', 'data', 'dossiers', 'functions', 'observatory', 'shared'];
+const PUBLIC_DIRECTORIES = ['assets', 'data', 'dossiers', 'functions', 'observatory', 'shared', 'story'];
 
 const EXCLUDED_ROOT_JS = new Set([
   'build-assets.js',
