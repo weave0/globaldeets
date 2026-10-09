@@ -26,6 +26,19 @@ const feed = {
 };
 
 async function routeApi(context) {
+  // In local Vite development, news.js normally targets the live API hostname. Route only
+  // this test context to same-origin /api to verify actual service-worker cache behavior.
+  await context.addInitScript(() => {
+    const nativeFetch = window.fetch.bind(window);
+    window.fetch = (resource, init) => {
+      const url = typeof resource === 'string' ? resource : resource instanceof Request ? resource.url : null;
+      if (url?.startsWith('https://globaldeets.com/api/')) {
+        const parsed = new URL(url);
+        return nativeFetch(parsed.pathname + parsed.search, init);
+      }
+      return nativeFetch(resource, init);
+    };
+  });
   await context.route('**/api/news**', async route => {
     const { pathname } = new URL(route.request().url());
     const body =
@@ -59,7 +72,7 @@ test('the service worker installs, precaches only shipped files, and retires the
 }) => {
   // Seed the cache the previous worker version used; activation must delete it.
   await page.goto('/offline.html');
-  await page.evaluate(() => caches.open('globaldeets-cache-v6').then(cache => cache.put('/stale', new Response('old'))));
+  await page.evaluate(() => caches.open('globaldeets-cache-v7').then(cache => cache.put('/stale', new Response('old'))));
 
   await page.goto('/index.html');
   await waitForControllingWorker(page);
@@ -67,12 +80,12 @@ test('the service worker installs, precaches only shipped files, and retires the
   const state = await page.evaluate(async () => ({
     keys: await caches.keys(),
     precached: await caches
-      .open('globaldeets-cache-v7')
+      .open('globaldeets-cache-v8')
       .then(cache => Promise.all(['/world-desk.js', '/news.js', '/offline.html'].map(path => cache.match(path))))
       .then(matches => matches.every(Boolean)),
   }));
-  expect(state.keys).toContain('globaldeets-cache-v7');
-  expect(state.keys).not.toContain('globaldeets-cache-v6');
+  expect(state.keys).toContain('globaldeets-cache-v8');
+  expect(state.keys).not.toContain('globaldeets-cache-v7');
   expect(state.precached).toBe(true);
 });
 
@@ -84,7 +97,7 @@ test('a dev server answering a stylesheet with JavaScript can never leave an uns
   await page.goto('/index.html');
   await waitForControllingWorker(page);
   const cached = await page.evaluate(async () => {
-    const cache = await caches.open('globaldeets-cache-v7');
+    const cache = await caches.open('globaldeets-cache-v8');
     const out = {};
     for (const path of ['/styles.css', '/world-desk.css', '/news.js']) {
       const response = await cache.match(path);
@@ -158,7 +171,7 @@ async function instrumentWorker(context, page, mode) {
   return worker;
 }
 
-const PROBE_URL = 'https://globaldeets.com/api/news?region=asia&limit=1&offset=0';
+const PROBE_URL = '/api/news?region=asia&limit=1&offset=0';
 
 async function fetchThroughWorker(page) {
   return page.evaluate(async url => {
@@ -336,6 +349,40 @@ test('News shows offline/no-saved-copy distinctly from a genuine upstream 503', 
   await expect(page.locator('.news-error')).toHaveAttribute('data-failure', 'upstream');
   await expect(page.locator('.news-error')).toContainText('service returned an error');
   await expect(page.locator('#news-grid .news-card')).toHaveCount(0);
+});
+
+test('private session and unrelated APIs never enter the offline cache', async ({ page, context }) => {
+  await page.goto('/index.html');
+  await waitForControllingWorker(page);
+  const cases = [
+    ['/get-session?session_id=fixture-private', { 'Cache-Control': 'no-store' }],
+    ['/api/deploy?test=fixture-private', { 'Cache-Control': 'public, max-age=60' }],
+  ];
+  for (const [path, headers] of cases) {
+    await context.route('**' + path, route => route.fulfill({
+      status: 200, contentType: 'application/json', headers, body: '{"ok":true}',
+    }));
+    const status = await page.evaluate(async url => (await fetch(url)).status, path);
+    expect(status).toBe(200);
+    const stored = await page.evaluate(async url => Boolean(await caches.match(url)), path);
+    expect(stored, `${path} must never be replayed by the public-news worker`).toBe(false);
+    await context.unroute('**' + path);
+  }
+});
+
+test('no-store public news is never cached even when its response is successful', async ({ page, context }) => {
+  await page.goto('/index.html');
+  await waitForControllingWorker(page);
+  const path = '/api/news?region=pacific&limit=1&offset=987654';
+  await context.route('**' + path, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    headers: { 'Cache-Control': 'no-store' },
+    body: '{"items":[],"total":0}',
+  }));
+  const status = await page.evaluate(async url => (await fetch(url)).status, path);
+  expect(status).toBe(200);
+  expect(await page.evaluate(async url => Boolean(await caches.match(url)), path)).toBe(false);
 });
 
 test('actual Pages CSP allows service worker first-install and offline News navigation', async ({ page, context }) => {
