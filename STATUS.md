@@ -31,7 +31,7 @@ Static/dynamic source truth (F6) is already on `main` (8459811) with raw-HTML an
 
 ## R2 story intelligence
 
-On `feat/gd-r2-story-intelligence`, which is based on unmerged PR #80 (`18f29105baed6fa9b8b98f1ddc4cad090e017394`) and is not deployed:
+On `feat/gd-r2-story-intelligence`, which is based on unmerged PR #80 (`c5f0452d7d18ebe65f3621f76c942ec0972d37d3`, reconciled parent) and is not deployed:
 
 | Item | State |
 | --- | --- |
@@ -50,3 +50,5 @@ Production verification is produced by the deploy workflow, not by this document
 ## Known engineering debt
 
 - Many root-level Markdown files describe the retired portfolio product and are archival.
+
+GD-R2 story confluence (October 9): reconciled the latest GD-038 Reader Reset candidate including corrected offline redirect handling and source-status freshness. The story prerelease now precaches a v9 shell and has its own exact-commit hosted preview gate. This is not production or approval of GD-038.

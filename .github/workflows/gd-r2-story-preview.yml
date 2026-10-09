@@ -1,0 +1,58 @@
+name: GD-R2 maintained story preview
+on:
+  push:
+    branches:
+      - feat/gd-r2-story-intelligence
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gd-r2-story-preview
+  cancel-in-progress: true
+
+jobs:
+  r2-story-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: npm install --no-audit --no-fund
+      - name: Lint reader and story code
+        run: npm run lint
+      - name: Run Function contracts and evidence governance
+        run: npm run test:functions
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run reader, mobile, story and offline tests
+        run: npx playwright test
+      - name: Stage Pages artifact
+        run: npm run stage:deploy
+        env:
+          NODE_ENV: production
+          CF_PAGES_BRANCH: gd-r2-story-preview
+          CF_PAGES_COMMIT_SHA: ${{ github.sha }}
+      - name: Deploy separate Cloudflare preview
+        uses: cloudflare/wrangler-action@v4
+        id: preview
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.131.1'
+          command: pages deploy dist --project-name globaldeets --branch gd-r2-story-preview --commit-hash ${{ github.sha }} --commit-dirty=false
+      - name: Verify hosted story projection and offline direct visit
+        run: node tools/verify-story-preview.js --base="$PREVIEW_URL" --expected-commit="$EXACT_SHA"
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.deployment-url }}
+          EXACT_SHA: ${{ github.sha }}
+      - name: Upload review screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gd-r2-maintained-story-previews
+          path: design-previews/gd-r2-*.png
+          if-no-files-found: ignore
+          retention-days: 14
