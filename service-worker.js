@@ -1,5 +1,5 @@
 // Basic service worker for offline caching
-const CACHE_NAME = 'globaldeets-cache-v7';
+const CACHE_NAME = 'globaldeets-cache-v8';
 // The offline shell: every precached page plus every same-origin asset those pages load (including
 // news-reader-bridge.css, which news.js injects). tests/offline-shell-agreement.test.mjs keeps this
 // list complete and limited to shipped files; a missing file would fail the worker install.
@@ -34,6 +34,20 @@ const OFFLINE_COPY_HEADER = 'X-GlobalDeets-Offline-Copy';
 const CACHED_AT_HEADER = 'X-GlobalDeets-Cached-At';
 const OFFLINE_MISS_HEADER = 'X-GlobalDeets-Offline-Miss';
 const OFFLINE_PAGES = new Set(['index', 'news', 'categories', 'timeline', 'offline']);
+const PUBLIC_NEWS_API_PATHS = new Set([
+  '/api/news',
+  '/api/news/coverage',
+  '/api/news/health',
+  '/api/news/sources',
+  '/api/news/admission',
+]);
+const PUBLIC_PAGES = new Set([
+  '/', '/index.html', '/news', '/news.html', '/categories', '/categories.html',
+  '/timeline', '/timeline.html', '/offline', '/offline.html', '/globe', '/globe.html',
+  '/worldmap', '/worldmap.html', '/about', '/about.html', '/contact', '/contact.html',
+  '/knowledge', '/knowledge.html', '/donate', '/donate.html',
+]);
+const PUBLIC_ASSET_DESTINATIONS = new Set(['script', 'style', 'image', 'font', 'manifest']);
 
 // A stylesheet or script is cached only when the server labels it as one. Some servers (the Vite
 // dev server among them) answer a generic request for /styles.css with a JavaScript module; caching
@@ -81,14 +95,23 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const { request } = event;
   if (request.method !== 'GET') return;
-  event.respondWith(respond(event, request));
-});
-
-async function respond(event, request) {
   const url = new URL(request.url);
-  const isApi = url.pathname.startsWith('/api/');
+  // Do not intercept external origins or non-news functions (including payment sessions).
+  if (url.origin !== self.location.origin) return;
+  const isApi = PUBLIC_NEWS_API_PATHS.has(url.pathname);
+  if (url.pathname.startsWith('/api/') && !isApi) return;
+  if (url.pathname === '/get-session' || url.pathname === '/create-checkout') return;
   const isNav =
     request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html');
+  // Fetch/XHR outside the public news API has no offline cache semantics. Bypass the worker.
+  if (!isApi && !isNav && !PUBLIC_ASSET_DESTINATIONS.has(request.destination)) return;
+  const cacheable = isApi || (isNav
+    ? PUBLIC_PAGES.has(url.pathname)
+    : PUBLIC_ASSET_DESTINATIONS.has(request.destination));
+  event.respondWith(respond(event, request, { isApi, isNav, cacheable }));
+});
+
+async function respond(event, request, { isApi, isNav, cacheable }) {
 
   let response;
   try {
@@ -97,7 +120,12 @@ async function respond(event, request) {
     return fromCache(request, isApi, isNav);
   }
 
-  if (response.ok && hasExpectedType(request.url, response)) {
+  const cacheControl = response.headers.get('cache-control') || '';
+  const sensitive =
+    /\b(?:private|no-store|no-cache)\b/i.test(cacheControl) ||
+    response.headers.has('set-cookie') ||
+    request.headers.has('authorization');
+  if (cacheable && !sensitive && response.ok && hasExpectedType(request.url, response)) {
     // The write is registered with the event's lifetime (waitUntil is called while respondWith is
     // still pending), so the worker is kept alive until it settles. A failed write is contained:
     // the valid network response below is returned either way.
