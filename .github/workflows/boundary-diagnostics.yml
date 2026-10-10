@@ -32,3 +32,6 @@ jobs:
         env:
           GLOBALDEETS_BOUNDARY_IMMUTABLE_BASE: ${{ inputs.immutable_base || 'https://69a0a63f.globaldeets.pages.dev' }}
         run: node tools/verify-boundary-retired-prod.js --diagnose
+
+      - name: Run production boundary acceptance check without deploying
+        run: node tools/verify-boundary-retired-prod.js
