@@ -26,7 +26,7 @@ function zoneResponse(
   return response({ success: true, result: zones });
 }
 
-test('purges only the canonical production URLs in RETIRED_PATHS', async () => {
+test('purges only canonical retired paths on both public Pages hostnames', async () => {
   const calls = [];
   const count = await purgeRetiredEdgeCache({
     accountId: 'account-id',
@@ -39,7 +39,7 @@ test('purges only the canonical production URLs in RETIRED_PATHS', async () => {
     },
   });
 
-  assert.equal(count, RETIRED_PATHS.length);
+  assert.equal(count, RETIRED_PATHS.length * 2);
   assert.equal(calls.length, 2);
   assert.equal(typeof calls[0].options.signal?.aborted, 'boolean');
   assert.equal(typeof calls[1].options.signal?.aborted, 'boolean');
@@ -54,7 +54,9 @@ test('purges only the canonical production URLs in RETIRED_PATHS', async () => {
   assert.equal(calls[1].options.method, 'POST');
   assert.equal(calls[1].options.headers.Authorization, 'Bearer test-token');
   assert.deepEqual(JSON.parse(calls[1].options.body), {
-    files: RETIRED_PATHS.map(path => `https://globaldeets.com${path}`),
+    files: ['https://globaldeets.com', 'https://www.globaldeets.com'].flatMap(origin =>
+      RETIRED_PATHS.map(path => `${origin}${path}`)
+    ),
   });
 });
 
@@ -77,6 +79,11 @@ test('deployment purges retired paths before and after Pages publication', () =>
     purgeSteps[1] > deployIndex && purgeSteps[1] < productionVerificationIndex,
     'post-deploy purge clears any stale response repopulated before the origin switched'
   );
+  const boundaryVerification = deployWorkflow.slice(
+    deployWorkflow.indexOf('- name: Verify public product boundary holds')
+  );
+  assert.match(boundaryVerification, /--base=https:\/\/globaldeets\.com/);
+  assert.match(boundaryVerification, /--base=https:\/\/www\.globaldeets\.com/);
 });
 
 test('requires both Cloudflare credentials before making a request', async () => {
