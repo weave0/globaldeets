@@ -138,9 +138,10 @@ async function verifyNews(page) {
     () => {
       const subtitle = document.querySelector('.news-page-subtitle')?.textContent || '';
       return (
-        subtitle.includes('Live source-linked headlines across seven routing regions') &&
-        subtitle.includes('source provenance') &&
-        subtitle.includes('coverage gaps')
+        subtitle.includes('Live, source-linked headlines') &&
+        subtitle.includes('original publisher') &&
+        subtitle.includes('provenance') &&
+        subtitle.includes('coverage limitations')
       );
     },
     undefined,
