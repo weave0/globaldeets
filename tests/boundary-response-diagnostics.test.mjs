@@ -83,4 +83,32 @@ test('diagnostics include both retired assets and a unique negative control with
   );
   assert.ok(requested.every(({ options }) => options.headers.Pragma === 'no-cache'));
   assert.ok(report.responses.every(response => response.status === 404));
+
+  const acceptanceRequests = [];
+  const acceptanceHeaders = {
+    'User-Agent': 'GlobalDeets-BoundaryVerifier/1.0',
+    'Cache-Control': 'no-cache',
+    Pragma: 'no-cache',
+  };
+  const acceptanceReport = await runBoundaryDiagnostics({
+    baseUrls: ['https://globaldeets.example'],
+    probeId: 'acceptance-probe',
+    cacheBust: false,
+    profile: 'acceptance-request-no-query',
+    requestHeaders: acceptanceHeaders,
+    fetchImpl: async (url, options) => {
+      acceptanceRequests.push({ url: new URL(url), options });
+      return new Response('not found', { status: 404, headers: { 'Content-Type': 'text/html' } });
+    },
+  });
+
+  assert.equal(acceptanceReport.profile, 'acceptance-request-no-query');
+  assert.equal(acceptanceReport.cacheBusted, false);
+  assert.deepEqual(acceptanceReport.requestHeaders, acceptanceHeaders);
+  assert.equal(acceptanceRequests.length, 3);
+  assert.ok(acceptanceRequests.every(({ url }) => url.search === ''));
+  assert.deepEqual(
+    acceptanceRequests.map(({ options }) => options.headers),
+    [acceptanceHeaders, acceptanceHeaders, acceptanceHeaders]
+  );
 });

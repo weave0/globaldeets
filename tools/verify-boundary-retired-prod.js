@@ -25,6 +25,16 @@ const DEFAULT_IMMUTABLE_BASE = 'https://69a0a63f.globaldeets.pages.dev';
 const DEFAULT_PAGES_BASE = 'https://globaldeets.pages.dev';
 const DIAGNOSTIC_PATHS = ['/platform-modal.js', '/bi-ecosystem.css'];
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
+const DIAGNOSTIC_HEADERS = {
+  'User-Agent': 'GlobalDeets-BoundaryDiagnostic/1.0',
+  'Cache-Control': 'no-cache, no-store, max-age=0',
+  Pragma: 'no-cache',
+};
+const ACCEPTANCE_HEADERS = {
+  'User-Agent': 'GlobalDeets-BoundaryVerifier/1.0',
+  'Cache-Control': 'no-cache',
+  Pragma: 'no-cache',
+};
 
 const RETIRED_PATHS = [
   '/observatory/mission-control/',
@@ -106,18 +116,14 @@ function selectedHeaders(headers) {
   return selected;
 }
 
-async function inspectResponse(initialUrl, fetchImpl = fetch) {
+async function inspectResponse(initialUrl, fetchImpl = fetch, requestHeaders = DIAGNOSTIC_HEADERS) {
   const redirectChain = [];
   let currentUrl = new URL(initialUrl);
 
   for (let redirects = 0; redirects <= 10; redirects++) {
     const response = await fetchImpl(currentUrl, {
       redirect: 'manual',
-      headers: {
-        'User-Agent': 'GlobalDeets-BoundaryDiagnostic/1.0',
-        'Cache-Control': 'no-cache, no-store, max-age=0',
-        Pragma: 'no-cache',
-      },
+      headers: requestHeaders,
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
     const responseHeaders = selectedHeaders(response.headers);
@@ -167,6 +173,9 @@ async function runBoundaryDiagnostics({
     process.env.GLOBALDEETS_BOUNDARY_PAGES_BASE || DEFAULT_PAGES_BASE,
   ],
   probeId = randomUUID(),
+  cacheBust = true,
+  requestHeaders = DIAGNOSTIC_HEADERS,
+  profile = 'cache-busted-diagnostic',
 } = {}) {
   const controlPath = `/__globaldeets_boundary_control_${probeId}.js`;
   const paths = [...DIAGNOSTIC_PATHS, controlPath];
@@ -176,15 +185,18 @@ async function runBoundaryDiagnostics({
   const responses = await Promise.all(
     targets.map(async ({ baseUrl, path }, index) => {
       const url = new URL(path, baseUrl);
-      url.searchParams.set('_boundary_probe', `${probeId}-${index}`);
-      return inspectResponse(url, fetchImpl);
+      if (cacheBust) url.searchParams.set('_boundary_probe', `${probeId}-${index}`);
+      return inspectResponse(url, fetchImpl, requestHeaders);
     })
   );
 
   return {
     diagnosticOnly: true,
+    profile,
+    cacheBusted: cacheBust,
     capturedAt: new Date().toISOString(),
     probeId,
+    requestHeaders,
     paths,
     responses,
   };
@@ -193,7 +205,25 @@ async function runBoundaryDiagnostics({
 module.exports = { RETIRED_PATHS, CORE_PAGES, inspectResponse, runBoundaryDiagnostics };
 if (require.main === module) (async () => {
   if (process.argv.includes('--diagnose')) {
-    console.log(JSON.stringify(await runBoundaryDiagnostics(), null, 2));
+    const [acceptanceProfile, cacheBustedProfile] = await Promise.all([
+      runBoundaryDiagnostics({
+        cacheBust: false,
+        profile: 'acceptance-request-no-query',
+        requestHeaders: ACCEPTANCE_HEADERS,
+      }),
+      runBoundaryDiagnostics(),
+    ]);
+    console.log(
+      JSON.stringify(
+        {
+          diagnosticOnly: true,
+          capturedAt: new Date().toISOString(),
+          profiles: [acceptanceProfile, cacheBustedProfile],
+        },
+        null,
+        2
+      )
+    );
     return;
   }
 
