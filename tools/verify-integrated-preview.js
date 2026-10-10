@@ -27,7 +27,7 @@ async function populated(page, selector, attempts = 5) {
       await page.locator(selector).first().waitFor({ state: 'visible', timeout: 8000 });
       return;
     } catch (error) {
-      if (i === attempts) throw new Error('No populated reporting for '+selector+' after '+attempts+' retries: '+String(error));
+      if (i === attempts) throw new Error('No populated reporting for '+selector+' after '+attempts+' retries', { cause: error });
       await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
       await new Promise(done => setTimeout(done, 1500));
     }
