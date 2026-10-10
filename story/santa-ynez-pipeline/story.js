@@ -118,7 +118,7 @@
     if (!fixturePage && typeof view.dossierVersion === 'string' &&
         /^\d{4}-\d{2}-\d{2}\.\d{1,4}$/.test(view.dossierVersion)) {
       document.body.dataset.storyVersion = view.dossierVersion;
-      document.dispatchEvent(new Event('globaldeets:reviewed-story-rendered'));
+      document.dispatchEvent(new window.Event('globaldeets:reviewed-story-rendered'));
     }
   }
 
