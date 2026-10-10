@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { tmpdir } from 'node:os';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
@@ -13,6 +14,7 @@ const require = createRequire(import.meta.url);
 const ROOT = join(fileURLToPath(import.meta.url), '..', '..');
 const { ROUTES } = require('../health-prod.js');
 const { RETIRED_PATHS } = require('../tools/verify-boundary-retired-prod.js');
+const { assertNoRetiredPaths } = require('../tools/stage-deploy.js');
 
 const canonical = path => path.replace(/\.html$/, '').replace(/\/$/, '') || '/';
 
@@ -116,4 +118,37 @@ test('the knowledge page does not deny analytics while loading Google Analytics'
   assert.match(page, /googletagmanager\.com\/gtag\/js/);
   assert.doesNotMatch(page, /No tracking\./i, 'public privacy copy must agree with active analytics scripts');
   assert.match(page, /This site uses analytics\./);
+});
+
+test('staging accepts an artifact with no retired public paths', () => {
+  const artifact = mkdtempSync(join(tmpdir(), 'globaldeets-clean-stage-'));
+  try {
+    assert.doesNotThrow(() => assertNoRetiredPaths(artifact));
+  } finally {
+    rmSync(artifact, { recursive: true, force: true });
+  }
+});
+
+test('staging rejects every retired public path if it re-enters the artifact', async t => {
+  for (const retiredPath of RETIRED_PATHS) {
+    await t.test(retiredPath, () => {
+      const artifact = mkdtempSync(join(tmpdir(), 'globaldeets-retired-stage-'));
+      try {
+        const artifactPath = join(artifact, retiredPath.replace(/^\/+/, ''));
+        if (retiredPath.endsWith('/')) {
+          mkdirSync(artifactPath, { recursive: true });
+        } else {
+          mkdirSync(dirname(artifactPath), { recursive: true });
+          writeFileSync(artifactPath, '');
+        }
+
+        assert.throws(
+          () => assertNoRetiredPaths(artifact),
+          error => error instanceof Error && error.message.includes(retiredPath)
+        );
+      } finally {
+        rmSync(artifact, { recursive: true, force: true });
+      }
+    });
+  }
 });
