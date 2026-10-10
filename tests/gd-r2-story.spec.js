@@ -1,4 +1,5 @@
 const { spawnSync } = require('node:child_process');
+const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 const { expect, test } = require('@playwright/test');
 
@@ -183,7 +184,7 @@ test('the integrated story makes comparison limits, update provenance and sectio
   await expect(page.getByRole('heading', { name: 'Record at a glance' })).toBeVisible();
   const comparison = page.locator('section[aria-labelledby="comparison-heading"]');
   await expect(comparison).toContainText('1 distinct reporting URL');
-  await expect(comparison).toContainText('fewer than two independently attributed');
+  await expect(comparison).toContainText('fewer than two distinct named publishers');
   await expect(page.getByRole('navigation', { name: 'Story sections' }).getByRole('link', { name: 'Corrections' }))
     .toHaveAttribute('href', '#corrections-heading');
   await expect(page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Evidence' }))
@@ -191,6 +192,28 @@ test('the integrated story makes comparison limits, update provenance and sectio
   const background = await page.evaluate(() => window.getComputedStyle(document.body).backgroundColor);
   expect(background).toBe('rgb(11, 17, 26)');
   await expectNoHorizontalOverflow(page);
+});
+
+test('one named publisher with two original URLs is still not a cross-publisher comparison', async ({ page }) => {
+  const path = join(__dirname, '..', 'story', 'santa-ynez-pipeline', 'story.json');
+  const shipped = JSON.parse(readFileSync(path, 'utf8'));
+  const duplicate = {
+    ...shipped.reporting.origins[0],
+    url: 'https://example.com/second-report',
+    linkLabel: 'Read another report from the same outlet',
+  };
+  shipped.reporting.origins.push(duplicate);
+  shipped.reporting.distinctUrls = 2;
+  await page.route('**/story/santa-ynez-pipeline/story.json', route =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(shipped) })
+  );
+  await page.route('**/api/intelligence/stories/santa-ynez-pipeline', route => route.abort());
+  await page.goto(STORY);
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+  const comparison = page.locator('section[aria-labelledby="comparison-heading"]');
+  await expect(comparison).toContainText('2 distinct reporting URLs');
+  await expect(comparison).toContainText('fewer than two distinct named publishers');
+  await expect(comparison.locator('.story-compare-list')).toHaveCount(0);
 });
 
 test('the record keeps conflict, evidence, correction, and unknowns', async ({ page }) => {

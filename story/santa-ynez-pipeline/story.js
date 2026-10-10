@@ -184,16 +184,33 @@
     const distinct = Number.isInteger(view.reporting?.distinctUrls)
       ? view.reporting.distinctUrls
       : new Set(origins.map(origin => origin.url)).size;
-    const independent = origins.filter(origin => origin.independent === true && !origin.syndicated);
-    const sufficient = independent.length >= 2;
+    // One-to-one source/URL attribution does NOT prove an independent editorial
+    // viewpoint. Require two separately named publishers and nonduplicated URLs
+    // before presenting side-by-side reporting origins. Ownership is not inferred.
+    const publishers = new Map();
+    for (const origin of origins) {
+      if (origin.independent !== true || origin.syndicated) continue;
+      const name = typeof origin.name === 'string' ? origin.name.trim() : '';
+      if (!name) continue;
+      const id = name.normalize('NFKC').toLowerCase();
+      if (!publishers.has(id)) publishers.set(id, { name, origins: [] });
+      publishers.get(id).origins.push(origin);
+    }
+    const sufficient = publishers.size >= 2;
     const note = sufficient
-      ? 'These independently attributed reporting origins are shown side by side for transparency, not ranked for importance, reliability, bias or truth.'
-      : 'A meaningful comparison of publisher accounts is not available: this record has fewer than two independently attributed reporting origins. Official statements and reprints are not extra publishers.';
+      ? 'Different named publishers with separate original reporting URLs are shown here. Shared ownership or editorial independence has not been verified; their accounts are not scored for reliability, bias, importance or truth, and agreement is not automatically corroboration.'
+      : 'A meaningful side-by-side publisher comparison is not available: fewer than two distinct named publishers with separate, nonduplicated reporting URLs are documented. Official statements and syndicated copies are not extra publishers.';
     const rows = sufficient
       ? '<ul class="story-compare-list">' +
-          independent.map(origin => '<li><strong>' + esc(origin.name || 'Unnamed publisher') + '</strong>' +
-            '<p class="story-note">' + esc((origin.eventTitles || []).join('; ') || 'No event attribution recorded.') + '</p>' +
-            '<p>' + externalLink(origin.url, origin.linkLabel || 'Read the original report') + '</p></li>').join('') +
+          [...publishers.values()].map(group => {
+            const events = [...new Set(group.origins.flatMap(origin => origin.eventTitles || []))];
+            const links = group.origins.map(origin =>
+              '<p>' + externalLink(origin.url, origin.linkLabel || 'Read the original report') + '</p>'
+            ).join('');
+            return '<li><strong>' + esc(group.name) + '</strong>' +
+              '<p class="story-note">' + esc(events.join('; ') || 'No event attribution recorded.') + '</p>' +
+              links + '</li>';
+          }).join('') +
         '</ul>'
       : '<p class="story-compare-note">' + esc(note) + '</p>';
     return section('comparison-heading', 'Publisher comparison',
