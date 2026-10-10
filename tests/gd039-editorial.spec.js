@@ -112,3 +112,11 @@ test('the editorial masthead has no horizontal overflow at reader phone widths',
     }
   }
 });
+
+test('the homepage chronological escape link has an accessible editorial color', async ({ page }) => {
+  await page.goto('/index.html');
+  const link = page.getByRole('link', { name: 'See newest first' });
+  await expect(link).toHaveAttribute('href', 'news.html');
+  const color = await link.evaluate(element => window.getComputedStyle(element).color);
+  expect(color).toBe('rgb(124, 214, 211)');
+});

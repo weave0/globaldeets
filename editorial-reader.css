@@ -654,3 +654,14 @@ body.gd-editorial .timeline-day { background: var(--paper); color: var(--ink); }
   }
   body.gd-editorial .primary-nav .nav-item { min-width: 44px; padding-inline: .12rem; }
 }
+
+/* GD-041 visual acceptance: the chronological alternative remains readable on dark ink. */
+body.gd-editorial .desk-note a:link,
+body.gd-editorial .desk-note a:visited {
+  color: var(--edition-accent);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+body.gd-editorial .desk-note a:hover,
+body.gd-editorial .desk-note a:focus-visible { color: #c4f2e9; }

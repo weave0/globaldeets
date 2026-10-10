@@ -499,3 +499,23 @@ body.gd-editorial.gd-story .story-compare-list li { margin: .55rem 0; padding: .
   body.gd-editorial.gd-story .story { width: calc(100% - 1rem); }
   body.gd-editorial.gd-story .story-quick-facts li { padding: .55rem; }
 }
+
+/* Compact, discoverable one-row story section index on narrow reader screens. */
+@media (max-width: 700px) {
+  body.gd-editorial.gd-story .story-local-nav {
+    flex-wrap: nowrap;
+    align-items: center;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    gap: .8rem;
+    padding: .1rem 0 .25rem;
+    scrollbar-width: thin;
+    scrollbar-color: #425764 transparent;
+  }
+  body.gd-editorial.gd-story .story-local-nav a {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    min-height: 44px;
+  }
+}
