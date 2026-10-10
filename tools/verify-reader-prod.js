@@ -27,16 +27,77 @@ async function requireTouchTarget(locator, label, minimum = 44) {
   );
 }
 
-async function waitForHomepageTrust(page) {
+// The homepage now describes the actual governed selection, not the number of
+// configured sources. Capture the same response the reader renders so a wrong
+// hard-coded label, stale number, or missing policy disclosure fails certification.
+async function verifyHomepageSelection(page) {
+  const responsePromise = page.waitForResponse(response => {
+    try {
+      const url = new URL(response.url());
+      return url.pathname === '/api/news' && url.searchParams.get('mode') === 'diverse';
+    } catch {
+      return false;
+    }
+  }, { timeout: 30_000 });
+  await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+  const response = await responsePromise;
+  requireCondition(response.ok(), `governed homepage selection returned HTTP ${response.status()}`);
+  const data = await response.json();
+  requireCondition(Array.isArray(data?.items), 'homepage did not receive a governed report selection');
+  requireCondition(
+    data.selection?.mode === 'diverse' &&
+      data.selection?.policyVersion === 'gd040-publisher-region-rotation-v1',
+    'homepage response did not declare the approved diversity policy'
+  );
   await page.waitForFunction(
-    () => {
-      const stat = [...document.querySelectorAll('.dm-stat')].find(node =>
-        node.querySelector('.dm-stat-label')?.textContent.trim() === 'Live Sources'
-      );
-      return stat?.querySelector('.dm-stat-value')?.textContent.trim() === '21';
-    },
+    () => document.body.dataset.deskLatest === 'ready',
     undefined,
     { timeout: 20_000 }
+  );
+  const shown = await page.evaluate(() => {
+    const value = id => document.getElementById(id)?.textContent?.trim();
+    return {
+      publishers: value('desk-audit-publishers'),
+      regions: value('desk-audit-regions'),
+      total: value('desk-audit-total'),
+      share: value('desk-audit-share'),
+      note: value('desk-selection-note') || '',
+      cards: document.querySelectorAll('#desk-latest .desk-story').length,
+      obsoleteClaim: document.body.textContent.includes('21 Live Sources'),
+    };
+  });
+  const isLinked = item => {
+    try {
+      const url = new URL(item?.sourceUrl);
+      return url.protocol === 'https:' || url.protocol === 'http:';
+    } catch {
+      return false;
+    }
+  };
+  const linked = data.items.filter(isLinked);
+  const publishers = new Map();
+  const regions = new Set();
+  for (const item of linked) {
+    const id = String(item.sourceId || item.source || '').trim();
+    if (!id) continue;
+    publishers.set(id, (publishers.get(id) || 0) + 1);
+    if (['global', 'americas', 'europe', 'asia', 'middle-east', 'pacific', 'africa'].includes(item.region)) {
+      regions.add(item.region);
+    }
+  }
+  const maxShare = publishers.size && linked.length
+    ? Math.round(100 * Math.max(...publishers.values()) / linked.length) + '%'
+    : '—';
+  const total = Number.isSafeInteger(data.total) && data.total >= 0 ? String(data.total) : '—';
+  requireCondition(shown.cards === data.items.length, 'rendered homepage headlines do not match the audited feed');
+  requireCondition(shown.publishers === String(publishers.size), 'homepage linked-publisher count is not from the response');
+  requireCondition(shown.regions === String(regions.size), 'homepage feed-region count is not from the response');
+  requireCondition(shown.total === total, 'homepage available-report count is not from the response');
+  requireCondition(shown.share === maxShare, 'homepage publisher-concentration figure is not from the response');
+  requireCondition(
+    !shown.obsoleteClaim && shown.note.includes('rotation verified') &&
+      shown.note.includes('not event locations or impartiality'),
+    'homepage reintroduced a false live-source claim or lost the coverage limitations'
   );
 }
 
@@ -52,17 +113,7 @@ async function waitForNewsTrust(page) {
 }
 
 async function verifyHomepage(page) {
-  await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
-  const liveSources = page
-    .locator('.dm-stat')
-    .filter({ hasText: 'Live Sources' })
-    .locator('.dm-stat-value');
-  await liveSources.waitFor({ state: 'visible', timeout: 20_000 });
-  await waitForHomepageTrust(page);
-  requireCondition(
-    (await liveSources.textContent())?.trim() === '21',
-    'homepage did not render 21 live sources'
-  );
+  await verifyHomepageSelection(page);
   requireCondition(
     (await page.locator('a[href="/observatory/coverage/"]').count()) > 0,
     'homepage coverage observatory link missing'
@@ -118,19 +169,7 @@ async function verifyMobileSurface(browser, viewport, label) {
   const page = await context.newPage();
 
   try {
-    await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
-    const liveSources = page.locator('.dm-stat').filter({ hasText: 'Live Sources' });
-    await liveSources.waitFor({ state: 'visible', timeout: 20_000 });
-    await waitForHomepageTrust(page);
-    await page.locator('.dm-stat').filter({ hasText: 'Regions' }).waitFor({ state: 'visible', timeout: 10_000 });
-    await page
-      .locator('.dm-stat')
-      .filter({ hasText: 'Local/State Sources' })
-      .waitFor({ state: 'visible', timeout: 10_000 });
-    await page
-      .locator('.dm-stat')
-      .filter({ hasText: 'Open Coverage Gaps' })
-      .waitFor({ state: 'visible', timeout: 10_000 });
+    await verifyHomepageSelection(page);
     await page.locator('#globe-hero-container').waitFor({ state: 'visible', timeout: 20_000 });
     await verifyNoHorizontalOverflow(page, `${label} homepage`);
     await requireTouchTarget(page.locator('header .nav-icon-btn').first(), `${label} primary nav`);
@@ -207,7 +246,7 @@ async function verifyServiceWorker(browser) {
       const shell = await Promise.all(['/index.html', '/news.html', '/styles.css', '/editorial-reader.css', '/saved-reading.js', '/news.js'].map(path => cache.match(path)));
       return { names, complete: shell.every(Boolean) };
     });
-    requireCondition(cached.names.includes('globaldeets-cache-v11'), 'production cache v9 did not install');
+    requireCondition(cached.names.includes('globaldeets-cache-v11'), 'production cache v11 did not install');
     requireCondition(cached.complete, 'the production offline shell is incomplete after first install');
 
     // Browser-context route aborts can prevent navigation before the controlling worker
@@ -269,7 +308,7 @@ async function verifyServiceWorker(browser) {
     await verifyMobileSurface(browser, { width: 390, height: 844 }, 'iPhone-class');
     await verifyMobileSurface(browser, { width: 360, height: 800 }, 'narrow Android-class');
     console.log(
-      'Production reader verification passed: desktop + mobile rendered surfaces, visible governed metrics, 44px touch targets, raw news HTML, evidence bridge, and live MIME/CSP/service-worker registration/offline shell are current.'
+      'Production reader verification passed: desktop + mobile rendered surfaces, audited publisher selection, 44px touch targets, raw news HTML, evidence bridge, and live MIME/CSP/service-worker registration/offline shell are current.'
     );
   } finally {
     await context.close();
