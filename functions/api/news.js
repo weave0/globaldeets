@@ -1,5 +1,7 @@
 // functions/api/news.js
 // Cloudflare Pages Function — GET /api/news
+
+import { STORY_MEMBERSHIP_VERSION, withStoryMembership } from '../lib/story-membership.js';
 //
 // Params:
 //   ?region=global|middle-east|europe|asia|americas|pacific|africa
@@ -146,6 +148,8 @@ export function getSourceFingerprint(sources = SOURCES) {
 
 export const SOURCE_FINGERPRINT = getSourceFingerprint();
 export const DISPLAY_POLICY_VERSION = 'gd021-admission-v1';
+export const NEWS_SELECTION_POLICY_VERSION = 'gd040-publisher-region-rotation-v1';
+export const DIVERSE_FRESHNESS_HOURS = 36;
 export const CACHE_KEY_PREFIX = `news_feed_v3_${SOURCE_FINGERPRINT}_${DISPLAY_POLICY_VERSION}`;
 export const SOURCE_HEALTH_KEY = `news_source_health_v2_${SOURCE_FINGERPRINT}`;
 const CACHE_TTL_SECONDS = 900; // 15 minutes
@@ -226,9 +230,10 @@ export function getFeedCacheIdentity(admissionFingerprint) {
     throw new TypeError('admission fingerprint is required');
   }
   return {
-    cacheKey: `${CACHE_KEY_PREFIX}_${admissionFingerprint}`,
+    cacheKey: `${CACHE_KEY_PREFIX}_${STORY_MEMBERSHIP_VERSION}_${admissionFingerprint}`,
     admissionFingerprint,
     displayPolicyVersion: DISPLAY_POLICY_VERSION,
+    storyMembershipVersion: STORY_MEMBERSHIP_VERSION,
   };
 }
 
@@ -286,7 +291,14 @@ export async function applyAdmissionPolicy(items, contract = null) {
       governed.summary = null;
       governed.translated = false;
       governed.originalLang = item.lang;
-    } else {
+    } else if (
+      item.translated === true &&
+      typeof item.originalHeadline === 'string' &&
+      item.originalHeadline.trim()
+    ) {
+      governed.originalHeadline = item.originalHeadline.trim();
+    }
+    if (decision.displayMode !== 'headline-link') {
       const permitsExcerpt = Array.isArray(admission?.permittedUse)
         ? admission.permittedUse.includes('excerpt')
         : false;
@@ -300,7 +312,7 @@ export async function applyAdmissionPolicy(items, contract = null) {
       }
     }
 
-    governedItems.push(governed);
+    governedItems.push(withStoryMembership(governed));
   }
 
   return { items: governedItems, admissionById };
@@ -314,6 +326,23 @@ export async function onRequestGet({ env, request }) {
 
   const rawRegion = url.searchParams.get('region') || 'global';
   const region = VALID_REGIONS.has(rawRegion) ? rawRegion : 'global';
+  // Chronological remains the default, including the News and Timeline readers.
+  // The home World Desk explicitly opts into the explainable publisher mix.
+  const mode = url.searchParams.get('mode') === 'diverse' ? 'diverse' : 'chronological';
+  const selection = mode === 'diverse'
+    ? {
+        mode,
+        scope: region === 'global' ? 'all publisher feed regions' : `only publishers assigned to ${region}`,
+        policyVersion: NEWS_SELECTION_POLICY_VERSION,
+        freshnessWindowHours: DIVERSE_FRESHNESS_HOURS,
+        explanation: 'Rotate among publishers within each feed region, then among feed regions, for articles within 36 hours of the newest available article; append older items by publication date. Feed region is not event location. This is not an importance, truth, or bias score.',
+      }
+    : {
+        mode,
+        scope: region === 'global' ? 'all publisher feed regions' : `only publishers assigned to ${region}`,
+        policyVersion: NEWS_SELECTION_POLICY_VERSION,
+        explanation: 'Publisher items shown by publication timestamp, newest first; not ranked by importance.',
+      };
   const limit = Math.min(
     Math.max(parseInt(url.searchParams.get('limit') || '30', 10) || 30, 1),
     100
@@ -324,32 +353,36 @@ export async function onRequestGet({ env, request }) {
   // in cache identity. Restrictive governance changes therefore cannot reuse a richer old payload.
   const cached = await readFeedCache(env, cacheIdentity.cacheKey);
   if (cached) {
-    const filtered = filterByRegion(cached, region);
+    const filtered = orderNewsForDisplay(filterByRegion(cached, region), mode);
     const page = filtered.slice(offset, offset + limit);
     return new Response(
       JSON.stringify({
-        items: page,
+        items: page.map(withStoryMembership),
         cached: true,
         total: filtered.length,
+        selection,
         sourceFingerprint: SOURCE_FINGERPRINT,
         admissionFingerprint: cacheIdentity.admissionFingerprint,
         displayPolicyVersion: cacheIdentity.displayPolicyVersion,
+        storyMembershipVersion: STORY_MEMBERSHIP_VERSION,
       }),
       { headers }
     );
   }
 
   const { items } = await getOrCreateRegeneration(env, cacheIdentity, admissionContract);
-  const filtered = filterByRegion(items, region);
+  const filtered = orderNewsForDisplay(filterByRegion(items, region), mode);
   const page = filtered.slice(offset, offset + limit);
   return new Response(
     JSON.stringify({
-      items: page,
+      items: page.map(withStoryMembership),
       cached: false,
       total: filtered.length,
+      selection,
       sourceFingerprint: SOURCE_FINGERPRINT,
       admissionFingerprint: cacheIdentity.admissionFingerprint,
       displayPolicyVersion: cacheIdentity.displayPolicyVersion,
+      storyMembershipVersion: STORY_MEMBERSHIP_VERSION,
     }),
     { headers }
   );
@@ -451,6 +484,7 @@ export async function translateNonEnglish(items, env, admissionById = new Map())
     selected.map(async item => {
       const sourceLang = LANG_NAMES[item.lang] || item.lang;
       try {
+        const originalHeadline = typeof item.headline === 'string' ? item.headline : '';
         const [headlineRes, summaryRes] = await Promise.all([
           env.AI.run('@cf/meta/m2m100-1.2b', {
             text: item.headline,
@@ -466,9 +500,16 @@ export async function translateNonEnglish(items, env, admissionById = new Map())
             : Promise.resolve(null),
         ]);
 
-        item.headline = headlineRes?.translated_text || item.headline;
+        const translatedHeadline = headlineRes?.translated_text;
+        if (typeof translatedHeadline === 'string' && translatedHeadline.trim() && originalHeadline.trim()) {
+          item.originalHeadline = originalHeadline;
+          item.headline = translatedHeadline;
+          item.translated = true;
+        } else {
+          item.translated = false;
+          delete item.originalHeadline;
+        }
         item.summary = summaryRes?.translated_text || item.summary;
-        item.translated = true;
         item.originalLang = item.lang;
       } catch (error) {
         item.translated = false;
@@ -668,7 +709,85 @@ function hashStr(str) {
   return Math.abs(hash).toString(36);
 }
 
+// GD-040. The selection acts ONLY on the governed consumer payload after region
+// filtering, never on source admission, rights, translation or the shared KV cache.
+// Deterministic within a 15-minute cache snapshot: pagination cannot drift because
+// there is no wall-clock/random weighting and the complete list is ordered before
+// slicing. Publication time limits how far diversity can promote older reports.
+function publishedTime(item) {
+  const time = Date.parse(typeof item?.published === 'string' ? item.published : '');
+  return Number.isFinite(time) ? time : Number.NEGATIVE_INFINITY;
+}
+
+function compareForNews(itemA, itemB) {
+  const timeA = publishedTime(itemA);
+  const timeB = publishedTime(itemB);
+  if (timeA !== timeB) return timeA > timeB ? -1 : 1;
+  const keyA = String(itemA?.sourceId || itemA?.source || '') + '\u001f' + String(itemA?.id || itemA?.sourceUrl || '');
+  const keyB = String(itemB?.sourceId || itemB?.source || '') + '\u001f' + String(itemB?.id || itemB?.sourceUrl || '');
+  return keyA < keyB ? -1 : keyA > keyB ? 1 : 0;
+}
+
+export function orderNewsForDisplay(items, mode = 'chronological') {
+  const list = Array.isArray(items) ? items : [];
+  if (mode !== 'diverse' || list.length < 2) return list;
+
+  const chronological = [...list].sort(compareForNews);
+  const newest = publishedTime(chronological[0]);
+  if (!Number.isFinite(newest)) return chronological;
+
+  // Relative to this cache snapshot's newest published item, not Date.now().
+  // An old feed remains visibly dated and is never relabeled as current.
+  const boundary = newest - DIVERSE_FRESHNESS_HOURS * 60 * 60 * 1000;
+  const recent = [];
+  const older = [];
+  for (const item of chronological) {
+    (publishedTime(item) >= boundary ? recent : older).push(item);
+  }
+  if (recent.length < 2) return chronological;
+
+  const regionMap = new Map();
+  for (const item of recent) {
+    // This is the source's feed-routing region, NOT the reported event location.
+    const region = VALID_REGIONS.has(item?.region) ? item.region : 'unassigned';
+    const source = String(item?.sourceId || item?.source || 'unidentified-source');
+    if (!regionMap.has(region)) regionMap.set(region, new Map());
+    const publishers = regionMap.get(region);
+    if (!publishers.has(source)) publishers.set(source, []);
+    publishers.get(source).push(item);
+  }
+  const buckets = [...regionMap].map(([name, publishers]) => ({
+    name,
+    freshest: publishedTime([...publishers.values()][0][0]),
+    cursor: 0,
+    sources: [...publishers].map(([id, queue]) => ({ id, queue })),
+  }));
+  // The freshest feed-routing region starts each pass. For equal times, use an
+  // explicit stable tie-breaker; no geography or outlet is assigned a weight.
+  buckets.sort((a, b) => b.freshest - a.freshest || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+
+  const ordered = [];
+  while (ordered.length < recent.length) {
+    for (const bucket of buckets) {
+      if (!bucket.sources.length) continue;
+      bucket.cursor %= bucket.sources.length;
+      const source = bucket.sources[bucket.cursor];
+      ordered.push(source.queue.shift());
+      if (!source.queue.length) {
+        bucket.sources.splice(bucket.cursor, 1);
+      } else {
+        bucket.cursor++;
+      }
+    }
+  }
+  return ordered.concat(older);
+}
+
 function filterByRegion(items, region) {
   if (region === 'global') return items;
-  return items.filter(item => item.region === region || item.region === 'global');
+  // A feed region groups publisher channels, NOT the geographic location of
+  // their events. Including "global" channels in every regional tab previously
+  // made Asia/Pacific/Africa views lead with unrelated global-source reports.
+  // Readers wanting the full cross-region list can choose All Regions.
+  return items.filter(item => item.region === region);
 }

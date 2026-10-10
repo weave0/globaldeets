@@ -14,6 +14,10 @@ mkdirSync(dirname(admissionPath), { recursive: true });
 writeFileSync(join(functions, 'package.json'), '{"type":"module"}\n');
 copyFileSync(fileURLToPath(new URL('../functions/api/news.js', import.meta.url)), newsPath);
 copyFileSync(fileURLToPath(new URL('../functions/lib/news-source-admission.js', import.meta.url)), admissionPath);
+copyFileSync(
+  fileURLToPath(new URL('../functions/lib/story-membership.js', import.meta.url)),
+  join(functions, 'lib', 'story-membership.js')
+);
 
 const news = await import(pathToFileURL(newsPath).href);
 const admission = await import(pathToFileURL(admissionPath).href);

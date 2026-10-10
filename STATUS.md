@@ -29,6 +29,20 @@ Status of the roadmap's R1 release ("Reader reset", GD-038) on branch `feat/gd03
 
 Static/dynamic source truth (F6) is already on `main` (8459811) with raw-HTML and fallback regressions; the older `feat/gd0260-static-source-truth` branch is superseded.
 
+## R2 story intelligence
+
+On `feat/gd-r2-story-intelligence`, which is based on unmerged PR #80 (`c5f0452d7d18ebe65f3621f76c942ec0972d37d3`, reconciled parent) and is not deployed:
+
+| Item | State |
+| --- | --- |
+| Maintained story `/story/santa-ynez-pipeline/` | Implemented from the Santa Ynez dossier. The story id does not replace event ids |
+| Reader API | `GET /api/intelligence/stories` and `GET /api/intelligence/stories/santa-ynez-pipeline` |
+| Shipped record | `story.json` matches the projection. Review date and content version stay visible when the API is down. The story page registers the service worker so a direct link reloads from the precache offline |
+| Headline link | "Context & sources" only when `/api/news` marks that exact article URL. The client maps are gone. The Los Angeles Times URL is not in the admitted feed, so live cards do not show it until an admitted item carries that URL |
+| Additional public stories | Not invented. One maintained story carries the single-source, multi-source, conflicting, corrected, and limited-evidence cases |
+| Incomplete-data states | Evaluation fixtures only (`functions/lib/story-evaluation-fixtures.js`). Not indexed, not linked from the desk, not real-world reporting |
+| Place pages | Not part of this slice |
+
 ## Evidence state
 
 Production verification is produced by the deploy workflow, not by this document. When this file and a live check disagree, the live check wins. Operational edge telemetry is not certified human audience; no reader-retention baseline exists yet (roadmap R9).
@@ -36,3 +50,5 @@ Production verification is produced by the deploy workflow, not by this document
 ## Known engineering debt
 
 - Many root-level Markdown files describe the retired portfolio product and are archival.
+
+GD-R2 story confluence (October 9): reconciled the latest GD-038 Reader Reset candidate including corrected offline redirect handling and source-status freshness. The story prerelease now precaches a v9 shell and has its own exact-commit hosted preview gate. This is not production or approval of GD-038.

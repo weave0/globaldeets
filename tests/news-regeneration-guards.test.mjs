@@ -17,6 +17,10 @@ copyFileSync(
   fileURLToPath(new URL('../functions/lib/news-source-admission.js', import.meta.url)),
   fixtureAdmission
 );
+copyFileSync(
+  fileURLToPath(new URL('../functions/lib/story-membership.js', import.meta.url)),
+  join(fixtureFunctions, 'lib', 'story-membership.js')
+);
 
 const newsModule = await import(pathToFileURL(fixtureNews).href);
 const admissionModule = await import(pathToFileURL(fixtureAdmission).href);

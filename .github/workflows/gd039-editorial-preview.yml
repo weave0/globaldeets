@@ -1,0 +1,71 @@
+name: GD-039 editorial preview
+on:
+  push:
+    branches:
+      - feat/gd039-editorial-reader
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gd039-editorial-preview
+  cancel-in-progress: true
+
+jobs:
+  editorial-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact source commit
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Check JavaScript
+        run: npm run lint
+
+      - name: Run Function contracts
+        run: npm run test:functions
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser regressions
+        run: npx playwright test
+
+      - name: Stage isolated Cloudflare Pages artifact
+        run: npm run stage:deploy
+        env:
+          NODE_ENV: production
+          CF_PAGES_BRANCH: gd039-editorial-preview
+          CF_PAGES_COMMIT_SHA: ${{ github.sha }}
+
+      - name: Deploy GD-039 preview (never production)
+        id: preview
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.131.1'
+          command: pages deploy dist --project-name globaldeets --branch gd039-editorial-preview --commit-hash ${{ github.sha }} --commit-dirty=false
+
+      - name: Verify hosted editorial layout and capture desktop/mobile views
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.deployment-url }}
+          EXACT_SHA: ${{ github.sha }}
+        run: node tools/verify-editorial-preview.js --base="$PREVIEW_URL" --expected-commit="$EXACT_SHA"
+
+      - name: Preserve editorial review screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gd039-editorial-screenshots
+          path: design-previews/
+          if-no-files-found: ignore
+          retention-days: 14

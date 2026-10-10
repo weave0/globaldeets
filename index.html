@@ -101,6 +101,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="world-desk.css" />
+    <link rel="stylesheet" href="editorial-reader.css" />
     <!-- JSON-LD Structured Data for Google -->
     <script type="application/ld+json">
       {
@@ -118,7 +119,7 @@
     </script>
   </head>
 
-  <body>
+  <body class="gd-editorial">
 <a href="#main-content" class="skip-link">Skip to main content</a>
     <!-- Glass Header -->
     <header>
@@ -134,8 +135,9 @@
                 width="220"
                 height="140"
               />
+            <span class="editorial-wordmark">GlobalDeets</span>
             </a>
-            <p class="tagline">World Desk · Original Publishers · Open Sources</p>
+            <p class="tagline">Original reporting · Open evidence</p>
           </div>
           <nav role="navigation" aria-label="Primary navigation" class="primary-nav">
             <a href="index.html" class="nav-icon-btn nav-item active" aria-current="page">
@@ -150,7 +152,10 @@
               <img src="assets/icons/site/nav-list.svg" alt="" aria-hidden="true" width="22" height="22" />
               <span class="nav-label">Browse</span>
             </a>
-            <details class="nav-more">
+            <a href="/observatory/coverage/" class="nav-evidence">
+                <span class="nav-label">Evidence</span>
+              </a>
+              <details class="nav-more">
               <summary class="nav-icon-btn nav-item">
                 <svg class="nav-more-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><circle cx="5" cy="12" r="2" fill="currentColor" /><circle cx="12" cy="12" r="2" fill="currentColor" /><circle cx="19" cy="12" r="2" fill="currentColor" /></svg>
                 <span class="nav-label">More</span>
@@ -170,27 +175,7 @@
       </div>
     </header>
 
-    <!-- Globe Hero -->
-    <section class="globe-hero-section" aria-label="Interactive Earth Globe">
-      <div id="globe-hero-container"></div>
-      <div class="globe-hero-overlay">
-        <h2 class="globe-hero-title">The Earth,<br /> <span>Right Now.</span></h2>
-        <p class="globe-hero-tagline">
-          Live headlines from publishers around the world. Every story links to the original.
-        </p>
-        <div class="globe-hero-cta">
-          <a href="#world-desk" class="btn-globe-primary">Today&rsquo;s latest</a>
-          <a href="globe.html" class="btn-globe-secondary">Full Globe &rarr;</a>
-        </div>
-        <p class="globe-pin-hint">
-          Pins: approximate publisher location, or feed region if unmapped. Never the story&rsquo;s location.
-        </p>
-      </div>
-      <div class="news-ticker-bar" aria-label="News ticker">
-        <span class="ticker-label">LIVE</span>
-        <div class="ticker-viewport"><div id="ticker-track"></div></div>
-      </div>
-    </section>
+
 
     <!-- News pin overlay (populated by globe-hero.js) -->
     <div id="news-pin-overlay" role="dialog" aria-modal="true" aria-label="News story detail">
@@ -206,7 +191,7 @@
       <section id="world-desk" class="desk" aria-labelledby="desk-title">
         <header class="desk-header">
           <p class="desk-eyebrow">Today</p>
-          <h2 id="desk-title" class="desk-title">World Desk</h2>
+          <h1 id="desk-title" class="desk-title">World Desk</h1>
           <p class="desk-dateline">
             <time id="desk-date"></time>
             <span id="desk-updated" class="desk-updated" aria-live="polite"
@@ -218,9 +203,10 @@
         <div class="desk-grid">
           <div class="desk-latest">
             <div class="desk-section-head">
-              <h3>Latest reporting</h3>
+              <h3>Across publishers</h3>
               <p class="desk-note">
-                Newest first from our current sources. Not ranked by importance.
+                Recent reports across available publishers. Not ranked by importance.
+                <a href="news.html">See newest first</a>.
               </p>
             </div>
             <ol id="desk-latest" class="desk-stories" data-limit="8">
@@ -281,12 +267,35 @@
               </p>
               <div class="platform-actions desk-actions">
                 <a href="/observatory/coverage/" class="btn-primary">Coverage &amp; Evidence Observatory</a>
+                <a href="/story/santa-ynez-pipeline/" class="btn-sample">Open the Santa Ynez story</a>
                 <a href="/dossiers/santa-ynez-pipeline/" class="btn-sample">Open Evidence Dossier</a>
               </div>
             </section>
           </aside>
         </div>
       </section>
+
+      <!-- Globe exploration, after the reporting -->
+    <section class="globe-hero-section" aria-label="Interactive Earth Globe">
+      <div id="globe-hero-container"></div>
+      <div class="globe-hero-overlay">
+        <h2 class="globe-hero-title">The Earth,<br /> <span>Right Now.</span></h2>
+        <p class="globe-hero-tagline">
+          Live headlines from publishers around the world. Every story links to the original.
+        </p>
+        <div class="globe-hero-cta">
+          <a href="#world-desk" class="btn-globe-primary">Back to latest</a>
+          <a href="globe.html" class="btn-globe-secondary">Full Globe &rarr;</a>
+        </div>
+        <p class="globe-pin-hint">
+          Pins: approximate publisher location, or feed region if unmapped. Never the story&rsquo;s location.
+        </p>
+      </div>
+      <div class="news-ticker-bar" aria-label="News ticker">
+        <span class="ticker-label">LIVE</span>
+        <div class="ticker-viewport"><div id="ticker-track"></div></div>
+      </div>
+    </section>
 
       <!-- Explore: existing, working surfaces only -->
       <section class="desk-explore" aria-labelledby="desk-explore-title">

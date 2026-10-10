@@ -96,18 +96,26 @@ async function mockApi(page, { feedStatus = 200 } = {}) {
   });
 }
 
-test('homepage leads with dated latest reporting linked to publishers', async ({ page }) => {
+test('homepage shows an explained publisher mix with original-source actions', async ({ page }) => {
+  const newsRequests = [];
+  page.on('request', request => {
+    const url = new URL(request.url());
+    if (url.pathname === '/api/news') newsRequests.push(url);
+  });
   await mockApi(page);
   await page.goto('/index.html');
 
   const desk = page.locator('#world-desk');
   await expect(desk.getByRole('heading', { name: 'World Desk' })).toBeVisible();
+  await expect(desk.getByRole('heading', { name: 'Across publishers' })).toBeVisible();
   await expect(page.locator('#desk-date')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/);
   await expect(page.locator('#desk-updated')).toContainText('3 stories from our current sources');
   await expect(desk.getByText('Not ranked by importance.')).toBeVisible();
 
   const stories = page.locator('#desk-latest .desk-story');
   await expect(stories).toHaveCount(3);
+  expect(newsRequests.some(url => url.searchParams.get('mode') === 'diverse')).toBe(true);
+  await expect(desk.getByRole('link', { name: 'See newest first' })).toHaveAttribute('href', 'news.html');
   await expect(stories.first().getByRole('link', { name: 'Port authority reopens northern terminal' })).toHaveAttribute(
     'href',
     'https://example.com/port'

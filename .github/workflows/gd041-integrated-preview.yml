@@ -1,0 +1,58 @@
+name: GD-041 integrated world reader preview
+on:
+  push:
+    branches:
+      - feat/gd041-integrated-reader
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gd041-integrated-reader-preview
+  cancel-in-progress: true
+
+jobs:
+  integrated-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: npm install --no-audit --no-fund
+      - name: Lint
+        run: npm run lint
+      - name: Function and evidence contracts
+        run: npm run test:functions
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Reader and offline browser regressions
+        run: npx playwright test
+      - name: Stage exact source artifact
+        run: npm run stage:deploy
+        env:
+          NODE_ENV: production
+          CF_PAGES_BRANCH: gd041-integrated-preview
+          CF_PAGES_COMMIT_SHA: ${{ github.sha }}
+      - name: Deploy isolated integration preview
+        uses: cloudflare/wrangler-action@v4
+        id: pages
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.131.1'
+          command: pages deploy dist --project-name globaldeets --branch gd041-integrated-preview --commit-hash ${{ github.sha }} --commit-dirty=false
+      - name: Hosted confluence and mobile/offline visual gate
+        run: node tools/verify-integrated-preview.js --base="$PREVIEW_URL" --expected-commit="$EXACT_SHA"
+        env:
+          PREVIEW_URL: ${{ steps.pages.outputs.deployment-url }}
+          EXACT_SHA: ${{ github.sha }}
+      - name: Preserve review screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gd041-integrated-reader-screenshots
+          path: design-previews/gd041-*.png
+          if-no-files-found: ignore
+          retention-days: 14
