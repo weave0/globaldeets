@@ -156,7 +156,8 @@ jobs:
             - name: Verify public product boundary holds
               run: |
                   for attempt in 1 2 3 4 5 6; do
-                    if node tools/verify-boundary-retired-prod.js --base=https://globaldeets.com; then
+                    if node tools/verify-boundary-retired-prod.js --base=https://globaldeets.com &&
+                       node tools/verify-boundary-retired-prod.js --base=https://www.globaldeets.com; then
                       exit 0
                     fi
 
