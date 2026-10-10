@@ -94,6 +94,7 @@ test('diagnostics include both retired assets and a unique negative control with
     baseUrls: ['https://globaldeets.example'],
     probeId: 'acceptance-probe',
     cacheBust: false,
+    redirectMode: 'follow',
     profile: 'acceptance-request-no-query',
     requestHeaders: acceptanceHeaders,
     fetchImpl: async (url, options) => {
@@ -104,9 +105,11 @@ test('diagnostics include both retired assets and a unique negative control with
 
   assert.equal(acceptanceReport.profile, 'acceptance-request-no-query');
   assert.equal(acceptanceReport.cacheBusted, false);
+  assert.equal(acceptanceReport.redirectMode, 'follow');
   assert.deepEqual(acceptanceReport.requestHeaders, acceptanceHeaders);
   assert.equal(acceptanceRequests.length, 3);
   assert.ok(acceptanceRequests.every(({ url }) => url.search === ''));
+  assert.ok(acceptanceRequests.every(({ options }) => !Object.hasOwn(options, 'redirect')));
   assert.deepEqual(
     acceptanceRequests.map(({ options }) => options.headers),
     [acceptanceHeaders, acceptanceHeaders, acceptanceHeaders]

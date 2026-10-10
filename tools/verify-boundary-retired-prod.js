@@ -116,16 +116,22 @@ function selectedHeaders(headers) {
   return selected;
 }
 
-async function inspectResponse(initialUrl, fetchImpl = fetch, requestHeaders = DIAGNOSTIC_HEADERS) {
+async function inspectResponse(
+  initialUrl,
+  fetchImpl = fetch,
+  requestHeaders = DIAGNOSTIC_HEADERS,
+  redirectMode = 'manual'
+) {
   const redirectChain = [];
   let currentUrl = new URL(initialUrl);
 
   for (let redirects = 0; redirects <= 10; redirects++) {
-    const response = await fetchImpl(currentUrl, {
-      redirect: 'manual',
+    const requestOptions = {
       headers: requestHeaders,
       signal: AbortSignal.timeout(TIMEOUT_MS),
-    });
+    };
+    if (redirectMode === 'manual') requestOptions.redirect = 'manual';
+    const response = await fetchImpl(currentUrl, requestOptions);
     const responseHeaders = selectedHeaders(response.headers);
     const location = response.headers.get('location');
 
@@ -145,7 +151,8 @@ async function inspectResponse(initialUrl, fetchImpl = fetch, requestHeaders = D
     const body = new Uint8Array(await response.arrayBuffer());
     return {
       requestedUrl: new URL(initialUrl).href,
-      finalUrl: currentUrl.href,
+      finalUrl: redirectMode === 'follow' ? response.url || currentUrl.href : currentUrl.href,
+      redirected: redirectMode === 'follow' ? response.redirected : redirectChain.length > 0,
       redirectChain,
       status: response.status,
       contentType: response.headers.get('content-type'),
@@ -175,6 +182,7 @@ async function runBoundaryDiagnostics({
   probeId = randomUUID(),
   cacheBust = true,
   requestHeaders = DIAGNOSTIC_HEADERS,
+  redirectMode = 'manual',
   profile = 'cache-busted-diagnostic',
 } = {}) {
   const controlPath = `/__globaldeets_boundary_control_${probeId}.js`;
@@ -186,7 +194,7 @@ async function runBoundaryDiagnostics({
     targets.map(async ({ baseUrl, path }, index) => {
       const url = new URL(path, baseUrl);
       if (cacheBust) url.searchParams.set('_boundary_probe', `${probeId}-${index}`);
-      return inspectResponse(url, fetchImpl, requestHeaders);
+      return inspectResponse(url, fetchImpl, requestHeaders, redirectMode);
     })
   );
 
@@ -194,6 +202,7 @@ async function runBoundaryDiagnostics({
     diagnosticOnly: true,
     profile,
     cacheBusted: cacheBust,
+    redirectMode,
     capturedAt: new Date().toISOString(),
     probeId,
     requestHeaders,
@@ -210,6 +219,7 @@ if (require.main === module) (async () => {
         cacheBust: false,
         profile: 'acceptance-request-no-query',
         requestHeaders: ACCEPTANCE_HEADERS,
+        redirectMode: 'follow',
       }),
       runBoundaryDiagnostics(),
     ]);
