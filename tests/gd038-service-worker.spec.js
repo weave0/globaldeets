@@ -72,7 +72,12 @@ test('the service worker installs, precaches only shipped files, and retires the
 }) => {
   // Seed the cache the previous worker version used; activation must delete it.
   await page.goto('/offline.html');
-  await page.evaluate(() => caches.open('globaldeets-cache-v7').then(cache => cache.put('/stale', new Response('old'))));
+  await page.evaluate(async () => {
+    await Promise.all([
+      caches.open('globaldeets-cache-v7').then(cache => cache.put('/stale', new Response('old'))),
+      caches.open('unrelated-app-cache-v1').then(cache => cache.put('/keep', new Response('unrelated'))),
+    ]);
+  });
 
   await page.goto('/index.html');
   await waitForControllingWorker(page);
@@ -86,6 +91,7 @@ test('the service worker installs, precaches only shipped files, and retires the
   }));
   expect(state.keys).toContain('globaldeets-cache-v8');
   expect(state.keys).not.toContain('globaldeets-cache-v7');
+  expect(state.keys).toContain('unrelated-app-cache-v1');
   expect(state.precached).toBe(true);
 });
 

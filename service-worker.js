@@ -1,5 +1,6 @@
 // Basic service worker for offline caching
 const CACHE_NAME = 'globaldeets-cache-v8';
+const CACHE_PREFIX = 'globaldeets-cache-';
 // The offline shell: every precached page plus every same-origin asset those pages load (including
 // news-reader-bridge.css, which news.js injects). tests/offline-shell-agreement.test.mjs keeps this
 // list complete and limited to shipped files; a missing file would fail the worker install.
@@ -91,7 +92,11 @@ self.addEventListener('activate', event => {
     Promise.all([
       caches
         .keys()
-        .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))),
+        .then(keys =>
+          Promise.all(
+            keys.filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME).map(key => caches.delete(key))
+          )
+        ),
       self.clients.claim(),
     ])
   );
