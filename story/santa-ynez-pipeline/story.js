@@ -243,7 +243,7 @@
     const sufficient = comparable.length >= 2;
     const note = sufficient
       ? 'Different named publishers with separate, non-overlapping original reporting URLs are shown here. Shared ownership or editorial independence has not been verified; their accounts are not scored for reliability, bias, importance or truth, and agreement is not automatically corroboration.'
-      : 'A meaningful side-by-side publisher comparison is not available: fewer than two named publishers with separate, nonduplicated original reporting URLs are documented. Shared links, official statements and syndicated copies are not extra reporting origins.';
+      : 'A meaningful side-by-side publisher comparison is not available: fewer than two distinct named publishers with separate, nonduplicated reporting URLs are documented. Shared links, official statements and syndicated copies are not extra reporting origins.';
     const rows = sufficient
       ? '<ul class="story-compare-list">' +
           comparable.map(group => {
