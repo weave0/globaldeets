@@ -176,6 +176,23 @@ test('chronology does not treat publication order as event order', async ({ page
   await expect(page.getByText(/Ordered by the dossier timeline date/)).toBeVisible();
 });
 
+test('the integrated story makes comparison limits, update provenance and section navigation explicit', async ({ page }) => {
+  await page.goto(STORY);
+  await expect(page.locator('body')).toHaveClass(/gd-editorial/);
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+  await expect(page.getByRole('heading', { name: 'Record at a glance' })).toBeVisible();
+  const comparison = page.locator('section[aria-labelledby="comparison-heading"]');
+  await expect(comparison).toContainText('1 distinct reporting URL');
+  await expect(comparison).toContainText('fewer than two independently attributed');
+  await expect(page.getByRole('navigation', { name: 'Story sections' }).getByRole('link', { name: 'Corrections' }))
+    .toHaveAttribute('href', '#corrections-heading');
+  await expect(page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Evidence' }))
+    .toHaveAttribute('href', '/observatory/coverage/');
+  const background = await page.evaluate(() => window.getComputedStyle(document.body).backgroundColor);
+  expect(background).toBe('rgb(11, 17, 26)');
+  await expectNoHorizontalOverflow(page);
+});
+
 test('the record keeps conflict, evidence, correction, and unknowns', async ({ page }) => {
   await page.goto(STORY);
   await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();

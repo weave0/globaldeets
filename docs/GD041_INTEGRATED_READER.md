@@ -29,3 +29,7 @@ Archive desktop Home, desktop/mobile Asia News, and desktop Story screenshots. A
 - This branch exercises their combined contracts and addresses only integration defects.
 
 Do not independently merge all four PRs and this integration branch. Before promotion, choose one reviewed integration route, reconcile feature branches against final parent SHA, and run the complete production smoke/offline gates.
+
+## Premium story progression
+
+The maintained Santa Ynez Story now uses the same midnight editorial masthead and compact evidence navigation as the desk. The body adds a transparently calculated **Record at a glance** with actual structured-record counts and a **Publisher comparison** panel that explicitly refuses to synthesize multiple independent perspectives when only one reporting origin is documented. All record dates, primary-doc evidence, corrections, official statements and unresolved gaps retain their original provenance. This is not a fabricated comparative scoring system or claim of continuous live updating. Public story HTML, fixture rendering, keyboard tests and offline source actions remain required acceptance gates.

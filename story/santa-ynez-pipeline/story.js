@@ -99,9 +99,12 @@
     applyFixtureIdentity(view);
     showFreshness(view);
     body.innerHTML = [
+      localNavigation(),
+      recordAtGlance(view),
       understanding(view),
       chronology(view),
       reporting(view),
+      publisherComparison(view),
       statements(view),
       evidence(view),
       unresolved(view),
@@ -141,6 +144,63 @@
     const dek = document.getElementById('story-dek');
     if (dek) dek.textContent = view.dek ? `Maintained record description: ${view.dek}` : '';
     if (view.title) document.title = `${view.title} | GlobalDeets`;
+  }
+
+
+  function localNavigation() {
+    const links = [
+      ['Latest understanding', 'understanding-heading'],
+      ['Chronology', 'chronology-heading'],
+      ['Publisher comparison', 'comparison-heading'],
+      ['Evidence', 'evidence-heading'],
+      ['Corrections', 'corrections-heading'],
+      ['Unresolved', 'unresolved-heading'],
+    ];
+    return '<nav class="story-local-nav" aria-label="Story sections">' +
+      links.map(([label, id]) => '<a href="#' + id + '">' + esc(label) + '</a>').join('') + '</nav>';
+  }
+
+  function recordAtGlance(view) {
+    const distinct = Number.isInteger(view.reporting?.distinctUrls) ? view.reporting.distinctUrls : 0;
+    const evidenceCount = Array.isArray(view.evidence) ? view.evidence.length : 0;
+    const corrections = Array.isArray(view.corrections) ? view.corrections.length : 0;
+    const unknowns = Array.isArray(view.unresolved?.items) ? view.unresolved.items.length : 0;
+    const reviewed = view.reviewedAt ? 'Reviewed ' + formatDate(view.reviewedAt) + '.' : 'Review date not recorded.';
+    return section('glance-heading', 'Record at a glance',
+      '<p class="story-note">' + esc(reviewed) +
+      ' These counts describe only this maintained evidence record, not the whole news cycle or a live verdict.</p>' +
+      '<ul class="story-quick-facts">' + [
+        [distinct, 'Distinct reporting URLs'],
+        [evidenceCount, 'Evidence records'],
+        [corrections, 'Recorded corrections'],
+        [unknowns, 'Unresolved items'],
+      ].map(([count, label]) =>
+        '<li><strong>' + count + '</strong>' + esc(label) + '</li>').join('') + '</ul>' +
+      '<p class="story-note">The review date, source links, corrections and unresolved questions are kept visible. This page does not claim continuous monitoring or independent corroboration.</p>');
+  }
+
+  function publisherComparison(view) {
+    const origins = (view.reporting?.origins || []).filter(origin => origin && origin.url);
+    const distinct = Number.isInteger(view.reporting?.distinctUrls)
+      ? view.reporting.distinctUrls
+      : new Set(origins.map(origin => origin.url)).size;
+    const independent = origins.filter(origin => origin.independent === true && !origin.syndicated);
+    const sufficient = independent.length >= 2;
+    const note = sufficient
+      ? 'These independently attributed reporting origins are shown side by side for transparency, not ranked for importance, reliability, bias or truth.'
+      : 'A meaningful comparison of publisher accounts is not available: this record has fewer than two independently attributed reporting origins. Official statements and reprints are not extra publishers.';
+    const rows = sufficient
+      ? '<ul class="story-compare-list">' +
+          independent.map(origin => '<li><strong>' + esc(origin.name || 'Unnamed publisher') + '</strong>' +
+            '<p class="story-note">' + esc((origin.eventTitles || []).join('; ') || 'No event attribution recorded.') + '</p>' +
+            '<p>' + externalLink(origin.url, origin.linkLabel || 'Read the original report') + '</p></li>').join('') +
+        '</ul>'
+      : '<p class="story-compare-note">' + esc(note) + '</p>';
+    return section('comparison-heading', 'Publisher comparison',
+      '<p class="story-note">' + distinct + ' distinct reporting URL' +
+      (distinct === 1 ? '' : 's') + ' in this reviewed record. ' +
+      (sufficient ? esc(note) : 'Publisher variety on the live feed does not imply corroboration here.') + '</p>' +
+      rows);
   }
 
   function understanding(view) {
