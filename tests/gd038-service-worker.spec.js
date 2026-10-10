@@ -69,11 +69,28 @@ async function waitForControllingWorker(page) {
 
 test('the service worker installs, precaches only shipped files, and retires the old cache', async ({
   page,
+  context,
 }) => {
-  // Seed the cache the previous worker version used; activation must delete it.
+  // Keep registration blocked until the old and unrelated caches are fully seeded.
+  await context.route('**/sw-register.js**', route =>
+    route.fulfill({ status: 200, contentType: 'application/javascript', body: '' })
+  );
   await page.goto('/offline.html');
-  await page.evaluate(() => caches.open('globaldeets-cache-v7').then(cache => cache.put('/stale', new Response('old'))));
+  const collision = 'UNRELATED-CACHE-COLLISION';
+  await page.evaluate(async collision => {
+    const oldCache = await caches.open('globaldeets-cache-v7');
+    const unrelatedCache = await caches.open('unrelated-app-cache-v1');
+    await Promise.all([
+      oldCache.put('/stale', new Response('old')),
+      unrelatedCache.put('/keep', new Response('unrelated')),
+      unrelatedCache.put(
+        '/index.html',
+        new Response(collision, { headers: { 'Content-Type': 'text/html' } })
+      ),
+    ]);
+  }, collision);
 
+  await context.unroute('**/sw-register.js**');
   await page.goto('/index.html');
   await waitForControllingWorker(page);
 
@@ -86,7 +103,14 @@ test('the service worker installs, precaches only shipped files, and retires the
   }));
   expect(state.keys).toContain('globaldeets-cache-v8');
   expect(state.keys).not.toContain('globaldeets-cache-v7');
+  expect(state.keys).toContain('unrelated-app-cache-v1');
   expect(state.precached).toBe(true);
+
+  // Offline fallback must not replay the unrelated app's colliding homepage URL.
+  await context.route('**/index.html', route => route.abort('internetdisconnected'));
+  await page.reload();
+  await expect(page.locator('body')).not.toContainText(collision);
+  await context.unroute('**/index.html');
 });
 
 test('a dev server answering a stylesheet with JavaScript can never leave an unstyled cached page', async ({
