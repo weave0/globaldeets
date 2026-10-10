@@ -125,6 +125,14 @@ async function main() {
       await storyPage.waitForSelector('body[data-story-ready="true"]',{timeout:15000});
       assert(await storyPage.getByRole('link',{name:/Read at Los Angeles Times/}).count()>0,
         'original publisher source link missing');
+      const storyState = await storyPage.evaluate(() => ({
+        midnight: window.getComputedStyle(document.body).backgroundColor,
+        navigation: Boolean(document.querySelector('.story-local-nav')),
+        comparison: Boolean(document.querySelector('section[aria-labelledby="comparison-heading"]')),
+        horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+      }));
+      assert(storyState.midnight === 'rgb(11, 17, 26)' && storyState.navigation &&
+        storyState.comparison && !storyState.horizontalOverflow, 'story editor/identity shell is not integrated');
       await storyPage.screenshot({path:resolve('design-previews/gd041-story-desktop.png'),animations:'disabled'});
       await storyPage.waitForFunction(()=>navigator.serviceWorker?.controller,undefined,{timeout:15000});
       await storyContext.setOffline(true);
