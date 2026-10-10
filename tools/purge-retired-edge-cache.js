@@ -4,6 +4,7 @@ const { RETIRED_PATHS } = require('./verify-boundary-retired-prod');
 
 const API_BASE = 'https://api.cloudflare.com/client/v4';
 const SITE_ORIGIN = 'https://globaldeets.com';
+const API_REQUEST_TIMEOUT_MS = 15_000;
 
 function cloudflareFailure(operation, response, payload) {
   const details = Array.isArray(payload?.errors)
@@ -13,6 +14,13 @@ function cloudflareFailure(operation, response, payload) {
         .join('; ')
     : '';
   return new Error(`${operation} failed (HTTP ${response.status})${details ? `: ${details}` : ''}`);
+}
+
+function fetchCloudflare(fetchImpl, url, options) {
+  return fetchImpl(url, {
+    ...options,
+    signal: AbortSignal.timeout(API_REQUEST_TIMEOUT_MS),
+  });
 }
 
 async function readCloudflareResponse(response, operation) {
@@ -48,7 +56,7 @@ async function purgeRetiredEdgeCache({
   zoneUrl.searchParams.set('status', 'active');
   zoneUrl.searchParams.set('per_page', '2');
 
-  const zonesResponse = await fetchImpl(zoneUrl, { headers });
+  const zonesResponse = await fetchCloudflare(fetchImpl, zoneUrl, { headers });
   const zonesPayload = await readCloudflareResponse(zonesResponse, 'Cloudflare zone lookup');
   if (!Array.isArray(zonesPayload.result)) {
     throw new Error('Cloudflare zone lookup returned a malformed result');
@@ -64,7 +72,8 @@ async function purgeRetiredEdgeCache({
   }
 
   const files = RETIRED_PATHS.map(path => new URL(path, SITE_ORIGIN).href);
-  const purgeResponse = await fetchImpl(
+  const purgeResponse = await fetchCloudflare(
+    fetchImpl,
     `${API_BASE}/zones/${encodeURIComponent(matchingZones[0].id)}/purge_cache`,
     {
       method: 'POST',

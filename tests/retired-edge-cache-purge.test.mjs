@@ -1,10 +1,16 @@
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
+import { readFileSync } from 'node:fs';
+import { URL } from 'node:url';
 import test from 'node:test';
 
 const require = createRequire(import.meta.url);
 const { purgeRetiredEdgeCache } = require('../tools/purge-retired-edge-cache.js');
 const { RETIRED_PATHS } = require('../tools/verify-boundary-retired-prod.js');
+const deployWorkflow = readFileSync(
+  new URL('../.github/workflows/deploy.yml', import.meta.url),
+  'utf8'
+);
 
 function response(payload, status = 200) {
   return {
@@ -35,6 +41,9 @@ test('purges only the canonical production URLs in RETIRED_PATHS', async () => {
 
   assert.equal(count, RETIRED_PATHS.length);
   assert.equal(calls.length, 2);
+  assert.equal(typeof calls[0].options.signal?.aborted, 'boolean');
+  assert.equal(typeof calls[1].options.signal?.aborted, 'boolean');
+  assert.notEqual(calls[0].options.signal, calls[1].options.signal);
   assert.equal(calls[0].url.origin, 'https://api.cloudflare.com');
   assert.equal(calls[0].url.pathname, '/client/v4/zones');
   assert.equal(calls[0].url.searchParams.get('name'), 'globaldeets.com');
@@ -47,6 +56,27 @@ test('purges only the canonical production URLs in RETIRED_PATHS', async () => {
   assert.deepEqual(JSON.parse(calls[1].options.body), {
     files: RETIRED_PATHS.map(path => `https://globaldeets.com${path}`),
   });
+});
+
+test('deployment purges retired paths before and after Pages publication', () => {
+  const purgeSteps = [
+    ...deployWorkflow.matchAll(/- name: Purge retired public paths from Cloudflare edge cache/g),
+  ].map(match => match.index);
+  const purgeCommands = [
+    ...deployWorkflow.matchAll(/run: node tools\/purge-retired-edge-cache\.js/g),
+  ].map(match => match.index);
+  const deployIndex = deployWorkflow.indexOf('- name: Deploy to Cloudflare Pages');
+  const productionVerificationIndex = deployWorkflow.indexOf(
+    '- name: Verify production deployment'
+  );
+
+  assert.equal(purgeSteps.length, 2);
+  assert.equal(purgeCommands.length, 2);
+  assert.ok(purgeSteps[0] < deployIndex, 'pre-deploy purge validates permissions');
+  assert.ok(
+    purgeSteps[1] > deployIndex && purgeSteps[1] < productionVerificationIndex,
+    'post-deploy purge clears any stale response repopulated before the origin switched'
+  );
 });
 
 test('requires both Cloudflare credentials before making a request', async () => {
