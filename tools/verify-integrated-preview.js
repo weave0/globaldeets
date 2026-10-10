@@ -84,7 +84,7 @@ async function main() {
       const desk=document.querySelector('#world-desk');
       const globe=document.querySelector('.globe-hero-section');
       return {
-        canvas:getComputedStyle(document.body).backgroundColor,
+        canvas:window.getComputedStyle(document.body).backgroundColor,
         headerHeight:document.querySelector('body > header').getBoundingClientRect().height,
         firstSource:document.querySelector('#desk-latest .desk-story-source')?.textContent,
         diverseHeading:!!document.querySelector('#world-desk h3')?.textContent.includes('Across publishers'),
@@ -110,7 +110,7 @@ async function main() {
     const nav=await phone.evaluate(()=>{
       const summary=document.querySelector('header details.nav-more summary').getBoundingClientRect();
       return {overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,
-      touchWidth:summary.width,touchHeight:summary.height,menuRight:summary.right,viewport:innerWidth};
+      touchWidth:summary.width,touchHeight:summary.height,menuRight:summary.right,viewport:window.innerWidth};
     });
     assert(!nav.overflow && nav.touchWidth>=44 && nav.touchHeight>=44 &&
       nav.menuRight<=nav.viewport+1,'mobile reader navigation broke');
