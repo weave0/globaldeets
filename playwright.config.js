@@ -12,6 +12,8 @@ const mobileSpecs = /mobile-(reader|secondary-surfaces)\.spec\.js/;
 
 module.exports = defineConfig({
   testDir: './tests',
+  // node:test contracts (*.test.mjs) run under `npm run test:functions`, not Playwright.
+  testMatch: '**/*.spec.js',
   timeout: 30000,
   expect: {
     timeout: 10000,
@@ -19,6 +21,9 @@ module.exports = defineConfig({
   use: {
     baseURL,
     trace: 'on-first-retry',
+    // Specs mock /api/** with page.route; a controlling service worker would fetch around those
+    // mocks and silently mix live production data into fixture assertions.
+    serviceWorkers: 'block',
   },
   projects: [
     {

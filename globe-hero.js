@@ -5,7 +5,10 @@
 (function () {
   'use strict';
 
-  // Approximate source-to-location mapping for geo-pinning news items
+  // Approximate home cities for mapped publishers (locationKind 'publisher-approximate'). A pin
+  // never marks where a story happened: GlobalDeets does not yet establish event location, so the globe must not imply it.
+  // Publishers missing here (e.g. Minnesota Reformer, CalMatters) are NOT given invented
+  // coordinates; they fall back to a broad feed-region position and are labeled that way.
   const SOURCE_COORDS = {
     Reuters: [40.71, -74.01],
     AP: [40.71, -74.01],
@@ -29,25 +32,53 @@
     'The East African': [-1.29, 36.82],
   };
 
-  function jitter(val, range) {
-    return val + (Math.random() - 0.5) * range;
+  const REGION_FALLBACK = {
+    global: [20, 0],
+    americas: [10, -80],
+    europe: [50, 15],
+    asia: [30, 105],
+    'middle-east': [26, 44],
+    pacific: [-25, 140],
+    africa: [0, 20],
+  };
+  const REGION_NAMES = {
+    global: 'global',
+    americas: 'Americas',
+    europe: 'Europe',
+    asia: 'Asia',
+    'middle-east': 'Middle East',
+    pacific: 'Pacific',
+    africa: 'Africa',
+  };
+
+  /**
+   * Returns pin coordinates plus an explicit locationKind:
+   *   'publisher-approximate' — near the publisher's home city, offset so pins do not overlap;
+   *   'region-fallback'       — a broad position inside the item's feed region, because the
+   *                             publisher's location is not mapped.
+   * Neither kind is the location of the story.
+   */
+  function assignCoords(item, random = Math.random) {
+    const jitter = (val, range) => val + (random() - 0.5) * range;
+    const base = SOURCE_COORDS[item.source];
+    if (base) {
+      return { lat: jitter(base[0], 10), lng: jitter(base[1], 14), locationKind: 'publisher-approximate' };
+    }
+    const fallback = REGION_FALLBACK[item.region] || REGION_FALLBACK.global;
+    return {
+      lat: jitter(fallback[0], 20),
+      lng: jitter(fallback[1], 25),
+      locationKind: 'region-fallback',
+    };
   }
 
-  function assignCoords(item) {
-    const base = SOURCE_COORDS[item.source];
-    if (base) return { lat: jitter(base[0], 10), lng: jitter(base[1], 14) };
-    // Region fallback centroids
-    const regionFallback = {
-      global: [20, 0],
-      americas: [10, -80],
-      europe: [50, 15],
-      asia: [30, 105],
-      'middle-east': [26, 44],
-      pacific: [-25, 140],
-      africa: [0, 20],
-    };
-    const fb = regionFallback[item.region] || [0, 0];
-    return { lat: jitter(fb[0], 20), lng: jitter(fb[1], 25) };
+  function pinLocationLabel(item) {
+    const source = item.source || 'Unknown publisher';
+    if (item.locationKind === 'publisher-approximate') {
+      return `${source} · pin is near where the publisher is based (approximate), not where the story happened`;
+    }
+    const region = REGION_NAMES[item.region] || 'global';
+    return `${source} · publisher location not mapped; pin is a general ${region} feed position, not where the story happened`;
   }
 
   // -------------------------------------------------------------------------
@@ -172,13 +203,15 @@
       if (el) el.textContent = val || '';
     };
 
-    set('news-overlay-source', item.source);
+    set('news-overlay-source', pinLocationLabel(item));
     set('news-overlay-title', item.headline);
     set('news-overlay-summary', item.summary);
 
     const link = document.getElementById('news-overlay-link');
     if (link) {
       link.href = item.sourceUrl || '#';
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
       link.textContent = `Read at ${item.source || 'source'} →`;
     }
 
@@ -264,6 +297,8 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
   }
+
+  window.GlobalDeetsGlobe = { assignCoords, pinLocationLabel };
 
   // -------------------------------------------------------------------------
   // Boot

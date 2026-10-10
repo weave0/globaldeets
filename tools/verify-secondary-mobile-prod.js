@@ -46,17 +46,14 @@ async function verifyPhone(browser, viewport, label) {
 
   try {
     await verifySurface(page, '/globe.html', '#globe-hero-container', `${label} globe`);
-    await requireTouchTarget(page.locator('.ecosystem-toggle'), `${label} globe ecosystem menu`);
     await requireTouchTarget(page.locator('header .nav-icon-btn').first(), `${label} globe primary nav`);
     await requireTouchTarget(page.locator('.globe-filter-btn').first(), `${label} globe region filter`);
 
     await verifySurface(page, '/knowledge.html', '.knowledge-hero', `${label} knowledge`);
-    await requireTouchTarget(page.locator('.ecosystem-toggle'), `${label} knowledge ecosystem menu`);
     await requireTouchTarget(page.locator('header .nav-icon-btn').first(), `${label} knowledge primary nav`);
     await requireTouchTarget(page.locator('.knowledge-filter-pill').first(), `${label} knowledge category filter`);
 
     await verifySurface(page, '/worldmap.html', '#main-content', `${label} world map`);
-    await requireTouchTarget(page.locator('.ecosystem-toggle'), `${label} world map ecosystem menu`);
     await requireTouchTarget(page.locator('#view-toggle'), `${label} world map view toggle`);
     await requireTouchTarget(page.locator('#panel-toggle'), `${label} world map panel toggle`);
     await requireTouchTarget(page.locator('#location-search'), `${label} world map search`);

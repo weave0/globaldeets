@@ -50,33 +50,33 @@ const newsFixture = {
   items: [
     {
       id: 'mobile-1',
-      title: 'Global leaders meet for climate talks',
-      link: 'https://example.com/story-1',
+      headline: 'Global leaders meet for climate talks',
+      sourceUrl: 'https://example.com/story-1',
       source: 'Reuters',
       sourceId: 'reuters',
       region: 'global',
-      publishedAt: new Date().toISOString(),
-      policy: { treatment: 'headline-link' },
+      published: new Date().toISOString(),
+      displayMode: 'headline-link',
     },
     {
       id: 'mobile-2',
-      title: 'Regional infrastructure update',
-      link: 'https://example.com/story-2',
+      headline: 'Regional infrastructure update',
+      sourceUrl: 'https://example.com/story-2',
       source: 'Reuters',
       sourceId: 'reuters',
       region: 'americas',
-      publishedAt: new Date().toISOString(),
-      policy: { treatment: 'headline-link' },
+      published: new Date().toISOString(),
+      displayMode: 'headline-link',
     },
     {
       id: 'mobile-3',
-      title: 'Markets react to policy decision',
-      link: 'https://example.com/story-3',
+      headline: 'Markets react to policy decision',
+      sourceUrl: 'https://example.com/story-3',
       source: 'Reuters',
       sourceId: 'reuters',
       region: 'europe',
-      publishedAt: new Date().toISOString(),
-      policy: { treatment: 'headline-link' },
+      published: new Date().toISOString(),
+      displayMode: 'headline-link',
     },
   ],
 };
@@ -145,6 +145,10 @@ test('mobile news reader fits and keeps evidence controls usable', async ({ page
 
   await expect(page.getByRole('heading', { name: /World News Feed/i })).toBeVisible();
   await expect(page.locator('#news-grid .news-card')).toHaveCount(3);
+  // Coverage detail sits behind the "Sources & coverage" disclosure so stories come first.
+  const disclosureToggle = page.locator('#news-sources-coverage summary');
+  await expectPracticalTouchTarget(disclosureToggle);
+  await disclosureToggle.click();
   await expect(page.locator('#news-coverage-context')).toBeVisible();
   await expect(page.locator('.news-source-context').first()).toBeAttached();
   await expectNoHorizontalOverflow(page);

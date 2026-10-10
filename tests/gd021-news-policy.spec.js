@@ -93,14 +93,14 @@ test('news cards honor admission display mode without blank or false translation
   const verified = page.locator('.news-card').filter({ hasText: 'Minnesota verified-use story' });
   await expect(verified.locator('.news-summary')).toHaveCount(1);
   await expect(verified.locator('.news-summary')).toContainText('permitted to expose');
-  await expect(verified.getByText('Headline/link only')).toHaveCount(0);
+  await expect(verified.getByText('Headline only')).toHaveCount(0);
 
   const guardian = page.locator('.news-card').filter({ hasText: 'Guardian headline-link story' });
-  await expect(guardian.getByText('Headline/link only')).toBeVisible();
+  await expect(guardian.getByText('Headline only')).toBeVisible();
   await expect(guardian.locator('.news-summary')).toHaveCount(0);
 
   const nhk = page.locator('.news-card').filter({ hasText: 'NHK source headline' });
-  await expect(nhk.getByText('Headline/link only')).toBeVisible();
+  await expect(nhk.getByText('Headline only')).toBeVisible();
   await expect(nhk.locator('.news-summary')).toHaveCount(0);
   await expect(nhk.locator('.news-mt-badge--failed')).toHaveCount(0);
 

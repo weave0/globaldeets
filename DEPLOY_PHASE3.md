@@ -1,3 +1,5 @@
+> **Archival (portfolio era).** This document describes the retired GFD portfolio showcase. Its project directory (`projects-data.js` and related files) was removed in GD-038. For the current product, see `README.md` and `docs/NEWS_PRODUCT_ROADMAP.md`.
+
 # GlobalDeets Phase 3 - Deployment Guide
 
 ## 🚀 Quick Deploy to Netlify

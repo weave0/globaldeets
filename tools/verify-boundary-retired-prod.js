@@ -7,6 +7,10 @@
  * internal estate-control-plane surfaces retired by GD-037 have not silently re-entered
  * the production deploy artifact: Mission Control, the shared estate-ecosystem nav bundle,
  * the retired Spheres directory, and the retired analytics redirect.
+ *
+ * GD-038 extends the check from dead URLs to semantics: the retired GFD portfolio directory
+ * (projects-data/render, platform modal, sibling product pages, maintainer templates) must stay
+ * gone, and core public pages must not name sibling products or link to their domains.
  */
 function argValue(name) {
   const arg = process.argv.find(value => value.startsWith(name));
@@ -24,7 +28,47 @@ const RETIRED_PATHS = [
   '/shared/ecosystem-nav.css',
   '/spheres.html',
   '/analytics.html',
+  '/projects-data.js',
+  '/projects-render.js',
+  '/platform-modal.js',
+  '/PROJECT_TEMPLATE.js',
+  '/QUICK_REFERENCE.js',
+  '/bb-content.html',
+  '/bi-ecosystem.css',
 ];
+
+const CORE_PAGES = [
+  '/', '/news', '/categories', '/timeline', '/globe', '/worldmap', '/knowledge',
+  '/about', '/contact', '/donate', '/offline', '/app.js', '/world-desk.js',
+  '/news.js', '/globe-hero.js', '/404.html',
+  '/dossiers/santa-ynez-pipeline/', '/observatory/coverage/',
+];
+
+const FORBIDDEN_CONTENT = [
+  /projects-data\.js/,
+  /projects-render\.js/,
+  /platform-modal\.js/,
+  /Fantasy Penpal/i,
+  /Culture Sherpa/i,
+  /aiaimate/i,
+  /Insurance Intelligence/i,
+  /Healthcare (?:System )?Intelligence/i,
+  /Mission Control/i,
+  /fantasy-penpal\.globaldeets/i,
+  /steveb\.globaldeets/i,
+  /medical\.globaldeets/i,
+  /impact across 6 world-changing platforms/i,
+  /gofundme\.com/i,
+];
+
+async function textOf(path) {
+  const response = await fetch(`${BASE}${path}`, {
+    headers: { 'User-Agent': 'GlobalDeets-BoundaryVerifier/1.0', 'Cache-Control': 'no-cache', Pragma: 'no-cache' },
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+  });
+  if (!response.ok) throw new Error(`${path} returned HTTP ${response.status}`);
+  return response.text();
+}
 
 async function statusOf(path) {
   const response = await fetch(`${BASE}${path}`, {
@@ -34,7 +78,8 @@ async function statusOf(path) {
   return response.status;
 }
 
-(async () => {
+module.exports = { RETIRED_PATHS, CORE_PAGES };
+if (require.main === module) (async () => {
   const results = await Promise.all(RETIRED_PATHS.map(async path => ({ path, status: await statusOf(path) })));
   const leaked = results.filter(result => result.status === 200);
 
@@ -44,7 +89,32 @@ async function statusOf(path) {
     );
   }
 
-  console.log(`Public product boundary holds: ${results.length} retired estate paths all stay unreachable.`);
+  const pages = await Promise.all(CORE_PAGES.map(async path => ({ path, body: await textOf(path) })));
+  const drift = pages.flatMap(({ path, body }) =>
+    FORBIDDEN_CONTENT.filter(pattern => pattern.test(body)).map(pattern => `${path} matches ${pattern}`)
+  );
+  // Owner identification is legitimate on About, but the publisher's unrelated portfolio
+  // destination does not belong on the news-reading and source-browsing surfaces. The About
+  // exception is intentionally narrow: exactly two checked operator-credit links, no directory.
+  const OWNER_DOMAIN = /goodflippindesign\.com/gi;
+  for (const { path, body } of pages) {
+    const occurrences = [...body.matchAll(OWNER_DOMAIN)].length;
+    if (path === '/about') {
+      const aboutCredits = [...body.matchAll(/href="https:\/\/goodflippindesign\.com"/gi)].length;
+      if (occurrences !== 2 || aboutCredits !== 2) {
+        drift.push(`${path} operator attribution is not limited to its two reviewed About links`);
+      }
+    } else if (occurrences > 0) {
+      drift.push(`${path} links to the unrelated owner-domain portfolio`);
+    }
+  }
+  if (drift.length > 0) {
+    throw new Error(`GFD portfolio content has re-entered public pages: ${drift.join(', ')}`);
+  }
+
+  console.log(
+    `Public product boundary holds: ${results.length} retired estate paths stay unreachable and ${pages.length} core pages carry no portfolio content.`
+  );
 })().catch(error => {
   console.error(`Public product boundary verification failed: ${error.message}`);
   process.exit(1);

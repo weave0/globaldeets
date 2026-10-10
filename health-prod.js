@@ -38,7 +38,6 @@ const ROUTES = [
   { path: '/news', label: 'News', expect: 200, type: 'text/html' },
   { path: '/globe', label: 'Globe', expect: 200, type: 'text/html' },
   { path: '/about', label: 'About', expect: 200, type: 'text/html' },
-  { path: '/spheres', label: 'Spheres', expect: 200, type: 'text/html' },
   { path: '/knowledge', label: 'Knowledge', expect: 200, type: 'text/html' },
   { path: '/worldmap', label: 'World Map', expect: 200, type: 'text/html' },
   { path: '/timeline', label: 'Timeline', expect: 200, type: 'text/html' },
@@ -63,6 +62,12 @@ const ROUTES = [
   { path: '/sitemap.xml', label: 'Sitemap', expect: 200, type: 'application/xml' },
   { path: '/robots.txt', label: 'Robots.txt', expect: 200, type: 'text/plain' },
   { path: '/offline', label: 'Offline fallback', expect: 200, type: 'text/html' },
+  // Retired public routes (GD-037/GD-038) must stay unreachable; this agrees with
+  // tools/verify-boundary-retired-prod.js (tests/release-gate-agreement.test.mjs enforces it).
+  { path: '/spheres', label: 'Retired Spheres directory', expect: 404, type: 'text/html' },
+  { path: '/spheres.html', label: 'Retired Spheres .html alias', expect: 404, type: 'text/html' },
+  { path: '/analytics.html', label: 'Retired analytics page', expect: 404, type: 'text/html' },
+  { path: '/bb-content.html', label: 'Retired sibling product page', expect: 404, type: 'text/html' },
   {
     path: '/__globaldeets_health_missing__',
     label: 'Native Pages 404',
@@ -325,7 +330,8 @@ async function probeHeaders() {
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────────
-(async () => {
+module.exports = { ROUTES };
+if (require.main === module) (async () => {
   const start = Date.now();
 
   if (!JSON_OUT) {

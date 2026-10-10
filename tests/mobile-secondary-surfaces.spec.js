@@ -18,6 +18,37 @@ async function expectTouchTarget(locator, label, minimum = 44) {
   expect(box.height, `${label} height`).toBeGreaterThanOrEqual(minimum);
 }
 
+// The timeline reads the governed feed; keep it deterministic instead of depending on production.
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/news?**', route =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        total: 2,
+        items: [
+          {
+            source: 'Fixture Wire',
+            headline: 'A deliberately long fixture headline that must wrap cleanly inside a phone-width reading lane',
+            sourceUrl: 'https://example.com/a',
+            region: 'europe',
+            published: new Date().toISOString(),
+            displayMode: 'headline-link',
+          },
+          {
+            source: 'Fixture Wire',
+            headline: 'Second fixture headline',
+            sourceUrl: 'https://example.com/b',
+            region: 'asia',
+            published: new Date(Date.now() - 86_400_000).toISOString(),
+            displayMode: 'headline-link',
+          },
+        ],
+      }),
+    })
+  );
+});
+
 async function openAndCheck(page, path, visibleSelector, label) {
   await page.goto(path, { waitUntil: 'domcontentloaded' });
   await expect(page.locator(visibleSelector).first(), `${label} core content`).toBeVisible();
@@ -53,6 +84,9 @@ test('timeline collapses cleanly to a single mobile reading lane', async ({ page
   await openAndCheck(page, '/timeline.html', '.timeline-container', 'timeline');
   await expectTouchTarget(page.locator('header .nav-icon-btn').first(), 'timeline primary nav');
   await expect(page.locator('.timeline-item').first()).toBeVisible();
+  await expect(page.locator('.timeline-item')).toHaveCount(2);
+  await expectTouchTarget(page.locator('.desk-story-read').first(), 'timeline publisher link');
+  await expectNoHorizontalOverflow(page, 'timeline after render');
 });
 
 test('coverage observatory remains readable without clipping', async ({ page }) => {

@@ -686,7 +686,9 @@
   color: var(--text-muted);
 }
 
-.news-error button {
+.news-error button,
+.news-empty button {
+  min-height: 44px;
   margin-top: 1rem;
   padding: 0.5rem 1.25rem;
   background: var(--neon-cyan);
@@ -695,6 +697,14 @@
   border-radius: 6px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.news-load-more-note {
+  margin: 0.75rem auto 0;
+  text-align: center;
+  /* Readers must be able to read this recovery message: --text-muted is too low-contrast here. */
+  color: var(--text-secondary);
+  font-size: 0.875rem;
 }
 
 /* Load more button */
@@ -884,9 +894,11 @@ body::after {
 
 /* =============================================
    HEADER - FLOATING GLASS
+   Scoped to the site header (a direct child of <body>). Semantic <header> elements inside page
+   content, such as the World Desk dateline or a modal header, must not become sticky glass bars.
    ============================================= */
 
-header {
+body > header {
   background: rgba(15, 23, 42, 0.5);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
@@ -904,11 +916,11 @@ header {
     box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-header.scrolled {
+body > header.scrolled {
   padding: 0.75rem 0;
 }
 
-header::before {
+body > header::before {
   content: '';
   position: absolute;
   top: 0;
@@ -926,7 +938,7 @@ header::before {
   pointer-events: none;
 }
 
-header.scrolled {
+body > header.scrolled {
   background: rgba(10, 14, 26, 0.92);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
   backdrop-filter: blur(32px) saturate(200%);
@@ -935,7 +947,7 @@ header.scrolled {
     0 0 80px rgba(59, 130, 246, 0.15);
 }
 
-header.scrolled::before {
+body > header.scrolled::before {
   opacity: 1;
 }
 
@@ -1051,7 +1063,7 @@ header.scrolled::before {
     box-shadow 0.25s ease;
 }
 
-header.scrolled .site-logo-mark {
+body > header.scrolled .site-logo-mark {
   height: 54px;
 }
 
@@ -2891,5 +2903,251 @@ body.globe-page {
   .globe-filter-btn {
     font-size: 0.7rem;
     padding: 0.3rem 0.6rem;
+  }
+}
+
+/* =============================================
+   PHONE HEADER + HERO (GD-038 mobile pass)
+   On phones the header is one slim row: compact logo mark plus a single row of 44px icon
+   targets. The decorative logo frame, tagline, and full-screen hero are desktop-only so the
+   reader reaches stories on the first screen.
+   ============================================= */
+@media (max-width: 700px) {
+  body > header,
+  body > header.scrolled {
+    padding: 0.4rem 0;
+  }
+
+  body > header .container {
+    padding: 0 0.75rem;
+  }
+
+  body > header .header {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+  }
+
+  body > header .logo {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  body > header .tagline {
+    display: none;
+  }
+
+  body > header .logo h1 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  body > header .site-logo-link {
+    min-width: 0;
+    padding: 2px 6px;
+    border-radius: 10px;
+    box-shadow: none;
+  }
+
+  body > header .site-logo-link::before,
+  body > header .site-logo-link::after {
+    display: none;
+  }
+
+  body > header .site-logo-mark,
+  body > header.scrolled .site-logo-mark {
+    height: 36px;
+    filter: none;
+  }
+
+  body > header .primary-nav {
+    flex: 0 1 auto;
+    gap: 4px;
+  }
+
+  body > header .primary-nav .nav-item {
+    flex-direction: column;
+    gap: 2px;
+    min-width: 52px;
+    height: 50px;
+    padding: 0.2rem 0.45rem;
+    font-size: 0.7rem;
+  }
+
+  body > header .primary-nav .nav-item img,
+  body > header .primary-nav .nav-more-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* The globe stays as a compact identity band; the reader must reach a real headline,
+     its publisher, and its source action on the first screen (tests/gd038-first-view). */
+  .globe-hero-section {
+    height: auto;
+    min-height: 0;
+  }
+
+  .globe-hero-overlay {
+    position: relative;
+    padding: 1.1rem 1rem 1rem;
+    justify-content: flex-end;
+  }
+
+  .globe-hero-title {
+    margin: 0 0 0.35rem;
+    font-size: clamp(1.6rem, 8vw, 2rem);
+  }
+
+  .globe-hero-title br {
+    display: none;
+  }
+
+  .globe-hero-tagline,
+  .globe-hero-cta,
+  .news-ticker-bar {
+    display: none;
+  }
+
+  .globe-pin-hint {
+    margin: 0;
+    font-size: 0.75rem;
+  }
+
+  .news-status-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+}
+
+/* =============================================
+   LABELED PRIMARY NAVIGATION (GD-038)
+   Destinations carry visible text labels; nothing essential depends on recognizing an icon or
+   hovering for a tooltip. Secondary destinations live in a native <details> "More" menu.
+   ============================================= */
+.primary-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.primary-nav .nav-item {
+  width: auto;
+  height: auto;
+  min-width: 44px;
+  min-height: 44px;
+  gap: 0.45rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.1;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primary-nav .nav-item img,
+.primary-nav .nav-more-icon,
+.primary-nav .nav-label {
+  position: relative;
+  z-index: 1;
+}
+
+.primary-nav .nav-item:hover,
+.primary-nav .nav-item:focus-visible {
+  border-color: rgba(0, 245, 255, 0.45);
+}
+
+.primary-nav .nav-item.active {
+  border-color: var(--neon-cyan);
+  background: rgba(0, 245, 255, 0.1);
+}
+
+summary.nav-item {
+  list-style: none;
+}
+
+summary.nav-item::-webkit-details-marker {
+  display: none;
+}
+
+.nav-more {
+  position: relative;
+}
+
+.nav-more[open] > summary.nav-item {
+  border-color: var(--neon-cyan);
+}
+
+.nav-more-menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 200;
+  min-width: 230px;
+  margin: 0;
+  padding: 0.4rem;
+  list-style: none;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  background: #0f1629;
+  box-shadow: var(--shadow-lg);
+}
+
+.nav-more-menu a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.85rem;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.nav-more-menu a:hover,
+.nav-more-menu a:focus-visible {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.nav-more-menu a[aria-current='page'] {
+  color: var(--neon-cyan);
+  font-weight: 600;
+}
+
+/* Very narrow screens (320px reflow and below): keep the labeled header on one row without
+   overflow; targets stay at least 44px. */
+@media (max-width: 380px) {
+  body > header .container {
+    padding: 0 0.5rem;
+  }
+
+  body > header .header {
+    gap: 0.35rem;
+  }
+
+  body > header .site-logo-link {
+    padding: 2px 4px;
+  }
+
+  body > header .site-logo-mark,
+  body > header.scrolled .site-logo-mark {
+    height: 24px;
+  }
+
+  body > header .header {
+    gap: 0.25rem;
+  }
+
+  body > header .primary-nav {
+    gap: 2px;
+  }
+
+  body > header .primary-nav .nav-item {
+    min-width: 44px;
+    padding: 0.2rem 0.25rem;
+    font-size: 0.65rem;
   }
 }

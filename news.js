@@ -25,19 +25,35 @@
     prohibited: 'Reuse prohibited',
   };
 
-  let currentRegion = 'global';
+  let currentRegion = initialRegion();
   let currentOffset = 0;
   const PAGE_SIZE = 24;
+  // The core feed gets longer than optional trust panels: a slow panel must never hold the feed.
+  const FEED_TIMEOUT_MS = 15_000;
+  const TRUST_TIMEOUT_MS = 8_000;
   const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
     ? 'https://globaldeets.com'
     : '';
   let allItems = [];
-  let loading = false;
   let searchTerm = '';
   let sourceById = new Map();
   let admissionById = new Map();
   let coverageData = null;
   let healthData = null;
+  // GD-038 (F4): every feed request carries its own generation and region. A response is applied
+  // only if it is still the newest request, so a slow earlier region can never overwrite a later
+  // selection. Region resets abort the superseded request; "load more" never runs concurrently.
+  let feedGeneration = 0;
+  let feedController = null;
+  let appendInFlight = false;
+  let feedState = 'loading'; // 'loading' | 'ready' | 'error'
+  let feedErrorKind = null;
+  let feedRetrievedAt = null;
+  let feedOfflineCopyAt = null;
+  // functions/api/news.js caches the assembled feed for CACHE_TTL_SECONDS (900s).
+  const SERVER_CACHE_MAX_MINUTES = 15;
+  // Coverage context shows "unavailable" only after both of its inputs have actually settled.
+  const coverageSettled = { coverage: false, admission: false };
 
   function init() {
     installReaderBridgeStyles();
@@ -47,6 +63,26 @@
     loadNews(true);
     hydrateTrustSurface();
     document.getElementById('load-more-btn')?.addEventListener('click', () => loadNews(false));
+  }
+
+  function initialRegion() {
+    try {
+      const requested = new URLSearchParams(location.search).get('region');
+      return REGIONS.includes(requested) ? requested : 'global';
+    } catch {
+      return 'global';
+    }
+  }
+
+  function syncRegionToUrl() {
+    try {
+      const url = new URL(location.href);
+      if (currentRegion === 'global') url.searchParams.delete('region');
+      else url.searchParams.set('region', currentRegion);
+      history.replaceState(history.state, '', url);
+    } catch {
+      // Shareable URLs are a convenience; the feed works without them.
+    }
   }
 
   function installReaderBridgeStyles() {
@@ -68,71 +104,84 @@
     });
   }
 
+  // The trust bar and coverage panel are static markup inside the "Sources & coverage"
+  // disclosure (GD-038 F3), so the raw HTML is meaningful before hydration and stories come first.
   function prepareTrustSurface() {
     const subtitle = document.querySelector('.news-page-subtitle');
     if (subtitle) {
       subtitle.textContent =
         'Live source-linked headlines across seven routing regions. Publisher links stay primary; source provenance, reuse limits, freshness and coverage gaps are inspectable.';
     }
-    const tagline = document.querySelector('.logo .tagline');
-    if (tagline) tagline.textContent = 'World News · Source-Linked · Evidence-Aware';
-    const sourceNote = document.querySelector('.news-sources-note');
-    if (sourceNote) sourceNote.textContent = 'Source inventory loading…';
+  }
 
-    if (!document.getElementById('news-trust-bar')) {
-      const tools = document.querySelector('.news-tools');
-      if (tools) {
-        const trustBar = document.createElement('div');
-        trustBar.id = 'news-trust-bar';
-        trustBar.className = 'news-status-bar';
-        trustBar.setAttribute('aria-label', 'Source coverage and freshness');
-        trustBar.innerHTML = `
-          <span id="news-source-count">Source contract loading…</span>
-          <span id="news-health-status" aria-live="polite">Health snapshot loading…</span>
-          <span class="news-sources-note"><a href="/observatory/coverage/">Coverage & Evidence Observatory →</a></span>`;
-        tools.insertAdjacentElement('afterend', trustBar);
-      }
-    }
-
-    if (!document.getElementById('news-coverage-context')) {
-      const trustBar = document.getElementById('news-trust-bar');
-      if (trustBar) {
-        const panel = document.createElement('section');
-        panel.id = 'news-coverage-context';
-        panel.className = 'news-context-panel';
-        panel.setAttribute('aria-labelledby', 'news-context-title');
-        panel.innerHTML = `
-          <div class="news-context-heading">
-            <div>
-              <p class="news-context-eyebrow">Reading context</p>
-              <h3 id="news-context-title">What this feed can — and cannot — tell you</h3>
-            </div>
-            <a href="/observatory/coverage/" class="news-context-deep-link">Inspect full coverage →</a>
-          </div>
-          <div id="news-context-summary" class="news-context-summary" aria-live="polite">
-            Governed coverage context loading…
-          </div>
-          <div id="news-context-gaps" class="news-context-gaps"></div>
-          <p class="news-context-caveat">Routing region is a feed organization field, not a claim about publisher origin, story locality, truth, quality, or political viewpoint.</p>`;
-        trustBar.insertAdjacentElement('afterend', panel);
-      }
+  class FeedRequestError extends Error {
+    constructor(kind, message) {
+      super(message);
+      this.kind = kind; // 'timeout' | 'offline' | 'upstream' | 'aborted'
     }
   }
 
-  async function fetchJson(path) {
-    const response = await fetch(`${API_BASE}${path}`, { headers: { Accept: 'application/json' } });
-    if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
-    return response.json();
+  async function fetchJson(path, { timeoutMs = TRUST_TIMEOUT_MS, signal } = {}) {
+    const controller = new AbortController();
+    let timedOut = false;
+    const timer = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, timeoutMs);
+    const onOuterAbort = () => controller.abort();
+    signal?.addEventListener('abort', onOuterAbort, { once: true });
+    try {
+      const response = await fetch(`${API_BASE}${path}`, {
+        headers: { Accept: 'application/json' },
+        signal: controller.signal,
+      });
+      if (!response.ok) {
+        // A worker-generated cache miss is not an upstream 503, even if navigator.onLine is true.
+        if (response.headers.get('X-GlobalDeets-Offline-Miss') === '1') {
+          throw new FeedRequestError('offline', `${path}: offline with no saved copy`);
+        }
+        throw new FeedRequestError('upstream', `${path}: HTTP ${response.status}`);
+      }
+      const data = await response.json();
+      // The service worker marks API responses it replays from cache while offline.
+      const offlineCopy = response.headers.get('X-GlobalDeets-Offline-Copy');
+      if (offlineCopy && data && typeof data === 'object') {
+        Object.defineProperty(data, 'offlineCopyAt', { value: offlineCopy, enumerable: false });
+      }
+      return data;
+    } catch (error) {
+      if (error instanceof FeedRequestError) throw error;
+      if (timedOut) throw new FeedRequestError('timeout', `${path}: no response in ${timeoutMs}ms`);
+      if (signal?.aborted) throw new FeedRequestError('aborted', `${path}: superseded`);
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        throw new FeedRequestError('offline', `${path}: browser is offline`);
+      }
+      throw new FeedRequestError('upstream', `${path}: ${error?.message || 'network error'}`);
+    } finally {
+      clearTimeout(timer);
+      signal?.removeEventListener('abort', onOuterAbort);
+    }
   }
 
-  async function hydrateTrustSurface() {
-    const [sourcesResult, admissionResult, coverageResult, healthResult] = await Promise.allSettled([
-      fetchJson('/api/news/sources'),
-      fetchJson('/api/news/admission'),
-      fetchJson('/api/news/coverage'),
-      fetchJson('/api/news/health'),
+  // GD-038 (F5): each trust panel resolves on its own deadline and renders as soon as it lands.
+  // A hung endpoint degrades only its own panel; it never delays the others or the core feed.
+  function hydrateTrustSurface() {
+    return Promise.allSettled([
+      settle(fetchJson('/api/news/sources'), applySources),
+      settle(fetchJson('/api/news/admission'), applyAdmission),
+      settle(fetchJson('/api/news/coverage'), applyCoverage),
+      settle(fetchJson('/api/news/health'), applyHealth),
     ]);
+  }
 
+  function settle(promise, apply) {
+    return promise.then(
+      value => apply({ status: 'fulfilled', value }),
+      reason => apply({ status: 'rejected', reason })
+    );
+  }
+
+  function applySources(sourcesResult) {
     if (sourcesResult.status === 'fulfilled') {
       const sourceData = sourcesResult.value;
       const sources = Array.isArray(sourceData.sources) ? sourceData.sources : [];
@@ -141,7 +190,7 @@
       if (count) {
         count.textContent = `${sourceData.totalSources ?? sources.length} source endpoints in the live contract`;
       }
-      const sourceNote = document.querySelector('.news-status-bar:not(#news-trust-bar) .news-sources-note');
+      const sourceNote = document.querySelector('.news-source-inventory .news-sources-note');
       if (sourceNote) {
         const names = sources.map(source => source.name).filter(Boolean);
         sourceNote.textContent = names.length
@@ -153,7 +202,10 @@
       if (count) count.textContent = 'Source inventory temporarily unavailable';
       console.warn('GlobalDeets source inventory unavailable:', sourcesResult.reason);
     }
+    renderVisibleCards();
+  }
 
+  function applyAdmission(admissionResult) {
     if (admissionResult.status === 'fulfilled') {
       const admissionData = admissionResult.value;
       const admissions = Array.isArray(admissionData.liveAdmissions) ? admissionData.liveAdmissions : [];
@@ -162,13 +214,22 @@
     } else {
       console.warn('GlobalDeets source admission unavailable:', admissionResult.reason);
     }
+    coverageSettled.admission = true;
+    renderCoverageContext();
+    renderVisibleCards();
+  }
 
+  function applyCoverage(coverageResult) {
     if (coverageResult.status === 'fulfilled') {
       coverageData = coverageResult.value;
     } else {
       console.warn('GlobalDeets coverage context unavailable:', coverageResult.reason);
     }
+    coverageSettled.coverage = true;
+    renderCoverageContext();
+  }
 
+  function applyHealth(healthResult) {
     if (healthResult.status === 'fulfilled') {
       healthData = healthResult.value;
       const healthNode = document.getElementById('news-health-status');
@@ -177,14 +238,12 @@
         const total = Number.isFinite(healthData.totalSources) ? healthData.totalSources : '—';
         healthNode.textContent = `${healthy}/${total} endpoints healthy · checked ${formatSnapshotTime(healthData.generatedAt)}`;
       }
+      renderAlerts();
     } else {
       const healthNode = document.getElementById('news-health-status');
       if (healthNode) healthNode.textContent = 'Health snapshot temporarily unavailable';
       console.warn('GlobalDeets health snapshot unavailable:', healthResult.reason);
     }
-
-    renderCoverageContext();
-    renderVisibleCards();
   }
 
   function renderCoverageContext() {
@@ -194,6 +253,7 @@
 
     const admissionSummary = window.__globalDeetsAdmissionSummary;
     if (!coverageData && !admissionSummary) {
+      if (!coverageSettled.coverage || !coverageSettled.admission) return;
       summary.textContent =
         'Coverage context is temporarily unavailable. Headlines and original publisher links remain available.';
       gaps.replaceChildren();
@@ -271,69 +331,181 @@
     if (!tabBar) return;
     tabBar.innerHTML = REGIONS.map(
       r => `
-      <button class="region-tab${r === currentRegion ? ' active' : ''}" data-region="${r}">${REGION_LABELS[r]}</button>`
+      <button type="button" class="region-tab${r === currentRegion ? ' active' : ''}" data-region="${r}" aria-pressed="${r === currentRegion}">${REGION_LABELS[r]}</button>`
     ).join('');
+    // A deep-linked region may sit off-screen in the phone's single scrolling row.
+    tabBar.querySelector('.region-tab.active')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
     tabBar.addEventListener('click', e => {
       const btn = e.target.closest('.region-tab');
       if (!btn || btn.classList.contains('active')) return;
       currentRegion = btn.dataset.region;
-      currentOffset = 0;
-      allItems = [];
       searchTerm = '';
       const searchInput = document.getElementById('news-search');
       if (searchInput) searchInput.value = '';
-      tabBar.querySelectorAll('.region-tab').forEach(b => b.classList.toggle('active', b === btn));
+      tabBar.querySelectorAll('.region-tab').forEach(b => {
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-pressed', String(b === btn));
+      });
+      syncRegionToUrl();
       renderCoverageContext();
       loadNews(true);
     });
   }
 
   function loadNews(reset) {
-    if (loading) return;
-    loading = true;
     const grid = document.getElementById('news-grid');
     const loadBtn = document.getElementById('load-more-btn');
-    if (reset && grid) grid.innerHTML = '<div class="news-skeleton"></div>'.repeat(6);
+
+    if (reset) {
+      // A new selection supersedes everything in flight, including an unfinished "load more".
+      feedController?.abort();
+      currentOffset = 0;
+      allItems = [];
+      appendInFlight = false;
+      feedState = 'loading';
+      // A region switch must not retain the previous region's saved-copy or retrieval label.
+      feedRetrievedAt = null;
+      feedOfflineCopyAt = null;
+      feedErrorKind = null;
+      if (grid) {
+        grid.setAttribute('aria-busy', 'true');
+        grid.innerHTML = '<div class="news-skeleton"></div>'.repeat(6);
+      }
+      if (loadBtn) loadBtn.classList.add('js-hidden');
+      setLoadMoreNote('');
+      updateStatus();
+      renderAlerts();
+    } else {
+      if (appendInFlight || feedState !== 'ready') return;
+      appendInFlight = true;
+      setLoadMoreNote('');
+    }
+
+    const generation = ++feedGeneration;
+    const request = { region: currentRegion, offset: currentOffset, reset };
+    const controller = new AbortController();
+    feedController = controller;
     if (loadBtn) loadBtn.disabled = true;
-    const url = `${API_BASE}/api/news?region=${encodeURIComponent(currentRegion)}&limit=${PAGE_SIZE}&offset=${currentOffset}`;
-    fetch(url)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
+
+    const path = `/api/news?region=${encodeURIComponent(request.region)}&limit=${PAGE_SIZE}&offset=${request.offset}`;
+    fetchJson(path, { timeoutMs: FEED_TIMEOUT_MS, signal: controller.signal })
       .then(data => {
-        const items = data.items || [];
-        allItems = reset ? items : [...allItems, ...items];
-        currentOffset += items.length;
+        if (generation !== feedGeneration || request.region !== currentRegion) return;
+        const items = Array.isArray(data?.items) ? data.items : [];
+        allItems = request.reset ? items : [...allItems, ...items];
+        currentOffset = request.offset + items.length;
+        feedState = 'ready';
         window.__globalDeetsNewsTotal = data.total;
         window.__globalDeetsNewsCached = data.cached;
         window.__globalDeetsNewsAdmissionFingerprint = data.admissionFingerprint;
         window.__globalDeetsNewsDisplayPolicyVersion = data.displayPolicyVersion;
+        window.__globalDeetsNewsRegion = request.region;
+        feedRetrievedAt = new Date();
+        feedOfflineCopyAt = data.offlineCopyAt || null;
         renderVisibleCards();
         updateStatus();
+        renderAlerts();
         if (loadBtn) {
           loadBtn.disabled = false;
-          loadBtn.classList.toggle('js-hidden', items.length < PAGE_SIZE);
+          const total = Number.isFinite(data.total) ? data.total : null;
+          const exhausted = total != null ? currentOffset >= total : items.length < PAGE_SIZE;
+          loadBtn.classList.toggle('js-hidden', exhausted);
         }
       })
-      .catch(err => {
-        if (grid && reset) {
-          grid.innerHTML =
-            '<div class="news-error"><p>Unable to load news feed. The worker may be warming up.</p><button onclick="location.reload()">Retry</button></div>';
-        }
+      .catch(error => {
+        if (generation !== feedGeneration || error?.kind === 'aborted') return;
+        console.error('News fetch failed:', error);
         if (loadBtn) loadBtn.disabled = false;
-        console.error('News fetch failed:', err);
+        if (request.reset) {
+          feedState = 'error';
+          feedErrorKind = error?.kind || 'upstream';
+          renderVisibleCards();
+          updateStatus();
+        } else {
+          setLoadMoreNote(
+            `${failureMessage(error?.kind)} The stories already shown are unchanged.`
+          );
+        }
       })
       .finally(() => {
-        loading = false;
+        if (generation !== feedGeneration) return;
+        if (!request.reset) appendInFlight = false;
+        grid?.removeAttribute('aria-busy');
       });
+  }
+
+  function failureMessage(kind) {
+    if (kind === 'offline') return 'You appear to be offline, so new stories could not be loaded.';
+    if (kind === 'timeout') return 'The news service did not respond in time.';
+    return 'The news service returned an error.';
+  }
+
+  function setLoadMoreNote(text) {
+    let note = document.getElementById('load-more-note');
+    if (!note && text) {
+      const loadBtn = document.getElementById('load-more-btn');
+      if (!loadBtn) return;
+      note = document.createElement('p');
+      note.id = 'load-more-note';
+      note.className = 'news-load-more-note';
+      note.setAttribute('role', 'status');
+      loadBtn.insertAdjacentElement('afterend', note);
+    }
+    if (note) note.textContent = text;
+  }
+
+  function renderErrorState(grid) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'news-error';
+    wrapper.dataset.failure = feedErrorKind;
+    wrapper.setAttribute('role', 'alert');
+    const message = document.createElement('p');
+    message.textContent = `${failureMessage(feedErrorKind)} No stories are shown for ${REGION_LABELS[currentRegion]} right now. This is a loading problem, not a sign that nothing is happening.`;
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.textContent = 'Try again';
+    retry.addEventListener('click', () => loadNews(true));
+    wrapper.append(message, retry);
+    grid.replaceChildren(wrapper);
+  }
+
+  function renderEmptyState(grid) {
+    const empty = document.createElement('div');
+    empty.className = 'news-empty';
+    const message = document.createElement('p');
+    if (searchTerm && allItems.length) {
+      empty.dataset.state = 'no-matches';
+      message.textContent = `None of the ${allItems.length} loaded stories match “${searchTerm}”. The filter only searches stories already loaded on this page.`;
+      const clear = document.createElement('button');
+      clear.type = 'button';
+      clear.textContent = 'Clear filter';
+      clear.addEventListener('click', () => {
+        searchTerm = '';
+        const input = document.getElementById('news-search');
+        if (input) input.value = '';
+        renderVisibleCards();
+        updateStatus();
+        input?.focus();
+      });
+      empty.append(message, clear);
+    } else {
+      empty.dataset.state = 'empty';
+      message.textContent = `Our current sources have no recent stories routed to ${REGION_LABELS[currentRegion]}. That reflects our source coverage, not a lack of events.`;
+      empty.append(message);
+    }
+    grid.replaceChildren(empty);
   }
 
   function renderCards(grid, items, reset) {
     if (!grid) return;
+    if (feedState === 'loading') return;
+    if (feedState === 'error') {
+      renderErrorState(grid);
+      return;
+    }
     if (reset) grid.innerHTML = '';
     if (!items.length && reset) {
-      grid.innerHTML = '<p class="news-empty">No stories found for this region yet.</p>';
+      renderEmptyState(grid);
       return;
     }
     const fragment = document.createDocumentFragment();
@@ -341,6 +513,8 @@
     grid.appendChild(fragment);
   }
 
+  // Card order (GD-038 F3): headline → publisher and publication time → permitted supporting
+  // text → the publisher action. Labels appear only when they change how the card should be read.
   function buildCard(item) {
     const card = document.createElement('article');
     card.className = 'news-card';
@@ -349,35 +523,62 @@
     const headlineLinkOnly = item.displayMode === 'headline-link';
     const provenance = sourceById.get(item.sourceId) || null;
     const admission = admissionById.get(item.sourceId) || null;
+    const href = safeHref(item.sourceUrl);
+    const source = item.source || 'the publisher';
+    const headline = escapeHtml(item.headline || 'Untitled story');
+    const originalLang = escapeHtml(String(item.originalLang || '').toUpperCase());
 
-    const mtBadge = !headlineLinkOnly && item.translated
-      ? `<span class="news-mt-badge" title="Machine translated from ${escapeAttr(item.originalLang || 'original language')} · Cloudflare AI (m2m100)">MT</span>`
-      : !headlineLinkOnly && item.originalLang && item.originalLang !== 'en' && !item.translated
-        ? `<span class="news-mt-badge news-mt-badge--failed" title="Originally in ${escapeAttr(item.originalLang)}; translation unavailable">⚠ ${escapeAttr(item.originalLang.toUpperCase())}</span>`
-        : '';
-    const policyBadge = headlineLinkOnly
-      ? '<span class="news-source-badge news-source-badge--restricted" title="The reviewed source-use record does not authorize the richer card treatment">Headline/link only</span>'
-      : '<span class="news-source-badge news-source-badge--bounded" title="The reviewed source-use record permits GlobalDeets current bounded display">Bounded display</span>';
+    const flags = [];
+    if (headlineLinkOnly) {
+      flags.push(
+        '<span class="news-source-badge news-source-badge--restricted">Headline only</span>'
+      );
+    } else if (item.translated) {
+      flags.push(
+        `<span class="news-mt-badge">Machine-translated from ${originalLang || 'another language'}</span>`
+      );
+    } else if (item.originalLang && item.originalLang !== 'en') {
+      flags.push(
+        `<span class="news-mt-badge news-mt-badge--failed">Original language: ${originalLang}; not translated</span>`
+      );
+    }
     const summaryHtml =
       typeof item.summary === 'string' && item.summary.trim()
         ? `<p class="news-summary">${escapeHtml(item.summary)}</p>`
         : '';
-    const contextHtml = buildSourceContext(item, provenance, admission);
+    const regionLabel = item.region === 'global' ? 'Global' : REGION_LABELS[item.region];
 
     card.innerHTML = `
-      <div class="news-card-header">
-        <span class="news-source-badge">${escapeHtml(item.source || '')}</span>
-        ${policyBadge}${mtBadge}
-        <time class="news-time"${dateAttr}>${pubTime}</time>
-      </div>
-      <h2 class="news-headline"><a href="${escapeAttr(item.sourceUrl || '#')}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.headline || '')}</a></h2>
+      <h2 class="news-headline">${
+        href
+          ? `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">${headline}</a>`
+          : headline
+      }</h2>
+      <p class="news-card-meta">
+        <span class="news-source-name">${escapeHtml(item.source || 'Unnamed source')}</span>
+        ${pubTime ? `<time class="news-time"${dateAttr}>${pubTime}</time>` : ''}
+        ${regionLabel ? `<span class="news-region-tag">Feed: ${escapeHtml(regionLabel)}</span>` : ''}
+      </p>
+      ${flags.length ? `<p class="news-card-flags">${flags.join('')}</p>` : ''}
       ${summaryHtml}
-      ${contextHtml}
-      <div class="news-card-footer">
-        <span class="news-region-tag">${escapeHtml(REGION_LABELS[item.region] || item.region || '')}</span>
-        <a class="news-read-link" href="${escapeAttr(item.sourceUrl || '#')}" target="_blank" rel="noopener noreferrer">Read at ${escapeHtml(item.source || 'source')} →</a>
-      </div>`;
+      <div class="news-card-actions">
+        ${
+          href
+            ? `<a class="news-read-link" href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">Read at ${escapeHtml(source)} →<span class="visually-hidden"> (opens in a new tab)</span></a>`
+            : '<span class="news-read-unavailable">Publisher link unavailable</span>'
+        }
+      </div>
+      ${buildSourceContext(item, provenance, admission)}`;
     return card;
+  }
+
+  function safeHref(value) {
+    try {
+      const url = new URL(value);
+      return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : null;
+    } catch {
+      return null;
+    }
   }
 
   function buildSourceContext(item, provenance, admission) {
@@ -404,7 +605,7 @@
     }
     return `
       <details class="news-source-context">
-        <summary>Why this source is shown this way</summary>
+        <summary>Source context</summary>
         <div class="news-source-context-body">
           <p class="news-rights-state"><strong>${escapeHtml(RIGHTS_LABELS[status] || humanize(status))}.</strong> ${escapeHtml(explanation)}</p>
           ${facts.length ? `<div class="news-source-facts">${facts.join('')}</div>` : ''}
@@ -449,12 +650,74 @@
 
   function updateStatus() {
     const status = document.getElementById('news-status');
+    updateFreshness();
     if (!status) return;
+    if (feedState === 'loading') {
+      status.textContent = `Loading ${REGION_LABELS[currentRegion]}…`;
+      return;
+    }
+    if (feedState === 'error') {
+      status.textContent = `${REGION_LABELS[currentRegion]} stories unavailable`;
+      return;
+    }
     const total = window.__globalDeetsNewsTotal ?? '?';
-    const cachedNote = window.__globalDeetsNewsCached ? ' · cached' : '';
     const visibleItems = getVisibleItems();
-    const searchNote = searchTerm ? ` · ${visibleItems.length} matching search` : '';
-    status.textContent = `${allItems.length} of ${total} stories${cachedNote}${searchNote}`;
+    const searchNote = searchTerm ? ` · ${visibleItems.length} matching filter` : '';
+    status.textContent = `${allItems.length} of ${total} stories${searchNote}`;
+  }
+
+  // Publication time lives on each card; this line states only when this page retrieved the feed
+  // and how old the server's copy can be. It never claims the stories themselves are current.
+  function updateFreshness() {
+    const node = document.getElementById('news-freshness');
+    if (!node) return;
+    if (feedState !== 'ready' || !feedRetrievedAt) {
+      node.textContent = '';
+      return;
+    }
+    if (feedOfflineCopyAt) {
+      node.textContent = 'saved copy';
+      return;
+    }
+    const retrieved = feedRetrievedAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    node.textContent = window.__globalDeetsNewsCached
+      ? `retrieved ${retrieved} · server copy up to ${SERVER_CACHE_MAX_MINUTES} min old`
+      : `retrieved ${retrieved}`;
+  }
+
+  // Consequential conditions stay visible outside the "Sources & coverage" disclosure.
+  function renderAlerts() {
+    const container = document.getElementById('news-alerts');
+    if (!container) return;
+    const alerts = [];
+    if (feedState === 'ready' && feedOfflineCopyAt) {
+      const saved = new Date(feedOfflineCopyAt);
+      const when = Number.isNaN(saved.getTime())
+        ? 'earlier'
+        : `at ${saved.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+      alerts.push([
+        'offline',
+        `You appear to be offline. These stories were saved ${when} and may be out of date.`,
+      ]);
+    }
+    const healthy = healthData?.healthySources;
+    const totalSources = healthData?.totalSources;
+    if (Number.isFinite(healthy) && Number.isFinite(totalSources) && healthy < totalSources) {
+      const failing = totalSources - healthy;
+      alerts.push([
+        'partial',
+        `${failing} of ${totalSources} sources failed their most recent check, so some stories may be missing.`,
+      ]);
+    }
+    container.replaceChildren(
+      ...alerts.map(([kind, text]) => {
+        const item = document.createElement('p');
+        item.className = 'news-alert';
+        item.dataset.alert = kind;
+        item.textContent = text;
+        return item;
+      })
+    );
   }
 
   function escapeHtml(str) {
