@@ -32,6 +32,7 @@ jobs:
               run: |
                   npm run lint
                   npm run test:smoke
+                  npm run test:retired-edge-cache-purge
 
             - name: Fetch validated Mission Control evidence (if any)
               run: |
@@ -50,6 +51,12 @@ jobs:
                   CF_PAGES_COMMIT_SHA: ${{ github.sha }}
                   MISSION_CONTROL_EVIDENCE_DIR: .evidence
 
+            - name: Purge retired public paths from Cloudflare edge cache
+              run: node tools/purge-retired-edge-cache.js
+              env:
+                  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
             - name: Deploy to Cloudflare Pages
               uses: cloudflare/wrangler-action@v4
               with:
@@ -57,6 +64,12 @@ jobs:
                   accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
                   wranglerVersion: "4.131.1"
                   command: pages deploy dist --project-name globaldeets --branch main --commit-hash ${{ github.sha }} --commit-dirty=false
+
+            - name: Purge retired public paths from Cloudflare edge cache
+              run: node tools/purge-retired-edge-cache.js
+              env:
+                  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
             - name: Verify production deployment
               env:
@@ -143,7 +156,8 @@ jobs:
             - name: Verify public product boundary holds
               run: |
                   for attempt in 1 2 3 4 5 6; do
-                    if node tools/verify-boundary-retired-prod.js --base=https://globaldeets.com; then
+                    if node tools/verify-boundary-retired-prod.js --base=https://globaldeets.com &&
+                       node tools/verify-boundary-retired-prod.js --base=https://www.globaldeets.com; then
                       exit 0
                     fi
 
