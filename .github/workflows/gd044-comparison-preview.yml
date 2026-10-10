@@ -47,6 +47,10 @@ jobs:
           PREVIEW_URL: ${{ steps.pages.outputs.deployment-url }}
           EXACT_SHA: ${{ github.sha }}
         run: node tools/verify-saved-reading-preview.js --base="$PREVIEW_URL" --expected-commit="$EXACT_SHA"
+      - name: Verify actual production reader gate against integrated preview
+        env:
+          PREVIEW_URL: ${{ steps.pages.outputs.deployment-url }}
+        run: node tools/verify-reader-prod.js --base="$PREVIEW_URL"
       - name: Save design and return-navigation screenshots
         if: always()
         uses: actions/upload-artifact@v4
