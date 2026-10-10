@@ -115,6 +115,18 @@ async function main() {
     assert(!nav.overflow && nav.touchWidth>=44 && nav.touchHeight>=44 &&
       nav.menuRight<=nav.viewport+1,'mobile reader navigation broke');
     await phone.screenshot({path:resolve('design-previews/gd041-asia-mobile.png'),animations:'disabled'});
+    res=await phone.goto(BASE+'/story/santa-ynez-pipeline/', {waitUntil:'domcontentloaded',timeout:30000});
+    assert(res?.ok(), 'story failed mobile navigation');
+    await phone.waitForSelector('body[data-story-ready="true"]', {timeout:15000});
+    const phoneStory=await phone.evaluate(()=>({
+      dark:window.getComputedStyle(document.body).backgroundColor,
+      overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,
+      source:Boolean(document.querySelector('.story-lead-action .story-read-link')),
+      recordFacts:Boolean(document.querySelector('.story-quick-facts')),
+    }));
+    assert(phoneStory.dark==='rgb(11, 17, 26)' && !phoneStory.overflow &&
+      phoneStory.source && phoneStory.recordFacts, 'story mobile reading layout or attribution failed');
+    await phone.screenshot({path:resolve('design-previews/gd041-story-mobile.png'),animations:'disabled'});
     await mobile.close();
     const storyContext=await browser.newContext({viewport:{width:1440,height:900},serviceWorkers:'allow'});
     try{
