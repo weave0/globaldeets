@@ -308,6 +308,27 @@ test('original links survive a failed record', async ({ page }) => {
   await expect(page.locator('body[data-story-ready="true"]')).toHaveCount(0);
 });
 
+test('unversioned live record cannot replace the saved-story provenance of a reviewed copy', async ({ page }) => {
+  const path = join(__dirname, '..', 'story', 'santa-ynez-pipeline', 'story.json');
+  const shipped = JSON.parse(readFileSync(path, 'utf8'));
+  await page.route('**/api/intelligence/stories/santa-ynez-pipeline', route =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ ...shipped, dossierVersion: null, reviewedAt: '2026-10-09' }),
+    })
+  );
+  await page.goto(STORY);
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+  await expect(page.locator('#story-load-status')).toContainText('newer copy was rejected');
+  await expect(page.locator('body')).toHaveAttribute('data-story-version', shipped.dossierVersion);
+  await page.getByRole('button', { name: 'Save story on this device' }).click();
+  const local = JSON.parse(await page.evaluate(() =>
+    window.localStorage.getItem('globaldeets:saved-story:v1')
+  ));
+  expect(local.version).toBe(shipped.dossierVersion);
+});
+
 test('a rule-breaking API copy is rejected', async ({ page }) => {
   await page.route('**/api/intelligence/stories/santa-ynez-pipeline', async route => {
     await route.fulfill({
