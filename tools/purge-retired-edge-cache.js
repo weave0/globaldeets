@@ -3,7 +3,9 @@
 const { RETIRED_PATHS } = require('./verify-boundary-retired-prod');
 
 const API_BASE = 'https://api.cloudflare.com/client/v4';
-const SITE_ORIGIN = 'https://globaldeets.com';
+// Both hostnames are active public Pages aliases. A purge of the apex URL does not evict
+// a separately cached response under www.
+const SITE_ORIGINS = ['https://globaldeets.com', 'https://www.globaldeets.com'];
 const API_REQUEST_TIMEOUT_MS = 15_000;
 
 function cloudflareFailure(operation, response, payload) {
@@ -71,7 +73,9 @@ async function purgeRetiredEdgeCache({
     );
   }
 
-  const files = RETIRED_PATHS.map(path => new URL(path, SITE_ORIGIN).href);
+  const files = SITE_ORIGINS.flatMap(origin =>
+    RETIRED_PATHS.map(path => new URL(path, origin).href)
+  );
   const purgeResponse = await fetchCloudflare(
     fetchImpl,
     `${API_BASE}/zones/${encodeURIComponent(matchingZones[0].id)}/purge_cache`,
@@ -88,7 +92,7 @@ async function purgeRetiredEdgeCache({
 
 if (require.main === module) {
   purgeRetiredEdgeCache()
-    .then(count => console.log(`Purged ${count} retired-path cache entries for globaldeets.com.`))
+    .then(count => console.log(`Purged ${count} retired-path cache entries across both production hostnames.`))
     .catch(error => {
       console.error(error.message);
       process.exitCode = 1;
