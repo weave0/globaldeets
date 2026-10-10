@@ -101,6 +101,24 @@ test('a direct maintained story link keeps the reviewed record through offline r
   await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
 });
 
+test('an explicitly saved maintained story remains discoverable on the first offline visit', async ({ page }) => {
+  await page.goto('/story/santa-ynez-pipeline/');
+  await waitForControllingWorker(page);
+  await expect(page.getByRole('button', { name: 'Save story on this device' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Save story on this device' }).click();
+  await expect(page.getByRole('button', { name: 'Remove saved story' })).toBeVisible();
+
+  await page.context().route('**/*', route => route.abort('internetdisconnected'));
+  await page.reload();
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+  await expect(page.getByRole('button', { name: 'Remove saved story' })).toBeVisible();
+  await page.goto('/index.html');
+  const home = page.locator('#saved-story-panel');
+  await expect(home).toBeVisible();
+  await expect(home.getByRole('link', { name: 'Continue this record' }))
+    .toHaveAttribute('href', '/story/santa-ynez-pipeline/');
+});
+
 test('a dev server answering a stylesheet with JavaScript can never leave an unstyled cached page', async ({
   page,
 }) => {
