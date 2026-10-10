@@ -12,6 +12,8 @@
  * (projects-data/render, platform modal, sibling product pages, maintainer templates) must stay
  * gone, and core public pages must not name sibling products or link to their domains.
  */
+const { createHash, randomUUID } = require('crypto');
+
 function argValue(name) {
   const arg = process.argv.find(value => value.startsWith(name));
   return arg ? arg.slice(name.length) : null;
@@ -19,6 +21,20 @@ function argValue(name) {
 
 const BASE = (argValue('--base=') || 'https://globaldeets.com').replace(/\/$/, '');
 const TIMEOUT_MS = 12_000;
+const DEFAULT_IMMUTABLE_BASE = 'https://69a0a63f.globaldeets.pages.dev';
+const DEFAULT_PAGES_BASE = 'https://globaldeets.pages.dev';
+const DIAGNOSTIC_PATHS = ['/platform-modal.js', '/bi-ecosystem.css'];
+const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
+const DIAGNOSTIC_HEADERS = {
+  'User-Agent': 'GlobalDeets-BoundaryDiagnostic/1.0',
+  'Cache-Control': 'no-cache, no-store, max-age=0',
+  Pragma: 'no-cache',
+};
+const ACCEPTANCE_HEADERS = {
+  'User-Agent': 'GlobalDeets-BoundaryVerifier/1.0',
+  'Cache-Control': 'no-cache',
+  Pragma: 'no-cache',
+};
 
 const RETIRED_PATHS = [
   '/observatory/mission-control/',
@@ -78,8 +94,149 @@ async function statusOf(path) {
   return response.status;
 }
 
-module.exports = { RETIRED_PATHS, CORE_PAGES };
+function selectedHeaders(headers) {
+  const selected = {};
+  for (const [name, value] of headers.entries()) {
+    if (
+      name === 'age' ||
+      name === 'cache-control' ||
+      name === 'content-length' ||
+      name === 'content-type' ||
+      name === 'etag' ||
+      name === 'location' ||
+      name === 'server' ||
+      name === 'vary' ||
+      name === 'via' ||
+      name.startsWith('cf-') ||
+      name.startsWith('x-')
+    ) {
+      selected[name] = value;
+    }
+  }
+  return selected;
+}
+
+async function inspectResponse(
+  initialUrl,
+  fetchImpl = fetch,
+  requestHeaders = DIAGNOSTIC_HEADERS,
+  redirectMode = 'manual'
+) {
+  const redirectChain = [];
+  let currentUrl = new URL(initialUrl);
+
+  for (let redirects = 0; redirects <= 10; redirects++) {
+    const requestOptions = {
+      headers: requestHeaders,
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    };
+    if (redirectMode === 'manual') requestOptions.redirect = 'manual';
+    const response = await fetchImpl(currentUrl, requestOptions);
+    const responseHeaders = selectedHeaders(response.headers);
+    const location = response.headers.get('location');
+
+    if (REDIRECT_STATUSES.has(response.status) && location) {
+      redirectChain.push({
+        url: currentUrl.href,
+        status: response.status,
+        location: new URL(location, currentUrl).href,
+        headers: responseHeaders,
+      });
+      await response.body?.cancel();
+      if (redirects === 10) throw new Error(`Response exceeded 10 redirects: ${initialUrl}`);
+      currentUrl = new URL(location, currentUrl);
+      continue;
+    }
+
+    const body = new Uint8Array(await response.arrayBuffer());
+    return {
+      requestedUrl: new URL(initialUrl).href,
+      finalUrl: redirectMode === 'follow' ? response.url || currentUrl.href : currentUrl.href,
+      redirected: redirectMode === 'follow' ? response.redirected : redirectChain.length > 0,
+      redirectChain,
+      status: response.status,
+      contentType: response.headers.get('content-type'),
+      declaredContentLength: response.headers.get('content-length'),
+      contentLengthBytes: body.byteLength,
+      bodySha256: createHash('sha256').update(body).digest('hex'),
+      cacheControl: response.headers.get('cache-control'),
+      age: response.headers.get('age'),
+      cfCacheStatus: response.headers.get('cf-cache-status'),
+      cfRay: response.headers.get('cf-ray'),
+      etag: response.headers.get('etag'),
+      headers: responseHeaders,
+    };
+  }
+
+  throw new Error(`Unable to inspect response: ${initialUrl}`);
+}
+
+async function runBoundaryDiagnostics({
+  fetchImpl = fetch,
+  baseUrls = [
+    BASE,
+    'https://www.globaldeets.com',
+    process.env.GLOBALDEETS_BOUNDARY_IMMUTABLE_BASE || DEFAULT_IMMUTABLE_BASE,
+    process.env.GLOBALDEETS_BOUNDARY_PAGES_BASE || DEFAULT_PAGES_BASE,
+  ],
+  probeId = randomUUID(),
+  cacheBust = true,
+  requestHeaders = DIAGNOSTIC_HEADERS,
+  redirectMode = 'manual',
+  profile = 'cache-busted-diagnostic',
+} = {}) {
+  const controlPath = `/__globaldeets_boundary_control_${probeId}.js`;
+  const paths = [...DIAGNOSTIC_PATHS, controlPath];
+  const targets = [...new Set(baseUrls)].flatMap(baseUrl =>
+    paths.map(path => ({ baseUrl, path }))
+  );
+  const responses = await Promise.all(
+    targets.map(async ({ baseUrl, path }, index) => {
+      const url = new URL(path, baseUrl);
+      if (cacheBust) url.searchParams.set('_boundary_probe', `${probeId}-${index}`);
+      return inspectResponse(url, fetchImpl, requestHeaders, redirectMode);
+    })
+  );
+
+  return {
+    diagnosticOnly: true,
+    profile,
+    cacheBusted: cacheBust,
+    redirectMode,
+    capturedAt: new Date().toISOString(),
+    probeId,
+    requestHeaders,
+    paths,
+    responses,
+  };
+}
+
+module.exports = { RETIRED_PATHS, CORE_PAGES, inspectResponse, runBoundaryDiagnostics };
 if (require.main === module) (async () => {
+  if (process.argv.includes('--diagnose')) {
+    const [acceptanceProfile, cacheBustedProfile] = await Promise.all([
+      runBoundaryDiagnostics({
+        cacheBust: false,
+        profile: 'acceptance-request-no-query',
+        requestHeaders: ACCEPTANCE_HEADERS,
+        redirectMode: 'follow',
+      }),
+      runBoundaryDiagnostics(),
+    ]);
+    console.log(
+      JSON.stringify(
+        {
+          diagnosticOnly: true,
+          capturedAt: new Date().toISOString(),
+          profiles: [acceptanceProfile, cacheBustedProfile],
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+
   const results = await Promise.all(RETIRED_PATHS.map(async path => ({ path, status: await statusOf(path) })));
   const leaked = results.filter(result => result.status === 200);
 
