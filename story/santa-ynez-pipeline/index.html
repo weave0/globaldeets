@@ -113,6 +113,12 @@
           Reviewed <time datetime="2026-09-03">September 3, 2026</time>. Content version 2026-09-03.1.
         </p>
         <p id="story-load-status" class="story-load-status" role="status"></p>
+        <div id="saved-story-controls" class="story-save-panel" hidden>
+          <button type="button" id="saved-story-toggle" disabled>Save story on this device</button>
+          <p id="saved-story-status" class="story-note" role="status" aria-live="polite">
+            A reviewed record must load before saving.
+          </p>
+        </div>
       </header>
 
       <div id="story-body" aria-busy="true"></div>
@@ -141,5 +147,6 @@
     <script src="/site-nav.js" defer></script>
     <script src="/sw-register.js" defer></script>
     <script src="/story/santa-ynez-pipeline/story.js" defer></script>
+    <script src="/saved-reading.js" defer></script>
   </body>
 </html>
