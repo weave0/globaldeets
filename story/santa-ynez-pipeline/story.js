@@ -17,6 +17,7 @@
     'July', 'August', 'September', 'October', 'November', 'December',
   ];
   const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+  const RECORD_VERSION = /^\d{4}-\d{2}-\d{2}\.\d{1,4}$/;
   if (!fixturePage) recordStoryMeasurement('story-opened', key);
 
   document.addEventListener('keydown', event => {
@@ -92,7 +93,8 @@
     );
     if (!rulesOk) return false;
     if (fixturePage) return view.fixture === true;
-    return view.storyKey === key && view.fixture !== true;
+    return view.storyKey === key && view.fixture !== true &&
+      typeof view.dossierVersion === 'string' && RECORD_VERSION.test(view.dossierVersion);
   }
 
   function render(view) {
@@ -116,7 +118,7 @@
     // Save only a successfully validated and actually rendered public record
     // version. No account, activity history or passive tracking is introduced.
     if (!fixturePage && typeof view.dossierVersion === 'string' &&
-        /^\d{4}-\d{2}-\d{2}\.\d{1,4}$/.test(view.dossierVersion)) {
+        RECORD_VERSION.test(view.dossierVersion)) {
       document.body.dataset.storyVersion = view.dossierVersion;
       document.dispatchEvent(new window.Event('globaldeets:reviewed-story-rendered'));
     }
@@ -186,30 +188,67 @@
       '<p class="story-note">The review date, source links, corrections and unresolved questions are kept visible. This page does not claim continuous monitoring or independent corroboration.</p>');
   }
 
+  // Comparison is about attributable distinct URLs, not the number of names
+  // placed beside the same article. Fragments and common tracking parameters
+  // cannot turn one report into a second original reporting origin.
+  function comparisonUrlKey(value) {
+    if (typeof value !== 'string') return null;
+    try {
+      const url = new URL(value);
+      if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
+      url.hash = '';
+      for (const key of [...url.searchParams.keys()]) {
+        if (/^(?:utm_.*|fbclid|gclid|mc_cid|mc_eid)$/i.test(key)) {
+          url.searchParams.delete(key);
+        }
+      }
+      url.searchParams.sort();
+      return url.href;
+    } catch {
+      return null;
+    }
+  }
+
   function publisherComparison(view) {
-    const origins = (view.reporting?.origins || []).filter(origin => origin && origin.url);
-    const distinct = Number.isInteger(view.reporting?.distinctUrls)
-      ? view.reporting.distinctUrls
-      : new Set(origins.map(origin => origin.url)).size;
-    // One-to-one source/URL attribution does NOT prove an independent editorial
-    // viewpoint. Require two separately named publishers and nonduplicated URLs
-    // before presenting side-by-side reporting origins. Ownership is not inferred.
+    const origins = (view.reporting?.origins || [])
+      .filter(origin => origin && comparisonUrlKey(origin.url))
+      .map(origin => ({ origin, urlKey: comparisonUrlKey(origin.url) }));
+    // Recompute from safe, canonical original links rather than trusting a
+    // potentially stale projected count, including on an offline story copy.
+    const distinct = new Set(origins.map(entry => entry.urlKey)).size;
     const publishers = new Map();
-    for (const origin of origins) {
+    const urlOwners = new Map();
+    for (const { origin, urlKey } of origins) {
       if (origin.independent !== true || origin.syndicated) continue;
       const name = typeof origin.name === 'string' ? origin.name.trim() : '';
       if (!name) continue;
       const id = name.normalize('NFKC').toLowerCase();
       if (!publishers.has(id)) publishers.set(id, { name, origins: [] });
-      publishers.get(id).origins.push(origin);
+      publishers.get(id).origins.push({ origin, urlKey });
+      if (!urlOwners.has(urlKey)) urlOwners.set(urlKey, new Set());
+      urlOwners.get(urlKey).add(id);
     }
-    const sufficient = publishers.size >= 2;
+    // A publisher must have at least one original URL attributed to it alone.
+    // Shared links cannot establish a second source, even with different names.
+    const comparable = [...publishers.values()].map(group => {
+      const seen = new Set();
+      const own = group.origins
+        .filter(entry => urlOwners.get(entry.urlKey).size === 1)
+        .filter(entry => {
+          if (seen.has(entry.urlKey)) return false;
+          seen.add(entry.urlKey);
+          return true;
+        })
+        .map(entry => entry.origin);
+      return { name: group.name, origins: own };
+    }).filter(group => group.origins.length > 0);
+    const sufficient = comparable.length >= 2;
     const note = sufficient
-      ? 'Different named publishers with separate original reporting URLs are shown here. Shared ownership or editorial independence has not been verified; their accounts are not scored for reliability, bias, importance or truth, and agreement is not automatically corroboration.'
-      : 'A meaningful side-by-side publisher comparison is not available: fewer than two distinct named publishers with separate, nonduplicated reporting URLs are documented. Official statements and syndicated copies are not extra publishers.';
+      ? 'Different named publishers with separate, non-overlapping original reporting URLs are shown here. Shared ownership or editorial independence has not been verified; their accounts are not scored for reliability, bias, importance or truth, and agreement is not automatically corroboration.'
+      : 'A meaningful side-by-side publisher comparison is not available: fewer than two distinct named publishers with separate, nonduplicated reporting URLs are documented. Shared links, official statements and syndicated copies are not extra reporting origins.';
     const rows = sufficient
       ? '<ul class="story-compare-list">' +
-          [...publishers.values()].map(group => {
+          comparable.map(group => {
             const events = [...new Set(group.origins.flatMap(origin => origin.eventTitles || []))];
             const links = group.origins.map(origin =>
               '<p>' + externalLink(origin.url, origin.linkLabel || 'Read the original report') + '</p>'

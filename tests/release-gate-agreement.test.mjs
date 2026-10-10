@@ -117,3 +117,38 @@ test('the knowledge page does not deny analytics while loading Google Analytics'
   assert.doesNotMatch(page, /No tracking\./i, 'public privacy copy must agree with active analytics scripts');
   assert.match(page, /This site uses analytics\./);
 });
+
+test('production reader gate audits displayed global selection rather than retired live-source statistics', () => {
+  const home = readFileSync(join(ROOT, 'index.html'), 'utf8');
+  const verifier = readFileSync(join(ROOT, 'tools/verify-reader-prod.js'), 'utf8');
+  for (const id of ['desk-audit-publishers', 'desk-audit-regions', 'desk-audit-total', 'desk-audit-share']) {
+    assert.match(home, new RegExp('id="' + id + '"'), 'homepage is missing a measured selection counter');
+    assert.ok(verifier.includes("value('" + id + "')"), 'production gate must inspect ' + id);
+  }
+  assert.match(verifier, /page\.waitForResponse\(/, 'release gate must inspect the actual homepage API response');
+  assert.match(verifier, /data\.selection\?\.policyVersion/, 'release gate must check named selection policy');
+  assert.match(verifier, /shown\.share === maxShare/, 'release gate must verify calculated concentration');
+  assert.doesNotMatch(verifier, /hasText: 'Live Sources'|homepage did not render 21 live sources/i);
+  assert.doesNotMatch(home, /<span class="dm-stat-label">Live Sources<\/span>/);
+});
+
+test('reader verification requires the service worker cache version actually built for this release', () => {
+  const worker = readFileSync(join(ROOT, 'service-worker.js'), 'utf8');
+  const reader = readFileSync(join(ROOT, 'tools/verify-reader-prod.js'), 'utf8');
+  const preview = readFileSync(join(ROOT, 'tools/verify-preview-pages.js'), 'utf8');
+  const version = /const CACHE_NAME = '(globaldeets-cache-v\d+)'/.exec(worker)?.[1];
+  assert.ok(version, 'service-worker cache name not found');
+  assert.ok(reader.includes(version), 'production reader gate is checking the wrong service-worker cache');
+  assert.ok(preview.includes(version), 'isolated Pages verifier is checking the wrong service-worker cache');
+});
+
+test('production News verifier checks the current reader disclosure, not a retired subtitle', () => {
+  const page = readFileSync(join(ROOT, 'news.html'), 'utf8');
+  const verifier = readFileSync(join(ROOT, 'tools/verify-reader-prod.js'), 'utf8');
+  for (const phrase of ['Live, source-linked headlines', 'original publisher', 'provenance', 'coverage limitations']) {
+    assert.ok(page.includes(phrase), 'News disclosure no longer contains: ' + phrase);
+    assert.ok(verifier.includes("subtitle.includes('" + phrase + "')"),
+      'production reader gate drifted from News disclosure: ' + phrase);
+  }
+  assert.doesNotMatch(verifier, /Live source-linked headlines across seven routing regions/);
+});

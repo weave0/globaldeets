@@ -27,6 +27,16 @@ async function routeFeed(page, items) {
   });
 }
 
+test('News coverage disclosure keeps the reviewed source-first copy after hydration', async ({ page }) => {
+  await page.goto('/news.html');
+  const disclosure = page.locator('.news-page-subtitle');
+  await expect(disclosure).toContainText('Live, source-linked headlines from 21 governed source endpoints');
+  await expect(disclosure).toContainText('original publisher');
+  await expect(disclosure).toContainText('provenance');
+  await expect(disclosure).toContainText('coverage limitations');
+  await expect(disclosure).not.toContainText('across seven routing regions');
+});
+
 test.describe('local calendar dates (America/Chicago)', () => {
   test.use({ timezoneId: 'America/Chicago' });
 

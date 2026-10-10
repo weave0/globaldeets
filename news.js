@@ -60,7 +60,6 @@
 
   function init() {
     installReaderBridgeStyles();
-    prepareTrustSurface();
     renderTabs();
     bindSearch();
     document.getElementById('news-grid')?.addEventListener('click', event => {
@@ -113,15 +112,9 @@
     });
   }
 
-  // The trust bar and coverage panel are static markup inside the "Sources & coverage"
-  // disclosure (GD-038 F3), so the raw HTML is meaningful before hydration and stories come first.
-  function prepareTrustSurface() {
-    const subtitle = document.querySelector('.news-page-subtitle');
-    if (subtitle) {
-      subtitle.textContent =
-        'Live source-linked headlines across seven routing regions. Publisher links stay primary; source provenance, reuse limits, freshness and coverage gaps are inspectable.';
-    }
-  }
+  // The trust bar and coverage panel are already meaningful HTML. Hydration
+  // must not replace the editorial disclosure with divergent legacy copy.
+  // Source-health and coverage fields are updated separately below.
 
   class FeedRequestError extends Error {
     constructor(kind, message) {
