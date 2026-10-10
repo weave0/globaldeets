@@ -113,6 +113,13 @@
       notes(view),
     ].join('');
     body.setAttribute('aria-busy', 'false');
+    // Save only a successfully validated and actually rendered public record
+    // version. No account, activity history or passive tracking is introduced.
+    if (!fixturePage && typeof view.dossierVersion === 'string' &&
+        /^\d{4}-\d{2}-\d{2}\.\d{1,4}$/.test(view.dossierVersion)) {
+      document.body.dataset.storyVersion = view.dossierVersion;
+      document.dispatchEvent(new window.Event('globaldeets:reviewed-story-rendered'));
+    }
   }
 
   function applyFixtureIdentity(view) {

@@ -55,8 +55,8 @@ async function main() {
   const worker = await response('/service-worker.js');
   assert((worker.headers.get('content-type') || '').includes('javascript'), 'worker MIME is not JavaScript');
   const swText = await worker.text();
-  assert(swText.includes('globaldeets-cache-v10') && swText.includes('normalizeHtmlResponse') &&
-    swText.includes('story/santa-ynez-pipeline/index.html'), 'reviewed v10 offline story shell is absent');
+  assert(swText.includes('globaldeets-cache-v11') && swText.includes('normalizeHtmlResponse') &&
+    swText.includes('story/santa-ynez-pipeline/index.html') && swText.includes('saved-reading.js'), 'reviewed v10 offline story shell is absent');
   const stylesheet = await response('/story/story.css');
   assert((stylesheet.headers.get('content-type') || '').includes('text/css'), 'story stylesheet MIME invalid');
   mkdirSync(resolve('design-previews'), { recursive: true });

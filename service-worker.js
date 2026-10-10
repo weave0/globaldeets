@@ -1,5 +1,5 @@
 // Basic service worker for offline caching
-const CACHE_NAME = 'globaldeets-cache-v10';
+const CACHE_NAME = 'globaldeets-cache-v11';
 // The offline shell: every precached page plus every same-origin asset those pages load (including
 // news-reader-bridge.css, which news.js injects). tests/offline-shell-agreement.test.mjs keeps this
 // list complete and limited to shipped files; a missing file would fail the worker install.
@@ -18,6 +18,7 @@ const CORE_ASSETS = [
   'news.js',
   'globe-hero.js',
   'site-nav.js',
+  'saved-reading.js',
   'interactions.js',
   'app.js',
   'sw-register.js',

@@ -46,9 +46,9 @@ async function main() {
   ]);
   assert((style.headers.get('content-type')||'').includes('text/css'), 'editorial CSS MIME unavailable');
   const sw = await worker.text();
-  assert(sw.includes('globaldeets-cache-v10') &&
+  assert(sw.includes('globaldeets-cache-v11') &&
       sw.includes('story/santa-ynez-pipeline/story.json') &&
-      sw.includes('editorial-reader.css') &&
+      sw.includes('editorial-reader.css') && sw.includes('saved-reading.js') &&
       sw.includes('normalizeHtmlResponse'), 'unified public offline shell missing');
   assert(story.storyId === 'story:santa-ynez-pipeline' && story.rules?.truthScore === false &&
       story.rules?.editorialVerdict === false && story.understanding?.proseSummary == null,

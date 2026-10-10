@@ -72,7 +72,7 @@ test('the service worker installs, precaches only shipped files, and retires the
 }) => {
   // Seed the cache the previous worker version used; activation must delete it.
   await page.goto('/offline.html');
-  await page.evaluate(() => caches.open('globaldeets-cache-v9').then(cache => cache.put('/stale', new Response('old'))));
+  await page.evaluate(() => caches.open('globaldeets-cache-v10').then(cache => cache.put('/stale', new Response('old'))));
 
   await page.goto('/index.html');
   await waitForControllingWorker(page);
@@ -80,12 +80,12 @@ test('the service worker installs, precaches only shipped files, and retires the
   const state = await page.evaluate(async () => ({
     keys: await caches.keys(),
     precached: await caches
-      .open('globaldeets-cache-v10')
-      .then(cache => Promise.all(['/world-desk.js', '/news.js', '/offline.html'].map(path => cache.match(path))))
+      .open('globaldeets-cache-v11')
+      .then(cache => Promise.all(['/world-desk.js', '/news.js', '/saved-reading.js', '/offline.html'].map(path => cache.match(path))))
       .then(matches => matches.every(Boolean)),
   }));
-  expect(state.keys).toContain('globaldeets-cache-v10');
-  expect(state.keys).not.toContain('globaldeets-cache-v9');
+  expect(state.keys).toContain('globaldeets-cache-v11');
+  expect(state.keys).not.toContain('globaldeets-cache-v10');
   expect(state.precached).toBe(true);
 });
 
@@ -101,6 +101,24 @@ test('a direct maintained story link keeps the reviewed record through offline r
   await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
 });
 
+test('an explicitly saved maintained story remains discoverable on the first offline visit', async ({ page }) => {
+  await page.goto('/story/santa-ynez-pipeline/');
+  await waitForControllingWorker(page);
+  await expect(page.getByRole('button', { name: 'Save story on this device' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Save story on this device' }).click();
+  await expect(page.getByRole('button', { name: 'Remove saved story' })).toBeVisible();
+
+  await page.context().route('**/*', route => route.abort('internetdisconnected'));
+  await page.reload();
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+  await expect(page.getByRole('button', { name: 'Remove saved story' })).toBeVisible();
+  await page.goto('/index.html');
+  const home = page.locator('#saved-story-panel');
+  await expect(home).toBeVisible();
+  await expect(home.getByRole('link', { name: 'Continue this record' }))
+    .toHaveAttribute('href', '/story/santa-ynez-pipeline/');
+});
+
 test('a dev server answering a stylesheet with JavaScript can never leave an unstyled cached page', async ({
   page,
 }) => {
@@ -109,9 +127,9 @@ test('a dev server answering a stylesheet with JavaScript can never leave an uns
   await page.goto('/index.html');
   await waitForControllingWorker(page);
   const cached = await page.evaluate(async () => {
-    const cache = await caches.open('globaldeets-cache-v10');
+    const cache = await caches.open('globaldeets-cache-v11');
     const out = {};
-    for (const path of ['/styles.css', '/world-desk.css', '/editorial-reader.css', '/news.js']) {
+    for (const path of ['/styles.css', '/world-desk.css', '/editorial-reader.css', '/saved-reading.js', '/news.js']) {
       const response = await cache.match(path);
       out[path] = response ? response.headers.get('content-type') : null;
     }
