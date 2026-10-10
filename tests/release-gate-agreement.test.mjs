@@ -141,3 +141,14 @@ test('reader verification requires the service worker cache version actually bui
   assert.ok(reader.includes(version), 'production reader gate is checking the wrong service-worker cache');
   assert.ok(preview.includes(version), 'isolated Pages verifier is checking the wrong service-worker cache');
 });
+
+test('production News verifier checks the current reader disclosure, not a retired subtitle', () => {
+  const page = readFileSync(join(ROOT, 'news.html'), 'utf8');
+  const verifier = readFileSync(join(ROOT, 'tools/verify-reader-prod.js'), 'utf8');
+  for (const phrase of ['Live, source-linked headlines', 'original publisher', 'provenance', 'coverage limitations']) {
+    assert.ok(page.includes(phrase), 'News disclosure no longer contains: ' + phrase);
+    assert.ok(verifier.includes("subtitle.includes('" + phrase + "')"),
+      'production reader gate drifted from News disclosure: ' + phrase);
+  }
+  assert.doesNotMatch(verifier, /Live source-linked headlines across seven routing regions/);
+});
