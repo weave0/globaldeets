@@ -135,6 +135,52 @@ test('fails closed when zone lookup is denied or the zone belongs to another acc
   assert.equal(calls, 1);
 });
 
+test('rejects ambiguous active zones in the configured account', async () => {
+  let calls = 0;
+  await assert.rejects(
+    purgeRetiredEdgeCache({
+      accountId: 'account-id',
+      apiToken: 'test-token',
+      fetchImpl: async () => {
+        calls++;
+        return zoneResponse([
+          { id: 'zone-a', name: 'globaldeets.com', account: { id: 'account-id' } },
+          { id: 'zone-b', name: 'globaldeets.com', account: { id: 'account-id' } },
+        ]);
+      },
+    }),
+    /found 2/
+  );
+  assert.equal(calls, 1, 'never attempt a purge without a unique matching zone');
+});
+
+test('fails closed on malformed Cloudflare success responses', async () => {
+  await assert.rejects(
+    purgeRetiredEdgeCache({
+      accountId: 'account-id',
+      apiToken: 'test-token',
+      fetchImpl: async () => response({ success: true, result: null }),
+    }),
+    /malformed result/
+  );
+
+  let calls = 0;
+  await assert.rejects(
+    purgeRetiredEdgeCache({
+      accountId: 'account-id',
+      apiToken: 'test-token',
+      fetchImpl: async () => {
+        calls++;
+        return calls === 1
+          ? zoneResponse()
+          : response({ success: false, errors: [{ code: 10000, message: 'Denied' }] });
+      },
+    }),
+    /Cloudflare retired-path cache purge failed \(HTTP 200\).*Denied/
+  );
+  assert.equal(calls, 2);
+});
+
 test('fails when Cloudflare rejects the purge request', async () => {
   let calls = 0;
   await assert.rejects(
