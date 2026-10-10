@@ -17,6 +17,7 @@
     'July', 'August', 'September', 'October', 'November', 'December',
   ];
   const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+  const RECORD_VERSION = /^\d{4}-\d{2}-\d{2}\.\d{1,4}$/;
   if (!fixturePage) recordStoryMeasurement('story-opened', key);
 
   document.addEventListener('keydown', event => {
@@ -92,7 +93,8 @@
     );
     if (!rulesOk) return false;
     if (fixturePage) return view.fixture === true;
-    return view.storyKey === key && view.fixture !== true;
+    return view.storyKey === key && view.fixture !== true &&
+      typeof view.dossierVersion === 'string' && RECORD_VERSION.test(view.dossierVersion);
   }
 
   function render(view) {
@@ -116,7 +118,7 @@
     // Save only a successfully validated and actually rendered public record
     // version. No account, activity history or passive tracking is introduced.
     if (!fixturePage && typeof view.dossierVersion === 'string' &&
-        /^\d{4}-\d{2}-\d{2}\.\d{1,4}$/.test(view.dossierVersion)) {
+        RECORD_VERSION.test(view.dossierVersion)) {
       document.body.dataset.storyVersion = view.dossierVersion;
       document.dispatchEvent(new window.Event('globaldeets:reviewed-story-rendered'));
     }
