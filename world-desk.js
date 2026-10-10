@@ -2,7 +2,7 @@
  * GlobalDeets — World Desk reader modules (GD-038)
  *
  * Renders GlobalDeets-native reader surfaces from the governed /api/news feed:
- *   - #desk-latest     homepage "Latest reporting" list
+ *   - #desk-latest     homepage publisher-diverse recent reporting list
  *   - #timeline-items  timeline.html: stories grouped by publication day
  *   - #browse-regions  categories.html: browse by feed region and source
  *
@@ -236,7 +236,7 @@
     list.setAttribute('aria-busy', 'true');
     if (status) status.textContent = 'Loading latest reporting…';
     try {
-      const data = await fetchJson(`/api/news?region=global&limit=${limit}&offset=0`);
+      const data = await fetchJson(`/api/news?region=global&limit=${limit}&offset=0&mode=diverse`);
       const items = Array.isArray(data?.items) ? data.items : [];
       if (!items.length) {
         list.replaceChildren(
