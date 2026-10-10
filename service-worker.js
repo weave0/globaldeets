@@ -159,7 +159,8 @@ async function writeToCache(request, response, isApi) {
 }
 
 async function fromCache(request, isApi, isNav) {
-  const cached = await caches.match(request);
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(request);
   if (cached && isApi) return markOfflineCopy(cached);
   if (cached) return isNav ? normalizeHtmlResponse(cached) : cached;
   if (isApi) {
@@ -171,11 +172,11 @@ async function fromCache(request, isApi, isNav) {
   if (isNav && urlIsSameOrigin(request.url)) {
     const page = offlinePageFor(request.url);
     if (page) {
-      const shell = await caches.match(page);
+      const shell = await cache.match(page);
       if (shell) return shell;
     }
   }
-  if (isNav) return (await caches.match('offline.html')) || Response.error();
+  if (isNav) return (await cache.match('offline.html')) || Response.error();
   return Response.error();
 }
 
