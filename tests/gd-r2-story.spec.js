@@ -216,6 +216,56 @@ test('one named publisher with two original URLs is still not a cross-publisher 
   await expect(comparison.locator('.story-compare-list')).toHaveCount(0);
 });
 
+
+test('publisher comparison rejects two named publishers sharing one original report URL', async ({ page }) => {
+  const path = join(__dirname, '..', 'story', 'santa-ynez-pipeline', 'story.json');
+  const shipped = JSON.parse(readFileSync(path, 'utf8'));
+  const original = shipped.reporting.origins[0];
+  shipped.reporting.origins.push({
+    ...original,
+    name: 'Reattributed Fixture Publisher',
+    url: original.url + '#mirror',
+    linkLabel: 'Read reattributed report',
+    independent: true,
+    syndicated: false,
+  });
+  shipped.reporting.distinctUrls = 2; // Deliberately stale, not evidence.
+  await page.route('**/story/santa-ynez-pipeline/story.json', route =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(shipped) })
+  );
+  await page.route('**/api/intelligence/stories/santa-ynez-pipeline', route => route.abort());
+  await page.goto(STORY);
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+  const comparison = page.locator('section[aria-labelledby="comparison-heading"]');
+  await expect(comparison).toContainText('1 distinct reporting URL');
+  await expect(comparison).toContainText('Shared links');
+  await expect(comparison.locator('.story-compare-list')).toHaveCount(0);
+});
+
+test('publisher comparison shows separately attributable originals, without implying corroboration', async ({ page }) => {
+  const path = join(__dirname, '..', 'story', 'santa-ynez-pipeline', 'story.json');
+  const shipped = JSON.parse(readFileSync(path, 'utf8'));
+  shipped.reporting.origins.push({
+    ...shipped.reporting.origins[0],
+    name: 'Second Fixture Publisher',
+    url: 'https://example.com/separately-published-report',
+    linkLabel: 'Read separate original',
+    independent: true,
+    syndicated: false,
+  });
+  shipped.reporting.distinctUrls = 1; // Prove the browser recalculates the actual origins.
+  await page.route('**/story/santa-ynez-pipeline/story.json', route =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(shipped) })
+  );
+  await page.route('**/api/intelligence/stories/santa-ynez-pipeline', route => route.abort());
+  await page.goto(STORY);
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+  const comparison = page.locator('section[aria-labelledby="comparison-heading"]');
+  await expect(comparison).toContainText('2 distinct reporting URLs');
+  await expect(comparison.locator('.story-compare-list > li')).toHaveCount(2);
+  await expect(comparison).toContainText('agreement is not automatically corroboration');
+});
+
 test('the record keeps conflict, evidence, correction, and unknowns', async ({ page }) => {
   await page.goto(STORY);
   await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
