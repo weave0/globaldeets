@@ -241,6 +241,40 @@ test('coverage collection derives route queries from the canonical coverage resp
   assert.equal(report.sampledFeedViews.routeCount, 2);
 });
 
+test('coverage report refuses conflicting endpoint and feed fingerprints', () => {
+  const first = minimalResponses();
+  first.core.health.body.sourceFingerprint = 'another-registry';
+  assert.throws(
+    () => buildCoverageReport({ capturedAt: '2026-10-10T18:30:00.000Z', baseUrl: 'https://globaldeets.com', ...first }),
+    /Inconsistent coverage snapshot: health sourceFingerprint/
+  );
+
+  const second = minimalResponses();
+  second.feeds.americas.body.admissionFingerprint = 'wrong-admissions';
+  assert.throws(
+    () => buildCoverageReport({ capturedAt: '2026-10-10T18:30:00.000Z', baseUrl: 'https://globaldeets.com', ...second }),
+    /Inconsistent coverage snapshot: feed:americas admissionFingerprint/
+  );
+});
+
+test('invalid article URLs do not count as duplicate canonical URLs', () => {
+  const fixture = minimalResponses();
+  fixture.feeds.global.body.items.push({
+    sourceId: 'beta',
+    sourceUrl: 'not-a-url',
+    published: '2026-10-10T10:00:00.000Z',
+  });
+  const report = buildCoverageReport({
+    capturedAt: '2026-10-10T18:30:00.000Z',
+    baseUrl: 'https://globaldeets.com',
+    ...fixture,
+  });
+  const globalView = report.sampledFeedViews.views.find(view => view.feedRoutingRegionFilter === 'global');
+  assert.equal(globalView.invalidOriginalArticleUrlCount, 1);
+  assert.equal(globalView.duplicateCanonicalArticleUrlCount, 1);
+  assert.equal(globalView.distinctCanonicalArticleUrls, 1);
+});
+
 test('coverage collection fails explicitly when a required API is unavailable', async () => {
   await assert.rejects(
     collectCoverageReport('https://globaldeets.com', async () => response({}, { status: 503 })),
