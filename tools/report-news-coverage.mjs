@@ -61,6 +61,7 @@ export function buildCoverageReport({ capturedAt, baseUrl, core, feeds }) {
   const coverage = core.coverage.body;
   const admissionById = new Map(admissions.map(entry => [entry.sourceId, entry]));
   const healthById = new Map(health.map(entry => [entry.sourceId, entry]));
+  const fingerprintConsistency = verifyFingerprintConsistency(core, feeds);
   const routeReports = Object.entries(feeds)
     .sort(([left], [right]) => left.localeCompare(right))
     .map(([region, result]) => summarizeFeed(region, result.body));
@@ -149,6 +150,7 @@ export function buildCoverageReport({ capturedAt, baseUrl, core, feeds }) {
       source: core.sources.body.sourceFingerprint,
       admission: core.admission.body.admissionFingerprint,
     },
+    fingerprintConsistency,
     registryReviewDates: {
       provenance: core.sources.body.reviewedAt,
       admission: core.admission.body.reviewedAt,
@@ -226,6 +228,41 @@ export function buildCoverageReport({ capturedAt, baseUrl, core, feeds }) {
   };
 }
 
+function verifyFingerprintConsistency(core, feeds) {
+  const expected = {
+    sourceFingerprint: core.sources.body.sourceFingerprint,
+    admissionFingerprint: core.admission.body.admissionFingerprint,
+  };
+  for (const [field, value] of Object.entries(expected)) {
+    if (typeof value !== 'string' || !value) {
+      throw new Error(`Coverage report missing required ${field}`);
+    }
+  }
+
+  const observed = [];
+  const check = (label, body) => {
+    for (const [field, value] of Object.entries(expected)) {
+      if (body[field] === undefined || body[field] === null) {
+        observed.push({ endpoint: label, field, status: 'not-exposed' });
+        continue;
+      }
+      if (body[field] !== value) {
+        throw new Error(
+          `Inconsistent coverage snapshot: ${label} ${field} differs from the canonical fingerprint`
+        );
+      }
+      observed.push({ endpoint: label, field, status: 'matched' });
+    }
+  };
+  for (const [name, result] of Object.entries(core)) {
+    check(name, result.body);
+  }
+  for (const [region, result] of Object.entries(feeds)) {
+    check(`feed:${region}`, result.body);
+  }
+  return { consistent: true, observations: observed };
+}
+
 function summarizeFeed(region, body) {
   const items = requiredArray(body.items, `${region} feed`);
   const canonicalUrls = new Set();
@@ -256,7 +293,10 @@ function summarizeFeed(region, body) {
     sourceFingerprint: body.sourceFingerprint || null,
     admissionFingerprint: body.admissionFingerprint || null,
     distinctCanonicalArticleUrls: canonicalUrls.size,
-    duplicateCanonicalArticleUrlCount: Math.max(0, items.length - canonicalUrls.size),
+    duplicateCanonicalArticleUrlCount: Math.max(
+      0,
+      items.length - invalidOriginalArticleUrlCount - canonicalUrls.size
+    ),
     invalidOriginalArticleUrlCount,
     missingOrInvalidPublicationTimeCount,
     newestPublishedAt: publicationTimes.length
