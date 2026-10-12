@@ -197,3 +197,28 @@ test('Pages middleware retains existing API behavior and security headers', asyn
   assert.equal(response.headers.get('x-frame-options'), 'DENY');
   assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
 });
+
+test('production boundary rejects redirects, errors and missing retired-path protections', () => {
+  const { auditRetiredResponse, isValidRetiredResponse } =
+    require('../tools/verify-boundary-retired-prod.js');
+  const protectedHeaders = {
+    'content-type': 'text/html; charset=utf-8',
+    'cache-control': 'no-store, max-age=0',
+    'x-robots-tag': 'noindex',
+    'x-content-type-options': 'nosniff',
+  };
+  const good = auditRetiredResponse(new Response('not found', {
+    status: 404, headers: protectedHeaders,
+  }));
+  assert.equal(isValidRetiredResponse(good), true);
+  for (const status of [200, 301, 302, 403, 500, 503]) {
+    const outcome = auditRetiredResponse(new Response('bad', { status, headers: protectedHeaders }));
+    assert.equal(isValidRetiredResponse(outcome), false, `HTTP ${status} cannot certify retirement`);
+  }
+  for (const header of Object.keys(protectedHeaders)) {
+    const headers = { ...protectedHeaders };
+    delete headers[header];
+    const outcome = auditRetiredResponse(new Response('not found', { status: 404, headers }));
+    assert.equal(isValidRetiredResponse(outcome), false, `missing ${header} cannot certify retirement`);
+  }
+});
