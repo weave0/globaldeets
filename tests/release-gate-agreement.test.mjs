@@ -177,7 +177,7 @@ test('Pages middleware emits uncached 404 for every retired path on both hostnam
       assert.equal(response.status, 404, `${host}${path} was not rejected`);
       assert.match(response.headers.get('cache-control') || '', /no-store/);
       assert.equal(response.headers.get('x-robots-tag'), 'noindex');
-      assert.match(response.headers.get('content-type') || '', /text\\/html/);
+      assert.match(response.headers.get('content-type') || '', /text\/html/);
       assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
     }
   }
