@@ -33,7 +33,7 @@ const RETIRED_PUBLIC_PATHS = new Set([
 ]);
 
 export async function onRequest(context) {
-  const pathname = new URL(context.request.url).pathname;
+  const pathname = context.request?.url ? new URL(context.request.url).pathname : '';
   const retired = RETIRED_PUBLIC_PATHS.has(pathname) ||
     pathname.startsWith('/observatory/mission-control/');
   const response = retired
