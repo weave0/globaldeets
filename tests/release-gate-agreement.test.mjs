@@ -157,10 +157,27 @@ test('Pages routes all retired URLs through the middleware without routing all s
   const routes = JSON.parse(readFileSync(join(ROOT, '_routes.json'), 'utf8'));
   assert.ok(routes.include.includes('/api/*'), 'existing API routing must stay enabled');
   assert.ok(!routes.include.includes('/*'), 'ordinary static routes must remain free of Functions');
+  const matchesRule = (rule, path) => rule.endsWith('*')
+    ? path.startsWith(rule.slice(0, -1))
+    : rule === path;
+
+  // Wrangler rejects includes that overlap a wildcard, even when unit tests pass.
+  // Check the actual dispatch patterns, not only whether their names are present.
   for (const path of RETIRED_PATHS) {
-    assert.ok(routes.include.includes(path), `${path} does not invoke the Pages boundary middleware`);
+    const matching = routes.include.filter(rule => matchesRule(rule, path));
+    assert.equal(matching.length, 1, `${path} must be handled by exactly one route rule`);
   }
   assert.ok(routes.include.includes('/observatory/mission-control/*'));
+  for (let i = 0; i < routes.include.length; i++) {
+    for (let j = i + 1; j < routes.include.length; j++) {
+      const left = routes.include[i];
+      const right = routes.include[j];
+      assert.ok(
+        !(matchesRule(left, right) || matchesRule(right, left)),
+        `Cloudflare Pages disallows overlapping include rules: ${left} and ${right}`
+      );
+    }
+  }
 });
 
 test('Pages middleware emits uncached 404 for every retired path on both hostnames', async () => {
