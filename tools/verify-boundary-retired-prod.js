@@ -78,10 +78,10 @@ function auditRetiredResponse(response) {
   const contentType = response.headers.get('content-type') || '';
   return {
     status: response.status,
-    noStore: /\\bno-store\\b/i.test(cacheControl),
-    noindex: /\\bnoindex\\b/i.test(robots),
+    noStore: /\bno-store\b/i.test(cacheControl),
+    noindex: /\bnoindex\b/i.test(robots),
     nosniff: (response.headers.get('x-content-type-options') || '').toLowerCase() === 'nosniff',
-    html: /text\\/html/i.test(contentType),
+    html: /text\/html/i.test(contentType),
   };
 }
 
