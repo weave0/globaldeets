@@ -152,3 +152,48 @@ test('staging rejects every retired public path if it re-enters the artifact', a
     });
   }
 });
+
+test('Pages routes all retired URLs through the middleware without routing all static traffic', () => {
+  const routes = JSON.parse(readFileSync(join(ROOT, '_routes.json'), 'utf8'));
+  assert.ok(routes.include.includes('/api/*'), 'existing API routing must stay enabled');
+  assert.ok(!routes.include.includes('/*'), 'ordinary static routes must remain free of Functions');
+  for (const path of RETIRED_PATHS) {
+    assert.ok(routes.include.includes(path), `${path} does not invoke the Pages boundary middleware`);
+  }
+  assert.ok(routes.include.includes('/observatory/mission-control/*'));
+});
+
+test('Pages middleware emits uncached 404 for every retired path on both hostnames', async () => {
+  const source = readFileSync(join(ROOT, 'functions/_middleware.js'), 'utf8');
+  const { onRequest } = await import(`data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`);
+  for (const host of ['globaldeets.com', 'www.globaldeets.com']) {
+    for (const path of RETIRED_PATHS) {
+      let forwarded = false;
+      const response = await onRequest({
+        request: new Request(`https://${host}${path}`),
+        next: () => { forwarded = true; return new Response('unsafe', { status: 200 }); },
+      });
+      assert.equal(forwarded, false, `${host}${path} escaped middleware`);
+      assert.equal(response.status, 404, `${host}${path} was not rejected`);
+      assert.match(response.headers.get('cache-control') || '', /no-store/);
+      assert.equal(response.headers.get('x-robots-tag'), 'noindex');
+      assert.match(response.headers.get('content-type') || '', /text\\/html/);
+      assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+    }
+  }
+});
+
+test('Pages middleware retains existing API behavior and security headers', async () => {
+  const source = readFileSync(join(ROOT, 'functions/_middleware.js'), 'utf8');
+  const { onRequest } = await import(`data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`);
+  let forwarded = 0;
+  const response = await onRequest({
+    request: new Request('https://globaldeets.com/api/news'),
+    next: () => { forwarded++; return new Response('ok', { status: 200 }); },
+  });
+  assert.equal(forwarded, 1);
+  assert.equal(response.status, 200);
+  assert.equal(await response.text(), 'ok');
+  assert.equal(response.headers.get('x-frame-options'), 'DENY');
+  assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+});
