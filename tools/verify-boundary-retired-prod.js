@@ -70,22 +70,41 @@ async function textOf(path) {
   return response.text();
 }
 
+// A deleted asset must not be mistaken for a successful boundary just because
+// the edge returned a redirect, block page, or server error rather than HTTP 200.
+function auditRetiredResponse(response) {
+  const cacheControl = response.headers.get('cache-control') || '';
+  const robots = response.headers.get('x-robots-tag') || '';
+  const contentType = response.headers.get('content-type') || '';
+  return {
+    status: response.status,
+    noStore: /\bno-store\b/i.test(cacheControl),
+    noindex: /\bnoindex\b/i.test(robots),
+    nosniff: (response.headers.get('x-content-type-options') || '').toLowerCase() === 'nosniff',
+    html: /text\/html/i.test(contentType),
+  };
+}
+
+function isValidRetiredResponse(result) {
+  return result.status === 404 && result.noStore && result.noindex && result.nosniff && result.html;
+}
+
 async function statusOf(path) {
   const response = await fetch(`${BASE}${path}`, {
     headers: { 'User-Agent': 'GlobalDeets-BoundaryVerifier/1.0', 'Cache-Control': 'no-cache', Pragma: 'no-cache' },
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
-  return response.status;
+  return auditRetiredResponse(response);
 }
 
-module.exports = { RETIRED_PATHS, CORE_PAGES };
+module.exports = { RETIRED_PATHS, CORE_PAGES, auditRetiredResponse, isValidRetiredResponse };
 if (require.main === module) (async () => {
-  const results = await Promise.all(RETIRED_PATHS.map(async path => ({ path, status: await statusOf(path) })));
-  const leaked = results.filter(result => result.status === 200);
+  const results = await Promise.all(RETIRED_PATHS.map(async path => ({ path, ...await statusOf(path) })));
+  const invalid = results.filter(result => !isValidRetiredResponse(result));
 
-  if (leaked.length > 0) {
+  if (invalid.length > 0) {
     throw new Error(
-      `retired estate surfaces are publicly reachable again: ${leaked.map(item => `${item.path} (HTTP ${item.status})`).join(', ')}`
+      `retired estate surfaces lack strict 404/no-store/noindex protections: ${invalid.map(item => `${item.path} (HTTP ${item.status}; no-store=${item.noStore}; noindex=${item.noindex}; nosniff=${item.nosniff}; html=${item.html})`).join(', ')}`
     );
   }
 
