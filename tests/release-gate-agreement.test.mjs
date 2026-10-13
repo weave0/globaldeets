@@ -239,3 +239,35 @@ test('production boundary rejects redirects, errors and missing retired-path pro
     assert.equal(isValidRetiredResponse(outcome), false, `missing ${header} cannot certify retirement`);
   }
 });
+
+test('production reader requires selection audit derived from the governed response', () => {
+  const html = readFileSync(join(ROOT, 'index.html'), 'utf8');
+  const script = readFileSync(join(ROOT, 'tools/verify-reader-prod.js'), 'utf8');
+  for (const id of ['desk-audit-publishers', 'desk-audit-regions', 'desk-audit-total', 'desk-audit-share']) {
+    assert.match(html, new RegExp('id="' + id + '"'));
+    assert.ok(script.includes("value('" + id + "')"));
+  }
+  assert.match(script, /page\.waitForResponse\(/);
+  assert.match(script, /data\.selection\?\.policyVersion/);
+  assert.match(script, /shown\.share === maxShare/);
+  assert.doesNotMatch(script, /hasText: 'Live Sources'|homepage did not render 21 live sources/);
+});
+
+test('production reader checks the actually shipped service-worker cache', () => {
+  const sw = readFileSync(join(ROOT, 'service-worker.js'), 'utf8');
+  const script = readFileSync(join(ROOT, 'tools/verify-reader-prod.js'), 'utf8');
+  const cache = /const CACHE_NAME = '(globaldeets-cache-v\d+)'/.exec(sw)?.[1];
+  assert.ok(cache && script.includes(cache));
+  assert.doesNotMatch(script, /saved-reading\.js/, 'do not require unshipped v11 assets');
+});
+
+test('News hydration retains reviewed source-first subtitle and release-verifier agreement', () => {
+  const html = readFileSync(join(ROOT, 'news.html'), 'utf8');
+  const app = readFileSync(join(ROOT, 'news.js'), 'utf8');
+  const check = readFileSync(join(ROOT, 'tools/verify-reader-prod.js'), 'utf8');
+  for (const phrase of ['Live, source-linked headlines', 'original publisher', 'provenance', 'coverage limitations']) {
+    assert.ok(html.includes(phrase));
+    assert.ok(check.includes("subtitle.includes('" + phrase + "')"));
+  }
+  assert.doesNotMatch(app, /prepareTrustSurface\(\)/);
+});
