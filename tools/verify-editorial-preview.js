@@ -49,18 +49,18 @@ async function main() {
     await waitForPopulatedReporting(page, '#desk-latest .desk-story', 'desktop homepage');
     const placement = await page.evaluate(() => {
       const desk = document.querySelector('#world-desk');
-      const globe = document.querySelector('.globe-hero-section');
+      const explorer = document.querySelector('#coverage-explorer');
       const evidence = document.querySelector('header .nav-evidence');
       return {
-        deskBeforeGlobe: !!(desk.compareDocumentPosition(globe) & Node.DOCUMENT_POSITION_FOLLOWING),
-        globeInMain: document.querySelector('main').contains(globe),
+        deskBeforeExplorer: !!(desk.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING),
+        explorerInMain: document.querySelector('main').contains(explorer),
         canvas: window.getComputedStyle(document.body).backgroundColor,
         headerHeight: document.querySelector('body > header').getBoundingClientRect().height,
         evidenceVisible: evidence && window.getComputedStyle(evidence).display !== 'none',
         overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
       };
     });
-    assert(placement.deskBeforeGlobe && placement.globeInMain, 'globe appears ahead of reporting');
+    assert(placement.deskBeforeExplorer && placement.explorerInMain, 'explorer appears ahead of reporting');
     assert(placement.canvas === 'rgb(11, 17, 26)' && placement.headerHeight < 120,
       'compact midnight editorial reading palette was not applied');
     assert(placement.evidenceVisible && !placement.overflow, 'home navigation/layout not editorial');
