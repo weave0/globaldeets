@@ -345,9 +345,10 @@ Updated as work lands. "Implemented" means merged code with automated tests; it 
 | R1 phone first view | Implemented: first headline, publisher, and source action visible without scrolling at 390×844, 360×800, 360×640 | `gd038-first-view.spec.js` |
 | R1 service worker install/upgrade/offline labeling | Implemented with a dedicated service-worker-enabled test path | `gd038-service-worker.spec.js` |
 | R1 light mode | **Deferred** (not part of the reader-reset release; tracked under R7) | — |
-| R1 production release | Not deployed | — |
-| R2 story page | Implemented on `feat/gd-r2-story-intelligence`, which depends on unmerged PR #80 (`18f2910`). Not deployed and not production-certified. One public story. Server-owned exact-URL membership. Incomplete-data states are evaluation fixtures, not extra public stories | `tests/story-intelligence.test.mjs`, `tests/story-membership.test.mjs`, `tests/gd-r2-story.spec.js`, `docs/story-intelligence.md` |
-| R3–R9 | Not started (GD-026 place work exists on `feat/gd0261-place-registry`) | — |
+| R1 production release | Certified on October 12, 2026 at `16716ca3` (GD-047 boundary incident closed) | [Production release run](https://github.com/weave0/globaldeets/actions/runs/38315951914) |
+| R6: reproducible source-coverage baseline | Repository reporter and dated baseline implemented; live publication/source expansion not certified by this entry | `docs/NEWS_SOURCE_COVERAGE_BASELINE_2026-10-10.md`; `tools/report-news-coverage.mjs` |
+| R2 reviewed story intelligence | Integrated in the GD-041 reader PR #87; production acceptance remains separate until its release checks pass | `tests/story-intelligence.test.mjs`, `tests/story-membership.test.mjs`, `tests/gd-r2-story.spec.js`, `docs/story-intelligence.md` |
+| R3–R5, R7–R9 | Planned / draft implementations under review (GD-026 place work exists on `feat/gd0261-place-registry`) | No production claims |
 
 ## 10. Public route inventory (R0)
 
@@ -362,8 +363,8 @@ Updated as work lands. "Implemented" means merged code with automated tests; it 
 | `/knowledge` | Keep | Review for portfolio drift in a later pass |
 | `/about`, `/contact`, `/donate` | Keep, review copy | `donate.html` title ("Power World-Changing Tech") needs a reader-product rewrite |
 | `/observatory/coverage/` | Keep | Trust deep link from the desk and feed |
-| `/dossiers/santa-ynez-pipeline/` | Keep | Evidence graph for the maintained Santa Ynez story |
-| `/story/santa-ynez-pipeline/` | Added (R2) | Reader story. Stable id `story:santa-ynez-pipeline`. Not a headline URL |
+| `/dossiers/santa-ynez-pipeline/` | Keep | Evidence graph for the reviewed Santa Ynez story |
+| `/story/santa-ynez-pipeline/` | Integrated reader candidate (R2) | Server-owned reviewed story; distinct from the original article URLs |
 | `/places/{iso2}/` | Planned (R3) | GD-026 |
 | `/observatory/mission-control/`, `/spheres.html`, `/analytics.html` | Retired (GD-037) | Must stay unreachable |
 | `/bb-content.html`, `projects-*.js`, `platform-modal.js` | Retired (GD-038) | Must stay unreachable |

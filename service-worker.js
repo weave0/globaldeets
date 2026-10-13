@@ -1,5 +1,6 @@
 // Basic service worker for offline caching
 const CACHE_NAME = 'globaldeets-cache-v10';
+const CACHE_PREFIX = 'globaldeets-cache-';
 // The offline shell: every precached page plus every same-origin asset those pages load (including
 // news-reader-bridge.css, which news.js injects). tests/offline-shell-agreement.test.mjs keeps this
 // list complete and limited to shipped files; a missing file would fail the worker install.
@@ -103,7 +104,7 @@ self.addEventListener('activate', event => {
     Promise.all([
       caches
         .keys()
-        .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))),
+        .then(keys => Promise.all(keys.filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME).map(key => caches.delete(key))),
       self.clients.claim(),
     ])
   );
@@ -167,7 +168,8 @@ async function writeToCache(request, response, isApi) {
 }
 
 async function fromCache(request, isApi, isNav) {
-  const cached = await caches.match(request);
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(request);
   if (cached && isApi) return markOfflineCopy(cached);
   if (cached) return isNav ? normalizeHtmlResponse(cached) : cached;
   if (isApi) {
@@ -179,11 +181,11 @@ async function fromCache(request, isApi, isNav) {
   if (isNav && urlIsSameOrigin(request.url)) {
     const page = offlinePageFor(request.url);
     if (page) {
-      const shell = await caches.match(page);
+      const shell = await cache.match(page);
       if (shell) return shell;
     }
   }
-  if (isNav) return (await caches.match('offline.html')) || Response.error();
+  if (isNav) return (await cache.match('offline.html')) || Response.error();
   return Response.error();
 }
 
