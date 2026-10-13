@@ -257,6 +257,18 @@ test('coverage report refuses conflicting endpoint and feed fingerprints', () =>
   );
 });
 
+test('coverage report marks absent cross-endpoint fingerprints as partially verifiable', () => {
+  const fixture = minimalResponses();
+  const report = buildCoverageReport({
+    capturedAt: '2026-10-10T18:30:00.000Z',
+    baseUrl: 'https://globaldeets.com',
+    ...fixture,
+  });
+  assert.equal(report.fingerprintConsistency.status, 'partially-verifiable');
+  assert.equal(report.fingerprintConsistency.consistent, false);
+  assert.ok(report.fingerprintConsistency.observations.some(item => item.status === 'not-exposed'));
+});
+
 test('invalid article URLs do not count as duplicate canonical URLs', () => {
   const fixture = minimalResponses();
   fixture.feeds.global.body.items.push({

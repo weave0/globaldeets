@@ -36,6 +36,9 @@ jobs:
       - name: Run function and governance contracts
         run: npm run test:functions
 
+      - name: Test retired-path cache purge
+        run: npm run test:retired-edge-cache-purge
+
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 

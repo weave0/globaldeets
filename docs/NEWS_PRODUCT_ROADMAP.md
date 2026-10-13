@@ -345,9 +345,9 @@ Updated as work lands. "Implemented" means merged code with automated tests; it 
 | R1 phone first view | Implemented: first headline, publisher, and source action visible without scrolling at 390×844, 360×800, 360×640 | `gd038-first-view.spec.js` |
 | R1 service worker install/upgrade/offline labeling | Implemented with a dedicated service-worker-enabled test path | `gd038-service-worker.spec.js` |
 | R1 light mode | **Deferred** (not part of the reader-reset release; tracked under R7) | — |
-| R1 production release | Not deployed | — |
-| R6: reproducible source-coverage baseline | Implemented in this PR with focused tests; production certification remains separate | `docs/NEWS_SOURCE_COVERAGE_BASELINE_2026-10-10.md`; `tools/report-news-coverage.mjs`; focused tests passed. Source expansion and candidate qualification remain outstanding. |
-| R2–R5, R7–R9 | Not started (GD-026 place work exists on `feat/gd0261-place-registry`) | — |
+| R1 production release | Certified on October 12, 2026 at `16716ca3` (GD-047 boundary incident closed) | [Production release run](https://github.com/weave0/globaldeets/actions/runs/38315951914) |
+| R6: reproducible source-coverage baseline | Repository reporter and dated baseline implemented; live publication/source expansion not certified by this entry | `docs/NEWS_SOURCE_COVERAGE_BASELINE_2026-10-10.md`; `tools/report-news-coverage.mjs` |
+| R2–R5, R7–R9 | Planned / draft implementations under review (GD-026 place work exists on `feat/gd0261-place-registry`) | GD-041 integrated reader PR #87; no production claims |
 
 ## 10. Public route inventory (R0)
 
@@ -366,3 +366,4 @@ Updated as work lands. "Implemented" means merged code with automated tests; it 
 | `/places/{iso2}/` | Planned (R3) | GD-026 |
 | `/observatory/mission-control/`, `/spheres.html`, `/analytics.html` | Retired (GD-037) | Must stay unreachable |
 | `/bb-content.html`, `projects-*.js`, `platform-modal.js` | Retired (GD-038) | Must stay unreachable |
+

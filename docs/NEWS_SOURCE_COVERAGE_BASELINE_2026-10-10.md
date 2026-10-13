@@ -4,7 +4,7 @@
 **Environment:** `https://globaldeets.com`
 **Source fingerprint:** `a8ae04ba`
 **Admission fingerprint:** `df3be068`
-**Status:** Locally tested baseline; not merged, not a production certification, and not a legal assessment.
+**Status:** Historical API capture from October 10, 2026. The associated reporter is maintained in repository source; the captured numbers are not a current-source-health, license, or production-release certification.
 
 ## Reproduce
 

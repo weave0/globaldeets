@@ -260,7 +260,12 @@ function verifyFingerprintConsistency(core, feeds) {
   for (const [region, result] of Object.entries(feeds)) {
     check(`feed:${region}`, result.body);
   }
-  return { consistent: true, observations: observed };
+  const missing = observed.filter(item => item.status === 'not-exposed');
+  return {
+    status: missing.length ? 'partially-verifiable' : 'verified',
+    consistent: missing.length === 0,
+    observations: observed,
+  };
 }
 
 function summarizeFeed(region, body) {
