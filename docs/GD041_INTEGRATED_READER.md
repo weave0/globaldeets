@@ -1,6 +1,6 @@
 # GD-041 — Integrated World Reader (candidate only)
 
-**State: draft integration; no production or editorial approval.** This branch is stacked on GD-038 (#80), which is still blocked by required review. Its scope is an explicit confluence test of GD-039 dark editorial, GD-040 publisher-diverse/region-accurate news selection, and GD-R2 maintained Story Intelligence—not a replacement for any required review or rollout process.
+**State: candidate integration; not merged or production-certified.** Reader Reset (#80) is merged and was production-certified on October 12, 2026; the GD-047 boundary incident (#93) is closed. This branch reconciles the dark editorial, publisher-diverse/region-accurate feed, and governed maintained-story work with the current production release controls. Automated preview acceptance is distinct from a completed production rollout.
 
 ## Contract and purpose
 
@@ -9,10 +9,10 @@ The independently verified previews do not constitute an integrated user journey
 - **Home:** compact midnight masthead and dated original-publisher reporting first, with an explicitly opt-in deterministic **Across publishers** selection. No publisher, geographic viewpoint, or political truth scores. Globe is optional exploration below reporting.
 - **News:** publisher-source feed, newest first by default. `region=asia` means Asia-assigned publisher channels only. This does **not** assert that stories took place in Asia. No global padding of weak regions.
 - **Intelligence:** one maintained Santa Ynez record, explicit original reporting link and independent evidence graph/corrections/unknowns, server-owned exact-URL membership only; no automatic clustering.
-- **Governance:** the upstream R1 public-boundary, rights policy, unsafe URL checks, source admissions, and source-health caveats remain enforced. Service-worker v10 precaches both the midnight stylesheet and the public story records while preserving redirected HTML normalization.
+- **Governance:** the upstream R1 public-boundary, rights policy, unsafe URL checks, source admissions, and source-health caveats remain enforced. Service-worker v10 precaches the midnight stylesheet and reviewed public story records, preserves redirected HTML normalization, and retains #95 isolation from unrelated same-origin caches.
 - **Proof:** source and admission fingerprint still gate the KV cache; both sort modes read the same governed dataset. Stable pagination and mode/region metadata validated in 300+ tests.
 - **Privacy:** no new engagement cookies, personal profiles, unreviewed publisher content or tracking. Story event counts remain intentionally anonymous as in R2.
-- **Release:** all changes require an authorized reviewed merge of #80, a deliberate feature integration review, and exact-commit production deployment and verification. Never call a Cloudflare preview production.
+- **Release:** Reader Reset #80 and the GD-047 retired-path protections are already merged and certified. This integrated reader still requires a successful exact-head CI/hosted preview, ordinary authorized merge, and post-merge production verification. Never call a Cloudflare preview production.
 
 ## Verification and acceptance
 
@@ -22,13 +22,13 @@ Archive desktop Home, desktop/mobile Asia News, and desktop Story screenshots. A
 
 ## Dependency / change ownership
 
-- #80 owns R1 Reader Reset safety + release gates.
+- #80 owns the merged R1 Reader Reset safety + release gates; #94/#98/#100/#101 retain the certified retired-path boundary.
 - #86 owns deterministic news selection + honest publisher-region routing.
 - #83 owns dark editorial pages.
 - #82 owns server-approved story association, record, evidence and corrections.
 - This branch exercises their combined contracts and addresses only integration defects.
 
-Do not independently merge all four PRs and this integration branch. Before promotion, choose one reviewed integration route, reconcile feature branches against final parent SHA, and run the complete production smoke/offline gates.
+PR #87 is the integrated release vehicle; do not separately merge its older source branches #82/#83/#86, as that would double-land the implementation. The current branch has been reconciled with production `main` including #95 service-worker isolation and #96 source-coverage reporting. Preserve exact-head CI, preview, and production verification evidence before reporting public completion.
 
 ## Premium story progression
 
