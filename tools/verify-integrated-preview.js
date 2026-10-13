@@ -97,17 +97,17 @@ async function main() {
     await populated(page, '#desk-latest .desk-story');
     const home=await page.evaluate(()=>{
       const desk=document.querySelector('#world-desk');
-      const globe=document.querySelector('.globe-hero-section');
+      const explorer=document.querySelector('#coverage-explorer');
       return {
         canvas:window.getComputedStyle(document.body).backgroundColor,
         headerHeight:document.querySelector('body > header').getBoundingClientRect().height,
         firstSource:document.querySelector('#desk-latest .desk-story-source')?.textContent,
         diverseHeading:!!document.querySelector('#world-desk h3')?.textContent.includes('Across publishers'),
-        globeAfter:!!(desk.compareDocumentPosition(globe)&Node.DOCUMENT_POSITION_FOLLOWING),
+        explorerAfter:!!(desk.compareDocumentPosition(explorer)&Node.DOCUMENT_POSITION_FOLLOWING),
         overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth+1,
       };
     });
-    assert(home.canvas==='rgb(11, 17, 26)' && home.headerHeight<120 && home.globeAfter
+    assert(home.canvas==='rgb(11, 17, 26)' && home.headerHeight<120 && home.explorerAfter
       && home.diverseHeading && home.firstSource && !home.overflow,
       'headline-first dark editorial homepage did not render');
     await page.screenshot({path:resolve('design-previews/gd041-home-desktop.png'),animations:'disabled'});
