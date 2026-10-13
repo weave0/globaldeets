@@ -96,18 +96,26 @@ async function mockApi(page, { feedStatus = 200 } = {}) {
   });
 }
 
-test('homepage leads with dated latest reporting linked to publishers', async ({ page }) => {
+test('homepage shows an explained publisher mix with original-source actions', async ({ page }) => {
+  const newsRequests = [];
+  page.on('request', request => {
+    const url = new URL(request.url());
+    if (url.pathname === '/api/news') newsRequests.push(url);
+  });
   await mockApi(page);
   await page.goto('/index.html');
 
   const desk = page.locator('#world-desk');
   await expect(desk.getByRole('heading', { name: 'World Desk' })).toBeVisible();
+  await expect(desk.getByRole('heading', { name: 'Across publishers' })).toBeVisible();
   await expect(page.locator('#desk-date')).toHaveAttribute('datetime', /^\d{4}-\d{2}-\d{2}$/);
   await expect(page.locator('#desk-updated')).toContainText('3 stories from our current sources');
   await expect(desk.getByText('Not ranked by importance.')).toBeVisible();
 
   const stories = page.locator('#desk-latest .desk-story');
   await expect(stories).toHaveCount(3);
+  expect(newsRequests.some(url => url.searchParams.get('mode') === 'diverse')).toBe(true);
+  await expect(desk.getByRole('link', { name: 'See newest first' })).toHaveAttribute('href', 'news.html');
   await expect(stories.first().getByRole('link', { name: 'Port authority reopens northern terminal' })).toHaveAttribute(
     'href',
     'https://example.com/port'
@@ -119,6 +127,20 @@ test('homepage leads with dated latest reporting linked to publishers', async ({
   await expect(stories.first()).toContainText('Feed: Europe');
   await expect(stories.first()).toContainText('Headline only');
   await expect(stories.nth(1)).toContainText('Machine-translated from JA');
+
+  // Every displayed number is derived from this specific governed response,
+  // never from a hard-coded configured-source contract.
+  await expect(page.locator('#desk-audit-publishers')).toHaveText('2');
+  await expect(page.locator('#desk-audit-regions')).toHaveText('2');
+  await expect(page.locator('#desk-audit-total')).toHaveText('3');
+  await expect(page.locator('#desk-audit-share')).toHaveText('50%');
+  await expect(page.locator('#desk-selection-note')).toContainText('Selection policy could not be verified');
+  await expect(page.getByRole('heading', { name: 'Inside this selection' })).toBeVisible();
+  await expect(desk.getByText('Live Sources')).toHaveCount(0);
+  const method = desk.getByText('How were these publishers selected?');
+  await method.click();
+  await expect(desk.getByText(/not an importance, accuracy, political-bias, or event-location score/))
+    .toBeVisible();
 
   // Unsafe publisher URLs never become links.
   await expect(stories.nth(2).locator('a')).toHaveCount(0);
@@ -143,9 +165,14 @@ test('homepage latest-reporting failure is explicit and recoverable', async ({ p
   const alert = page.locator('#desk-latest [role="alert"]');
   await expect(alert).toContainText('could not be loaded right now');
   await expect(page.locator('#desk-updated')).toHaveText('Latest reporting unavailable');
+  await expect(page.locator('#desk-audit-publishers')).toHaveText('—');
+  await expect(page.locator('#desk-audit-total')).toHaveText('—');
+  await expect(page.locator('#desk-selection-note')).toContainText('Selection evidence is unavailable');
   fail = false;
   await alert.getByRole('button', { name: 'Try again' }).click();
   await expect(page.locator('#desk-latest .desk-story')).toHaveCount(3);
+  await expect(page.locator('#desk-audit-publishers')).toHaveText('2');
+  await expect(page.locator('#desk-selection-note')).toContainText('Selection policy could not be verified');
 });
 
 test('homepage no longer carries portfolio, pitch, or roadmap modules', async ({ page }) => {

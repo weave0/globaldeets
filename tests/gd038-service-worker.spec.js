@@ -78,7 +78,7 @@ test('the service worker installs, precaches only shipped files, and retires the
   await page.goto('/offline.html');
   const collision = 'UNRELATED-CACHE-COLLISION';
   await page.evaluate(async collision => {
-    const oldCache = await caches.open('globaldeets-cache-v7');
+    const oldCache = await caches.open('globaldeets-cache-v9');
     const unrelatedCache = await caches.open('unrelated-app-cache-v1');
     await Promise.all([
       oldCache.put('/stale', new Response('old')),
@@ -97,12 +97,12 @@ test('the service worker installs, precaches only shipped files, and retires the
   const state = await page.evaluate(async () => ({
     keys: await caches.keys(),
     precached: await caches
-      .open('globaldeets-cache-v8')
+      .open('globaldeets-cache-v10')
       .then(cache => Promise.all(['/world-desk.js', '/news.js', '/offline.html'].map(path => cache.match(path))))
       .then(matches => matches.every(Boolean)),
   }));
-  expect(state.keys).toContain('globaldeets-cache-v8');
-  expect(state.keys).not.toContain('globaldeets-cache-v7');
+  expect(state.keys).toContain('globaldeets-cache-v10');
+  expect(state.keys).not.toContain('globaldeets-cache-v9');
   expect(state.keys).toContain('unrelated-app-cache-v1');
   expect(state.precached).toBe(true);
 
@@ -113,6 +113,31 @@ test('the service worker installs, precaches only shipped files, and retires the
   await context.unroute('**/index.html');
 });
 
+test('a direct maintained story link keeps the reviewed record through offline reload', async ({ page }) => {
+  await page.goto('/story/santa-ynez-pipeline/');
+  await waitForControllingWorker(page);
+  await expect(page.getByRole('heading', { level: 1, name: 'Santa Ynez Pipeline — Evidence Dossier' })).toBeVisible();
+  await page.context().route('**/*', route => route.abort('internetdisconnected'));
+  await page.reload();
+  await expect(page.getByRole('heading', { level: 1, name: 'Santa Ynez Pipeline — Evidence Dossier' })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Read at Los Angeles Times/ }).first()).toBeVisible();
+  await expect(page.getByText(/Content version 2026-09-03[.]1/)).toBeVisible();
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+});
+
+test('offline maintained story without a trailing slash loads its precached record', async ({ page, context }) => {
+  await page.goto('/story/santa-ynez-pipeline/');
+  await waitForControllingWorker(page);
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+  // Exercise the no-slash alias without allowing the dev server to redirect it.
+  await page.evaluate(() => history.replaceState(null, '', '/story/santa-ynez-pipeline'));
+  await context.route('**/*', route => route.abort('internetdisconnected'));
+  await page.reload();
+  await expect(page).toHaveURL(/\/story\/santa-ynez-pipeline$/);
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+  await expect(page.getByText(/Content version 2026-09-03[.]1/)).toBeVisible();
+});
+
 test('a dev server answering a stylesheet with JavaScript can never leave an unstyled cached page', async ({
   page,
 }) => {
@@ -121,9 +146,9 @@ test('a dev server answering a stylesheet with JavaScript can never leave an uns
   await page.goto('/index.html');
   await waitForControllingWorker(page);
   const cached = await page.evaluate(async () => {
-    const cache = await caches.open('globaldeets-cache-v8');
+    const cache = await caches.open('globaldeets-cache-v10');
     const out = {};
-    for (const path of ['/styles.css', '/world-desk.css', '/news.js']) {
+    for (const path of ['/styles.css', '/world-desk.css', '/editorial-reader.css', '/news.js']) {
       const response = await cache.match(path);
       out[path] = response ? response.headers.get('content-type') : null;
     }

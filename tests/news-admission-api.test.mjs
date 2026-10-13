@@ -10,6 +10,7 @@ const functions = join(root, 'functions');
 const files = [
   ['../functions/api/news.js', join(functions, 'api', 'news.js')],
   ['../functions/lib/news-source-admission.js', join(functions, 'lib', 'news-source-admission.js')],
+  ['../functions/lib/story-membership.js', join(functions, 'lib', 'story-membership.js')],
   ['../functions/api/news/admission.js', join(functions, 'api', 'news', 'admission.js')],
 ];
 for (const [, target] of files) mkdirSync(dirname(target), { recursive: true });

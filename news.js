@@ -17,6 +17,9 @@
     pacific: 'Pacific',
     africa: 'Africa',
   };
+  // Story membership arrives on the news item. This only checks that the server
+  // sent a same-site story path. It does not decide which articles belong.
+
   const RIGHTS_LABELS = {
     'verified-public-use': 'Bounded reuse reviewed',
     'permission-required': 'Publisher permission required',
@@ -60,6 +63,12 @@
     prepareTrustSurface();
     renderTabs();
     bindSearch();
+    document.getElementById('news-grid')?.addEventListener('click', event => {
+      const target = event.target instanceof window.Element ? event.target : event.target?.parentElement;
+      const link = target?.closest?.('a.news-context-link');
+      if (!link) return;
+      recordStoryMeasurement('story-context-opened', link.getAttribute('data-story-key'));
+    });
     loadNews(true);
     hydrateTrustSurface();
     document.getElementById('load-more-btn')?.addEventListener('click', () => loadNews(false));
@@ -527,6 +536,12 @@
     const source = item.source || 'the publisher';
     const headline = escapeHtml(item.headline || 'Untitled story');
     const originalLang = escapeHtml(String(item.originalLang || '').toUpperCase());
+    const originalHeadline =
+      item.translated === true && typeof item.originalHeadline === 'string' && item.originalHeadline.trim()
+        ? item.originalHeadline.trim()
+        : '';
+    const originalLangCode = /^[a-z]{2,3}$/i.test(item.originalLang || '') ? item.originalLang : '';
+    const storyHref = storyContextHref(item);
 
     const flags = [];
     if (headlineLinkOnly) {
@@ -560,6 +575,11 @@
         ${regionLabel ? `<span class="news-region-tag">Feed: ${escapeHtml(regionLabel)}</span>` : ''}
       </p>
       ${flags.length ? `<p class="news-card-flags">${flags.join('')}</p>` : ''}
+      ${
+        originalHeadline
+          ? `<p class="news-original" dir="auto"${originalLangCode ? ` lang="${escapeAttr(originalLangCode)}"` : ''}><span class="visually-hidden">Original headline. </span>${escapeHtml(originalHeadline)}</p>`
+          : ''
+      }
       ${summaryHtml}
       <div class="news-card-actions">
         ${
@@ -567,9 +587,49 @@
             ? `<a class="news-read-link" href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">Read at ${escapeHtml(source)} →<span class="visually-hidden"> (opens in a new tab)</span></a>`
             : '<span class="news-read-unavailable">Publisher link unavailable</span>'
         }
+        ${
+          storyHref
+            ? `<a class="news-context-link" href="${escapeAttr(storyHref)}" data-story-key="${escapeAttr(item.story.storyKey)}">Context &amp; sources</a>`
+            : ''
+        }
       </div>
       ${buildSourceContext(item, provenance, admission)}`;
     return card;
+  }
+
+  function storyContextHref(item) {
+    const story = item && item.story;
+    if (!story || typeof story !== 'object') return null;
+    const key = story.storyKey;
+    const href = story.href;
+    if (typeof key !== 'string' || typeof href !== 'string') return null;
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(key)) return null;
+    if (href !== `/story/${key}/`) return null;
+    if (story.storyId != null && story.storyId !== `story:${key}`) return null;
+    return href;
+  }
+
+  function recordStoryMeasurement(eventName, storyKey) {
+    if (eventName !== 'story-context-opened' && eventName !== 'story-opened') return;
+    if (typeof storyKey !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(storyKey)) return;
+    const body = JSON.stringify({ event: eventName, storyKey });
+    try {
+      if (typeof navigator.sendBeacon === 'function') {
+        const sent = navigator.sendBeacon(
+          '/api/intelligence/story-measurement',
+          new Blob([body], { type: 'text/plain' })
+        );
+        if (sent) return;
+      }
+    } catch {
+      /* A failed measurement must not affect the card. */
+    }
+    fetch('/api/intelligence/story-measurement', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body,
+      keepalive: true,
+    }).catch(() => {});
   }
 
   function safeHref(value) {

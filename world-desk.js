@@ -2,7 +2,7 @@
  * GlobalDeets — World Desk reader modules (GD-038)
  *
  * Renders GlobalDeets-native reader surfaces from the governed /api/news feed:
- *   - #desk-latest     homepage "Latest reporting" list
+ *   - #desk-latest     homepage publisher-diverse recent reporting list
  *   - #timeline-items  timeline.html: stories grouped by publication day
  *   - #browse-regions  categories.html: browse by feed region and source
  *
@@ -12,6 +12,9 @@
  */
 (function () {
   'use strict';
+
+  // Story membership arrives on the news item. This only checks that the server
+  // sent a same-site story path. It does not decide which articles belong.
 
   const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
     ? 'https://globaldeets.com'
@@ -126,7 +129,27 @@
       meta.append(el('span', { className: 'desk-story-flag' }, 'Headline only'));
     }
 
-    const row = el('li', { className: 'desk-story' }, el('h4', { className: 'desk-story-headline' }, headlineNode), meta);
+    const originalHeadline =
+      item.translated === true && typeof item.originalHeadline === 'string' && item.originalHeadline.trim()
+        ? item.originalHeadline.trim()
+        : '';
+    const originalLangCode = /^[a-z]{2,3}$/i.test(item.originalLang || '') ? item.originalLang : '';
+    const original = originalHeadline
+      ? el(
+          'p',
+          { className: 'desk-original', dir: 'auto', ...(originalLangCode ? { lang: originalLangCode } : {}) },
+          el('span', { className: 'visually-hidden' }, 'Original headline. '),
+          originalHeadline
+        )
+      : null;
+
+    const row = el(
+      'li',
+      { className: 'desk-story' },
+      el('h4', { className: 'desk-story-headline' }, headlineNode),
+      meta,
+      original
+    );
     if (href) {
       row.append(
         el(
@@ -137,7 +160,52 @@
         )
       );
     }
+    const storyHref = storyContextHref(item);
+    if (href && storyHref) {
+      row.append(
+        el(
+          'a',
+          { className: 'desk-story-context', href: storyHref, 'data-story-key': item.story.storyKey },
+          'Context & sources'
+        )
+      );
+    }
     return row;
+  }
+
+  function storyContextHref(item) {
+    const story = item && item.story;
+    if (!story || typeof story !== 'object') return null;
+    const key = story.storyKey;
+    const href = story.href;
+    if (typeof key !== 'string' || typeof href !== 'string') return null;
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(key)) return null;
+    if (href !== `/story/${key}/`) return null;
+    if (story.storyId != null && story.storyId !== `story:${key}`) return null;
+    return href;
+  }
+
+  function recordStoryMeasurement(eventName, storyKey) {
+    if (eventName !== 'story-context-opened' && eventName !== 'story-opened') return;
+    if (typeof storyKey !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(storyKey)) return;
+    const body = JSON.stringify({ event: eventName, storyKey });
+    try {
+      if (typeof navigator.sendBeacon === 'function') {
+        const sent = navigator.sendBeacon(
+          '/api/intelligence/story-measurement',
+          new Blob([body], { type: 'text/plain' })
+        );
+        if (sent) return;
+      }
+    } catch {
+      /* A failed measurement must not affect the row. */
+    }
+    fetch('/api/intelligence/story-measurement', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body,
+      keepalive: true,
+    }).catch(() => {});
   }
 
   function failureNode(message, retry) {
@@ -159,6 +227,59 @@
     return `Checked ${clockTime(fetchedAt)} · ${data?.total ?? 'unknown'} stories from our current sources`;
   }
 
+  // GD-042: audit the actual, linkable selection. Never repeat a static source
+  // registry number as "live" coverage. No additional requests, tracking or
+  // publisher scoring are involved; the response is already governed.
+  function renderSelectionAudit(data, items) {
+    const metrics = {
+      publishers: document.getElementById('desk-audit-publishers'),
+      regions: document.getElementById('desk-audit-regions'),
+      total: document.getElementById('desk-audit-total'),
+      share: document.getElementById('desk-audit-share'),
+    };
+    const note = document.getElementById('desk-selection-note');
+    if (!note) return;
+    if (!data || !Array.isArray(items)) {
+      Object.values(metrics).forEach(node => { if (node) node.textContent = '—'; });
+      note.textContent = 'Selection evidence is unavailable. A source outage is not evidence that no reporting exists.';
+      return;
+    }
+
+    const linked = items.filter(item => item && safeUrl(item.sourceUrl));
+    const publishers = new Map();
+    const regions = new Set();
+    for (const item of linked) {
+      const id = String(item.sourceId || item.source || '').trim();
+      if (!id) continue;
+      publishers.set(id, (publishers.get(id) || 0) + 1);
+      if (REGION_LABELS[item.region]) regions.add(item.region);
+    }
+    const total = Number.isSafeInteger(data.total) && data.total >= 0 ? data.total : null;
+    const largest = publishers.size && linked.length
+      ? Math.round(100 * Math.max(...publishers.values()) / linked.length) + '%'
+      : '—';
+    const values = {
+      publishers: String(publishers.size),
+      regions: String(regions.size),
+      total: total == null ? '—' : String(total),
+      share: largest,
+    };
+    for (const [key, value] of Object.entries(values)) {
+      if (metrics[key]) metrics[key].textContent = value;
+    }
+
+    const verified = data.selection?.mode === 'diverse' &&
+      data.selection?.policyVersion === 'gd040-publisher-region-rotation-v1';
+    const status = data.offlineCopyAt
+      ? 'Offline saved copy: these figures may be outdated.'
+      : verified
+        ? 'Publisher/region rotation verified for this feed snapshot.'
+        : 'Selection policy could not be verified for this response.';
+    note.textContent = status + ' Figures count the ' + linked.length +
+      ' headlines with valid original-publisher links among the ' + items.length +
+      ' shown, not all world events. Feed regions describe source routing, not event locations or impartiality.';
+  }
+
   // ---------------------------------------------------------------------------
   // Homepage: Latest reporting
   // ---------------------------------------------------------------------------
@@ -166,9 +287,10 @@
     const status = document.getElementById('desk-updated');
     const limit = Number(list.dataset.limit) || 8;
     list.setAttribute('aria-busy', 'true');
+    renderSelectionAudit(null, null);
     if (status) status.textContent = 'Loading latest reporting…';
     try {
-      const data = await fetchJson(`/api/news?region=global&limit=${limit}&offset=0`);
+      const data = await fetchJson(`/api/news?region=global&limit=${limit}&offset=0&mode=diverse`);
       const items = Array.isArray(data?.items) ? data.items : [];
       if (!items.length) {
         list.replaceChildren(
@@ -182,6 +304,7 @@
         list.replaceChildren(...items.map(item => storyItem(item)));
       }
       if (status) status.textContent = freshnessText(data, new Date());
+      renderSelectionAudit(data, items);
       document.body.dataset.deskLatest = 'ready';
     } catch (error) {
       console.warn('GlobalDeets latest reporting unavailable:', error);
@@ -196,6 +319,7 @@
         )
       );
       if (status) status.textContent = 'Latest reporting unavailable';
+      renderSelectionAudit(null, null);
       document.body.dataset.deskLatest = 'error';
     } finally {
       list.removeAttribute('aria-busy');
@@ -363,6 +487,12 @@
   }
 
   function init() {
+    document.addEventListener('click', event => {
+      const target = event.target instanceof window.Element ? event.target : event.target?.parentElement;
+      const link = target?.closest?.('a.desk-story-context');
+      if (!link) return;
+      recordStoryMeasurement('story-context-opened', link.getAttribute('data-story-key'));
+    });
     renderDateline();
     const latest = document.getElementById('desk-latest');
     if (latest) renderLatest(latest);

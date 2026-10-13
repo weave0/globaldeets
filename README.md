@@ -29,7 +29,8 @@ GlobalDeets is not an opinion feed, not a portfolio showcase, and not the public
 | `/globe`, `/worldmap` | Optional discovery lenses: globe pins at approximate publisher locations or labeled feed-region fallbacks (never story locations); public webcams |
 | `/knowledge` | Public institutions and reference sources |
 | `/observatory/coverage/` | Coverage, provenance, rights, and gap evidence |
-| `/dossiers/santa-ynez-pipeline/` | Evidence dossier: claims, evidence, contradictions, corrections |
+| `/story/santa-ynez-pipeline/` | Maintained story: chronology, reporting, evidence, corrections, and unresolved questions |
+| `/dossiers/santa-ynez-pipeline/` | Evidence graph for that story: claims, evidence, contradictions, corrections |
 
 ## Internal estate tooling
 

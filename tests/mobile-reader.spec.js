@@ -121,12 +121,11 @@ test('mobile homepage fits, exposes governed metrics, and keeps navigation reach
   await page.goto('/index.html');
 
   await expect(page.getByRole('heading', { name: /The Earth,\s*Right Now\./i })).toBeVisible();
-  const liveSources = page.locator('.dm-stat').filter({ hasText: 'Live Sources' });
-  await expect(liveSources).toBeVisible();
-  await expect(liveSources).toContainText('21');
-  await expect(page.locator('.dm-stat').filter({ hasText: 'Regions' })).toBeVisible();
-  await expect(page.locator('.dm-stat').filter({ hasText: 'Local/State Sources' })).toBeVisible();
-  await expect(page.locator('.dm-stat').filter({ hasText: 'Open Coverage Gaps' })).toBeVisible();
+  await expect(page.locator('#desk-audit-publishers')).toHaveText('1');
+  await expect(page.locator('#desk-audit-regions')).toHaveText('3');
+  await expect(page.locator('#desk-audit-total')).toHaveText('3');
+  await expect(page.locator('#desk-audit-share')).toHaveText('100%');
+  await expect(page.locator('#desk-selection-note')).toContainText('not event locations or impartiality');
   await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible();
   await expect(page.locator('#globe-hero-container')).toBeVisible();
   await expectNoHorizontalOverflow(page);
@@ -143,7 +142,7 @@ test('mobile homepage fits, exposes governed metrics, and keeps navigation reach
 test('mobile news reader fits and keeps evidence controls usable', async ({ page }) => {
   await page.goto('/news.html');
 
-  await expect(page.getByRole('heading', { name: /World News Feed/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Latest reporting/i })).toBeVisible();
   await expect(page.locator('#news-grid .news-card')).toHaveCount(3);
   // Coverage detail sits behind the "Sources & coverage" disclosure so stories come first.
   const disclosureToggle = page.locator('#news-sources-coverage summary');
