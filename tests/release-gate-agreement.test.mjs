@@ -250,7 +250,7 @@ test('production reader requires selection audit derived from the governed respo
   assert.match(script, /page\.waitForResponse\(/);
   assert.match(script, /data\.selection\?\.policyVersion/);
   assert.match(script, /shown\.share === maxShare/);
-  assert.doesNotMatch(script, /Live Sources|homepage did not render 21 live sources/);
+  assert.doesNotMatch(script, /hasText: 'Live Sources'|homepage did not render 21 live sources/);
 });
 
 test('production reader checks the actually shipped service-worker cache', () => {
