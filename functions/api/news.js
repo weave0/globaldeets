@@ -501,18 +501,30 @@ export async function translateNonEnglish(items, env, admissionById = new Map())
         ]);
 
         const translatedHeadline = headlineRes?.translated_text;
-        if (typeof translatedHeadline === 'string' && translatedHeadline.trim() && originalHeadline.trim()) {
+        const translatedSummary = summaryRes?.translated_text;
+        const summaryNeedsTranslation = typeof item.summary === 'string' && Boolean(item.summary.trim());
+        const headlineReady =
+          typeof translatedHeadline === 'string' && Boolean(translatedHeadline.trim()) &&
+          Boolean(originalHeadline.trim());
+        const summaryReady =
+          !summaryNeedsTranslation ||
+          (typeof translatedSummary === 'string' && Boolean(translatedSummary.trim()));
+        // The reader currently uses one translation badge for the entire card.
+        // Commit both translated fields together or leave the original-language
+        // headline and summary unchanged; never publish a mixed-language card.
+        if (headlineReady && summaryReady) {
           item.originalHeadline = originalHeadline;
-          item.headline = translatedHeadline;
+          item.headline = translatedHeadline.trim();
+          if (summaryNeedsTranslation) item.summary = translatedSummary.trim();
           item.translated = true;
         } else {
           item.translated = false;
           delete item.originalHeadline;
         }
-        item.summary = summaryRes?.translated_text || item.summary;
         item.originalLang = item.lang;
       } catch (error) {
         item.translated = false;
+        delete item.originalHeadline;
         item.originalLang = item.lang;
         logOperationalError('translation', error, {
           source: item.source,

@@ -36,7 +36,10 @@
     }, 300);
     let shipped;
     try {
-      const response = await fetch('./story.json', { headers: { Accept: 'application/json' } });
+      // A clean Pages URL may omit its trailing slash. Relative "./story.json"
+      // would then resolve to /story/story.json, outside the precached record.
+      const recordUrl = fixturePage ? './story.json' : '/story/santa-ynez-pipeline/story.json';
+      const response = await fetch(recordUrl, { headers: { Accept: 'application/json' } });
       if (!response.ok) throw new Error('shipped record unavailable');
       shipped = await response.json();
       if (!acceptable(shipped)) throw new Error('shipped record rejected');

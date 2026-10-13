@@ -1,6 +1,6 @@
 # GlobalDeets — Current Status
 
-**Status date:** 2026-10-06  
+**Status date:** 2026-10-13  
 **Product state:** Live source-first world news desk  
 **Canonical public surface:** `/` (World Desk) and `/news`  
 **Controlling roadmap:** `docs/NEWS_PRODUCT_ROADMAP.md`
@@ -9,7 +9,7 @@
 
 ## Reader product
 
-Status of the roadmap's R1 release ("Reader reset", GD-038) on branch `feat/gd038-world-desk`:
+Status of the roadmap's R1 Reader Reset (GD-038), already production-certified October 12, 2026; GD-041 is a separate integrated editorial reader candidate:
 
 | Item | State |
 | --- | --- |
@@ -25,13 +25,13 @@ Status of the roadmap's R1 release ("Reader reset", GD-038) on branch `feat/gd03
 | Labeled shared navigation (Today, News, Browse, More) | Implemented on all primary pages |
 | Service worker install, upgrade, labeled offline copy | Implemented; dedicated SW-enabled spec |
 | Light mode | Deferred to R7; not part of this release |
-| Production deploy of the above | Not deployed; must pass the deploy workflow's exact-artifact verification |
+| Production deploy of the above | Certified October 12 (run #38315951914) with strict retired-path boundary; GD-041 remains under review |
 
 Static/dynamic source truth (F6) is already on `main` (8459811) with raw-HTML and fallback regressions; the older `feat/gd0260-static-source-truth` branch is superseded.
 
 ## R2 story intelligence
 
-On `feat/gd-r2-story-intelligence`, which is based on unmerged PR #80 (`c5f0452d7d18ebe65f3621f76c942ec0972d37d3`, reconciled parent) and is not deployed:
+Integrated into GD-041 PR #87, which carries the maintained Santa Ynez story from the earlier R2 prototype. Reader Reset PR #80 has already merged; the integrated story is preview-tested but not yet released to production:
 
 | Item | State |
 | --- | --- |
@@ -51,4 +51,4 @@ Production verification is produced by the deploy workflow, not by this document
 
 - Many root-level Markdown files describe the retired portfolio product and are archival.
 
-GD-R2 story confluence (October 9): reconciled the latest GD-038 Reader Reset candidate including corrected offline redirect handling and source-status freshness. The story prerelease now precaches a v9 shell and has its own exact-commit hosted preview gate. This is not production or approval of GD-038.
+GD-041 integration (October 13): the combined premium dark World Desk, governed publisher-diverse selection, source-selection accountability, and one maintained story are review candidates. Its public service-worker shell uses cache v10, preserves unrelated CacheStorage namespaces, and retains the certified retired-URL boundary. Production acceptance remains separate from preview CI.

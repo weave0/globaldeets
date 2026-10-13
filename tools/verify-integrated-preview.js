@@ -68,8 +68,23 @@ async function main() {
   assert(shipped.storyId === story.storyId &&
     shipped.dossierVersion === story.dossierVersion, 'ship and live story projections disagree');
   const cap = diverse.items.slice(0,8);
-  const firstPublishers = new Set(cap.map(item=>item.sourceId||item.source));
-  assert(firstPublishers.size >= 4 || diverse.total < 4, 'first eight headlines are supply-concentrated');
+  const firstPublishers = new Set(cap.map(item => item.sourceId || item.source).filter(Boolean));
+  const published = item => {
+    const timestamp = Date.parse(typeof item?.published === 'string' ? item.published : '');
+    return Number.isFinite(timestamp) ? timestamp : Number.NEGATIVE_INFINITY;
+  };
+  const newest = Math.max(...diverse.items.map(published));
+  const freshnessBoundary = newest - 36 * 60 * 60 * 1000;
+  const availableFreshPublishers = new Set(
+    diverse.items
+      .filter(item => Number.isFinite(newest) && published(item) >= freshnessBoundary)
+      .map(item => item.sourceId || item.source)
+      .filter(Boolean)
+  );
+  // Having many articles does not imply many independent publishers. The
+  // preview should require breadth only when the fresh governed feed offers it.
+  const breadthRequired = Math.min(4, availableFreshPublishers.size, cap.length);
+  assert(firstPublishers.size >= breadthRequired, 'first eight headlines fail available-publisher breadth');
   mkdirSync(resolve('design-previews'), { recursive: true });
   const browser = await chromium.launch({ headless: true });
   try {

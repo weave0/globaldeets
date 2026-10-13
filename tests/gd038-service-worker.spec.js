@@ -125,6 +125,19 @@ test('a direct maintained story link keeps the reviewed record through offline r
   await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
 });
 
+test('offline maintained story without a trailing slash loads its precached record', async ({ page, context }) => {
+  await page.goto('/story/santa-ynez-pipeline/');
+  await waitForControllingWorker(page);
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+  // Exercise the no-slash alias without allowing the dev server to redirect it.
+  await page.evaluate(() => history.replaceState(null, '', '/story/santa-ynez-pipeline'));
+  await context.route('**/*', route => route.abort('internetdisconnected'));
+  await page.reload();
+  await expect(page).toHaveURL(/\/story\/santa-ynez-pipeline$/);
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+  await expect(page.getByText(/Content version 2026-09-03[.]1/)).toBeVisible();
+});
+
 test('a dev server answering a stylesheet with JavaScript can never leave an unstyled cached page', async ({
   page,
 }) => {

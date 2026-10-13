@@ -62,8 +62,8 @@ These are why Story Intelligence is still one maintained story rather than a gen
 
 No truth, bias, reliability, or confidence score. No unattributed prose summary. No change to source-admission display permissions. Same-origin repetition and same-URL syndication are not independent corroboration. Corrections keep their history note, including when the earlier artifact was not retained. Machine translation is not original-language reporting. A count of publishers is not a finding.
 
-## Reader Reset reconciliation (2026-10-09)
+## Integrated reader reconciliation (2026-10-13)
 
-The R2 branch was advanced against GD-038 commit `c5f0452d7d18ebe65f3621f76c942ec0972d37d3` (PR #85's verified offline fix integrated). The public story shell is cached with reader cache v9; the redirected HTML normalization is retained for clean Cloudflare Pages routes and the explicit offline story fallback returns the maintained `story.json` without depending on live dossier APIs. Latest-news freshness and release/boundary gates remain as implemented in GD-038.
+The maintained story is part of GD-041 PR #87, based on certified Reader Reset `main` rather than the superseded R2 feature branch. The public story shell and record use reader cache v10. Offline navigation supports both trailing-slash and no-slash story URLs via the root-absolute shipped-record path; evaluation fixtures retain their relative record path. Redirected Pages HTML normalization, same-origin cache isolation and the strict retired-path release boundary are preserved. Live news rights and freshness behavior remain governed independently.
 
 An isolated story-preview workflow tests the exact source head, serves real Pages headers, reads the maintained API and record, reloads the story offline with a controlling service worker, and captures mobile/desktop screenshots. It does not assert an admitted live Los Angeles Times feed item, a second maintained story, user retention, or production deployment.

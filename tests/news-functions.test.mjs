@@ -401,6 +401,49 @@ test('restricted translated-source content is stripped before any AI translation
   assert.equal(aiCalls, 0);
 });
 
+test('translation commits headline and summary atomically to match a single badge', async () => {
+  const admissionById = new Map([['translated-fixture', { permittedUse: ['translated-headline-summary'] }]]);
+  const originals = () => ({
+    sourceId: 'translated-fixture',
+    source: 'Translation Fixture',
+    lang: 'ja',
+    displayMode: 'current-use',
+    headline: '原文見出し',
+    summary: '原文要約',
+    translated: false,
+  });
+  for (const [label, aiResult, expectedTranslated] of [
+    ['both translated', ['English headline', 'English summary'], true],
+    ['headline missing', [undefined, 'English summary'], false],
+    ['summary missing', ['English headline', undefined], false],
+    ['blank summary', ['English headline', '   '], false],
+  ]) {
+    const item = originals();
+    let calls = 0;
+    const env = {
+      AI: {
+        async run() {
+          return { translated_text: aiResult[calls++] };
+        },
+      },
+    };
+    await translateNonEnglish([item], env, admissionById);
+    assert.equal(calls, 2, label);
+    assert.equal(item.translated, expectedTranslated, label);
+    assert.equal(item.originalLang, 'ja', label);
+    assert.equal(item.headline, expectedTranslated ? 'English headline' : '原文見出し', label);
+    assert.equal(item.summary, expectedTranslated ? 'English summary' : '原文要約', label);
+    assert.equal(item.originalHeadline, expectedTranslated ? '原文見出し' : undefined, label);
+  }
+  const withoutSummary = { ...originals(), summary: null };
+  await translateNonEnglish([withoutSummary], { AI: { async run() {
+    return { translated_text: 'English headline' };
+  } } }, admissionById);
+  assert.equal(withoutSummary.translated, true);
+  assert.equal(withoutSummary.summary, null);
+  assert.equal(withoutSummary.headline, 'English headline');
+});
+
 test('/api/news degrades to live fetch when KV read fails and emits structured telemetry', async t => {
   const previousFetch = globalThis.fetch;
   t.after(() => {
