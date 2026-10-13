@@ -37,7 +37,7 @@
     a.rel = 'noopener noreferrer';
     return a;
   }
-  function select(region, country) {
+  function renderSelection(region, country) {
     state.region = regions.includes(region) ? region : 'global';
     state.country = country || null;
     root.querySelectorAll('[data-coverage-region]').forEach(b => {
@@ -136,8 +136,7 @@
     } catch { /* The unavailable state is explicit. */ }
     render();
   }
-  const originalSelect = select;
-  select = (region,country) => { originalSelect(region,country); updateStories(); };
+  function select(region,country) { renderSelection(region,country); updateStories(); }
   async function boot() {
     try {
       const [coverage,sources] = await Promise.all([json('/api/news/coverage'),json('/api/news/sources')]);
@@ -149,7 +148,7 @@
       try {
         const response = await fetch('/assets/world-coverage.svg');
         if (!response.ok) throw new Error('map unavailable');
-        const xml = new DOMParser().parseFromString(await response.text(),'image/svg+xml');
+        const xml = new window.DOMParser().parseFromString(await response.text(),'image/svg+xml');
         const svg = xml.documentElement;
         if (svg.localName !== 'svg' || !svg.querySelector('path')) throw new Error('invalid map');
         const imported = document.importNode(svg,true);
