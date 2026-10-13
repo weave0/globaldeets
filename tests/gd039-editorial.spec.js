@@ -3,23 +3,23 @@ const { expect, test } = require('@playwright/test');
 // GD-039 is a reader presentation pass, not an alternate source-admission or evidence model.
 // These checks deliberately avoid invented story fixtures or newsroom-ranking claims.
 
-test('the home reader leads with reporting, with the immersive globe below it', async ({ page }) => {
+test('the home reader leads with reporting, with coverage explorer below it', async ({ page }) => {
   await page.goto('/index.html');
   await expect(page.locator('body')).toHaveClass(/gd-editorial/);
   await expect(page.getByRole('heading', { name: 'World Desk', level: 1 })).toBeVisible();
   const order = await page.evaluate(() => {
     const desk = document.querySelector('#world-desk');
-    const globe = document.querySelector('.globe-hero-section');
+    const explorer = document.querySelector('#coverage-explorer');
     const container = document.querySelector('main#main-content');
     return {
-      globeInMain: container.contains(globe),
-      globeAfterDesk: Boolean(desk.compareDocumentPosition(globe) & Node.DOCUMENT_POSITION_FOLLOWING),
+      explorerInMain: container.contains(explorer),
+      explorerAfterDesk: Boolean(desk.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING),
       background: window.getComputedStyle(document.body).backgroundColor,
       loadedStyles: [...document.styleSheets].some(sheet => sheet.href?.endsWith('/editorial-reader.css')),
     };
   });
-  expect(order.globeInMain).toBe(true);
-  expect(order.globeAfterDesk).toBe(true);
+  expect(order.explorerInMain).toBe(true);
+  expect(order.explorerAfterDesk).toBe(true);
   expect(order.background).toBe('rgb(11, 17, 26)');
   expect(order.loadedStyles).toBe(true);
 });

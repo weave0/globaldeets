@@ -102,6 +102,7 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="world-desk.css" />
     <link rel="stylesheet" href="editorial-reader.css" />
+    <link rel="stylesheet" href="coverage-explorer.css" />
     <!-- JSON-LD Structured Data for Google -->
     <script type="application/ld+json">
       {
@@ -176,15 +177,6 @@
     </header>
 
 
-
-    <!-- News pin overlay (populated by globe-hero.js) -->
-    <div id="news-pin-overlay" role="dialog" aria-modal="true" aria-label="News story detail">
-      <button id="news-overlay-close" aria-label="Close">&times;</button>
-      <div id="news-overlay-source"></div>
-      <div id="news-overlay-title"></div>
-      <p id="news-overlay-summary"></p>
-      <a id="news-overlay-link" target="_blank" rel="noopener noreferrer"></a>
-    </div>
 
     <main class="main-content" id="main-content" role="main" aria-label="GlobalDeets World Desk">
       <!-- World Desk: the useful part comes first (GD-038) -->
@@ -285,27 +277,46 @@
         </div>
       </section>
 
-      <!-- Globe exploration, after the reporting -->
-    <section class="globe-hero-section" aria-label="Interactive Earth Globe">
-      <div id="globe-hero-container"></div>
-      <div class="globe-hero-overlay">
-        <h2 class="globe-hero-title">The Earth,<br /> <span>Right Now.</span></h2>
-        <p class="globe-hero-tagline">
-          Live headlines from publishers around the world. Every story links to the original.
-        </p>
-        <div class="globe-hero-cta">
-          <a href="#world-desk" class="btn-globe-primary">Back to latest</a>
-          <a href="globe.html" class="btn-globe-secondary">Full Globe &rarr;</a>
+      <!-- GD-049: publisher-origin map and feed-routing explorer; not event geography -->
+      <section id="coverage-explorer" class="coverage-explorer" aria-labelledby="coverage-title">
+        <p class="coverage-eyebrow">Geographic intelligence · Source coverage</p>
+        <h2 id="coverage-title">Explore the reporting landscape</h2>
+        <p class="coverage-intro">See where monitored publishers originate, which regional feeds they belong to, and where our source portfolio has gaps. The map <strong>does not show where news events happened.</strong></p>
+        <div class="coverage-controls" aria-label="Publisher feed region" role="group">
+          <button type="button" data-coverage-region="global" aria-pressed="true">All publishers</button>
+          <button type="button" data-coverage-region="africa" aria-pressed="false">Africa</button>
+          <button type="button" data-coverage-region="americas" aria-pressed="false">Americas</button>
+          <button type="button" data-coverage-region="asia" aria-pressed="false">Asia</button>
+          <button type="button" data-coverage-region="europe" aria-pressed="false">Europe</button>
+          <button type="button" data-coverage-region="middle-east" aria-pressed="false">Middle East</button>
+          <button type="button" data-coverage-region="pacific" aria-pressed="false">Pacific</button>
         </div>
-        <p class="globe-pin-hint">
-          Pins: approximate publisher location, or feed region if unmapped. Never the story&rsquo;s location.
-        </p>
-      </div>
-      <div class="news-ticker-bar" aria-label="News ticker">
-        <span class="ticker-label">LIVE</span>
-        <div class="ticker-viewport"><div id="ticker-track"></div></div>
-      </div>
-    </section>
+        <div class="coverage-main">
+          <div class="coverage-map-panel">
+            <div id="coverage-map" class="coverage-map" aria-label="Map of monitored publisher-origin countries">
+              <p>Loading the world coverage map…</p>
+            </div>
+            <p class="coverage-legend"><span class="coverage-swatch"></span>Monitored publisher origin <span class="coverage-swatch off"></span>No publisher origin in registry · Not an event map</p>
+            <div class="coverage-metrics" id="coverage-metrics" aria-label="Current source inventory"></div>
+            <p id="coverage-summary" class="coverage-caveat">Feed regions group publisher inputs, not event locations.</p>
+            <div id="coverage-gaps" class="coverage-gaps"></div>
+          </div>
+          <div class="coverage-inspector">
+            <h3 id="coverage-selection">All publishers — publisher feeds</h3>
+            <p id="coverage-status" role="status" aria-live="polite">Checking governed source records…</p>
+            <button type="button" id="coverage-reset" class="coverage-reset">Show all publishers</button>
+            <div id="coverage-sources" class="coverage-sources" aria-label="Publisher provenance"></div>
+            <h3>Observed recent reports</h3>
+            <div id="coverage-reports" aria-label="Reporting from selected publishers"></div>
+            <a id="coverage-feed-link" href="news.html">Open full news feed →</a>
+          </div>
+        </div>
+        <div class="coverage-footer">
+          <a href="/observatory/coverage/">Coverage &amp; evidence methods →</a>
+          <a href="globe.html">Optional immersive 3D globe →</a>
+          <span>Map geometry: Menelabs VectorAtlas · CC BY 4.0</span>
+        </div>
+      </section>
 
       <!-- Explore: existing, working surfaces only -->
       <section class="desk-explore" aria-labelledby="desk-explore-title">
@@ -313,7 +324,7 @@
         <ul class="desk-explore-grid">
           <li>
             <a class="desk-explore-card" href="globe.html">
-              <strong>Globe</strong>
+              <strong>Immersive globe</strong>
               <span>Headlines placed near each publisher, or in its feed region if unmapped. Never the story&rsquo;s location.</span>
             </a>
           </li>
@@ -408,8 +419,7 @@
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/globe.gl@2/dist/globe.gl.min.js" defer></script>
-    <script src="globe-hero.js" defer></script>
+    <script src="coverage-explorer.js" defer></script>
     <script src="world-desk.js" defer></script>
     <script src="interactions.js" defer></script>
     <script src="app.js" defer></script>
