@@ -3,6 +3,7 @@
 const { cpSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } = require('fs');
 const { extname, join } = require('path');
 const { execFileSync } = require('child_process');
+const { RETIRED_PATHS } = require('./verify-boundary-retired-prod');
 
 const ROOT = process.cwd();
 const OUT_DIR = join(ROOT, 'dist');
@@ -33,6 +34,7 @@ const REQUIRED_DEPLOY_FILES = [
   'observatory/coverage/index.html',
   'observatory/coverage/observatory.js',
   'observatory/coverage/observatory.css',
+  'functions/_middleware.js',
   'functions/api/intelligence/observatory/coverage.js',
   'functions/lib/coverage-evidence-observatory.js',
 ];
@@ -133,6 +135,20 @@ function assertCleanArtifact() {
     for (const file of forbidden) console.error(`- ${file}`);
     process.exit(1);
   }
+
+  assertNoRetiredPaths(OUT_DIR);
+}
+
+function assertNoRetiredPaths(artifactDirectory) {
+  const retired = RETIRED_PATHS.filter(retiredPath =>
+    existsSync(join(artifactDirectory, retiredPath.replace(/^\/+/, '')))
+  );
+
+  if (retired.length > 0) {
+    throw new Error(
+      `Refusing to deploy artifact containing retired public paths:\n${retired.map(path => `- ${path}`).join('\n')}`
+    );
+  }
 }
 
 function runMetadata() {
@@ -178,4 +194,4 @@ if (require.main === module) {
   stageDeploy();
 }
 
-module.exports = { stageDeploy };
+module.exports = { assertNoRetiredPaths, stageDeploy };

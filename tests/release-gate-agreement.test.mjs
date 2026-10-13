@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { tmpdir } from 'node:os';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
@@ -13,6 +14,7 @@ const require = createRequire(import.meta.url);
 const ROOT = join(fileURLToPath(import.meta.url), '..', '..');
 const { ROUTES } = require('../health-prod.js');
 const { RETIRED_PATHS } = require('../tools/verify-boundary-retired-prod.js');
+const { assertNoRetiredPaths } = require('../tools/stage-deploy.js');
 
 const canonical = path => path.replace(/\.html$/, '').replace(/\/$/, '') || '/';
 
@@ -116,4 +118,124 @@ test('the knowledge page does not deny analytics while loading Google Analytics'
   assert.match(page, /googletagmanager\.com\/gtag\/js/);
   assert.doesNotMatch(page, /No tracking\./i, 'public privacy copy must agree with active analytics scripts');
   assert.match(page, /This site uses analytics\./);
+});
+
+test('staging accepts an artifact with no retired public paths', () => {
+  const artifact = mkdtempSync(join(tmpdir(), 'globaldeets-clean-stage-'));
+  try {
+    assert.doesNotThrow(() => assertNoRetiredPaths(artifact));
+  } finally {
+    rmSync(artifact, { recursive: true, force: true });
+  }
+});
+
+test('staging rejects every retired public path if it re-enters the artifact', async t => {
+  for (const retiredPath of RETIRED_PATHS) {
+    await t.test(retiredPath, () => {
+      const artifact = mkdtempSync(join(tmpdir(), 'globaldeets-retired-stage-'));
+      try {
+        const artifactPath = join(artifact, retiredPath.replace(/^\/+/, ''));
+        if (retiredPath.endsWith('/')) {
+          mkdirSync(artifactPath, { recursive: true });
+        } else {
+          mkdirSync(dirname(artifactPath), { recursive: true });
+          writeFileSync(artifactPath, '');
+        }
+
+        assert.throws(
+          () => assertNoRetiredPaths(artifact),
+          error => error instanceof Error && error.message.includes(retiredPath)
+        );
+      } finally {
+        rmSync(artifact, { recursive: true, force: true });
+      }
+    });
+  }
+});
+
+test('Pages routes all retired URLs through the middleware without routing all static traffic', () => {
+  const routes = JSON.parse(readFileSync(join(ROOT, '_routes.json'), 'utf8'));
+  assert.ok(routes.include.includes('/api/*'), 'existing API routing must stay enabled');
+  assert.ok(!routes.include.includes('/*'), 'ordinary static routes must remain free of Functions');
+  const matchesRule = (rule, path) => rule.endsWith('*')
+    ? path.startsWith(rule.slice(0, -1))
+    : rule === path;
+
+  // Wrangler rejects includes that overlap a wildcard, even when unit tests pass.
+  // Check the actual dispatch patterns, not only whether their names are present.
+  for (const path of RETIRED_PATHS) {
+    const matching = routes.include.filter(rule => matchesRule(rule, path));
+    assert.equal(matching.length, 1, `${path} must be handled by exactly one route rule`);
+  }
+  assert.ok(routes.include.includes('/observatory/mission-control/*'));
+  for (let i = 0; i < routes.include.length; i++) {
+    for (let j = i + 1; j < routes.include.length; j++) {
+      const left = routes.include[i];
+      const right = routes.include[j];
+      assert.ok(
+        !(matchesRule(left, right) || matchesRule(right, left)),
+        `Cloudflare Pages disallows overlapping include rules: ${left} and ${right}`
+      );
+    }
+  }
+});
+
+test('Pages middleware emits uncached 404 for every retired path on both hostnames', async () => {
+  const source = readFileSync(join(ROOT, 'functions/_middleware.js'), 'utf8');
+  const { onRequest } = await import(`data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`);
+  for (const host of ['globaldeets.com', 'www.globaldeets.com']) {
+    for (const path of RETIRED_PATHS) {
+      let forwarded = false;
+      const response = await onRequest({
+        request: new Request(`https://${host}${path}`),
+        next: () => { forwarded = true; return new Response('unsafe', { status: 200 }); },
+      });
+      assert.equal(forwarded, false, `${host}${path} escaped middleware`);
+      assert.equal(response.status, 404, `${host}${path} was not rejected`);
+      assert.match(response.headers.get('cache-control') || '', /no-store/);
+      assert.equal(response.headers.get('x-robots-tag'), 'noindex');
+      assert.match(response.headers.get('content-type') || '', /text\/html/);
+      assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+    }
+  }
+});
+
+test('Pages middleware retains existing API behavior and security headers', async () => {
+  const source = readFileSync(join(ROOT, 'functions/_middleware.js'), 'utf8');
+  const { onRequest } = await import(`data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`);
+  let forwarded = 0;
+  const response = await onRequest({
+    request: new Request('https://globaldeets.com/api/news'),
+    next: () => { forwarded++; return new Response('ok', { status: 200 }); },
+  });
+  assert.equal(forwarded, 1);
+  assert.equal(response.status, 200);
+  assert.equal(await response.text(), 'ok');
+  assert.equal(response.headers.get('x-frame-options'), 'DENY');
+  assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+});
+
+test('production boundary rejects redirects, errors and missing retired-path protections', () => {
+  const { auditRetiredResponse, isValidRetiredResponse } =
+    require('../tools/verify-boundary-retired-prod.js');
+  const protectedHeaders = {
+    'content-type': 'text/html; charset=utf-8',
+    'cache-control': 'no-store, max-age=0',
+    'x-robots-tag': 'noindex',
+    'x-content-type-options': 'nosniff',
+  };
+  const good = auditRetiredResponse(new Response('not found', {
+    status: 404, headers: protectedHeaders,
+  }));
+  assert.equal(isValidRetiredResponse(good), true);
+  for (const status of [200, 301, 302, 403, 500, 503]) {
+    const outcome = auditRetiredResponse(new Response('bad', { status, headers: protectedHeaders }));
+    assert.equal(isValidRetiredResponse(outcome), false, `HTTP ${status} cannot certify retirement`);
+  }
+  for (const header of Object.keys(protectedHeaders)) {
+    const headers = { ...protectedHeaders };
+    delete headers[header];
+    const outcome = auditRetiredResponse(new Response('not found', { status: 404, headers }));
+    assert.equal(isValidRetiredResponse(outcome), false, `missing ${header} cannot certify retirement`);
+  }
 });

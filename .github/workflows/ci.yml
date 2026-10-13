@@ -162,6 +162,9 @@ jobs:
       - name: Run Function contract tests
         run: npm run test:functions
 
+      - name: Test retired-path cache purge
+        run: npm run test:retired-edge-cache-purge
+
       - name: Install Playwright Chromium
         run: npx playwright install chromium
 
