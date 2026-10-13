@@ -241,30 +241,40 @@
               aria-labelledby="desk-coverage-title"
               data-platform-id="world-desk"
             >
-              <h3 id="desk-coverage-title">Coverage at a glance</h3>
-              <div class="dashboard-mock desk-coverage">
+              <h3 id="desk-coverage-title">Inside this selection</h3>
+              <div class="dashboard-mock desk-coverage" aria-describedby="desk-selection-note">
                 <div class="dm-stats-row">
                   <div class="dm-stat">
-                    <span class="dm-stat-value">21</span>
-                    <span class="dm-stat-label">Live Sources</span>
+                    <span class="dm-stat-value" id="desk-audit-publishers" data-audit="publishers">—</span>
+                    <span class="dm-stat-label">Linked publishers shown</span>
                   </div>
                   <div class="dm-stat">
-                    <span class="dm-stat-value">7</span>
-                    <span class="dm-stat-label">Regions</span>
+                    <span class="dm-stat-value" id="desk-audit-regions" data-audit="regions">—</span>
+                    <span class="dm-stat-label">Feed regions shown</span>
                   </div>
                   <div class="dm-stat">
-                    <span class="dm-stat-value">—</span>
-                    <span class="dm-stat-label">Local/State Sources</span>
+                    <span class="dm-stat-value" id="desk-audit-total" data-audit="total">—</span>
+                    <span class="dm-stat-label">Reports available in feed</span>
                   </div>
                   <div class="dm-stat">
-                    <span class="dm-stat-value">—</span>
-                    <span class="dm-stat-label">Open Coverage Gaps</span>
+                    <span class="dm-stat-value" id="desk-audit-share" data-audit="share">—</span>
+                    <span class="dm-stat-label">Largest linked publisher share</span>
                   </div>
                 </div>
               </div>
-              <p class="desk-caveat">
-                Source counts describe what we monitor, not how much of the world we cover.
+              <p id="desk-selection-note" class="desk-caveat" role="status" aria-live="polite">
+                Loading the selection evidence. These figures describe available reports, not world events.
               </p>
+              <details class="desk-selection-method">
+                <summary>How were these publishers selected?</summary>
+                <p>
+                  Our World Desk rotates among available publishers and feed-routing regions, within
+                  a publication-time window relative to the newest item in the feed snapshot.
+                  It is not an importance, accuracy, political-bias, or event-location score.
+                  Reports outside that window remain available in the chronological
+                  <a href="news.html">News feed</a>.
+                </p>
+              </details>
               <div class="platform-actions desk-actions">
                 <a href="/observatory/coverage/" class="btn-primary">Coverage &amp; Evidence Observatory</a>
                 <a href="/story/santa-ynez-pipeline/" class="btn-sample">Open the Santa Ynez story</a>

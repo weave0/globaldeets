@@ -665,3 +665,34 @@ body.gd-editorial .desk-note a:visited {
 }
 body.gd-editorial .desk-note a:hover,
 body.gd-editorial .desk-note a:focus-visible { color: #c4f2e9; }
+
+
+/* GD-042: factual, first-page source-selection audit; not a trust or bias score. */
+body.gd-editorial .desk-selection-method {
+  border-top: 1px solid var(--hairline);
+  margin: .6rem 0 0;
+  padding: .35rem 0 0;
+}
+body.gd-editorial .desk-selection-method summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--edition-accent);
+  font-size: .82rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+body.gd-editorial .desk-selection-method p {
+  color: var(--ink-soft);
+  margin: .35rem 0 .65rem;
+  line-height: 1.55;
+  font-size: .8rem;
+}
+body.gd-editorial .desk-selection-method a {
+  color: var(--edition-accent);
+  text-decoration: underline;
+}
+body.gd-editorial #desk-selection-note {
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}

@@ -48,11 +48,18 @@ jobs:
         env:
           PREVIEW_URL: ${{ steps.pages.outputs.deployment-url }}
           EXACT_SHA: ${{ github.sha }}
+      - name: Hosted selection-accountability verification
+        run: node tools/verify-selection-preview.js --base="$PREVIEW_URL" --expected-commit="$EXACT_SHA"
+        env:
+          PREVIEW_URL: ${{ steps.pages.outputs.deployment-url }}
+          EXACT_SHA: ${{ github.sha }}
       - name: Preserve review screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gd041-integrated-reader-screenshots
-          path: design-previews/gd041-*.png
+          path: |
+            design-previews/gd041-*.png
+            design-previews/gd042-*.png
           if-no-files-found: ignore
           retention-days: 14
