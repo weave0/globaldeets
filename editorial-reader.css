@@ -788,3 +788,10 @@ body.gd-editorial .support-page a:not(.reader-support-button) { color: var(--edi
   body.gd-editorial > header .logo { max-width: 90px; }
   body.gd-editorial .primary-nav .nav-support { padding: .35rem .4rem; }
 }
+
+/* At the smallest reader sizes, Support stays in More and the homepage appeal.
+   Do not crowd the Today/News/Browse controls or hide the lead story. */
+@media (max-width: 700px) {
+  body.gd-editorial:not(.support-route) .primary-nav .nav-support { display: none; }
+  body.gd-editorial.support-route .primary-nav .support-nav-browse { display: none; }
+}
