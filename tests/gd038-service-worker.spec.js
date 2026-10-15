@@ -78,7 +78,7 @@ test('the service worker installs, precaches only shipped files, and retires the
   await page.goto('/offline.html');
   const collision = 'UNRELATED-CACHE-COLLISION';
   await page.evaluate(async collision => {
-    const oldCache = await caches.open('globaldeets-cache-v9');
+    const oldCache = await caches.open('globaldeets-cache-v10');
     const unrelatedCache = await caches.open('unrelated-app-cache-v1');
     await Promise.all([
       oldCache.put('/stale', new Response('old')),
@@ -97,12 +97,12 @@ test('the service worker installs, precaches only shipped files, and retires the
   const state = await page.evaluate(async () => ({
     keys: await caches.keys(),
     precached: await caches
-      .open('globaldeets-cache-v10')
+      .open('globaldeets-cache-v11')
       .then(cache => Promise.all(['/world-desk.js', '/news.js', '/offline.html'].map(path => cache.match(path))))
       .then(matches => matches.every(Boolean)),
   }));
-  expect(state.keys).toContain('globaldeets-cache-v10');
-  expect(state.keys).not.toContain('globaldeets-cache-v9');
+  expect(state.keys).toContain('globaldeets-cache-v11');
+  expect(state.keys).not.toContain('globaldeets-cache-v10');
   expect(state.keys).toContain('unrelated-app-cache-v1');
   expect(state.precached).toBe(true);
 
@@ -146,7 +146,7 @@ test('a dev server answering a stylesheet with JavaScript can never leave an uns
   await page.goto('/index.html');
   await waitForControllingWorker(page);
   const cached = await page.evaluate(async () => {
-    const cache = await caches.open('globaldeets-cache-v10');
+    const cache = await caches.open('globaldeets-cache-v11');
     const out = {};
     for (const path of ['/styles.css', '/world-desk.css', '/editorial-reader.css', '/news.js']) {
       const response = await cache.match(path);
