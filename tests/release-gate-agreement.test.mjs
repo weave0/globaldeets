@@ -117,7 +117,10 @@ test('the owner-domain URL appears only in the two reviewed About operator credi
 
 test('the knowledge page does not deny analytics while loading Google Analytics', () => {
   const page = readFileSync(join(ROOT, 'knowledge.html'), 'utf8');
-  assert.match(page, /googletagmanager\.com\/gtag\/js/);
+  assert.match(page, /src="\/ga4-consent\.js"[^>]+data-ga4="G-WXPBZB2MGV"/);
+  const consent = readFileSync(join(ROOT, 'ga4-consent.js'), 'utf8');
+  assert.match(consent, /analytics_storage: 'denied'/);
+  assert.match(consent, /googletagmanager\.com\/gtag\/js/);
   assert.doesNotMatch(page, /No tracking\./i, 'public privacy copy must agree with active analytics scripts');
   assert.match(page, /This site uses analytics\./);
 });
