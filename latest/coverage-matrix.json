@@ -1,7 +1,7 @@
 {
   "contractName": "globaldeets-estate-coverage-matrix",
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-10-15T18:32:45.994Z",
+  "generatedAt": "2026-10-16T00:55:22.580Z",
   "policy": {
     "unknownIsHealthy": false,
     "missingIsZero": false,
@@ -70,8 +70,8 @@
         "blocked": 1,
         "awaiting-authority": 0,
         "stale": 0,
-        "missing": 0,
-        "unknown": 3,
+        "missing": 1,
+        "unknown": 2,
         "not-applicable": 5
       },
       "businessEvents": {
@@ -178,10 +178,9 @@
       "priorityScore": 122,
       "properties": [
         "culturesherpa.org",
-        "aiaimate.com",
         "goodflippinvibes.com"
       ],
-      "propertyCount": 3
+      "propertyCount": 2
     },
     {
       "id": "audience:blocked",
@@ -198,6 +197,20 @@
       "propertyCount": 1
     },
     {
+      "id": "audience:missing",
+      "facet": "audience",
+      "status": "missing",
+      "severity": "critical",
+      "businessImpact": "existential",
+      "nextAction": "Connect certified GA4/RUM-quality audience ingestion (history ingestion seam: certified-audience) with explicit bot, monitor, API, asset, and Mission Control probe exclusions.",
+      "diagnosticId": "measurement:audience-certification",
+      "priorityScore": 122,
+      "properties": [
+        "aiaimate.com"
+      ],
+      "propertyCount": 1
+    },
+    {
       "id": "history:blocked",
       "facet": "history",
       "status": "blocked",
@@ -205,7 +218,7 @@
       "businessImpact": "high",
       "nextAction": "Check the Traffic Intelligence daily pipeline (traffic-intelligence-deploy workflow) for failures.",
       "diagnosticId": "evidence:audience-stale",
-      "priorityScore": 109,
+      "priorityScore": 110,
       "properties": [
         "goodflippindesign.com"
       ],
@@ -429,7 +442,7 @@
       "parentProperty": "globaldeets.com",
       "project": "good-flippin-vibes",
       "status": "deactivated",
-      "latestProductionDeployAt": "2026-09-04T04:06:18.223548Z",
+      "latestProductionDeployAt": "2026-10-15T22:54:36.32583Z",
       "coverage": "not-monitored",
       "finding": "Serves from the estate but is not registered, so no availability, audience or outcome evidence is collected."
     },
@@ -473,8 +486,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from globaldeets.com in 156 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from globaldeets.com in 189 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "verified",
@@ -550,20 +563,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "GlobalDeets owns and deploys this property; checks mirror the production verification the deploy workflow already enforces.",
           "level": "authoritative",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -576,12 +589,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -668,8 +681,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from culturesherpa.org in 153 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from culturesherpa.org in 554 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -680,7 +693,7 @@
         "audience": {
           "status": "unknown",
           "state": "unknown",
-          "detail": "A ga4 + ga4 tag is shipped in the homepage HTML, but no evidence shows events are being received.",
+          "detail": "A ga4 tag is shipped in the homepage HTML, but no evidence shows events are being received.",
           "collecting": null,
           "readable": false,
           "governedSource": {
@@ -748,20 +761,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -774,12 +787,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -804,7 +817,7 @@
           "id": "audience:unknown",
           "facet": "audience",
           "status": "unknown",
-          "detail": "A ga4 + ga4 tag is shipped in the homepage HTML, but no evidence shows events are being received.",
+          "detail": "A ga4 tag is shipped in the homepage HTML, but no evidence shows events are being received.",
           "severity": "low",
           "gapSeverity": "critical",
           "scope": "property",
@@ -867,7 +880,7 @@
           "status": "not-applicable",
           "state": "available",
           "detail": "Redirect alias: availability belongs to the destination property.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "not-applicable",
@@ -937,20 +950,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "No declared basis",
           "level": "none",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -963,12 +976,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [],
@@ -1003,8 +1016,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from agentkagent.com in 148 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from agentkagent.com in 77 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -1080,20 +1093,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -1106,12 +1119,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -1215,8 +1228,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from aiaimate.com in 152 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from aiaimate.com in 371 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "verified",
@@ -1225,9 +1238,9 @@
           "level": "authoritative"
         },
         "audience": {
-          "status": "unknown",
+          "status": "missing",
           "state": "unknown",
-          "detail": "A ga4 tag is shipped in the homepage HTML, but no evidence shows events are being received.",
+          "detail": "No known analytics tag in the served homepage HTML. Tags injected only by scripts cannot be seen from here.",
           "collecting": null,
           "readable": false,
           "governedSource": {
@@ -1236,13 +1249,8 @@
             "requests28d": null
           },
           "browserTelemetry": {
-            "instrumentation": "configured-unverified",
-            "reception": {
-              "state": "unavailable",
-              "events": null,
-              "windowHours": 24,
-              "observedAt": null
-            }
+            "instrumentation": "absent",
+            "reception": null
           }
         },
         "businessEvents": {
@@ -1305,20 +1313,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "The AIAIMate portal implements and documents a search API (portal/app/api/search) that the learning experience depends on; the contract is defined in source (ok: true, results array).",
           "level": "authoritative",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -1331,15 +1339,32 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
+        {
+          "id": "audience:missing",
+          "facet": "audience",
+          "status": "missing",
+          "detail": "No known analytics tag in the served homepage HTML. Tags injected only by scripts cannot be seen from here.",
+          "severity": "medium",
+          "gapSeverity": "critical",
+          "scope": "property",
+          "propertyDiagnosticId": "instrumentation:absent",
+          "businessImpact": "existential",
+          "nextAction": "Verify the analytics tag actually delivers events (none received in 24h) and connect the governed audience source.",
+          "diagnosticAction": "Connect certified GA4/RUM-quality audience ingestion (history ingestion seam: certified-audience) with explicit bot, monitor, API, asset, and Mission Control probe exclusions.",
+          "actionability": "blocked-on-authority",
+          "ownerLane": "Data / analytics",
+          "diagnosticId": "measurement:audience-certification",
+          "priorityScore": 122
+        },
         {
           "id": "businessEvents:missing",
           "facet": "businessEvents",
@@ -1356,31 +1381,14 @@
           "ownerLane": "Product + Data",
           "diagnosticId": "business-outcomes:coverage",
           "priorityScore": 100
-        },
-        {
-          "id": "audience:unknown",
-          "facet": "audience",
-          "status": "unknown",
-          "detail": "A ga4 tag is shipped in the homepage HTML, but no evidence shows events are being received.",
-          "severity": "low",
-          "gapSeverity": "critical",
-          "scope": "property",
-          "propertyDiagnosticId": "instrumentation:reception-unverified",
-          "businessImpact": "existential",
-          "nextAction": "Verify the analytics tag actually delivers events (none received in 24h) and connect the governed audience source.",
-          "diagnosticAction": "Connect certified GA4/RUM-quality audience ingestion (history ingestion seam: certified-audience) with explicit bot, monitor, API, asset, and Mission Control probe exclusions.",
-          "actionability": "blocked-on-authority",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 122
         }
       ],
       "severity": "medium",
-      "businessImpact": "high",
-      "recommendedAction": "Connect the declared producer (portal/app/api/newsletter/subscribe, portal/app/api/stripe/create-checkout and create-subscription) to the event plane and confirm its first event.",
-      "actionability": "actionable-now",
+      "businessImpact": "existential",
+      "recommendedAction": "Verify the analytics tag actually delivers events (none received in 24h) and connect the governed audience source.",
+      "actionability": "blocked-on-authority",
       "owner": {
-        "lane": "Product + Data",
+        "lane": "Data / analytics",
         "named": null
       },
       "confidence": {
@@ -1407,7 +1415,7 @@
           "status": "not-applicable",
           "state": "no-service-published",
           "detail": "No web service is published, so there is nothing to be available. Ownership intent is not declared.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "not-applicable",
@@ -1477,20 +1485,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "No declared basis",
           "level": "none",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -1503,12 +1511,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -1562,7 +1570,7 @@
           "status": "not-applicable",
           "state": "no-service-published",
           "detail": "No web service is published, so there is nothing to be available. Ownership intent is not declared.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "not-applicable",
@@ -1632,20 +1640,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "No declared basis",
           "level": "none",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -1658,12 +1666,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -1716,8 +1724,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from www.brettleeweaver.com in 363 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from www.brettleeweaver.com in 267 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -1793,20 +1801,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -1819,12 +1827,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -1928,8 +1936,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from citizenapproved.org in 238 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from citizenapproved.org in 120 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -2005,20 +2013,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -2031,12 +2039,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -2140,8 +2148,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from cyancanoe.com in 268 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from cyancanoe.com in 139 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -2224,20 +2232,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -2250,12 +2258,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -2342,8 +2350,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from flipskillet.com in 159 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from flipskillet.com in 192 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -2419,20 +2427,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -2445,12 +2453,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -2554,8 +2562,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from flipskillit.com in 178 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from flipskillit.com in 175 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -2631,20 +2639,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -2657,12 +2665,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -2749,8 +2757,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from foxyana.com in 116 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from foxyana.com in 137 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -2826,20 +2834,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -2852,12 +2860,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -2962,7 +2970,7 @@
           "status": "not-applicable",
           "state": "no-service-published",
           "detail": "No web service is published, so there is nothing to be available. Ownership intent is not declared.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "not-applicable",
@@ -3032,20 +3040,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "No declared basis",
           "level": "none",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -3058,12 +3066,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -3117,7 +3125,7 @@
           "status": "not-applicable",
           "state": "no-service-published",
           "detail": "No web service is published, so there is nothing to be available. Ownership intent is not declared.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "not-applicable",
@@ -3187,20 +3195,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "No declared basis",
           "level": "none",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -3213,12 +3221,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -3271,8 +3279,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from gflippinv.com in 234 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from gflippinv.com in 193 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -3348,20 +3356,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -3374,12 +3382,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -3467,7 +3475,7 @@
           "status": "blocked",
           "state": "unknown",
           "detail": "Probe was restricted by the target (edge-challenge); this vantage cannot establish availability.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "blocked",
@@ -3553,20 +3561,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Routes the owner already treats as production-critical in their own monitoring (config/health-targets.json: home, /donate, /community-portal are marked critical) plus the documented /api/health endpoint.",
           "level": "authoritative",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -3579,12 +3587,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -3654,7 +3662,7 @@
           "actionability": "actionable-now",
           "ownerLane": "Data / analytics",
           "diagnosticId": "evidence:audience-stale",
-          "priorityScore": 109
+          "priorityScore": 110
         }
       ],
       "severity": "medium",
@@ -3688,8 +3696,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from goodflippinluck.com in 205 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from goodflippinluck.com in 116 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -3768,20 +3776,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -3794,12 +3802,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -3886,8 +3894,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from goodflippinnews.com in 216 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from goodflippinnews.com in 128 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -3966,20 +3974,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -3992,12 +4000,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -4084,8 +4092,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from goodflippinvibes.com in 115 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from goodflippinvibes.com in 94 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -4164,20 +4172,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -4190,12 +4198,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -4282,8 +4290,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from goodflippinyikes.com in 216 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from goodflippinyikes.com in 170 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -4359,20 +4367,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -4385,12 +4393,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -4494,8 +4502,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from heavymoose.com in 249 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from heavymoose.com in 191 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -4571,20 +4579,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -4597,32 +4605,15 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
-        {
-          "id": "audience:partial",
-          "facet": "audience",
-          "status": "partial",
-          "detail": "Governed audience readings exist but browser-telemetry reception is unconfirmed.",
-          "severity": "medium",
-          "gapSeverity": "critical",
-          "scope": "property",
-          "propertyDiagnosticId": "instrumentation:placeholder-tag",
-          "businessImpact": "existential",
-          "nextAction": "Verify the analytics tag actually delivers events (none received in 24h) and connect the governed audience source.",
-          "diagnosticAction": "Connect certified GA4/RUM-quality audience ingestion (history ingestion seam: certified-audience) with explicit bot, monitor, API, asset, and Mission Control probe exclusions.",
-          "actionability": "blocked-on-authority",
-          "ownerLane": "Data / analytics",
-          "diagnosticId": "measurement:audience-certification",
-          "priorityScore": 122
-        },
         {
           "id": "businessEvents:missing",
           "facet": "businessEvents",
@@ -4639,6 +4630,23 @@
           "ownerLane": "Product + Data",
           "diagnosticId": "business-outcomes:coverage",
           "priorityScore": 100
+        },
+        {
+          "id": "audience:partial",
+          "facet": "audience",
+          "status": "partial",
+          "detail": "Governed audience readings exist but browser-telemetry reception is unconfirmed.",
+          "severity": "low",
+          "gapSeverity": "critical",
+          "scope": "property",
+          "propertyDiagnosticId": "instrumentation:reception-unverified",
+          "businessImpact": "existential",
+          "nextAction": "Verify the analytics tag actually delivers events (none received in 24h) and connect the governed audience source.",
+          "diagnosticAction": "Connect certified GA4/RUM-quality audience ingestion (history ingestion seam: certified-audience) with explicit bot, monitor, API, asset, and Mission Control probe exclusions.",
+          "actionability": "blocked-on-authority",
+          "ownerLane": "Data / analytics",
+          "diagnosticId": "measurement:audience-certification",
+          "priorityScore": 122
         },
         {
           "id": "criticalPath:partial",
@@ -4676,11 +4684,11 @@
         }
       ],
       "severity": "medium",
-      "businessImpact": "existential",
-      "recommendedAction": "Verify the analytics tag actually delivers events (none received in 24h) and connect the governed audience source.",
-      "actionability": "blocked-on-authority",
+      "businessImpact": "high",
+      "recommendedAction": "Declare a primary outcome and add a first-party event producer for it.",
+      "actionability": "actionable-now",
       "owner": {
-        "lane": "Data / analytics",
+        "lane": "Product + Data",
         "named": null
       },
       "confidence": {
@@ -4706,8 +4714,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from lowertownstpaul.org in 217 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from lowertownstpaul.org in 300 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -4783,20 +4791,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -4809,12 +4817,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -4918,8 +4926,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from minnesotapeace.com in 371 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from minnesotapeace.com in 230 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "verified",
@@ -4995,20 +5003,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "The publication sections the owner already verifies after every deploy (deploy workflow: Verify exact public URLs serve the publication build). Only route availability and page substance are checked, not volatile copy.",
           "level": "authoritative",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -5021,12 +5029,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
@@ -5113,8 +5121,8 @@
         "production": {
           "status": "verified",
           "state": "available",
-          "detail": "HTTP 200 from redleopardofstpaul.com in 214 ms.",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "detail": "HTTP 200 from redleopardofstpaul.com in 203 ms.",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         "criticalPath": {
           "status": "partial",
@@ -5190,20 +5198,20 @@
         "inventory": "fresh",
         "worst": "expired",
         "neverCollected": [],
-        "evidenceAsOf": "2026-10-15T18:32:45.994Z"
+        "evidenceAsOf": "2026-10-16T00:55:22.580Z"
       },
       "provenance": [
         {
           "facet": "production",
           "source": "Synthetic multi-vantage probe (2 vantages)",
-          "runId": "run-38786418904-1",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "runId": "run-38832174821-1",
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "criticalPath",
           "source": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
           "level": "baseline",
-          "observedAt": "2026-10-15T18:32:45.994Z"
+          "observedAt": "2026-10-16T00:55:22.580Z"
         },
         {
           "facet": "audience",
@@ -5216,12 +5224,12 @@
           "facet": "businessEvents",
           "source": "gfd-mission-control-events",
           "status": "measured",
-          "observedAt": "2026-10-15T18:33:00.317Z"
+          "observedAt": "2026-10-16T00:55:36.955Z"
         },
         {
           "facet": "inventory",
           "source": "Cloudflare API (zones + pages)",
-          "observedAt": "2026-10-15T18:32:45.996Z"
+          "observedAt": "2026-10-16T00:55:22.581Z"
         }
       ],
       "blindSpots": [
