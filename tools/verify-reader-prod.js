@@ -171,7 +171,8 @@ async function verifyMobileSurface(browser, viewport, label) {
 
   try {
     await verifyHomepageSelection(page);
-    await page.locator('#globe-hero-container').waitFor({ state: 'visible', timeout: 20_000 });
+    await page.locator('#coverage-explorer').waitFor({ state: 'visible', timeout: 20_000 });
+    requireCondition((await page.locator('#globe-hero-container').count()) === 0, `${label} retained retired globe hero`);
     await verifyNoHorizontalOverflow(page, `${label} homepage`);
     await requireTouchTarget(page.locator('header .nav-icon-btn').first(), `${label} primary nav`);
 
