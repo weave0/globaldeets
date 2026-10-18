@@ -120,14 +120,15 @@ test.beforeEach(async ({ page }) => {
 test('mobile homepage fits, exposes governed metrics, and keeps navigation reachable', async ({ page }) => {
   await page.goto('/index.html');
 
-  await expect(page.getByRole('heading', { name: /The Earth,\s*Right Now\./i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Explore the reporting landscape/i })).toBeVisible();
   await expect(page.locator('#desk-audit-publishers')).toHaveText('1');
   await expect(page.locator('#desk-audit-regions')).toHaveText('3');
   await expect(page.locator('#desk-audit-total')).toHaveText('3');
   await expect(page.locator('#desk-audit-share')).toHaveText('100%');
   await expect(page.locator('#desk-selection-note')).toContainText('not event locations or impartiality');
   await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible();
-  await expect(page.locator('#globe-hero-container')).toBeVisible();
+  await expect(page.locator('#coverage-explorer')).toBeVisible();
+  await expect(page.locator('#globe-hero-container')).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
 
   await expect(page.locator('.ecosystem-toggle')).toHaveCount(0);
