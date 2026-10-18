@@ -10,7 +10,13 @@
     try { return new Intl.DisplayNames(['en'], {type:'region'}).of(code) || code; }
     catch { return code; }
   };
-  const state = {region:'global', country:null, coverage:null, sources:null, health:null, stories:null};
+  const state = {
+    region:'global', country:null, coverage:null, sources:null, health:null,
+    healthState:'pending', stories:null, registryState:'loading', requestVersion:0,
+    storiesController:null,
+  };
+  const TIMEOUT_MS = 12_000;
+  const HEALTH_STALE_MS = 24 * 60 * 60 * 1000;
   const status = $('#coverage-status'), list = $('#coverage-sources'), map = $('#coverage-map'),
     report = $('#coverage-reports'), metrics = $('#coverage-metrics'), heading = $('#coverage-selection'),
     summary = $('#coverage-summary'), feed = $('#coverage-feed-link'), gap = $('#coverage-gaps');
@@ -23,10 +29,40 @@
     if (cls) n.className = cls;
     return n;
   };
-  async function json(url) {
-    const response = await fetch(url, {headers:{Accept:'application/json'}});
-    if (!response.ok) throw new Error('HTTP ' + response.status);
-    return response.json();
+  async function json(url, signal) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    const onAbort = () => controller.abort();
+    if (signal) signal.addEventListener('abort', onAbort, {once:true});
+    try {
+      if (signal?.aborted) controller.abort();
+      const response = await fetch(url, {headers:{Accept:'application/json'}, signal:controller.signal});
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      return await response.json();
+    } finally {
+      clearTimeout(timer);
+      if (signal) signal.removeEventListener('abort', onAbort);
+    }
+  }
+  function validTime(value) {
+    const time = Date.parse(value || '');
+    return Number.isFinite(time) ? time : null;
+  }
+  function healthMessage(observation) {
+    if (state.healthState === 'pending') return 'Checking feed health separately…';
+    if (state.healthState !== 'ready') return 'Feed health unavailable; this is not evidence of a source outage.';
+    if (!observation) return 'No observation for this source in the latest health snapshot.';
+    const checkedTime = validTime(observation.lastFetchStartedAt || state.health?.generatedAt);
+    if (observation.lastError) {
+      return 'Latest feed probe failed' + (checkedTime ? ' (' + new Date(checkedTime).toLocaleString() + ')' : '') +
+        '. Last successful observation is not established by this probe.';
+    }
+    const successTime = validTime(observation.lastFetchSucceededAt);
+    if (!successTime) return 'Latest probe result lacks a confirmed successful fetch.';
+    const stale = Date.now() - successTime > HEALTH_STALE_MS;
+    return (stale ? 'Stale successful feed observation: ' : 'Last successful feed check: ') +
+      new Date(successTime).toLocaleString() +
+      (stale ? ' (older than 24 hours; current health unknown).' : '.');
   }
   function link(text, href, cls) {
     const valid = safeHref(href);
@@ -38,6 +74,7 @@
     return a;
   }
   function renderSelection(region, country) {
+    if (state.registryState !== 'ready') return;
     state.region = regions.includes(region) ? region : 'global';
     state.country = country || null;
     root.querySelectorAll('[data-coverage-region]').forEach(b => {
@@ -72,6 +109,7 @@
     });
   }
   function render() {
+    if (state.registryState !== 'ready') return;
     const subset = sourcesForSelection();
     const country = state.country ? countryName(state.country) : null;
     heading.textContent = country ? country + ' — publisher origins' : labels[state.region] + ' — publisher feeds';
@@ -95,14 +133,15 @@
       card.append(el('h4',source.name));
       const language = (source.sourceLanguages || []).join(', ').toUpperCase() || 'unrecorded';
       card.append(el('p','Publisher country: ' + (source.primaryCountry ? countryName(source.primaryCountry) : 'Unknown') + ' · Language: ' + language + ' · Scope: ' + (source.geographicScope || 'unknown')));
+      const reviewDate = source.reviewedAt || state.sources.reviewedAt;
+      card.append(el('p', 'Publisher provenance reviewed: ' + (reviewDate || 'date unavailable'), 'coverage-review-date'));
       const observation = healthyById.get(source.sourceId);
-      const checked = observation?.lastFetchSucceededAt;
-      card.append(el('p', checked ? 'Last successful feed health check: ' + new Date(checked).toLocaleString() : 'No successful feed health check is available.', 'coverage-health'));
+      card.append(el('p', healthMessage(observation), 'coverage-health'));
       const href = source.evidenceUrls?.map(safeHref).find(Boolean);
       if (href) card.append(link('Source provenance ↗',href,'coverage-evidence-link'));
       list.append(card);
     }
-    const regionGaps = state.coverage?.gaps?.filter(g => g.region === state.region) || [];
+    const regionGaps = state.coverage?.gaps?.filter(g => g.region === state.region || (state.region === 'global' && !state.country && g.region == null)) || [];
     gap.replaceChildren();
     if (regionGaps.length) {
       gap.append(el('h4','Recorded source-portfolio gaps'));
@@ -128,50 +167,107 @@
     status.textContent = 'Showing ' + subset.length + ' monitored publisher inputs for ' + (country || labels[state.region]) + '.';
   }
   async function updateStories() {
+    // Only the newest selection can commit report data; canceled or delayed replies
+    // cannot replace a reader's current country/region choice.
+    const version = ++state.requestVersion;
+    state.storiesController?.abort();
+    const controller = new AbortController();
+    state.storiesController = controller;
     state.stories = null;
     render();
     try {
-      const data = await json('/api/news?region=' + encodeURIComponent(state.country ? 'global' : state.region) + '&limit=100&offset=0');
-      if (Array.isArray(data.items)) state.stories = data;
-    } catch { /* The unavailable state is explicit. */ }
+      const data = await json('/api/news?region=' +
+        encodeURIComponent(state.country ? 'global' : state.region) + '&limit=100&offset=0', controller.signal);
+      if (version !== state.requestVersion || state.registryState !== 'ready') return;
+      if (data.sourceFingerprint === state.sources.sourceFingerprint && Array.isArray(data.items)) {
+        state.stories = data;
+      }
+      // A mismatched or unidentified feed snapshot cannot be joined to this source registry.
+    } catch {
+      // The explicit unavailable state survives network errors and aborts.
+    } finally {
+      if (version === state.requestVersion) {
+        state.storiesController = null;
+        render();
+      }
+    }
+  }
+  function select(region,country) {
+    if (state.registryState !== 'ready') return;
+    renderSelection(region,country);
+    updateStories();
+  }
+  async function loadHealth() {
+    try {
+      const health = await json('/api/news/health');
+      if (state.registryState !== 'ready') return;
+      if (health?.sourceFingerprint !== state.sources.sourceFingerprint ||
+          !Array.isArray(health.sourceHealth)) throw new Error('inconsistent health snapshot');
+      state.health = health;
+      state.healthState = 'ready';
+    } catch {
+      state.health = null;
+      state.healthState = 'unavailable';
+    }
     render();
   }
-  function select(region,country) { renderSelection(region,country); updateStories(); }
+  async function loadMap() {
+    try {
+      const response = await fetch('/assets/world-coverage.svg');
+      if (!response.ok) throw new Error('map unavailable');
+      const xml = new window.DOMParser().parseFromString(await response.text(),'image/svg+xml');
+      const svg = xml.documentElement;
+      if (svg.localName !== 'svg' || !svg.querySelector('path')) throw new Error('invalid map');
+      const imported = document.importNode(svg,true);
+      imported.setAttribute('aria-label','World map showing publisher origin countries, not news event locations');
+      imported.setAttribute('role','group');
+      map.replaceChildren(imported);
+      map.addEventListener('click',e => {
+        const path = e.target.closest('path[id].is-covered');
+        if (path && map.contains(path)) select('global',path.id.toUpperCase());
+      });
+      map.addEventListener('keydown',e => {
+        const path = e.target.closest('path[id].is-covered');
+        if (path && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          select('global',path.id.toUpperCase());
+        }
+      });
+    } catch {
+      map.replaceChildren(el('p','Map artwork unavailable. Use the region and publisher controls below.','coverage-empty'));
+    }
+    renderMap();
+  }
+  function showRegistryUnavailable() {
+    state.registryState = 'error';
+    ++state.requestVersion;
+    state.storiesController?.abort();
+    root.querySelectorAll('[data-coverage-region], #coverage-reset').forEach(b => { b.disabled = true; });
+    status.textContent = 'Coverage registry unavailable. No coverage claims can be verified.';
+    map.replaceChildren(el('p','Map data unavailable. Visit the Coverage & Evidence Observatory for source documentation.','coverage-empty'));
+    list.replaceChildren(el('p','Publisher details unavailable.','coverage-empty'));
+    report.replaceChildren();
+    metrics.replaceChildren();
+    gap.replaceChildren();
+  }
   async function boot() {
     try {
       const [coverage,sources] = await Promise.all([json('/api/news/coverage'),json('/api/news/sources')]);
-      if (!coverage.sourceFingerprint || coverage.sourceFingerprint !== sources.sourceFingerprint || sources.validation?.valid !== true || !Array.isArray(sources.sources) || !Array.isArray(coverage.regions)) throw new Error('inconsistent source registries');
-      state.coverage = coverage; state.sources = sources;
-      const healthResult = await Promise.allSettled([json('/api/news/health')]);
-      const health = healthResult[0].status === 'fulfilled' ? healthResult[0].value : null;
-      state.health = health?.sourceFingerprint === sources.sourceFingerprint ? health : null;
-      try {
-        const response = await fetch('/assets/world-coverage.svg');
-        if (!response.ok) throw new Error('map unavailable');
-        const xml = new window.DOMParser().parseFromString(await response.text(),'image/svg+xml');
-        const svg = xml.documentElement;
-        if (svg.localName !== 'svg' || !svg.querySelector('path')) throw new Error('invalid map');
-        const imported = document.importNode(svg,true);
-        imported.setAttribute('aria-label','World map showing publisher origin countries, not news event locations');
-        imported.setAttribute('role','img');
-        map.replaceChildren(imported);
-        map.addEventListener('click',e => {
-          const path = e.target.closest('path[id]');
-          if (path && map.contains(path)) select('global',path.id.toUpperCase());
-        });
-        map.addEventListener('keydown',e => {
-          const path = e.target.closest('path[id]');
-          if (path && (e.key === 'Enter' || e.key === ' ')) {e.preventDefault();select('global',path.id.toUpperCase());}
-        });
-      } catch { map.replaceChildren(el('p','Map artwork unavailable. Use the region and publisher controls below.','coverage-empty')); }
+      if (!coverage?.sourceFingerprint || coverage.sourceFingerprint !== sources?.sourceFingerprint ||
+          sources.validation?.valid !== true || !Array.isArray(sources.sources) ||
+          !Array.isArray(coverage.regions) || !Array.isArray(coverage.gaps)) {
+        throw new Error('inconsistent source registries');
+      }
+      state.coverage = coverage;
+      state.sources = sources;
+      state.registryState = 'ready';
       render();
-      await updateStories();
+      // Health is optional observational metadata, never a dependency of map or reports.
+      loadHealth();
+      loadMap();
+      updateStories();
     } catch {
-      status.textContent = 'Coverage registry unavailable. No coverage claims can be verified.';
-      map.replaceChildren(el('p','Map data unavailable. Visit the Coverage & Evidence Observatory for source documentation.','coverage-empty'));
-      list.replaceChildren(el('p','Publisher details unavailable.','coverage-empty'));
-      report.replaceChildren();
-      metrics.replaceChildren();
+      showRegistryUnavailable();
     }
   }
   boot();
