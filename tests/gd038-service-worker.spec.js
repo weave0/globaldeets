@@ -78,7 +78,7 @@ test('the service worker installs, precaches only shipped files, and retires the
   await page.goto('/offline.html');
   const collision = 'UNRELATED-CACHE-COLLISION';
   await page.evaluate(async collision => {
-    const oldCache = await caches.open('globaldeets-cache-v9');
+    const oldCache = await caches.open('globaldeets-cache-v10');
     const unrelatedCache = await caches.open('unrelated-app-cache-v1');
     await Promise.all([
       oldCache.put('/stale', new Response('old')),
@@ -102,7 +102,7 @@ test('the service worker installs, precaches only shipped files, and retires the
       .then(matches => matches.every(Boolean)),
   }));
   expect(state.keys).toContain('globaldeets-cache-v11');
-  expect(state.keys).not.toContain('globaldeets-cache-v9');
+  expect(state.keys).not.toContain('globaldeets-cache-v10');
   expect(state.keys).toContain('unrelated-app-cache-v1');
   expect(state.precached).toBe(true);
 

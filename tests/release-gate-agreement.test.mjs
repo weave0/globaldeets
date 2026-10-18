@@ -75,11 +75,13 @@ test('every healthy public HTML page is included in the portfolio boundary scan'
   assert.deepEqual(missing, [], 'public pages escaped the semantic boundary scan');
 });
 
-test('public support page contains no stale portfolio fundraising checkout', () => {
+test('public support page points to the authorized fundraiser without a legacy embedded checkout', () => {
   const support = readFileSync(join(ROOT, 'donate.html'), 'utf8');
   assert.match(support, /GlobalDeets/);
-  assert.match(support, /Donations are not being accepted through this page/);
-  assert.doesNotMatch(support, /GoFundMe|PayPal\.Me|Stripe\(|Good Flippin Design|world-changing platforms/i);
+  assert.match(support, /https:\/\/gofund\.me\/3f0dfec7a/);
+  assert.match(support, /Contributions are processed through GoFundMe, not GlobalDeets/);
+  assert.doesNotMatch(support, /Donations are not being accepted through this page/);
+  assert.doesNotMatch(support, /PayPal\.Me|Stripe\(|Good Flippin Design|world-changing platforms/i);
 });
 
 test('every root public HTML file is included in the boundary verification', () => {
@@ -115,7 +117,10 @@ test('the owner-domain URL appears only in the two reviewed About operator credi
 
 test('the knowledge page does not deny analytics while loading Google Analytics', () => {
   const page = readFileSync(join(ROOT, 'knowledge.html'), 'utf8');
-  assert.match(page, /googletagmanager\.com\/gtag\/js/);
+  assert.match(page, /src="\/ga4-consent\.js"[^>]+data-ga4="G-WXPBZB2MGV"/);
+  const consent = readFileSync(join(ROOT, 'ga4-consent.js'), 'utf8');
+  assert.match(consent, /analytics_storage: 'denied'/);
+  assert.match(consent, /googletagmanager\.com\/gtag\/js/);
   assert.doesNotMatch(page, /No tracking\./i, 'public privacy copy must agree with active analytics scripts');
   assert.match(page, /This site uses analytics\./);
 });

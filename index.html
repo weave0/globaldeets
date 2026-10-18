@@ -1,25 +1,18 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script src="/ga4-consent.js" data-ga4="G-WXPBZB2MGV" data-hosts="globaldeets.com,www.globaldeets.com"></script>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WM6Q66W9W0"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
 
-      gtag('config', 'G-WM6Q66W9W0');
-    </script>
+
     <!-- Error monitoring -->
     <script>
       window.onerror = function (msg, src, line, col, err) {
         if (typeof gtag === 'function') {
           gtag('event', 'js_error', {
             event_category: 'JavaScript',
-            event_label: (src || '') + ':' + line,
-            description: msg,
+            event_label: 'client_script',
+            description: 'client_error',
           });
         }
       };
@@ -28,7 +21,7 @@
           gtag('event', 'js_error', {
             event_category: 'Promise',
             event_label: 'unhandledrejection',
-            description: String(e.reason),
+            description: 'unhandled_rejection',
           });
         }
       });
@@ -153,6 +146,7 @@
               <img src="assets/icons/site/nav-list.svg" alt="" aria-hidden="true" width="22" height="22" />
               <span class="nav-label">Browse</span>
             </a>
+            <a href="donate.html" class="nav-support" aria-label="Support GlobalDeets">Support</a>
             <a href="/observatory/coverage/" class="nav-evidence">
                 <span class="nav-label">Evidence</span>
               </a>
@@ -168,6 +162,7 @@
                 <li><a href="knowledge.html">Knowledge sources</a></li>
                 <li><a href="/observatory/coverage/">Coverage &amp; evidence</a></li>
                 <li><a href="about.html">About &amp; methods</a></li>
+                <li><a href="donate.html">Support GlobalDeets</a></li>
                 <li><a href="contact.html">Contact &amp; corrections</a></li>
               </ul>
             </details>
@@ -177,6 +172,11 @@
     </header>
 
 
+
+<div id="news-overlay-title"></div>
+      <p id="news-overlay-summary"></p>
+      <a id="news-overlay-link" target="_blank" rel="noopener noreferrer"></a>
+    </div>
 
     <main class="main-content" id="main-content" role="main" aria-label="GlobalDeets World Desk">
       <!-- World Desk: the useful part comes first (GD-038) -->
@@ -277,6 +277,19 @@
         </div>
       </section>
 
+      <!-- Reader-support appeal follows the reporting; it never displaces the first headline. -->
+      <aside class="reader-support-appeal" aria-labelledby="reader-support-title">
+        <div class="reader-support-message">
+          <p class="reader-support-kicker">A note from the team behind this desk</p>
+          <h2 id="reader-support-title">Help keep GlobalDeets online.</h2>
+          <p>GlobalDeets has no funding right now. Your support can help us keep this source-first world news desk available and continue developing it.</p>
+        </div>
+        <div class="reader-support-actions">
+          <a class="reader-support-button" href="https://gofund.me/3f0dfec7a" target="_blank" rel="noopener noreferrer" aria-label="Contribute on GoFundMe (opens in a new tab)">Contribute on GoFundMe <span aria-hidden="true">↗</span></a>
+          <a class="reader-support-details" href="donate.html">Why we're asking</a>
+        </div>
+      </aside>
+
       <!-- GD-049: publisher-origin map and feed-routing explorer; not event geography -->
       <section id="coverage-explorer" class="coverage-explorer" aria-labelledby="coverage-title">
         <p class="coverage-eyebrow">Geographic intelligence · Source coverage</p>
@@ -324,7 +337,7 @@
         <ul class="desk-explore-grid">
           <li>
             <a class="desk-explore-card" href="globe.html">
-              <strong>Immersive globe</strong>
+              <strong>Globe</strong>
               <span>Headlines placed near each publisher, or in its feed region if unmapped. Never the story&rsquo;s location.</span>
             </a>
           </li>

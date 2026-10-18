@@ -24,6 +24,7 @@ const CORE_ASSETS = [
   'interactions.js',
   'app.js',
   'sw-register.js',
+  'ga4-consent.js',
   'manifest.json',
   'assets/favicon.png',
   'assets/apple-touch-icon.png',
