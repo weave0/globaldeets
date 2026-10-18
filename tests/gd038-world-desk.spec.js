@@ -184,7 +184,7 @@ test('homepage no longer carries portfolio, pitch, or roadmap modules', async ({
   await expect(page.locator('script[src*="projects-"], script[src*="platform-modal"]')).toHaveCount(0);
   await expect(page.getByText(/Roadmap|Product Direction|2030 Product Spine|Paywalls/)).toHaveCount(0);
   await expect(page.getByText(/geo-pinned/i)).toHaveCount(0);
-  await expect(page.locator('.globe-pin-hint')).toHaveText(/approximate publisher location, or feed region if unmapped\. Never the story.s location/);
+  await expect(page.locator('#coverage-explorer')).toContainText('does not show where news events happened');
 });
 
 test('browse page offers regions and publishers, not sibling projects', async ({ page }) => {

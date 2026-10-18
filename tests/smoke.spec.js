@@ -276,8 +276,8 @@ test('homepage loads the primary GlobalDeets surface', async ({ page }) => {
 
   await expect(page).toHaveTitle(/GlobalDeets/i);
   await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible();
-  await expect(page.locator('#globe-hero-container')).toBeVisible();
-  await expect(page.getByRole('heading', { name: /The Earth,\s*Right Now\./i })).toBeVisible();
+  await expect(page.locator('#coverage-explorer')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Explore the reporting landscape' })).toBeVisible();
   await expect(page.locator('#desk-audit-total')).toHaveText('3');
   await expect(page.locator('#desk-audit-publishers')).toHaveText('3');
   await expect(page.locator('#desk-audit-regions')).toHaveText('3');
