@@ -204,3 +204,21 @@ test('GD-048 multilingual candidates remain research-only with recorded restrict
   assert.equal(news.SOURCES.length, 21, 'research may not inflate production source inventory');
   assert.equal(admission.SOURCE_ADMISSIONS.length, 21, 'research may not alter production admission inventory');
 });
+
+test('Global Voices CC-BY family is research-only and cannot inflate independent live sources', () => {
+  const entry = admission.SOURCE_RESEARCH_CANDIDATES.find(candidate => candidate.candidateId === 'global-voices-original');
+  assert.ok(entry);
+  assert.equal(entry.endpointUrl, 'https://globalvoices.org/feed/');
+  assert.equal(entry.endpointAuthority, 'first-party');
+  assert.equal(entry.allowedUseStatus, 'verified-public-use');
+  assert.equal(entry.operatorFamily, 'global-voices');
+  assert.equal(entry.disposition, 'research');
+  assert.equal(entry.itemLevelReviewRequired, true, 'third-party and translated item rights require review');
+  assert.equal(entry.healthVerificationStatus, 'research-only');
+  assert.deepEqual(entry.permittedUse, [], 'a publisher license is not blanket item-level authorization');
+  assert.equal(admission.isProductionAdmissible(entry), false);
+  assert.ok(!news.SOURCES.some(source => source.url === entry.endpointUrl));
+  assert.ok(!admission.SOURCE_ADMISSIONS.some(source => source.endpointUrl === entry.endpointUrl));
+  assert.equal(news.SOURCES.length, 21);
+  assert.equal(admission.SOURCE_ADMISSIONS.length, 21);
+});

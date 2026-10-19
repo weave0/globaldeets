@@ -56,7 +56,7 @@ test('/api/news/admission exposes fully reviewed live sources without hiding unr
   assert.equal(json.liveAdmissions.length, 21);
   const researchIds = json.researchCandidates.map(entry => entry.candidateId);
   assert.equal(new Set(researchIds).size, researchIds.length, 'candidate IDs must be unique');
-  for (const id of ['rnz-pacific','agencia-brasil','laist-local','antara-indonesian','vnexpress-vietnamese','lemonde-french']) {
+  for (const id of ['rnz-pacific','agencia-brasil','laist-local','antara-indonesian','vnexpress-vietnamese','lemonde-french','global-voices-original']) {
     assert.ok(researchIds.includes(id), `candidate ${id} should be discoverable`);
   }
   assert.ok(json.researchCandidates.every(entry =>
