@@ -54,7 +54,16 @@ test('/api/news/admission exposes fully reviewed live sources without hiding unr
   ]);
   assert.deepEqual(json.summary.unknownRightsSourceIds, ['nhk', 'npr', 'the-hindu']);
   assert.equal(json.liveAdmissions.length, 21);
-  assert.equal(json.researchCandidates.length, 3);
+  const researchIds = json.researchCandidates.map(entry => entry.candidateId);
+  assert.equal(new Set(researchIds).size, researchIds.length, 'candidate IDs must be unique');
+  for (const id of ['rnz-pacific','agencia-brasil','laist-local','antara-indonesian','vnexpress-vietnamese','lemonde-french']) {
+    assert.ok(researchIds.includes(id), `candidate ${id} should be discoverable`);
+  }
+  assert.ok(json.researchCandidates.every(entry =>
+    entry.disposition === 'research' &&
+    entry.healthVerificationStatus === 'research-only' &&
+    entry.permittedUse.length === 0
+  ), 'unverified leads cannot be presented as usable, healthy production feeds');
   assert.ok(json.liveAdmissions.every(entry => entry.reviewState === 'reviewed'));
   assert.ok(json.liveAdmissions.some(entry => entry.sourceId === 'mercopress' && entry.allowedUseStatus === 'verified-public-use'));
   assert.ok(json.liveAdmissions.some(entry => entry.sourceId === 'nhk' && entry.allowedUseStatus === 'unknown'));

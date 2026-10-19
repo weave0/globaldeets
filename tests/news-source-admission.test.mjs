@@ -169,3 +169,38 @@ test('admission telemetry changes independently of canonical news feed cache fin
   assert.equal(news.getSourceFingerprint(news.SOURCES), sourceFingerprint);
   assert.notEqual(admission.getAdmissionFingerprint(changed), admission.ADMISSION_FINGERPRINT);
 });
+
+test('GD-048 multilingual candidates remain research-only with recorded restrictions and first-party evidence', () => {
+  const candidates = admission.SOURCE_RESEARCH_CANDIDATES;
+  const entries = new Map(candidates.map(entry => [entry.candidateId, entry]));
+  assert.equal(new Set(entries.keys()).size, candidates.length, 'candidate IDs must not collide');
+  const rights = {
+    'agencia-brasil': 'verified-public-use',
+    'antara-indonesian': 'permission-required',
+    'vnexpress-vietnamese': 'permission-required',
+    'lemonde-french': 'contract-required',
+  };
+  for (const [candidateId, expectedRights] of Object.entries(rights)) {
+    const entry = entries.get(candidateId);
+    assert.ok(entry, candidateId + ' must be recorded for further research');
+    assert.equal(entry.disposition, 'research');
+    assert.equal(entry.allowedUseStatus, expectedRights);
+    assert.equal(entry.endpointType, 'rss');
+    assert.equal(entry.endpointAuthority, 'first-party');
+    assert.equal(entry.itemLevelReviewRequired, true);
+    assert.equal(entry.healthVerificationStatus, 'research-only');
+    assert.equal(entry.reviewedAt, '2026-10-18');
+    assert.ok(entry.endpointEvidenceUrls.includes(entry.endpointUrl));
+    assert.ok(entry.usagePolicyUrls.length > 0);
+    assert.deepEqual(entry.permittedUse, []);
+    assert.ok(!news.SOURCES.some(source => source.url === entry.endpointUrl));
+    assert.ok(!admission.SOURCE_ADMISSIONS.some(source => source.endpointUrl === entry.endpointUrl));
+    assert.equal(admission.isProductionAdmissible(entry), false);
+  }
+  assert.equal(entries.get('agencia-brasil').endpointUrl, 'https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml');
+  assert.equal(entries.get('antara-indonesian').endpointUrl, 'https://www.antaranews.com/rss/terkini.xml');
+  assert.equal(entries.get('vnexpress-vietnamese').endpointUrl, 'https://vnexpress.net/rss/the-gioi.rss');
+  assert.equal(entries.get('lemonde-french').endpointUrl, 'https://www.lemonde.fr/rss/une.xml');
+  assert.equal(news.SOURCES.length, 21, 'research may not inflate production source inventory');
+  assert.equal(admission.SOURCE_ADMISSIONS.length, 21, 'research may not alter production admission inventory');
+});
