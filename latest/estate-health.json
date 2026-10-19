@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0.0",
   "contractName": "globaldeets-estate-health",
-  "generatedAt": "2026-10-19T01:02:28.785Z",
+  "generatedAt": "2026-10-19T06:54:42.275Z",
   "propertyCount": 25,
   "policy": {
     "unknownIsHealthy": false,
@@ -75,8 +75,8 @@
   },
   "evidence": {
     "probe": {
-      "runId": "run-39183439332-1",
-      "observedAt": "2026-10-19T01:02:28.785Z",
+      "runId": "run-39212568142-1",
+      "observedAt": "2026-10-19T06:54:42.275Z",
       "validity": "valid",
       "vantage": "github-actions",
       "vantageCount": 2,
@@ -85,36 +85,37 @@
           "id": "github-actions",
           "network": null,
           "role": "primary",
-          "runId": "run-39183439332-1",
-          "observedAt": "2026-10-19T01:02:28.785Z",
+          "runId": "run-39212568142-1",
+          "observedAt": "2026-10-19T06:54:42.275Z",
           "validity": "valid",
           "freshness": {
             "state": "fresh",
             "ageHours": 0,
-            "freshUntil": "2026-10-19T09:02:28.785Z",
-            "expiresAt": "2026-10-20T01:02:28.785Z"
+            "freshUntil": "2026-10-19T14:54:42.275Z",
+            "expiresAt": "2026-10-20T06:54:42.275Z"
           }
         },
         {
           "id": "github-actions-macos",
           "network": "GitHub-hosted macOS",
           "role": "secondary",
-          "runId": "vantage-github-actions-macos-39183439332",
-          "observedAt": "2026-10-19T01:02:08.446Z",
+          "runId": "vantage-github-actions-macos-39212568142",
+          "observedAt": "2026-10-19T06:54:03.216Z",
           "validity": "valid",
           "freshness": {
             "state": "fresh",
             "ageHours": 0,
-            "freshUntil": "2026-10-19T09:02:08.446Z",
-            "expiresAt": "2026-10-20T01:02:08.446Z"
+            "freshUntil": "2026-10-19T14:54:03.216Z",
+            "expiresAt": "2026-10-20T06:54:03.216Z"
           }
         }
       ],
       "canaries": [
         {
           "id": "cloudflare-trace",
-          "ok": true,
-          "status": 200
+          "ok": false,
+          "status": null,
+          "errorCode": "ETIMEDOUT"
         },
         {
           "id": "example",
@@ -130,30 +131,30 @@
       "freshness": {
         "state": "fresh",
         "ageHours": 0,
-        "freshUntil": "2026-10-19T09:02:28.785Z",
-        "expiresAt": "2026-10-20T01:02:28.785Z"
+        "freshUntil": "2026-10-19T14:54:42.275Z",
+        "expiresAt": "2026-10-20T06:54:42.275Z"
       },
       "latestAttempt": {
-        "runId": "run-39183439332-1",
-        "at": "2026-10-19T01:02:28.785Z",
+        "runId": "run-39212568142-1",
+        "at": "2026-10-19T06:54:42.275Z",
         "validity": "valid"
       }
     },
     "inventory": {
-      "asOf": "2026-10-19T01:02:28.787Z",
+      "asOf": "2026-10-19T06:54:42.277Z",
       "baselineAsOf": "2026-09-24T16:29:00Z",
       "source": "Cloudflare API (zones + pages)",
       "refreshed": true,
       "facets": {
-        "zones": "2026-10-19T01:02:28.787Z",
-        "pages": "2026-10-19T01:02:28.787Z",
+        "zones": "2026-10-19T06:54:42.277Z",
+        "pages": "2026-10-19T06:54:42.277Z",
         "rum": null
       },
       "freshness": {
         "state": "fresh",
         "ageHours": 0,
-        "freshUntil": "2026-10-21T01:02:28.787Z",
-        "expiresAt": "2026-10-26T01:02:28.787Z"
+        "freshUntil": "2026-10-21T06:54:42.277Z",
+        "expiresAt": "2026-10-26T06:54:42.277Z"
       }
     },
     "rumReception": {
@@ -222,7 +223,7 @@
   "infrastructure": {
     "evidenceState": "measured",
     "reason": null,
-    "observedAt": "2026-10-19T01:02:28.787Z",
+    "observedAt": "2026-10-19T06:54:42.277Z",
     "projectCount": 24,
     "unregisteredSurfaces": [
       {
@@ -372,40 +373,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from globaldeets.com in 152 ms.",
+        "reason": "HTTP 200 from globaldeets.com in 634 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 152
+            "durationMs": 634
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 190
+            "durationMs": 112
           }
         ],
         "evidence": {
@@ -419,9 +420,9 @@
             "status": 200,
             "finalUrl": "https://globaldeets.com/",
             "redirects": 0,
-            "durationMs": 152,
+            "durationMs": 634,
             "cfMitigated": null,
-            "attempts": 1
+            "attempts": 2
           },
           "tls": {
             "state": "valid",
@@ -443,13 +444,13 @@
         "evidenceState": "measured",
         "level": "authoritative",
         "basis": "GlobalDeets owns and deploys this property; checks mirror the production verification the deploy workflow already enforces.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 152,
+            "durationMs": 634,
             "pass": true,
             "detail": "ok"
           },
@@ -457,7 +458,7 @@
             "id": "news-health",
             "path": "/api/news/health",
             "status": 200,
-            "durationMs": 149,
+            "durationMs": 288,
             "pass": true,
             "detail": "ok"
           },
@@ -465,7 +466,7 @@
             "id": "mission-control-data",
             "path": "/observatory/mission-control/mission-control-data.json",
             "status": 404,
-            "durationMs": 84,
+            "durationMs": 242,
             "pass": false,
             "detail": "status-404"
           },
@@ -473,7 +474,7 @@
             "id": "coverage-observatory",
             "path": "/api/intelligence/observatory/coverage",
             "status": 200,
-            "durationMs": 155,
+            "durationMs": 262,
             "pass": true,
             "detail": "ok"
           }
@@ -482,8 +483,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "authoritative",
@@ -522,7 +523,7 @@
         "basis": "Owned property; critical path verified against production on 2026-09-24."
       },
       "diagnosticState": "critical-path-failed",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "culturesherpa.org",
@@ -603,40 +604,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from culturesherpa.org in 138 ms.",
+        "reason": "HTTP 200 from culturesherpa.org in 350 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 138
+            "durationMs": 350
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 385
+            "durationMs": 253
           }
         ],
         "evidence": {
@@ -650,7 +651,7 @@
             "status": 200,
             "finalUrl": "https://culturesherpa.org/explore/",
             "redirects": 1,
-            "durationMs": 138,
+            "durationMs": 350,
             "cfMitigated": null,
             "attempts": 1
           },
@@ -674,13 +675,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 138,
+            "durationMs": 350,
             "pass": true,
             "detail": "ok"
           }
@@ -689,8 +690,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -730,7 +731,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "culturesherpa.com",
@@ -792,40 +793,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from culturesherpa.org in 264 ms.",
+        "reason": "HTTP 200 from culturesherpa.org in 1117 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 264
+            "durationMs": 1117
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 492
+            "durationMs": 332
           }
         ],
         "evidence": {
@@ -839,13 +840,13 @@
             "status": 200,
             "finalUrl": "https://culturesherpa.org/explore/",
             "redirects": 2,
-            "durationMs": 264,
+            "durationMs": 1117,
             "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
-            "daysRemaining": 77,
+            "daysRemaining": 76,
             "validTo": "2027-01-04T01:06:28.000Z"
           },
           "vantage": "github-actions"
@@ -863,14 +864,14 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [],
         "reason": "Redirect-only alias: availability is probed, but there is no independent critical path.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": null,
@@ -910,7 +911,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "agentkagent.com",
@@ -983,40 +984,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from agentkagent.com in 118 ms.",
+        "reason": "HTTP 200 from agentkagent.com in 605 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 118
+            "durationMs": 605
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 75
+            "durationMs": 123
           }
         ],
         "evidence": {
@@ -1030,14 +1031,14 @@
             "status": 200,
             "finalUrl": "https://agentkagent.com/",
             "redirects": 0,
-            "durationMs": 118,
+            "durationMs": 605,
             "cfMitigated": null,
-            "attempts": 1
+            "attempts": 2
           },
           "tls": {
-            "state": "valid",
-            "daysRemaining": 44,
-            "validTo": "2026-12-02T21:58:12.000Z"
+            "state": "unknown",
+            "daysRemaining": null,
+            "validTo": null
           },
           "vantage": "github-actions"
         },
@@ -1054,13 +1055,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 118,
+            "durationMs": 605,
             "pass": true,
             "detail": "ok"
           }
@@ -1069,8 +1070,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -1110,7 +1111,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "aiaimate.com",
@@ -1179,40 +1180,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from aiaimate.com in 142 ms.",
+        "reason": "HTTP 200 from aiaimate.com in 255 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 142
+            "durationMs": 255
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 41
+            "durationMs": 146
           }
         ],
         "evidence": {
@@ -1226,7 +1227,7 @@
             "status": 200,
             "finalUrl": "https://aiaimate.com/",
             "redirects": 0,
-            "durationMs": 142,
+            "durationMs": 255,
             "cfMitigated": null,
             "attempts": 1
           },
@@ -1250,13 +1251,13 @@
         "evidenceState": "measured",
         "level": "authoritative",
         "basis": "The AIAIMate portal implements and documents a search API (portal/app/api/search) that the learning experience depends on; the contract is defined in source (ok: true, results array).",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 142,
+            "durationMs": 255,
             "pass": true,
             "detail": "ok"
           },
@@ -1264,7 +1265,7 @@
             "id": "search-api",
             "path": "/api/search?q=ai",
             "status": 200,
-            "durationMs": 100,
+            "durationMs": 125,
             "pass": true,
             "detail": "ok"
           }
@@ -1273,8 +1274,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "authoritative",
@@ -1314,7 +1315,7 @@
         "basis": "Owner-documented search API route (source) plus homepage identity."
       },
       "diagnosticState": "verified-healthy",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "artificelligance.com",
@@ -1374,7 +1375,7 @@
         "state": "no-service-published",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": "dns-no-address-records",
         "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
@@ -1382,15 +1383,15 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "no-service-published",
             "blocked": false,
             "conclusive": true,
@@ -1401,7 +1402,7 @@
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "no-service-published",
             "blocked": false,
             "conclusive": true,
@@ -1445,14 +1446,14 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [],
         "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": null,
@@ -1492,7 +1493,7 @@
         "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
       },
       "diagnosticState": "no-service-published",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "artificelligence.com",
@@ -1552,7 +1553,7 @@
         "state": "no-service-published",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": "dns-no-address-records",
         "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
@@ -1560,15 +1561,15 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "no-service-published",
             "blocked": false,
             "conclusive": true,
@@ -1579,7 +1580,7 @@
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "no-service-published",
             "blocked": false,
             "conclusive": true,
@@ -1623,14 +1624,14 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [],
         "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": null,
@@ -1670,7 +1671,7 @@
         "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
       },
       "diagnosticState": "no-service-published",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "brettleeweaver.com",
@@ -1751,40 +1752,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from www.brettleeweaver.com in 245 ms.",
+        "reason": "HTTP 200 from www.brettleeweaver.com in 1162 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 245
+            "durationMs": 1162
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 265
+            "durationMs": 209
           }
         ],
         "evidence": {
@@ -1798,13 +1799,13 @@
             "status": 200,
             "finalUrl": "https://www.brettleeweaver.com/",
             "redirects": 1,
-            "durationMs": 245,
+            "durationMs": 1162,
             "cfMitigated": null,
-            "attempts": 1
+            "attempts": 2
           },
           "tls": {
             "state": "valid",
-            "daysRemaining": 59,
+            "daysRemaining": 58,
             "validTo": "2026-12-17T04:13:10.000Z"
           },
           "vantage": "github-actions"
@@ -1822,13 +1823,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 245,
+            "durationMs": 1162,
             "pass": true,
             "detail": "ok"
           }
@@ -1837,8 +1838,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -1878,7 +1879,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "citizenapproved.org",
@@ -1959,40 +1960,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from citizenapproved.org in 216 ms.",
+        "reason": "HTTP 200 from citizenapproved.org in 677 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 216
+            "durationMs": 677
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 153
+            "durationMs": 128
           }
         ],
         "evidence": {
@@ -2006,14 +2007,14 @@
             "status": 200,
             "finalUrl": "https://citizenapproved.org/",
             "redirects": 0,
-            "durationMs": 216,
+            "durationMs": 677,
             "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
-            "state": "valid",
-            "daysRemaining": 75,
-            "validTo": "2027-01-02T07:45:23.000Z"
+            "state": "unknown",
+            "daysRemaining": null,
+            "validTo": null
           },
           "vantage": "github-actions"
         },
@@ -2030,13 +2031,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 216,
+            "durationMs": 677,
             "pass": true,
             "detail": "ok"
           }
@@ -2045,8 +2046,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -2085,7 +2086,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "cyancanoe.com",
@@ -2158,40 +2159,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from cyancanoe.com in 138 ms.",
+        "reason": "HTTP 200 from cyancanoe.com in 667 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 138
+            "durationMs": 667
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 129
+            "durationMs": 194
           }
         ],
         "evidence": {
@@ -2205,14 +2206,14 @@
             "status": 200,
             "finalUrl": "https://cyancanoe.com/",
             "redirects": 0,
-            "durationMs": 138,
+            "durationMs": 667,
             "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
-            "state": "valid",
-            "daysRemaining": 34,
-            "validTo": "2026-11-22T02:39:01.000Z"
+            "state": "unknown",
+            "daysRemaining": null,
+            "validTo": null
           },
           "vantage": "github-actions"
         },
@@ -2229,13 +2230,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 138,
+            "durationMs": 667,
             "pass": true,
             "detail": "ok"
           }
@@ -2244,8 +2245,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -2284,7 +2285,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "flipskillet.com",
@@ -2357,40 +2358,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from flipskillet.com in 142 ms.",
+        "reason": "HTTP 200 from flipskillet.com in 924 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 142
+            "durationMs": 924
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 159
+            "durationMs": 121
           }
         ],
         "evidence": {
@@ -2404,7 +2405,7 @@
             "status": 200,
             "finalUrl": "https://flipskillet.com/",
             "redirects": 0,
-            "durationMs": 142,
+            "durationMs": 924,
             "cfMitigated": null,
             "attempts": 1
           },
@@ -2428,13 +2429,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 142,
+            "durationMs": 924,
             "pass": true,
             "detail": "ok"
           }
@@ -2443,8 +2444,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -2483,7 +2484,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "flipskillit.com",
@@ -2556,40 +2557,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from flipskillit.com in 147 ms.",
+        "reason": "HTTP 200 from flipskillit.com in 881 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 147
+            "durationMs": 881
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 180
+            "durationMs": 135
           }
         ],
         "evidence": {
@@ -2603,7 +2604,7 @@
             "status": 200,
             "finalUrl": "https://flipskillit.com/",
             "redirects": 0,
-            "durationMs": 147,
+            "durationMs": 881,
             "cfMitigated": null,
             "attempts": 1
           },
@@ -2627,13 +2628,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 147,
+            "durationMs": 881,
             "pass": true,
             "detail": "ok"
           }
@@ -2642,8 +2643,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -2682,7 +2683,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "foxyana.com",
@@ -2755,40 +2756,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from foxyana.com in 86 ms.",
+        "reason": "HTTP 200 from foxyana.com in 1602 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 86
+            "durationMs": 1602
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 92
+            "durationMs": 75
           }
         ],
         "evidence": {
@@ -2802,13 +2803,13 @@
             "status": 200,
             "finalUrl": "https://foxyana.com/",
             "redirects": 0,
-            "durationMs": 86,
+            "durationMs": 1602,
             "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
-            "daysRemaining": 78,
+            "daysRemaining": 77,
             "validTo": "2027-01-05T05:19:12.000Z"
           },
           "vantage": "github-actions"
@@ -2826,13 +2827,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 86,
+            "durationMs": 1602,
             "pass": true,
             "detail": "ok"
           }
@@ -2841,8 +2842,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -2882,7 +2883,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "fwomps.com",
@@ -2942,7 +2943,7 @@
         "state": "no-service-published",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": "dns-no-address-records",
         "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
@@ -2950,15 +2951,15 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "no-service-published",
             "blocked": false,
             "conclusive": true,
@@ -2969,7 +2970,7 @@
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "no-service-published",
             "blocked": false,
             "conclusive": true,
@@ -3013,14 +3014,14 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [],
         "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": null,
@@ -3060,7 +3061,7 @@
         "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
       },
       "diagnosticState": "no-service-published",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "fwomp.us",
@@ -3120,7 +3121,7 @@
         "state": "no-service-published",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": "dns-no-address-records",
         "reason": "Zone is active but publishes no web address, and no service is declared for it. This is a topology decision, not an outage.",
@@ -3128,15 +3129,15 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "no-service-published",
             "blocked": false,
             "conclusive": true,
@@ -3147,7 +3148,7 @@
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "no-service-published",
             "blocked": false,
             "conclusive": true,
@@ -3191,14 +3192,14 @@
         "evidenceState": "unavailable",
         "level": null,
         "basis": null,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [],
         "reason": "No honest critical-path contract exists for this property yet; only availability is probed.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": null,
@@ -3238,7 +3239,7 @@
         "basis": "No web service was observed at 2026-09-24 baseline; owner has not declared whether one is intended."
       },
       "diagnosticState": "no-service-published",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "gflippinv.com",
@@ -3315,40 +3316,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from gflippinv.com in 177 ms.",
+        "reason": "HTTP 200 from gflippinv.com in 916 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 177
+            "durationMs": 916
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 167
+            "durationMs": 159
           }
         ],
         "evidence": {
@@ -3362,13 +3363,13 @@
             "status": 200,
             "finalUrl": "https://gflippinv.com/",
             "redirects": 0,
-            "durationMs": 177,
+            "durationMs": 916,
             "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
-            "daysRemaining": 62,
+            "daysRemaining": 61,
             "validTo": "2026-12-20T05:57:53.000Z"
           },
           "vantage": "github-actions"
@@ -3386,13 +3387,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 177,
+            "durationMs": 916,
             "pass": true,
             "detail": "ok"
           }
@@ -3401,8 +3402,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -3441,7 +3442,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "goodflippindesign.com",
@@ -3510,7 +3511,7 @@
         "state": "unknown",
         "evidenceState": "measured",
         "blocked": true,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": null,
         "failureClass": "edge-challenge",
         "reason": "Probe was restricted by the target (edge-challenge); this vantage cannot establish availability.",
@@ -3518,32 +3519,32 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "inconclusive",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "unknown",
             "blocked": true,
             "conclusive": false,
             "failureClass": "edge-challenge",
             "httpStatus": 403,
-            "durationMs": 52
+            "durationMs": 591
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "unknown",
             "blocked": true,
             "conclusive": false,
             "failureClass": "edge-challenge",
             "httpStatus": 403,
-            "durationMs": 137
+            "durationMs": 63
           }
         ],
         "evidence": {
@@ -3557,13 +3558,13 @@
             "status": 403,
             "finalUrl": "https://goodflippindesign.com/",
             "redirects": 0,
-            "durationMs": 52,
+            "durationMs": 591,
             "cfMitigated": "challenge",
-            "attempts": 1
+            "attempts": 2
           },
           "tls": {
             "state": "valid",
-            "daysRemaining": 72,
+            "daysRemaining": 71,
             "validTo": "2026-12-30T05:21:33.000Z"
           },
           "vantage": "github-actions"
@@ -3581,14 +3582,14 @@
         "evidenceState": "unavailable",
         "level": "authoritative",
         "basis": "Routes the owner already treats as production-critical in their own monitoring (config/health-targets.json: home, /donate, /community-portal are marked critical) plus the documented /api/health endpoint.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [],
         "reason": "Not evaluable while availability is blocked.",
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "authoritative",
@@ -3627,7 +3628,7 @@
         "basis": "Owner-declared production-critical routes (owner health targets)."
       },
       "diagnosticState": "probe-blocked",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "goodflippinluck.com",
@@ -3708,40 +3709,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinluck.com in 239 ms.",
+        "reason": "HTTP 200 from goodflippinluck.com in 731 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 239
+            "durationMs": 731
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 149
+            "durationMs": 182
           }
         ],
         "evidence": {
@@ -3755,7 +3756,7 @@
             "status": 200,
             "finalUrl": "https://goodflippinluck.com/",
             "redirects": 0,
-            "durationMs": 239,
+            "durationMs": 731,
             "cfMitigated": null,
             "attempts": 1
           },
@@ -3779,13 +3780,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 239,
+            "durationMs": 731,
             "pass": true,
             "detail": "ok"
           }
@@ -3794,8 +3795,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -3834,7 +3835,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "goodflippinnews.com",
@@ -3915,40 +3916,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinnews.com in 195 ms.",
+        "reason": "HTTP 200 from goodflippinnews.com in 643 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 195
+            "durationMs": 643
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 164
+            "durationMs": 152
           }
         ],
         "evidence": {
@@ -3962,13 +3963,13 @@
             "status": 200,
             "finalUrl": "https://goodflippinnews.com/",
             "redirects": 0,
-            "durationMs": 195,
+            "durationMs": 643,
             "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
-            "daysRemaining": 75,
+            "daysRemaining": 74,
             "validTo": "2027-01-02T02:15:10.000Z"
           },
           "vantage": "github-actions"
@@ -3986,13 +3987,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 195,
+            "durationMs": 643,
             "pass": true,
             "detail": "ok"
           }
@@ -4001,8 +4002,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -4041,7 +4042,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "goodflippinvibes.com",
@@ -4121,40 +4122,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinvibes.com in 98 ms.",
+        "reason": "HTTP 200 from goodflippinvibes.com in 1511 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 98
+            "durationMs": 1511
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 86
+            "durationMs": 122
           }
         ],
         "evidence": {
@@ -4168,14 +4169,14 @@
             "status": 200,
             "finalUrl": "https://goodflippinvibes.com/",
             "redirects": 0,
-            "durationMs": 98,
+            "durationMs": 1511,
             "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
-            "state": "valid",
-            "daysRemaining": 75,
-            "validTo": "2027-01-02T19:13:24.000Z"
+            "state": "unknown",
+            "daysRemaining": null,
+            "validTo": null
           },
           "vantage": "github-actions"
         },
@@ -4192,13 +4193,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 98,
+            "durationMs": 1511,
             "pass": true,
             "detail": "ok"
           }
@@ -4207,8 +4208,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -4247,7 +4248,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "goodflippinyikes.com",
@@ -4320,40 +4321,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinyikes.com in 181 ms.",
+        "reason": "HTTP 200 from goodflippinyikes.com in 1381 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 181
+            "durationMs": 1381
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 212
+            "durationMs": 98
           }
         ],
         "evidence": {
@@ -4367,14 +4368,14 @@
             "status": 200,
             "finalUrl": "https://goodflippinyikes.com/",
             "redirects": 0,
-            "durationMs": 181,
+            "durationMs": 1381,
             "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
-            "state": "valid",
-            "daysRemaining": 83,
-            "validTo": "2027-01-10T06:42:10.000Z"
+            "state": "unknown",
+            "daysRemaining": null,
+            "validTo": null
           },
           "vantage": "github-actions"
         },
@@ -4391,13 +4392,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 181,
+            "durationMs": 1381,
             "pass": true,
             "detail": "ok"
           }
@@ -4406,8 +4407,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -4446,7 +4447,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "heavymoose.com",
@@ -4522,40 +4523,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from heavymoose.com in 159 ms.",
+        "reason": "HTTP 200 from heavymoose.com in 674 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 159
+            "durationMs": 674
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 555
+            "durationMs": 255
           }
         ],
         "evidence": {
@@ -4569,13 +4570,13 @@
             "status": 200,
             "finalUrl": "https://heavymoose.com/",
             "redirects": 0,
-            "durationMs": 159,
+            "durationMs": 674,
             "cfMitigated": null,
-            "attempts": 1
+            "attempts": 2
           },
           "tls": {
             "state": "valid",
-            "daysRemaining": 35,
+            "daysRemaining": 34,
             "validTo": "2026-11-23T05:48:25.000Z"
           },
           "vantage": "github-actions"
@@ -4593,13 +4594,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 159,
+            "durationMs": 674,
             "pass": true,
             "detail": "ok"
           }
@@ -4608,8 +4609,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -4648,7 +4649,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "lowertownstpaul.org",
@@ -4724,40 +4725,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from lowertownstpaul.org in 148 ms.",
+        "reason": "HTTP 200 from lowertownstpaul.org in 661 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 148
+            "durationMs": 661
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 171
+            "durationMs": 207
           }
         ],
         "evidence": {
@@ -4771,7 +4772,7 @@
             "status": 200,
             "finalUrl": "https://lowertownstpaul.org/",
             "redirects": 0,
-            "durationMs": 148,
+            "durationMs": 661,
             "cfMitigated": null,
             "attempts": 1
           },
@@ -4795,13 +4796,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 148,
+            "durationMs": 661,
             "pass": true,
             "detail": "ok"
           }
@@ -4810,8 +4811,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -4850,7 +4851,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "minnesotapeace.com",
@@ -4926,40 +4927,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from minnesotapeace.com in 218 ms.",
+        "reason": "HTTP 200 from minnesotapeace.com in 668 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 218
+            "durationMs": 668
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 147
+            "durationMs": 166
           }
         ],
         "evidence": {
@@ -4973,13 +4974,13 @@
             "status": 200,
             "finalUrl": "https://minnesotapeace.com/",
             "redirects": 0,
-            "durationMs": 218,
+            "durationMs": 668,
             "cfMitigated": null,
             "attempts": 1
           },
           "tls": {
             "state": "valid",
-            "daysRemaining": 47,
+            "daysRemaining": 46,
             "validTo": "2026-12-05T01:45:35.000Z"
           },
           "vantage": "github-actions"
@@ -4997,13 +4998,13 @@
         "evidenceState": "measured",
         "level": "authoritative",
         "basis": "The publication sections the owner already verifies after every deploy (deploy workflow: Verify exact public URLs serve the publication build). Only route availability and page substance are checked, not volatile copy.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 218,
+            "durationMs": 668,
             "pass": true,
             "detail": "ok"
           },
@@ -5011,7 +5012,7 @@
             "id": "record",
             "path": "/record/",
             "status": 200,
-            "durationMs": 164,
+            "durationMs": 710,
             "pass": true,
             "detail": "ok"
           },
@@ -5019,7 +5020,7 @@
             "id": "status",
             "path": "/status/",
             "status": 200,
-            "durationMs": 124,
+            "durationMs": 250,
             "pass": true,
             "detail": "ok"
           },
@@ -5027,7 +5028,7 @@
             "id": "guide",
             "path": "/guide/",
             "status": 200,
-            "durationMs": 133,
+            "durationMs": 290,
             "pass": true,
             "detail": "ok"
           },
@@ -5035,7 +5036,7 @@
             "id": "oversight",
             "path": "/oversight/",
             "status": 200,
-            "durationMs": 132,
+            "durationMs": 263,
             "pass": true,
             "detail": "ok"
           },
@@ -5043,7 +5044,7 @@
             "id": "programs",
             "path": "/programs/",
             "status": 200,
-            "durationMs": 215,
+            "durationMs": 286,
             "pass": true,
             "detail": "ok"
           },
@@ -5051,7 +5052,7 @@
             "id": "money",
             "path": "/money/",
             "status": 200,
-            "durationMs": 117,
+            "durationMs": 279,
             "pass": true,
             "detail": "ok"
           },
@@ -5059,7 +5060,7 @@
             "id": "authority",
             "path": "/authority/",
             "status": 200,
-            "durationMs": 142,
+            "durationMs": 279,
             "pass": true,
             "detail": "ok"
           }
@@ -5068,8 +5069,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "authoritative",
@@ -5108,7 +5109,7 @@
         "basis": "Owner deploy verification enforces these publication routes."
       },
       "diagnosticState": "verified-healthy",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     },
     {
       "propertyId": "redleopardofstpaul.com",
@@ -5183,40 +5184,40 @@
         "state": "available",
         "evidenceState": "measured",
         "blocked": false,
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "confidence": "confirmed",
         "failureClass": null,
-        "reason": "HTTP 200 from redleopardofstpaul.com in 142 ms.",
+        "reason": "HTTP 200 from redleopardofstpaul.com in 660 ms.",
         "nextAction": null,
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "agreement": "agree",
         "vantages": [
           {
             "vantage": "github-actions",
             "network": null,
-            "observedAt": "2026-10-19T01:02:28.785Z",
+            "observedAt": "2026-10-19T06:54:42.275Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 142
+            "durationMs": 660
           },
           {
             "vantage": "github-actions-macos",
             "network": "GitHub-hosted macOS",
-            "observedAt": "2026-10-19T01:02:08.446Z",
+            "observedAt": "2026-10-19T06:54:03.216Z",
             "state": "available",
             "blocked": false,
             "conclusive": true,
             "failureClass": null,
             "httpStatus": 200,
-            "durationMs": 137
+            "durationMs": 145
           }
         ],
         "evidence": {
@@ -5230,7 +5231,7 @@
             "status": 200,
             "finalUrl": "https://redleopardofstpaul.com/",
             "redirects": 0,
-            "durationMs": 142,
+            "durationMs": 660,
             "cfMitigated": null,
             "attempts": 1
           },
@@ -5254,13 +5255,13 @@
         "evidenceState": "measured",
         "level": "baseline",
         "basis": "Homepage identity baseline observed 2026-09-24. A mismatch is reported as contract drift for review, never as an outage.",
-        "observedAt": "2026-10-19T01:02:28.785Z",
+        "observedAt": "2026-10-19T06:54:42.275Z",
         "checks": [
           {
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 142,
+            "durationMs": 660,
             "pass": true,
             "detail": "ok"
           }
@@ -5269,8 +5270,8 @@
         "freshness": {
           "state": "fresh",
           "ageHours": 0,
-          "freshUntil": "2026-10-19T09:02:28.785Z",
-          "expiresAt": "2026-10-20T01:02:28.785Z"
+          "freshUntil": "2026-10-19T14:54:42.275Z",
+          "expiresAt": "2026-10-20T06:54:42.275Z"
         },
         "contract": {
           "level": "baseline",
@@ -5309,7 +5310,7 @@
         "basis": "observed-baseline-2026-09-24: property answered 2xx HTML; owner has not signed a service contract."
       },
       "diagnosticState": "reachable-unverified",
-      "evidenceAsOf": "2026-10-19T01:02:28.785Z"
+      "evidenceAsOf": "2026-10-19T06:54:42.275Z"
     }
   ]
 }
