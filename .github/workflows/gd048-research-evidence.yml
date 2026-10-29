@@ -49,6 +49,7 @@ jobs:
               evidence.duplicateCanonicalLinks ?? '—',
               evidence.creatorSignals ?? '—',
               evidence.attributionLinkPairs ?? '—',
+              evidence.offPublisherHostLinks ?? '—',
               evidence.itemsRequiringIndividualProvenanceReview ?? '—'].join(' | ') + ' |';
           });
           const summary = [
@@ -58,8 +59,8 @@ jobs:
             'No sources were activated, no article content was retained, and licensing cannot be inferred from HTTP success.',
             'CDATA may contain bylines; author/link counts are structural hints only and cannot certify original authorship or reuse rights.',
             '',
-            '| Candidate | HTTP | Observation | Sampled items | Newest age (hours) | Duplicate links | Author signals | Author + URL pairs | Items still requiring review |',
-            '| --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+            '| Candidate | HTTP | Observation | Sampled items | Newest age (hours) | Duplicate links | Author signals | Author + URL pairs | Off-publisher-host URLs | Items still requiring review |',
+            '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
             ...rows,
             '',
             'Failures and redirects require follow-up; even successful XML observation retains the research-only gate.',
