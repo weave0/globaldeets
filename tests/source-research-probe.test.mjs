@@ -71,3 +71,17 @@ test('unknown candidates cannot trigger network requests', async () => {
   await assert.rejects(() => probeResearchCandidate({ ...candidate, candidateId: 'unknown' }, { fetchImpl: async () => { called = true; } }));
   assert.equal(called, false);
 });
+
+test('publisher RSS directory is not silently probed as a feed', async () => {
+  const directory = SOURCE_RESEARCH_CANDIDATES.find(entry => entry.candidateId === 'rnz-pacific');
+  assert.equal(directory.endpointType, 'rss-directory');
+  let networkCalled = false;
+  const report = await probeResearchCandidate(directory, {
+    now,
+    fetchImpl: async () => { networkCalled = true; throw new Error('should not fetch directory'); },
+  });
+  assert.equal(networkCalled, false);
+  assert.equal(report.observation, 'feed-endpoint-not-established');
+  assert.equal(report.httpStatus, undefined);
+  assert.equal(report.productionEligible, false);
+});
