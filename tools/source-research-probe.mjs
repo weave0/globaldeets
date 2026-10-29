@@ -202,6 +202,12 @@ export async function probeResearchCandidate(candidate, { fetchImpl = fetch, now
     registryDisposition: 'research', productionEligible: false,
     itemReuseRightsCertified: false, observation: 'not-attempted',
   };
+  // Official RSS directory pages are not XML feeds. Do not fetch or misclassify them.
+  // A separate verified publisher-linked XML endpoint is required before technical probing.
+  if (candidate.endpointType !== 'rss') {
+    report.observation = 'feed-endpoint-not-established';
+    return report;
+  }
   try {
     const response = await fetchImpl(url.toString(), {
       method: 'GET', redirect: 'manual', headers: { Accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml;q=0.9' },
