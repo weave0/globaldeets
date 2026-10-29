@@ -121,6 +121,7 @@ The revised metadata-only scanner now keeps CDATA text as safely escaped charact
 - `creatorSignals`: items with a nonempty RSS/Atom byline field. This does not establish the author's identity or rights.
 - `attributionLinkPairs`: items where both a byline field and a syntactically valid HTTP(S) item URL occur. These are ingredients for future attribution review, not a clearance score.
 - `missingCreatorSignals` and `missingCanonicalLinks`: metadata gaps for human/operator research.
+- `samePublisherHostLinks` / `offPublisherHostLinks`: item-link hostname relationships to the first-party feed host. A different host may be a syndication clue, and a matching host is **not** proof that the article originated with that publisher. No story URL is persisted in the report.
 - `originSignals` and `itemRightsSignals`: mere *presence of structural tags*, with no conclusion about their meaning or applicability; false positives and partner-origin ambiguity remain possible.
 - `itemsRequiringIndividualProvenanceReview`: all sampled items, even when byline, URL and tag signals are present.
 - `autoAdmittableItems: 0`, `itemOriginCertified: false` and `itemReuseRightsCertified: false`: hard, independently testable evidence-lane invariants.
