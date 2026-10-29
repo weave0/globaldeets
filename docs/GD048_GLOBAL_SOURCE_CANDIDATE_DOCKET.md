@@ -111,3 +111,25 @@ All five XML-observed feeds had **zero duplicate canonical links within the boun
 4. **LAist:** investigate the 200 HTML response (routing, bot response, or outdated feed path) without speculative substitutions. **RNZ Pacific:** identify a specific first-party Pacific XML feed instead of treating the directory as feed data.
 
 **Next acceptance:** publish a second dated, independently repeatable observation after endpoint corrections; add item-level provenance/attribution fixtures and tests, then review rights. Preserve all 21 production feeds and the fail-closed admission predicate until each applicable gate is satisfied.
+
+## Item-attribution evidence hardening — 2026-10-28 development follow-up
+
+The first 2026-10-29 UTC probe collected technical facts, **not article-origin proof**. A parser limitation was subsequently identified: its original metadata scan **removed CDATA text**, so it could systematically undercount authors when a publisher wrapped a byline in CDATA. In particular, the earlier observation of **zero Global Voices creator signals must not be interpreted as confirmed author absence**. It was only what that first probe's limited extraction observed; even a corrected positive count will not verify ownership or item licensing.
+
+The revised metadata-only scanner now keeps CDATA text as safely escaped characters without letting markup-shaped text in articles, images or descriptions forge new feed entries, author fields, origin fields or licensing tags. Its bounded output reports:
+
+- `creatorSignals`: items with a nonempty RSS/Atom byline field. This does not establish the author's identity or rights.
+- `attributionLinkPairs`: items where both a byline field and a syntactically valid HTTP(S) item URL occur. These are ingredients for future attribution review, not a clearance score.
+- `missingCreatorSignals` and `missingCanonicalLinks`: metadata gaps for human/operator research.
+- `originSignals` and `itemRightsSignals`: mere *presence of structural tags*, with no conclusion about their meaning or applicability; false positives and partner-origin ambiguity remain possible.
+- `itemsRequiringIndividualProvenanceReview`: all sampled items, even when byline, URL and tag signals are present.
+- `autoAdmittableItems: 0`, `itemOriginCertified: false` and `itemReuseRightsCertified: false`: hard, independently testable evidence-lane invariants.
+
+### Publisher-specific licensing decision boundaries
+
+- **Agência Brasil:** [EBC's first-party policy](https://agenciabrasil.ebc.com.br/sobre) permits certain journalistic reproduction with source attribution and separately addresses commercial licensing. It explicitly warns that partner-origin material can carry different rights. A byline field or the absence of a partner tag in RSS cannot prove original EBC ownership. Until source/partner attribution can be confirmed per item and GlobalDeets' intended display use is covered, no production admission.
+- **Global Voices:** [publisher-authored republishing policy](https://globalvoices.org/about/global-voices-attribution-policy/) covers qualifying Global Voices-created work under CC BY, with author, original-source URL, license citation and modification notices where applicable. Third-party media, partner-origin material and translated editions still need provenance checks. The English feed does not confer ownership or language diversity solely by virtue of its URL; Global Voices stays one operator family.
+- **LAist:** 200 HTML at a first-party `/rss/latest-news` page was observed by the GitHub runner, despite its RSS-themed site labeling. Do not auto-discover or fetch HTML links from the probe or assume permission to ingest.
+- **RNZ Pacific:** the recorded RSS directory is not an XML endpoint. Its 200 HTML response was a correct directory response; identify a publisher-linked Pacific XML endpoint separately, without inferring reuse rights.
+
+The read-only GitHub Actions spot check runs when the evidence tool changes on `main` or when manually dispatched, with no periodic polling. A future positive author signal **cannot change** `SOURCE_RESEARCH_CANDIDATES`, `SOURCE_ADMISSIONS`, the live `SOURCES`, or its 21-endpoint baseline. Admission requires a separately reviewed, source-specific implementation and exact-head production gates.
