@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.2.0",
   "contractName": "globaldeets-mission-control-history",
-  "generatedAt": "2026-10-28T18:36:23.750Z",
+  "generatedAt": "2026-10-29T00:56:13.346Z",
   "supportedWindowsDays": [
     7,
     28,
@@ -2920,6 +2920,85 @@
         "instrumentedProperties": 2,
         "propertiesApplicable": 20,
         "feedGeneratedAt": "2026-10-28T18:36:50.386Z"
+      }
+    },
+    {
+      "snapshotId": "2026-10-29.scheduled",
+      "observedAt": "2026-10-29T00:56:13.346Z",
+      "collector": {
+        "kind": "scheduled",
+        "runId": "run-40796095429-1"
+      },
+      "estate": {
+        "activeZones": 1,
+        "rumObservedZones": 21,
+        "rumCoveragePct": 2100,
+        "evidenceState": "carried-forward",
+        "inventoryObservedAt": "2026-10-29T00:56:23.892Z",
+        "comparabilityKey": "estate-rum|v1"
+      },
+      "availability": {
+        "evidenceState": "measured",
+        "probeRunId": "run-40796095429-1",
+        "probeObservedAt": "2026-10-29T00:56:13.346Z",
+        "comparabilityKey": "estate-availability|v1|properties=25",
+        "propertyCount": 25,
+        "conclusiveServiceZones": 20,
+        "availableZones": 18,
+        "degradedZones": 0,
+        "unavailableZones": 2,
+        "noServiceZones": 4,
+        "blockedZones": 1,
+        "unknownZones": 0,
+        "verifiedHealthyZones": 2,
+        "availableRatioPct": 90,
+        "dayRollup": {
+          "runs": 1,
+          "worstAvailableZones": 18,
+          "worstUnavailableZones": 2
+        }
+      },
+      "globaldeetsOperational": {
+        "observationWindow": null,
+        "edgeRequests": null,
+        "edgeVisits": null,
+        "syntheticHealthVisits": null,
+        "residualUnclassifiedVisits": null,
+        "evidenceState": "unavailable",
+        "investorSafe": false,
+        "reason": "No Canonical Gold metric is bound to globaldeets.com (registry goldBindings is empty)."
+      },
+      "certifiedAudience": {
+        "evidenceState": "unavailable",
+        "value": null,
+        "unit": null,
+        "certified": false,
+        "reason": "No certified audience source is connected; edge and probe traffic are not human audience."
+      },
+      "instrumentation": {
+        "evidenceState": "measured",
+        "probeRunId": "run-40796095429-1",
+        "comparabilityKey": "instrumentation|v1|properties=25",
+        "applicable": 20,
+        "activeVerified": 0,
+        "configuredUnverified": 17,
+        "configuredInvalid": 0,
+        "absent": 1,
+        "inaccessible": 1,
+        "unknown": 1
+      },
+      "audience": {
+        "evidenceState": "unavailable",
+        "sourceStatus": "partial",
+        "comparabilityKey": "audience|gold-1.2|properties=25",
+        "reason": "No governed audience source is readable."
+      },
+      "businessEvents": {
+        "evidenceState": "measured",
+        "sourceStatus": "measured",
+        "instrumentedProperties": 2,
+        "propertiesApplicable": 20,
+        "feedGeneratedAt": "2026-10-29T00:56:38.551Z"
       }
     }
   ],
