@@ -1,9 +1,9 @@
 {
   "contractName": "globaldeets-probe-run",
   "schemaVersion": "1.0.0",
-  "runId": "run-40796095429-1",
-  "startedAt": "2026-10-29T00:51:02.403Z",
-  "finishedAt": "2026-10-29T00:56:13.346Z",
+  "runId": "run-40829757475-1",
+  "startedAt": "2026-10-29T06:37:36.076Z",
+  "finishedAt": "2026-10-29T06:42:46.851Z",
   "vantage": "github-actions",
   "network": null,
   "vantageCount": 1,
@@ -26,7 +26,7 @@
     "note": "Probe requests are synthetic monitor traffic and must be excluded from certified human-audience classification."
   },
   "confirmation": {
-    "at": "2026-10-29T00:56:13.346Z",
+    "at": "2026-10-29T06:42:46.851Z",
     "reprobed": [
       "culturesherpa.org",
       "culturesherpa.com"
@@ -35,19 +35,19 @@
   "properties": [
     {
       "propertyId": "globaldeets.com",
-      "probedAt": "2026-10-29T00:51:02.588Z",
+      "probedAt": "2026-10-29T06:37:36.252Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 33
+        "durationMs": 37
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://globaldeets.com/",
         "redirects": [],
-        "durationMs": 199,
+        "durationMs": 171,
         "contentType": "text/html; charset=utf-8",
         "bytes": 21593,
         "cfMitigated": null,
@@ -68,7 +68,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 199,
+            "durationMs": 171,
             "pass": true,
             "detail": "ok"
           },
@@ -76,7 +76,7 @@
             "id": "news-health",
             "path": "/api/news/health",
             "status": 200,
-            "durationMs": 251,
+            "durationMs": 257,
             "pass": true,
             "detail": "ok"
           },
@@ -84,7 +84,7 @@
             "id": "mission-control-data",
             "path": "/observatory/mission-control/mission-control-data.json",
             "status": 404,
-            "durationMs": 56,
+            "durationMs": 77,
             "pass": false,
             "detail": "status-404"
           },
@@ -92,7 +92,7 @@
             "id": "coverage-observatory",
             "path": "/api/intelligence/observatory/coverage",
             "status": 200,
-            "durationMs": 68,
+            "durationMs": 67,
             "pass": true,
             "detail": "ok"
           }
@@ -118,18 +118,18 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from globaldeets.com in 199 ms.",
+        "reason": "HTTP 200 from globaldeets.com in 171 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "culturesherpa.org",
-      "probedAt": "2026-10-29T00:51:02.589Z",
+      "probedAt": "2026-10-29T06:37:36.252Z",
       "dns": {
         "state": "no-address-records",
         "addresses": 0,
         "errorCode": "ENODATA,ENODATA",
-        "durationMs": 71
+        "durationMs": 264
       },
       "http": {
         "state": "not-attempted",
@@ -154,17 +154,17 @@
         "reason": "Property is expected to serve content but DNS publishes no address records. Confirmed by an independent re-probe after 300000 ms.",
         "nextAction": "Zone resolves but publishes no A/AAAA/CNAME for the web host. Decide: publish a placeholder, redirect, or record the property as intentionally parked in the registry.",
         "confirmed": true,
-        "confirmedAt": "2026-10-29T00:56:13.346Z"
+        "confirmedAt": "2026-10-29T06:42:46.851Z"
       }
     },
     {
       "propertyId": "culturesherpa.com",
-      "probedAt": "2026-10-29T00:51:02.589Z",
+      "probedAt": "2026-10-29T06:37:36.252Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 74
+        "durationMs": 89
       },
       "http": {
         "state": "failed",
@@ -180,7 +180,7 @@
       },
       "tls": {
         "state": "valid",
-        "daysRemaining": 67,
+        "daysRemaining": 66,
         "validTo": "2027-01-04T01:06:28.000Z"
       },
       "criticalPath": {
@@ -206,12 +206,12 @@
         "reason": "All 3 attempts failed (dns-failure). Confirmed by an independent re-probe after 300000 ms.",
         "nextAction": "Re-run from a second resolver; check authoritative nameserver health for the zone.",
         "confirmed": true,
-        "confirmedAt": "2026-10-29T00:56:13.346Z"
+        "confirmedAt": "2026-10-29T06:42:46.851Z"
       }
     },
     {
       "propertyId": "agentkagent.com",
-      "probedAt": "2026-10-29T00:51:02.589Z",
+      "probedAt": "2026-10-29T06:37:36.252Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
@@ -223,7 +223,7 @@
         "status": 200,
         "finalUrl": "https://agentkagent.com/",
         "redirects": [],
-        "durationMs": 125,
+        "durationMs": 132,
         "contentType": "text/html",
         "bytes": 19028,
         "cfMitigated": null,
@@ -244,7 +244,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 125,
+            "durationMs": 132,
             "pass": true,
             "detail": "ok"
           }
@@ -270,13 +270,13 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from agentkagent.com in 125 ms.",
+        "reason": "HTTP 200 from agentkagent.com in 132 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "aiaimate.com",
-      "probedAt": "2026-10-29T00:51:02.589Z",
+      "probedAt": "2026-10-29T06:37:36.252Z",
       "dns": {
         "state": "resolved",
         "addresses": 1,
@@ -288,7 +288,7 @@
         "status": 200,
         "finalUrl": "https://aiaimate.com/",
         "redirects": [],
-        "durationMs": 434,
+        "durationMs": 196,
         "contentType": "text/html; charset=utf-8",
         "bytes": 90332,
         "cfMitigated": null,
@@ -309,7 +309,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 434,
+            "durationMs": 196,
             "pass": true,
             "detail": "ok"
           },
@@ -317,7 +317,7 @@
             "id": "search-api",
             "path": "/api/search?q=ai",
             "status": 200,
-            "durationMs": 359,
+            "durationMs": 1349,
             "pass": true,
             "detail": "ok"
           }
@@ -337,18 +337,18 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from aiaimate.com in 434 ms.",
+        "reason": "HTTP 200 from aiaimate.com in 196 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "artificelligance.com",
-      "probedAt": "2026-10-29T00:51:02.661Z",
+      "probedAt": "2026-10-29T06:37:36.469Z",
       "dns": {
         "state": "no-address-records",
         "addresses": 0,
         "errorCode": "ENODATA,ENODATA",
-        "durationMs": 61
+        "durationMs": 29
       },
       "http": {
         "state": "not-attempted",
@@ -376,12 +376,12 @@
     },
     {
       "propertyId": "artificelligence.com",
-      "probedAt": "2026-10-29T00:51:02.722Z",
+      "probedAt": "2026-10-29T06:37:36.498Z",
       "dns": {
         "state": "no-address-records",
         "addresses": 0,
         "errorCode": "ENODATA,ENODATA",
-        "durationMs": 49
+        "durationMs": 65
       },
       "http": {
         "state": "not-attempted",
@@ -409,12 +409,12 @@
     },
     {
       "propertyId": "brettleeweaver.com",
-      "probedAt": "2026-10-29T00:51:02.771Z",
+      "probedAt": "2026-10-29T06:37:36.516Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 67
+        "durationMs": 93
       },
       "http": {
         "state": "available",
@@ -427,7 +427,7 @@
             "status": 308
           }
         ],
-        "durationMs": 472,
+        "durationMs": 397,
         "contentType": "text/html; charset=utf-8",
         "bytes": 44485,
         "cfMitigated": null,
@@ -436,7 +436,7 @@
       },
       "tls": {
         "state": "valid",
-        "daysRemaining": 49,
+        "daysRemaining": 48,
         "validTo": "2026-12-17T04:13:10.000Z"
       },
       "criticalPath": {
@@ -448,7 +448,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 472,
+            "durationMs": 397,
             "pass": false,
             "detail": "title-mismatch:Brett Weaver — Sales & GTM Leader"
           }
@@ -474,25 +474,25 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from www.brettleeweaver.com in 472 ms.",
+        "reason": "HTTP 200 from www.brettleeweaver.com in 397 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "citizenapproved.org",
-      "probedAt": "2026-10-29T00:51:02.837Z",
+      "probedAt": "2026-10-29T06:37:36.563Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 46
+        "durationMs": 149
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://citizenapproved.org/",
         "redirects": [],
-        "durationMs": 196,
+        "durationMs": 97,
         "contentType": "text/html; charset=utf-8",
         "bytes": 67869,
         "cfMitigated": null,
@@ -513,7 +513,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 196,
+            "durationMs": 97,
             "pass": true,
             "detail": "ok"
           }
@@ -544,13 +544,13 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from citizenapproved.org in 196 ms.",
+        "reason": "HTTP 200 from citizenapproved.org in 97 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "cyancanoe.com",
-      "probedAt": "2026-10-29T00:51:03.148Z",
+      "probedAt": "2026-10-29T06:37:36.830Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
@@ -562,7 +562,7 @@
         "status": 200,
         "finalUrl": "https://cyancanoe.com/",
         "redirects": [],
-        "durationMs": 273,
+        "durationMs": 229,
         "contentType": "text/html; charset=utf-8",
         "bytes": 12231,
         "cfMitigated": null,
@@ -571,7 +571,7 @@
       },
       "tls": {
         "state": "valid",
-        "daysRemaining": 83,
+        "daysRemaining": 82,
         "validTo": "2027-01-20T04:15:42.000Z"
       },
       "criticalPath": {
@@ -583,7 +583,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 273,
+            "durationMs": 229,
             "pass": true,
             "detail": "ok"
           }
@@ -609,25 +609,25 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from cyancanoe.com in 273 ms.",
+        "reason": "HTTP 200 from cyancanoe.com in 229 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "flipskillet.com",
-      "probedAt": "2026-10-29T00:51:03.236Z",
+      "probedAt": "2026-10-29T06:37:36.887Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 63
+        "durationMs": 30
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://flipskillet.com/",
         "redirects": [],
-        "durationMs": 170,
+        "durationMs": 193,
         "contentType": "text/html; charset=utf-8",
         "bytes": 10973,
         "cfMitigated": null,
@@ -636,8 +636,8 @@
       },
       "tls": {
         "state": "valid",
-        "daysRemaining": 31,
-        "validTo": "2026-11-30T00:21:45.000Z"
+        "daysRemaining": 89,
+        "validTo": "2027-01-27T01:49:51.000Z"
       },
       "criticalPath": {
         "state": "pass",
@@ -648,7 +648,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 170,
+            "durationMs": 193,
             "pass": true,
             "detail": "ok"
           }
@@ -674,25 +674,25 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from flipskillet.com in 170 ms.",
+        "reason": "HTTP 200 from flipskillet.com in 193 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "flipskillit.com",
-      "probedAt": "2026-10-29T00:51:03.379Z",
+      "probedAt": "2026-10-29T06:37:37.025Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 71
+        "durationMs": 59
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://flipskillit.com/",
         "redirects": [],
-        "durationMs": 211,
+        "durationMs": 104,
         "contentType": "text/html; charset=utf-8",
         "bytes": 10973,
         "cfMitigated": null,
@@ -701,8 +701,8 @@
       },
       "tls": {
         "state": "valid",
-        "daysRemaining": 30,
-        "validTo": "2026-11-29T00:45:08.000Z"
+        "daysRemaining": 89,
+        "validTo": "2027-01-27T03:47:06.000Z"
       },
       "criticalPath": {
         "state": "pass",
@@ -713,7 +713,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 211,
+            "durationMs": 104,
             "pass": true,
             "detail": "ok"
           }
@@ -739,25 +739,25 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from flipskillit.com in 211 ms.",
+        "reason": "HTTP 200 from flipskillit.com in 104 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "foxyana.com",
-      "probedAt": "2026-10-29T00:51:03.503Z",
+      "probedAt": "2026-10-29T06:37:37.140Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 75
+        "durationMs": 62
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://foxyana.com/",
         "redirects": [],
-        "durationMs": 214,
+        "durationMs": 115,
         "contentType": "text/html",
         "bytes": 131250,
         "cfMitigated": null,
@@ -766,7 +766,7 @@
       },
       "tls": {
         "state": "valid",
-        "daysRemaining": 68,
+        "daysRemaining": 67,
         "validTo": "2027-01-05T05:19:12.000Z"
       },
       "criticalPath": {
@@ -778,7 +778,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 214,
+            "durationMs": 115,
             "pass": true,
             "detail": "ok"
           }
@@ -804,18 +804,18 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from foxyana.com in 214 ms.",
+        "reason": "HTTP 200 from foxyana.com in 115 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "fwomps.com",
-      "probedAt": "2026-10-29T00:51:03.528Z",
+      "probedAt": "2026-10-29T06:37:37.143Z",
       "dns": {
         "state": "no-address-records",
         "addresses": 0,
         "errorCode": "ENODATA,ENODATA",
-        "durationMs": 71
+        "durationMs": 65
       },
       "http": {
         "state": "not-attempted",
@@ -843,12 +843,12 @@
     },
     {
       "propertyId": "fwomp.us",
-      "probedAt": "2026-10-29T00:51:03.562Z",
+      "probedAt": "2026-10-29T06:37:37.208Z",
       "dns": {
         "state": "no-address-records",
         "addresses": 0,
         "errorCode": "ENODATA,ENODATA",
-        "durationMs": 32
+        "durationMs": 50
       },
       "http": {
         "state": "not-attempted",
@@ -876,19 +876,19 @@
     },
     {
       "propertyId": "gflippinv.com",
-      "probedAt": "2026-10-29T00:51:03.594Z",
+      "probedAt": "2026-10-29T06:37:37.208Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 65
+        "durationMs": 40
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://gflippinv.com/",
         "redirects": [],
-        "durationMs": 180,
+        "durationMs": 143,
         "contentType": "text/html; charset=utf-8",
         "bytes": 100273,
         "cfMitigated": null,
@@ -897,7 +897,7 @@
       },
       "tls": {
         "state": "valid",
-        "daysRemaining": 52,
+        "daysRemaining": 51,
         "validTo": "2026-12-20T05:57:53.000Z"
       },
       "criticalPath": {
@@ -909,7 +909,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 180,
+            "durationMs": 143,
             "pass": true,
             "detail": "ok"
           }
@@ -939,25 +939,25 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from gflippinv.com in 180 ms.",
+        "reason": "HTTP 200 from gflippinv.com in 143 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "goodflippindesign.com",
-      "probedAt": "2026-10-29T00:51:03.599Z",
+      "probedAt": "2026-10-29T06:37:37.259Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 72
+        "durationMs": 34
       },
       "http": {
         "state": "blocked",
         "status": 403,
         "finalUrl": "https://goodflippindesign.com/",
         "redirects": [],
-        "durationMs": 119,
+        "durationMs": 35,
         "contentType": "text/html; charset=UTF-8",
         "bytes": 5571,
         "cfMitigated": "challenge",
@@ -966,7 +966,7 @@
       },
       "tls": {
         "state": "valid",
-        "daysRemaining": 62,
+        "daysRemaining": 61,
         "validTo": "2026-12-30T05:21:33.000Z"
       },
       "criticalPath": {
@@ -995,19 +995,19 @@
     },
     {
       "propertyId": "goodflippinluck.com",
-      "probedAt": "2026-10-29T00:51:03.729Z",
+      "probedAt": "2026-10-29T06:37:37.340Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 65
+        "durationMs": 66
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://goodflippinluck.com/",
         "redirects": [],
-        "durationMs": 175,
+        "durationMs": 128,
         "contentType": "text/html; charset=utf-8",
         "bytes": 5037,
         "cfMitigated": null,
@@ -1028,7 +1028,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 175,
+            "durationMs": 128,
             "pass": true,
             "detail": "ok"
           }
@@ -1054,25 +1054,25 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinluck.com in 175 ms.",
+        "reason": "HTTP 200 from goodflippinluck.com in 128 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "goodflippinnews.com",
-      "probedAt": "2026-10-29T00:51:03.852Z",
+      "probedAt": "2026-10-29T06:37:37.357Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 36
+        "durationMs": 61
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://goodflippinnews.com/",
         "redirects": [],
-        "durationMs": 186,
+        "durationMs": 187,
         "contentType": "text/html; charset=utf-8",
         "bytes": 5525,
         "cfMitigated": null,
@@ -1081,7 +1081,7 @@
       },
       "tls": {
         "state": "valid",
-        "daysRemaining": 65,
+        "daysRemaining": 64,
         "validTo": "2027-01-02T02:15:10.000Z"
       },
       "criticalPath": {
@@ -1093,7 +1093,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 186,
+            "durationMs": 187,
             "pass": true,
             "detail": "ok"
           }
@@ -1119,25 +1119,25 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinnews.com in 186 ms.",
+        "reason": "HTTP 200 from goodflippinnews.com in 187 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "goodflippinvibes.com",
-      "probedAt": "2026-10-29T00:51:03.854Z",
+      "probedAt": "2026-10-29T06:37:37.412Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 68
+        "durationMs": 66
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://goodflippinvibes.com/",
         "redirects": [],
-        "durationMs": 150,
+        "durationMs": 93,
         "contentType": "text/html; charset=utf-8",
         "bytes": 99696,
         "cfMitigated": null,
@@ -1158,7 +1158,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 150,
+            "durationMs": 93,
             "pass": true,
             "detail": "ok"
           }
@@ -1183,25 +1183,25 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinvibes.com in 150 ms.",
+        "reason": "HTTP 200 from goodflippinvibes.com in 93 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "goodflippinyikes.com",
-      "probedAt": "2026-10-29T00:51:03.907Z",
+      "probedAt": "2026-10-29T06:37:37.560Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 62
+        "durationMs": 61
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://goodflippinyikes.com/",
         "redirects": [],
-        "durationMs": 174,
+        "durationMs": 138,
         "contentType": "text/html; charset=utf-8",
         "bytes": 18089,
         "cfMitigated": null,
@@ -1222,7 +1222,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 174,
+            "durationMs": 138,
             "pass": true,
             "detail": "ok"
           }
@@ -1248,25 +1248,25 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from goodflippinyikes.com in 174 ms.",
+        "reason": "HTTP 200 from goodflippinyikes.com in 138 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "heavymoose.com",
-      "probedAt": "2026-10-29T00:51:04.035Z",
+      "probedAt": "2026-10-29T06:37:37.596Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 63
+        "durationMs": 56
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://heavymoose.com/",
         "redirects": [],
-        "durationMs": 278,
+        "durationMs": 192,
         "contentType": "text/html; charset=utf-8",
         "bytes": 133326,
         "cfMitigated": null,
@@ -1275,7 +1275,7 @@
       },
       "tls": {
         "state": "valid",
-        "daysRemaining": 84,
+        "daysRemaining": 83,
         "validTo": "2027-01-21T06:26:21.000Z"
       },
       "criticalPath": {
@@ -1287,7 +1287,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 278,
+            "durationMs": 192,
             "pass": true,
             "detail": "ok"
           }
@@ -1313,25 +1313,25 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from heavymoose.com in 278 ms.",
+        "reason": "HTTP 200 from heavymoose.com in 192 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "lowertownstpaul.org",
-      "probedAt": "2026-10-29T00:51:04.108Z",
+      "probedAt": "2026-10-29T06:37:37.630Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 149
+        "durationMs": 50
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://lowertownstpaul.org/",
         "redirects": [],
-        "durationMs": 194,
+        "durationMs": 191,
         "contentType": "text/html; charset=utf-8",
         "bytes": 106538,
         "cfMitigated": null,
@@ -1352,7 +1352,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 194,
+            "durationMs": 191,
             "pass": true,
             "detail": "ok"
           }
@@ -1378,25 +1378,25 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from lowertownstpaul.org in 194 ms.",
+        "reason": "HTTP 200 from lowertownstpaul.org in 191 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "minnesotapeace.com",
-      "probedAt": "2026-10-29T00:51:04.143Z",
+      "probedAt": "2026-10-29T06:37:37.782Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 65
+        "durationMs": 32
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://minnesotapeace.com/",
         "redirects": [],
-        "durationMs": 221,
+        "durationMs": 116,
         "contentType": "text/html; charset=utf-8",
         "bytes": 30553,
         "cfMitigated": null,
@@ -1405,7 +1405,7 @@
       },
       "tls": {
         "state": "valid",
-        "daysRemaining": 37,
+        "daysRemaining": 36,
         "validTo": "2026-12-05T01:45:35.000Z"
       },
       "criticalPath": {
@@ -1417,7 +1417,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 221,
+            "durationMs": 116,
             "pass": true,
             "detail": "ok"
           },
@@ -1425,7 +1425,7 @@
             "id": "record",
             "path": "/record/",
             "status": 200,
-            "durationMs": 102,
+            "durationMs": 58,
             "pass": true,
             "detail": "ok"
           },
@@ -1433,7 +1433,7 @@
             "id": "status",
             "path": "/status/",
             "status": 200,
-            "durationMs": 92,
+            "durationMs": 68,
             "pass": true,
             "detail": "ok"
           },
@@ -1449,7 +1449,7 @@
             "id": "oversight",
             "path": "/oversight/",
             "status": 200,
-            "durationMs": 88,
+            "durationMs": 60,
             "pass": true,
             "detail": "ok"
           },
@@ -1457,7 +1457,7 @@
             "id": "programs",
             "path": "/programs/",
             "status": 200,
-            "durationMs": 111,
+            "durationMs": 45,
             "pass": true,
             "detail": "ok"
           },
@@ -1465,7 +1465,7 @@
             "id": "money",
             "path": "/money/",
             "status": 200,
-            "durationMs": 117,
+            "durationMs": 72,
             "pass": true,
             "detail": "ok"
           },
@@ -1473,7 +1473,7 @@
             "id": "authority",
             "path": "/authority/",
             "status": 200,
-            "durationMs": 68,
+            "durationMs": 48,
             "pass": true,
             "detail": "ok"
           }
@@ -1499,25 +1499,25 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from minnesotapeace.com in 221 ms.",
+        "reason": "HTTP 200 from minnesotapeace.com in 116 ms.",
         "nextAction": null
       }
     },
     {
       "propertyId": "redleopardofstpaul.com",
-      "probedAt": "2026-10-29T00:51:04.228Z",
+      "probedAt": "2026-10-29T06:37:37.870Z",
       "dns": {
         "state": "resolved",
         "addresses": 4,
         "errorCode": null,
-        "durationMs": 49
+        "durationMs": 33
       },
       "http": {
         "state": "available",
         "status": 200,
         "finalUrl": "https://redleopardofstpaul.com/",
         "redirects": [],
-        "durationMs": 213,
+        "durationMs": 122,
         "contentType": "text/html; charset=utf-8",
         "bytes": 49241,
         "cfMitigated": null,
@@ -1526,7 +1526,7 @@
       },
       "tls": {
         "state": "valid",
-        "daysRemaining": 88,
+        "daysRemaining": 87,
         "validTo": "2027-01-25T02:52:04.000Z"
       },
       "criticalPath": {
@@ -1538,7 +1538,7 @@
             "id": "home",
             "path": "/",
             "status": 200,
-            "durationMs": 213,
+            "durationMs": 122,
             "pass": true,
             "detail": "ok"
           }
@@ -1564,7 +1564,7 @@
         "state": "available",
         "blocked": false,
         "failureClass": null,
-        "reason": "HTTP 200 from redleopardofstpaul.com in 213 ms.",
+        "reason": "HTTP 200 from redleopardofstpaul.com in 122 ms.",
         "nextAction": null
       }
     }
