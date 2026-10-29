@@ -152,3 +152,20 @@ test('CDATA containing a fake root closure does not bypass XML validation or cre
     '<link>https://example.net/a</link></item></channel></rss>';
   assert.equal(inspectFeed(rssCdata, { now }).sampledItems, 1);
 });
+
+test('publisher-host differences are review hints only, with no item-level leakage', () => {
+  const feed = '<rss><channel>' +
+    '<item><link>https://news.example.org/a</link><dc:creator>A</dc:creator></item>' +
+    '<item><link>https://sub.news.example.org/b</link></item>' +
+    '<item><link>https://external.example.net/partner</link></item>' +
+    '<item><link>https://news.example.org.attacker.example.net/imposter</link></item>' +
+    '</channel></rss>';
+  const result = inspectFeed(feed, { now, publisherHost: 'news.example.org' });
+  assert.equal(result.samePublisherHostLinks, 2);
+  assert.equal(result.offPublisherHostLinks, 2);
+  assert.equal(result.itemsRequiringIndividualProvenanceReview, 4);
+  assert.equal(result.autoAdmittableItems, 0);
+  assert.equal(result.itemOriginCertified, false);
+  assert.ok(!JSON.stringify(result).includes('external.example.net'));
+  assert.equal(inspectFeed(feed, { now }).samePublisherHostLinks, null, 'untested host evidence must remain unknown');
+});
