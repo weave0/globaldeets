@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     env:
-      GD048_RESULT: ${{ runner.temp }}/gd048.json
+      GD048_RESULT: /tmp/gd048.json
     steps:
       - uses: actions/checkout@v7
         with:
