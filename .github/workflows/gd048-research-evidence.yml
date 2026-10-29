@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/gd048-research-evidence.yml'
       - 'tools/source-research-probe.mjs'
+      - 'tools/source-origin-signals.mjs'
 
 permissions:
   contents: read
@@ -43,6 +44,17 @@ jobs:
             if (result.productionEligible !== false || result.itemReuseRightsCertified !== false || result.registryDisposition !== 'research')
               throw new Error('research-to-production status drift');
             const evidence = result.evidence || {};
+            if (result.evidence) {
+              const hints = evidence.sourceHintCounts;
+              if (!hints || !['publisher-source-hint','external-source-hint','conflicting-source-hints','unresolved'].every(
+                key => Number.isInteger(hints[key]) && hints[key] >= 0
+              )) throw new Error('source hint counts are missing or invalid');
+              const hintSum = Object.values(hints).reduce((total, count) => total + count, 0);
+              if (hintSum !== evidence.sampledItems || evidence.autoAdmittableItems !== 0 ||
+                evidence.itemOriginCertified !== false || evidence.itemReuseRightsCertified !== false ||
+                evidence.itemsRequiringIndividualProvenanceReview !== evidence.sampledItems)
+                throw new Error('article provenance or auto-admission invariant failed');
+            }
             return '| ' + [result.candidateId, result.httpStatus ?? '—',
               result.observation, evidence.sampledItems ?? '—',
               evidence.newestSampleAgeHours ?? '—',
@@ -50,6 +62,10 @@ jobs:
               evidence.creatorSignals ?? '—',
               evidence.attributionLinkPairs ?? '—',
               evidence.offPublisherHostLinks ?? '—',
+              evidence.sourceHintCounts?.['publisher-source-hint'] ?? '—',
+              evidence.sourceHintCounts?.['external-source-hint'] ?? '—',
+              evidence.sourceHintCounts?.['conflicting-source-hints'] ?? '—',
+              evidence.sourceHintCounts?.unresolved ?? '—',
               evidence.itemsRequiringIndividualProvenanceReview ?? '—'].join(' | ') + ' |';
           });
           const summary = [
@@ -57,10 +73,10 @@ jobs:
             '',
             'This is a technical spot check, **not** proof of permission, item provenance, editorial independence, freshness SLA or production admission.',
             'No sources were activated, no article content was retained, and licensing cannot be inferred from HTTP success.',
-            'CDATA may contain bylines; author/link counts are structural hints only and cannot certify original authorship or reuse rights.',
+            'CDATA may contain bylines; all source-host categories are metadata hints only, never findings of original reporting or licensed reuse.',
             '',
-            '| Candidate | HTTP | Observation | Sampled items | Newest age (hours) | Duplicate links | Author signals | Author + URL pairs | Off-publisher-host URLs | Items still requiring review |',
-            '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+            '| Candidate | HTTP | Observation | Sampled items | Newest age (hours) | Duplicate links | Author signals | Author + URL pairs | Off-publisher-host URLs | Publisher source hints | External/partner-host hints | Conflicts | Unresolved | Items still requiring review |',
+            '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
             ...rows,
             '',
             'Failures and redirects require follow-up; even successful XML observation retains the research-only gate.',
