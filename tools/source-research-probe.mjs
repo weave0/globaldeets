@@ -3,8 +3,9 @@
 // Run explicitly: node tools/source-research-probe.mjs --candidate=global-voices-original (or --all).
 import { pathToFileURL } from 'node:url';
 import { SOURCE_RESEARCH_CANDIDATES, SOURCE_ADMISSIONS } from '../functions/lib/news-source-admission.js';
+import { classifyItemSourceHints } from './source-origin-signals.mjs';
 
-export const PROBE_VERSION = 'gd048-research-probe-v1';
+export const PROBE_VERSION = 'gd049-research-probe-v2';
 export const MAX_FEED_BYTES = 512 * 1024;
 const MAX_SAMPLE_ITEMS = 30;
 const TIMEOUT_MS = 10000;
@@ -141,10 +142,21 @@ export function inspectFeed(xml, { now = new Date(), publisherHost = null } = {}
   let linked = 0, dated = 0, invalidDates = 0, futureDated = 0, duplicateLinks = 0;
   let guidPresent = 0, creatorPresent = 0, originSignalPresent = 0, rightsSignalPresent = 0;
   let attributionLinkPairs = 0, samePublisherHostLinks = 0, offPublisherHostLinks = 0;
+  const sourceHintCounts = {
+    'publisher-source-hint': 0,
+    'external-source-hint': 0,
+    'conflicting-source-hints': 0,
+    unresolved: 0,
+  };
+  let sourceMarkersPresent = 0, unresolvedSourceMarkers = 0;
   let newest = -Infinity;
   const at = new Date(now).getTime();
   assert(Number.isFinite(at), 'invalid observation time');
   for (const [, block] of sample) {
+    const sourceHints = classifyItemSourceHints(block, { publisherHost });
+    sourceHintCounts[sourceHints.status]++;
+    if (sourceHints.sourceMarkerPresent) sourceMarkersPresent++;
+    if (sourceHints.unresolvedSourceMarker) unresolvedSourceMarkers++;
     const link = canonicalKey(itemLink(block, format));
     if (link) {
       linked++;
@@ -164,7 +176,7 @@ export function inspectFeed(xml, { now = new Date(), publisherHost = null } = {}
       ? ['author', 'dc:creator'] : ['dc:creator', 'author']);
     if (author) creatorPresent++;
     if (author && link) attributionLinkPairs++;
-    if (/<(?:source|dc:source|original|originalLink)(?=[\s/>])/i.test(block)) originSignalPresent++;
+    if (sourceHints.sourceMarkerPresent) originSignalPresent++;
     if (/<(?:rights|license|cc:license|dc:rights|copyright)(?=[\s/>])/i.test(block)) rightsSignalPresent++;
     const rawDate = contentOf(block, format === 'atom'
       ? ['published', 'updated'] : ['pubDate', 'dc:date', 'published']);
@@ -188,10 +200,11 @@ export function inspectFeed(xml, { now = new Date(), publisherHost = null } = {}
     samePublisherHostLinks: publisherHost ? samePublisherHostLinks : null,
     offPublisherHostLinks: publisherHost ? offPublisherHostLinks : null,
     originSignals: originSignalPresent, itemRightsSignals: rightsSignalPresent,
+    sourceHintCounts, sourceMarkersPresent, unresolvedSourceMarkers,
     itemsRequiringIndividualProvenanceReview: sample.length,
     itemOriginCertified: false, itemReuseRightsCertified: false,
     autoAdmittableItems: 0,
-    caveat: 'Byline, link-host and rights tags are unverified metadata signals, not proof of original authorship, licensed reproduction, translation rights, independent reporting or production eligibility',
+    caveat: 'Source-host hints, bylines, article links and rights tags are unverified metadata, not proof of original authorship, licensed reproduction, translation rights, independent reporting or production eligibility',
   };
 }
 
