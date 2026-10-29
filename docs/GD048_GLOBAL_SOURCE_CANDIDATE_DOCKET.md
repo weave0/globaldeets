@@ -71,3 +71,18 @@ These are **publisher-declared XML feed locations and policy findings**, not val
 **Research disposition:** `global-voices-original` is a single research-only candidate with `operatorFamily: global-voices`, `itemLevelReviewRequired: true`, `permittedUse: []`, and health unverified. The third-party-fed/partner and translation composition is not yet characterized. No Global Voices source was added to production, and no full-site feed is declared entirely safe to republish. The network could improve global/local context after verifiable original-author attribution and item-license filtering; editorial commentary or translations must not be silently treated as multiple independently reported current events.
 
 **Next governed acceptance:** bounded edge fetch + XML parsing; determine whether feed exposes author, canonical link, original/translated status and rights origin for each item; confirm a conservative inclusion predicate from publisher evidence; preserve the original story link and author; if the feed cannot separate rights reliably, keep this candidate in research instead of suppressing the uncertainty.
+
+## Free, read-only live feed spot checks — 2026-10-28
+
+PR #112 added `tools/source-research-probe.mjs`, a manually invoked, bounded probe of the seven governed research candidates. Each HTTP attempt is limited to 10 seconds and each response body to 512 KiB; redirects, HTML responses, invalid structure, timestamp anomalies, canonical link collisions and the *presence* of author/origin/rights tags are recorded as observations. No article bodies or headlines are written into the report. The probe does not ingest, translate, syndicate, or admit sources.
+
+The companion `.github/workflows/gd048-research-evidence.yml` is a deliberately **no-subscription** evidence lane: GitHub-hosted Node 24 runner; read-only repository token; no secrets, paid feed providers, Cloudflare analytics permissions, third-party AI, scheduled repeats, or production writes. It executes once when the workflow file lands on `main` and can subsequently be invoked from **Actions > GD-048 research-only feed evidence (no-cost) > Run workflow**. It reports a human-readable summary and JSON observations in the job logs, not a new health certification or admissions state. GitHub Actions runner availability and usage remain subject to the owner's plan/platform allowances; this is designed to avoid chargeable services, not a guarantee about every account's billing configuration.
+
+### Evidence interpretation
+
+- `xml-structure-observed` means only that one bounded retrieval yielded RSS/Atom-like markup passing a conservative structural scan, **not** that publisher terms permit a product feed, that the service is continuously healthy, or that per-item rights/origin are proven.
+- `redirect-requires-review`, `html-instead-of-feed`, `http-error`, and `probe-failed` are observable investigation outcomes, not grounds for deleting unfavorable evidence or silently replacing the source.
+- Date age measures the newest *sampled* publication timestamp against the observation timestamp; future dates, zero dated items, empty feeds and duplicate links must be treated separately. A single run cannot establish uptime or update frequency.
+- Source rights and every item-rights gate remain independent from this probe. No source changes `SOURCE_ADMISSIONS`, `SOURCE_PROVENANCE`, or live `SOURCES` on the basis of this job.
+
+**Follow-up:** inspect actual run output, verify ambiguous XML/canonical/origin cases against publisher materials, and pursue explicit permission only where needed. Open a separate, narrowly scoped admission PR exclusively for a candidate with independently defensible original-item filtering and all governance predicates satisfied.

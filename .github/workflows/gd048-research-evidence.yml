@@ -1,0 +1,65 @@
+name: GD-048 research-only feed evidence (no-cost)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/gd048-research-evidence.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gd048-research-evidence
+  cancel-in-progress: true
+
+jobs:
+  inspect-public-feeds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      GD048_RESULT: /tmp/gd048.json
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Collect bounded research observations (no production writes)
+        run: |
+          node tools/source-research-probe.mjs --all > "$GD048_RESULT"
+          test -s "$GD048_RESULT"
+      - name: Publish honest technical evidence in job summary and logs
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, appendFileSync } from 'node:fs';
+          const run = JSON.parse(readFileSync(process.env.GD048_RESULT, 'utf8'));
+          if (run.inventoryBeforeAndAfter !== 21) throw new Error('source inventory invariant failed');
+          if (!Array.isArray(run.results) || run.results.length !== 7) throw new Error('unexpected candidate registry size');
+          const rows = run.results.map(result => {
+            if (result.productionEligible !== false || result.itemReuseRightsCertified !== false || result.registryDisposition !== 'research')
+              throw new Error('research-to-production status drift');
+            const evidence = result.evidence || {};
+            return '| ' + [result.candidateId, result.httpStatus ?? '—',
+              result.observation, evidence.sampledItems ?? '—',
+              evidence.newestSampleAgeHours ?? '—',
+              evidence.duplicateCanonicalLinks ?? '—'].join(' | ') + ' |';
+          });
+          const summary = [
+            '# GD-048: live feed *research* observations',
+            '',
+            'This is a technical spot check, **not** proof of permission, item provenance, editorial independence, freshness SLA or production admission.',
+            'No sources were activated, no article content was retained, and licensing cannot be inferred from HTTP success.',
+            '',
+            '| Candidate | HTTP | Observation | Sampled items | Newest age (hours) | Duplicate links |',
+            '| --- | --- | --- | --- | --- | --- |',
+            ...rows,
+            '',
+            'Failures and redirects require follow-up; even successful XML observation retains the research-only gate.',
+            '',
+          ].join('\n');
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+          console.log(JSON.stringify({probeVersion:run.probeVersion,sourceInventory:run.inventoryBeforeAndAfter,results:run.results}, null, 2));
+          NODE
