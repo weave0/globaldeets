@@ -86,3 +86,28 @@ The companion `.github/workflows/gd048-research-evidence.yml` is a deliberately 
 - Source rights and every item-rights gate remain independent from this probe. No source changes `SOURCE_ADMISSIONS`, `SOURCE_PROVENANCE`, or live `SOURCES` on the basis of this job.
 
 **Follow-up:** inspect actual run output, verify ambiguous XML/canonical/origin cases against publisher materials, and pursue explicit permission only where needed. Open a separate, narrowly scoped admission PR exclusively for a candidate with independently defensible original-item filtering and all governance predicates satisfied.
+
+## First bounded live observation — 2026-10-29 UTC
+
+**Evidence:** [GitHub Actions GD-048 run #40791861069](https://github.com/weave0/globaldeets/actions/runs/40791861069), executed against merged `main` at `e6ec3cad88f4383db68996b84fbbff944572a44e`. The run exited successfully because the research lane completed and honored its no-admission controls. Individual HTTP and XML outcomes are separate: success of the job is **not** feed health certification or licensing approval.
+
+| Registry ID | Observed response | RSS/XML sampled | Dated | Newest sampled age | Author tags detected | Item origin / rights markers |
+|---|---|---:|---:|---:|---:|---:|
+| rnz-pacific | 200 `text/html` directory, not a feed | — | — | — | — | — |
+| agencia-brasil | 200 `application/rss+xml`, structure observed | 10 | 10 | 0.7 h | 10 | 0 / 0 |
+| laist-local | 200 `text/html` instead of claimed XML feed | — | — | — | — | — |
+| antara-indonesian | 200, structure observed | 30 | 30 | 0.0 h | 0 | 0 / 0 |
+| vnexpress-vietnamese | 200, structure observed | 30 | 30 | 0.7 h | 0 | 0 / 0 |
+| lemonde-french | 200, structure observed | 16 | 16 | 1.0 h | 0 | 0 / 0 |
+| global-voices-original | 200 `application/rss+xml`, structure observed | 15 | 15 | 8.7 h | 0 | 0 / 0 |
+
+All five XML-observed feeds had **zero duplicate canonical links within the bounded sample**, and zero malformed or future-dated sampled timestamps. These are **point-in-time samples**. The initial probe included RNZ's *directory* URL; the subsequent repair recognizes directory-type candidates as `feed-endpoint-not-established` and skips network probing them until an actual XML URL is approved. Do not interpret the initial HTML response as a broken XML feed.
+
+### Decision implications (no admission)
+
+1. **Agência Brasil:** first technical priority for provenance/origin-filter research because the observed feed exposes ten author tags. Its policy excludes some partner material; **no source/original-versus-partner tags were detected** in this sample, so there is no defensible automatic clearance predicate yet.
+2. **Global Voices:** technical feed works and publisher-created material may carry CC BY rights, but **zero creator tags and zero item-level rights tags were detected by the existing extractor**. Attribution and origin/translation discrimination are not certified. Remain research-only.
+3. **ANTARA / VnExpress / Le Monde:** live XML proves technical connectivity, **not** GlobalDeets reuse or translation permission. Their existing permission/contract statuses remain unchanged.
+4. **LAist:** investigate the 200 HTML response (routing, bot response, or outdated feed path) without speculative substitutions. **RNZ Pacific:** identify a specific first-party Pacific XML feed instead of treating the directory as feed data.
+
+**Next acceptance:** publish a second dated, independently repeatable observation after endpoint corrections; add item-level provenance/attribution fixtures and tests, then review rights. Preserve all 21 production feeds and the fail-closed admission predicate until each applicable gate is satisfied.

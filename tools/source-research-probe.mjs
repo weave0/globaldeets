@@ -187,9 +187,10 @@ async function readBounded(response, maxBytes) {
 }
 
 export async function probeResearchCandidate(candidate, { fetchImpl = fetch, now = new Date(), maxBytes = MAX_FEED_BYTES } = {}) {
-  assert(SOURCE_RESEARCH_CANDIDATES.some(entry =>
-    entry.candidateId === candidate?.candidateId && entry.endpointUrl === candidate?.endpointUrl),
-  'candidate is not in the governed research registry');
+  // Require the immutable governed registry object, not a caller-supplied lookalike
+  // that could override endpoint type, rights state, or routing behavior.
+  assert(SOURCE_RESEARCH_CANDIDATES.includes(candidate),
+    'candidate must be the exact governed research registry entry');
   assert(candidate.disposition === 'research', 'research disposition required');
   assert(Number.isInteger(maxBytes) && maxBytes > 0 && maxBytes <= MAX_FEED_BYTES, 'invalid byte cap');
   const url = new URL(candidate.endpointUrl);
@@ -202,6 +203,12 @@ export async function probeResearchCandidate(candidate, { fetchImpl = fetch, now
     registryDisposition: 'research', productionEligible: false,
     itemReuseRightsCertified: false, observation: 'not-attempted',
   };
+  // Official RSS directory pages are not XML feeds. Do not fetch or misclassify them.
+  // A separate verified publisher-linked XML endpoint is required before technical probing.
+  if (candidate.endpointType !== 'rss') {
+    report.observation = 'feed-endpoint-not-established';
+    return report;
+  }
   try {
     const response = await fetchImpl(url.toString(), {
       method: 'GET', redirect: 'manual', headers: { Accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml;q=0.9' },
