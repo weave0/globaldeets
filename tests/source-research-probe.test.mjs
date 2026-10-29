@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { inspectFeed, inspectXmlStructure, probeResearchCandidate, MAX_FEED_BYTES } from '../tools/source-research-probe.mjs';
+import { inspectFeed, inspectXmlStructure, sanitizeFeedForMetadata, probeResearchCandidate, MAX_FEED_BYTES } from '../tools/source-research-probe.mjs';
 import { SOURCE_RESEARCH_CANDIDATES, SOURCE_ADMISSIONS } from '../functions/lib/news-source-admission.js';
 import { SOURCES } from '../functions/api/news.js';
 
@@ -94,4 +94,78 @@ test('lookalike directory candidate cannot override its governed endpoint type',
     fetchImpl: async () => { called = true; return new Response(rss); },
   }), /exact governed research registry entry/);
   assert.equal(called, false);
+});
+
+test('CDATA bylines remain observable while markup-looking article content cannot invent feed items', () => {
+  const feed = '<?xml version="1.0"?><rss><channel>' +
+    '<item><title><![CDATA[<item><dc:creator>Fake Author</dc:creator></item>]]></title>' +
+    '<link>https://news.example/story</link>' +
+    '<dc:creator><![CDATA[Real Reporter]]></dc:creator>' +
+    '<pubDate>Wed, 28 Oct 2026 10:00:00 GMT</pubDate>' +
+    '<content:encoded><![CDATA[<entry><rights>CC BY</rights></entry><source>other</source>]]></content:encoded>' +
+    '</item></channel></rss>';
+  const report = inspectFeed(feed, { now });
+  assert.equal(report.sampledItems, 1, 'CDATA must not forge additional items');
+  assert.equal(report.creatorSignals, 1, 'a genuine CDATA byline must survive');
+  assert.equal(report.attributionLinkPairs, 1);
+  assert.equal(report.originSignals, 0, 'markup in article body is not provenance evidence');
+  assert.equal(report.itemRightsSignals, 0, 'markup in article body is not licensing evidence');
+  assert.equal(report.itemsRequiringIndividualProvenanceReview, 1);
+  assert.equal(report.autoAdmittableItems, 0);
+  assert.equal(report.itemOriginCertified, false);
+  assert.equal(report.itemReuseRightsCertified, false);
+  assert.ok(sanitizeFeedForMetadata(feed).includes('&lt;entry&gt;'));
+  assert.ok(!JSON.stringify(report).includes('Real Reporter'), 'no author content retained');
+  assert.ok(!JSON.stringify(report).includes('news.example/story'), 'no story URL retained');
+});
+
+test('author/link completeness is counted without inferring that source owns the material', () => {
+  const feed = '<rss><channel>' +
+    '<item><link>https://example.org/first</link><dc:creator><![CDATA[First]]></dc:creator></item>' +
+    '<item><link>https://example.org/second</link><dc:creator><![CDATA[ ]]></dc:creator></item>' +
+    '<item><dc:creator><![CDATA[Third]]></dc:creator><source>Other Wire</source><copyright>Some publisher</copyright></item>' +
+    '</channel></rss>';
+  const report = inspectFeed(feed, { now });
+  assert.equal(report.sampledItems, 3);
+  assert.equal(report.creatorSignals, 2);
+  assert.equal(report.attributionLinkPairs, 1);
+  assert.equal(report.missingCreatorSignals, 1);
+  assert.equal(report.missingCanonicalLinks, 1);
+  assert.equal(report.originSignals, 1);
+  assert.equal(report.itemRightsSignals, 1);
+  assert.equal(report.itemsRequiringIndividualProvenanceReview, 3);
+  assert.equal(report.autoAdmittableItems, 0);
+});
+
+test('Atom nested author name is an attribution signal, not a clearance decision', () => {
+  const atom = '<feed xmlns="http://www.w3.org/2005/Atom">' +
+    '<entry><link rel="alternate" href="https://example.net/first"/><author><name>Example Writer</name></author></entry>' +
+    '</feed>';
+  const report = inspectFeed(atom, { now });
+  assert.equal(report.creatorSignals, 1);
+  assert.equal(report.attributionLinkPairs, 1);
+  assert.equal(report.autoAdmittableItems, 0);
+});
+
+test('CDATA containing a fake root closure does not bypass XML validation or create extra entries', () => {
+  const rssCdata = '<rss><channel><item><description><![CDATA[</item></channel></rss><rss>]]></description>' +
+    '<link>https://example.net/a</link></item></channel></rss>';
+  assert.equal(inspectFeed(rssCdata, { now }).sampledItems, 1);
+});
+
+test('publisher-host differences are review hints only, with no item-level leakage', () => {
+  const feed = '<rss><channel>' +
+    '<item><link>https://news.example.org/a</link><dc:creator>A</dc:creator></item>' +
+    '<item><link>https://sub.news.example.org/b</link></item>' +
+    '<item><link>https://external.example.net/partner</link></item>' +
+    '<item><link>https://news.example.org.attacker.example.net/imposter</link></item>' +
+    '</channel></rss>';
+  const result = inspectFeed(feed, { now, publisherHost: 'news.example.org' });
+  assert.equal(result.samePublisherHostLinks, 2);
+  assert.equal(result.offPublisherHostLinks, 2);
+  assert.equal(result.itemsRequiringIndividualProvenanceReview, 4);
+  assert.equal(result.autoAdmittableItems, 0);
+  assert.equal(result.itemOriginCertified, false);
+  assert.ok(!JSON.stringify(result).includes('external.example.net'));
+  assert.equal(inspectFeed(feed, { now }).samePublisherHostLinks, null, 'untested host evidence must remain unknown');
 });

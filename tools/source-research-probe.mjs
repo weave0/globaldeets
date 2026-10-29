@@ -114,11 +114,24 @@ function canonicalKey(value) {
   } catch { return null; }
 }
 
+// Keep CDATA *text* readable to metadata probes without letting markup-shaped article
+// content forge <item>, <entry>, <author>, or licensing tags. Never evaluate entities.
+export function sanitizeFeedForMetadata(xml) {
+  return xml
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, (_full, value) => value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;'));
+}
+
 // No headlines, item bodies, GUIDs, authors or article URLs are persisted in the evidence output.
-export function inspectFeed(xml, { now = new Date() } = {}) {
+export function inspectFeed(xml, { now = new Date(), publisherHost = null } = {}) {
   const format = inspectXmlStructure(xml);
-  // Remove CDATA/comment bodies so markup-looking article content cannot forge feed entries.
-  const safe = xml.replace(/<!\[CDATA\[[\s\S]*?\]\]>/g, '').replace(/<!--[\s\S]*?-->/g, '');
+  assert(publisherHost === null || (
+    typeof publisherHost === 'string' && /^[a-z0-9.-]+$/i.test(publisherHost)
+  ), 'publisher host must be a valid hostname or null');
+  const safe = sanitizeFeedForMetadata(xml);
   const itemPattern = format === 'atom'
     ? /<entry(?:\s[^>]*)?>([\s\S]*?)<\/entry\s*>/gi
     : /<item(?:\s[^>]*)?>([\s\S]*?)<\/item\s*>/gi;
@@ -127,6 +140,7 @@ export function inspectFeed(xml, { now = new Date() } = {}) {
   const seen = new Set();
   let linked = 0, dated = 0, invalidDates = 0, futureDated = 0, duplicateLinks = 0;
   let guidPresent = 0, creatorPresent = 0, originSignalPresent = 0, rightsSignalPresent = 0;
+  let attributionLinkPairs = 0, samePublisherHostLinks = 0, offPublisherHostLinks = 0;
   let newest = -Infinity;
   const at = new Date(now).getTime();
   assert(Number.isFinite(at), 'invalid observation time');
@@ -136,11 +150,22 @@ export function inspectFeed(xml, { now = new Date() } = {}) {
       linked++;
       if (seen.has(link)) duplicateLinks++;
       seen.add(link);
+      if (publisherHost) {
+        const articleHost = new URL(link).hostname.toLowerCase();
+        const expected = publisherHost.toLowerCase();
+        if (articleHost === expected || articleHost.endsWith('.' + expected))
+          samePublisherHostLinks++;
+        else offPublisherHostLinks++;
+      }
     }
     if (contentOf(block, format === 'atom' ? ['id'] : ['guid'])) guidPresent++;
-    if (contentOf(block, format === 'atom' ? ['author', 'dc:creator'] : ['dc:creator', 'author'])) creatorPresent++;
-    if (/<(?:source|dc:source|original|originalLink)\b/i.test(block)) originSignalPresent++;
-    if (/<(?:rights|license|cc:license|dc:rights)\b/i.test(block)) rightsSignalPresent++;
+    // Signals describe presence of attribution *metadata*, never legal ownership.
+    const author = contentOf(block, format === 'atom'
+      ? ['author', 'dc:creator'] : ['dc:creator', 'author']);
+    if (author) creatorPresent++;
+    if (author && link) attributionLinkPairs++;
+    if (/<(?:source|dc:source|original|originalLink)(?=[\s/>])/i.test(block)) originSignalPresent++;
+    if (/<(?:rights|license|cc:license|dc:rights|copyright)(?=[\s/>])/i.test(block)) rightsSignalPresent++;
     const rawDate = contentOf(block, format === 'atom'
       ? ['published', 'updated'] : ['pubDate', 'dc:date', 'published']);
     if (rawDate) {
@@ -158,9 +183,15 @@ export function inspectFeed(xml, { now = new Date() } = {}) {
     canonicalLinks: linked, duplicateCanonicalLinks: duplicateLinks,
     guidOrIdPresent: guidPresent, parseableDates: dated, invalidDates, futureDated,
     newestSampleAgeHours: newestAgeHours, creatorSignals: creatorPresent,
+    attributionLinkPairs, missingCreatorSignals: sample.length - creatorPresent,
+    missingCanonicalLinks: sample.length - linked,
+    samePublisherHostLinks: publisherHost ? samePublisherHostLinks : null,
+    offPublisherHostLinks: publisherHost ? offPublisherHostLinks : null,
     originSignals: originSignalPresent, itemRightsSignals: rightsSignalPresent,
+    itemsRequiringIndividualProvenanceReview: sample.length,
     itemOriginCertified: false, itemReuseRightsCertified: false,
-    caveat: 'Counts describe bounded feed markup, not independent reporting, verified origins, full XML schema validity or usage rights',
+    autoAdmittableItems: 0,
+    caveat: 'Byline, link-host and rights tags are unverified metadata signals, not proof of original authorship, licensed reproduction, translation rights, independent reporting or production eligibility',
   };
 }
 
@@ -234,7 +265,7 @@ export async function probeResearchCandidate(candidate, { fetchImpl = fetch, now
     }
     const xml = await readBounded(response, maxBytes);
     report.bytesRead = new TextEncoder().encode(xml).byteLength;
-    report.evidence = inspectFeed(xml, { now });
+    report.evidence = inspectFeed(xml, { now, publisherHost: url.hostname });
     report.observation = 'xml-structure-observed';
   } catch (error) {
     report.observation = 'probe-failed';

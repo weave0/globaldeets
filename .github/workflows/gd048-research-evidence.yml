@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/gd048-research-evidence.yml'
+      - 'tools/source-research-probe.mjs'
 
 permissions:
   contents: read
@@ -45,16 +46,21 @@ jobs:
             return '| ' + [result.candidateId, result.httpStatus ?? '—',
               result.observation, evidence.sampledItems ?? '—',
               evidence.newestSampleAgeHours ?? '—',
-              evidence.duplicateCanonicalLinks ?? '—'].join(' | ') + ' |';
+              evidence.duplicateCanonicalLinks ?? '—',
+              evidence.creatorSignals ?? '—',
+              evidence.attributionLinkPairs ?? '—',
+              evidence.offPublisherHostLinks ?? '—',
+              evidence.itemsRequiringIndividualProvenanceReview ?? '—'].join(' | ') + ' |';
           });
           const summary = [
             '# GD-048: live feed *research* observations',
             '',
             'This is a technical spot check, **not** proof of permission, item provenance, editorial independence, freshness SLA or production admission.',
             'No sources were activated, no article content was retained, and licensing cannot be inferred from HTTP success.',
+            'CDATA may contain bylines; author/link counts are structural hints only and cannot certify original authorship or reuse rights.',
             '',
-            '| Candidate | HTTP | Observation | Sampled items | Newest age (hours) | Duplicate links |',
-            '| --- | --- | --- | --- | --- | --- |',
+            '| Candidate | HTTP | Observation | Sampled items | Newest age (hours) | Duplicate links | Author signals | Author + URL pairs | Off-publisher-host URLs | Items still requiring review |',
+            '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
             ...rows,
             '',
             'Failures and redirects require follow-up; even successful XML observation retains the research-only gate.',
