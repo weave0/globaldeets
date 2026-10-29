@@ -169,3 +169,47 @@ test('publisher-host differences are review hints only, with no item-level leaka
   assert.ok(!JSON.stringify(result).includes('external.example.net'));
   assert.equal(inspectFeed(feed, { now }).samePublisherHostLinks, null, 'untested host evidence must remain unknown');
 });
+
+
+test('research probe counts article-level source hints without certifying origin or rights', () => {
+  const xml = '<rss><channel>' +
+    '<item><link>https://globalvoices.org/first</link><source url="https://globalvoices.org/feed/">GV</source></item>' +
+    '<item><link>https://globalvoices.org/second</link><dc:source>https://partner.example/original</dc:source></item>' +
+    '<item><source url="https://globalvoices.org/feed/"/><dc:source>https://wire.example/original</dc:source></item>' +
+    '<item><description><![CDATA[<source url="https://wire.example/forged"/>]]></description></item>' +
+    '<item><dc:creator>Writer</dc:creator><source>Partner name with no URL</source></item>' +
+    '</channel></rss>';
+  const result = inspectFeed(xml, { now, publisherHost: 'globalvoices.org' });
+  assert.deepEqual(result.sourceHintCounts, {
+    'publisher-source-hint': 1,
+    'external-source-hint': 1,
+    'conflicting-source-hints': 1,
+    unresolved: 2,
+  });
+  assert.equal(Object.values(result.sourceHintCounts).reduce((sum, count) => sum + count, 0), result.sampledItems);
+  assert.equal(result.sourceMarkersPresent, 4);
+  assert.equal(result.unresolvedSourceMarkers, 1);
+  assert.equal(result.itemsRequiringIndividualProvenanceReview, 5);
+  assert.equal(result.autoAdmittableItems, 0);
+  assert.equal(result.itemOriginCertified, false);
+  assert.equal(result.itemReuseRightsCertified, false);
+  const output = JSON.stringify(result);
+  assert.ok(!output.includes('globalvoices.org/first'));
+  assert.ok(!output.includes('partner.example'));
+  assert.ok(!output.includes('Writer'));
+});
+
+test('Agência Brasil direct source hints are not mistaken for first-party journalism', () => {
+  const xml = '<rss><channel>' +
+    '<item><source url="https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml">Agency</source></item>' +
+    '<item><source url="https://partner.example.br/feed">Partner</source></item>' +
+    '<item><link>https://agenciabrasil.ebc.com.br/noticias/local</link><dc:creator>Reporter</dc:creator></item>' +
+    '</channel></rss>';
+  const result = inspectFeed(xml, { now, publisherHost: 'agenciabrasil.ebc.com.br' });
+  assert.equal(result.sourceHintCounts['publisher-source-hint'], 1);
+  assert.equal(result.sourceHintCounts['external-source-hint'], 1);
+  assert.equal(result.sourceHintCounts.unresolved, 1);
+  assert.equal(result.attributionLinkPairs, 1);
+  assert.equal(result.itemsRequiringIndividualProvenanceReview, 3);
+  assert.equal(result.autoAdmittableItems, 0);
+});
