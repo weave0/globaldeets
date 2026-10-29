@@ -85,3 +85,13 @@ test('publisher RSS directory is not silently probed as a feed', async () => {
   assert.equal(report.httpStatus, undefined);
   assert.equal(report.productionEligible, false);
 });
+
+test('lookalike directory candidate cannot override its governed endpoint type', async () => {
+  const directory = SOURCE_RESEARCH_CANDIDATES.find(entry => entry.candidateId === 'rnz-pacific');
+  let called = false;
+  await assert.rejects(() => probeResearchCandidate({ ...directory, endpointType: 'rss' }, {
+    now,
+    fetchImpl: async () => { called = true; return new Response(rss); },
+  }), /exact governed research registry entry/);
+  assert.equal(called, false);
+});
