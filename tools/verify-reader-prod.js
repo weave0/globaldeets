@@ -297,6 +297,22 @@ async function verifyServiceWorker(browser) {
   }
 }
 
+async function verifySourceNetwork(page) {
+  const response = await page.goto(`${BASE}/source-network.html`, {
+    waitUntil: 'domcontentloaded', timeout: 30_000,
+  });
+  requireCondition(response?.ok(), 'source relationships page is not reachable');
+  await page.locator('#sn-status').getByText('Reviewed source registry loaded', { exact: false })
+    .waitFor({ state: 'visible', timeout: 20_000 });
+  const sourceCount = await page.locator('#sn-publishers .sn-publisher-btn').count();
+  const reportedCount = Number(await page.locator('#sn-count').textContent());
+  requireCondition(sourceCount > 0 && sourceCount === reportedCount,
+    'source relationships roster does not match the governed source count');
+  await page.locator('#sn-publishers .sn-publisher-btn').first().click();
+  requireCondition(await page.locator('#sn-inspector .sn-details').count() === 1,
+    'source relationship details are not accessible');
+  await verifyNoHorizontalOverflow(page, 'source relationships page');
+}
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext();
@@ -305,11 +321,12 @@ async function verifyServiceWorker(browser) {
   try {
     await verifyHomepage(page);
     await verifyNews(page);
+    await verifySourceNetwork(page);
     await verifyServiceWorker(browser);
     await verifyMobileSurface(browser, { width: 390, height: 844 }, 'iPhone-class');
     await verifyMobileSurface(browser, { width: 360, height: 800 }, 'narrow Android-class');
     console.log(
-      'Production reader verification passed: desktop + mobile rendered surfaces, audited publisher selection, 44px touch targets, raw news HTML, evidence bridge, and live MIME/CSP/service-worker registration/offline shell are current.'
+      'Production reader verification passed: desktop + mobile rendered surfaces, source relationships, audited publisher selection, 44px touch targets, raw news HTML, evidence bridge, and live MIME/CSP/service-worker registration/offline shell are current.'
     );
   } finally {
     await context.close();
