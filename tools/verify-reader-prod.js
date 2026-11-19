@@ -302,7 +302,7 @@ async function verifySourceNetwork(page) {
     waitUntil: 'domcontentloaded', timeout: 30_000,
   });
   requireCondition(response?.ok(), 'source relationships page is not reachable');
-  await page.locator('#sn-status').getByText('Reviewed source registry loaded', { exact: false })
+  await page.locator('#sn-status').filter({ hasText: 'Reviewed source registry loaded' })
     .waitFor({ state: 'visible', timeout: 20_000 });
   const sourceCount = await page.locator('#sn-publishers .sn-publisher-btn').count();
   const reportedCount = Number(await page.locator('#sn-count').textContent());
