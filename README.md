@@ -24,6 +24,7 @@ GlobalDeets is not an opinion feed, not a portfolio showcase, and not the public
 | --- | --- |
 | `/` | World Desk: dated latest reporting, feed-region entry points, coverage at a glance |
 | `/news` | Full news feed with region filter (`?region=`), source context, and rights-aware cards |
+| `/source-network` | Evidence-linked publisher-to-operator exploration from the validated production source registry; operator labels are not ultimate ownership or influence claims |
 | `/categories` | Browse by feed region and by publisher |
 | `/timeline` | Recent reporting grouped by publication day |
 | `/globe`, `/worldmap` | Optional discovery lenses: globe pins at approximate publisher locations or labeled feed-region fallbacks (never story locations); public webcams |
