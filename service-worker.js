@@ -47,7 +47,7 @@ const CORE_ASSETS = [
 const OFFLINE_COPY_HEADER = 'X-GlobalDeets-Offline-Copy';
 const CACHED_AT_HEADER = 'X-GlobalDeets-Cached-At';
 const OFFLINE_MISS_HEADER = 'X-GlobalDeets-Offline-Miss';
-const OFFLINE_PAGES = new Set(['index', 'news', 'categories', 'timeline', 'offline']);
+const OFFLINE_PAGES = new Set(['index', 'news', 'categories', 'timeline', 'source-network', 'offline']);
 // Only the actual story feed is rendered with an explicit "saved copy" warning.
 // Source authority, admissions, coverage and health must remain live-only or visibly unavailable.
 const PUBLIC_NEWS_API_PATHS = new Set(['/api/news']);
