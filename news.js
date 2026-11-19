@@ -534,6 +534,8 @@
         : '';
     const originalLangCode = /^[a-z]{2,3}$/i.test(item.originalLang || '') ? item.originalLang : '';
     const storyHref = storyContextHref(item);
+    const provenanceHref = /^[a-z0-9-]+$/.test(item.sourceId || '')
+      ? `source-network.html?source=${encodeURIComponent(item.sourceId)}` : null;
 
     const flags = [];
     if (headlineLinkOnly) {
@@ -582,6 +584,11 @@
         ${
           storyHref
             ? `<a class="news-context-link" href="${escapeAttr(storyHref)}" data-story-key="${escapeAttr(item.story.storyKey)}">Context &amp; sources</a>`
+            : ''
+        }
+        ${
+          provenanceHref
+            ? `<a class="news-context-link" href="${escapeAttr(provenanceHref)}">About this publisher</a>`
             : ''
         }
       </div>
