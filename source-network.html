@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b131c" />
+    <meta name="description" content="Explore who operates the publishers in GlobalDeets' news portfolio, inspect documented source relationships, and follow the evidence. No invented ownership or influence scores." />
+    <title>Source Relationships | GlobalDeets</title>
+    <link rel="canonical" href="https://globaldeets.com/source-network" />
+    <link rel="icon" href="assets/favicon.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="editorial-reader.css" />
+    <link rel="stylesheet" href="source-network.css" />
+    <script src="source-network.js" defer></script>
+    <script src="site-nav.js" defer></script>
+  </head>
+  <body class="gd-editorial sn-page">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header class="sn-topbar">
+      <div class="sn-topbar-inner">
+        <a class="sn-brand" href="index.html" aria-label="GlobalDeets home">
+          <img src="assets/logo-mark.png" alt="" width="38" height="38" />
+          <span>GlobalDeets</span>
+        </a>
+        <nav aria-label="Primary navigation" class="sn-topnav">
+          <a href="index.html">Today</a>
+          <a href="news.html">Latest news</a>
+          <a href="categories.html">Browse</a>
+          <a href="/observatory/coverage/">Evidence</a>
+          <a href="source-network.html" aria-current="page">Source relationships</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main-content" class="sn-main">
+      <div class="sn-breadcrumb"><a href="index.html">World Desk</a><span aria-hidden="true">/</span><span>Source relationships</span></div>
+      <section class="sn-hero" aria-labelledby="sn-title">
+        <p class="sn-eyebrow">The people and organizations behind the reporting</p>
+        <h1 id="sn-title">Who is behind the news?</h1>
+        <p class="sn-lead">See which organizations operate the publishers GlobalDeets currently monitors. Follow the documented source information, compare operating relationships, and discover what has <em>not</em> been established.</p>
+        <div class="sn-hero-actions">
+          <a href="news.html" class="sn-action-primary">Read latest reporting</a>
+          <a href="/observatory/coverage/" class="sn-action-secondary">Inspect coverage &amp; evidence</a>
+        </div>
+        <p class="sn-note">This is a source-portfolio explorer, not a map of worldwide media ownership or a measure of bias, political coordination, editorial control, or truth. A recorded operator label does not by itself establish an equity stake or corporate hierarchy.</p>
+      </section>
+      <section class="sn-overview" aria-labelledby="sn-overview-title">
+        <h2 id="sn-overview-title">What we can document</h2>
+        <p id="sn-status" role="status" aria-live="polite">Checking GlobalDeets' current source records…</p>
+        <div class="sn-metrics" aria-label="Source-portfolio facts">
+          <div><strong id="sn-count">—</strong><span>Monitored publisher inputs</span></div>
+          <div><strong id="sn-operator-count">—</strong><span>Distinct recorded operator labels</span></div>
+          <div><strong id="sn-country-count">—</strong><span>Publisher-origin countries</span></div>
+        </div>
+        <p id="sn-review" class="sn-meta">These figures come from the canonical source registry, not a survey of all media worldwide.</p>
+      </section>
+      <section class="sn-explorer" aria-labelledby="sn-explorer-title">
+        <div class="sn-section-heading">
+          <div>
+            <p class="sn-eyebrow">Investigate the source portfolio</p>
+            <h2 id="sn-explorer-title">Explore publisher relationships</h2>
+          </div>
+          <p>Choose a publisher to see its documented operator, source evidence, editorial scope, and any other publishers in this monitored portfolio with the same recorded operator label.</p>
+        </div>
+        <div class="sn-controls">
+          <label for="sn-search">Find a publisher or operator
+            <input id="sn-search" type="search" autocomplete="off" placeholder="Search publishers, organizations, countries…" disabled />
+          </label>
+          <label for="sn-region">Feed routing region
+            <select id="sn-region" disabled>
+              <option value="all">All feed regions</option>
+              <option value="africa">Africa</option>
+              <option value="americas">Americas</option>
+              <option value="asia">Asia</option>
+              <option value="europe">Europe</option>
+              <option value="middle-east">Middle East</option>
+              <option value="pacific">Pacific</option>
+              <option value="global">Global feeds</option>
+            </select>
+          </label>
+          <button id="sn-clear" type="button" disabled>Clear filters</button>
+        </div>
+        <div class="sn-workspace">
+          <div class="sn-roster" aria-label="Monitored publishers">
+            <h3>Publishers <span id="sn-visible-count" aria-live="polite"></span></h3>
+            <div id="sn-publishers"><p class="sn-placeholder">Source records are loading. No publisher relationships are asserted until their registry validates.</p></div>
+          </div>
+          <article id="sn-inspector" class="sn-inspector" aria-label="Selected publisher detail" aria-live="polite">
+            <h3>Choose a publisher</h3>
+            <p>Source and operator details will appear here when the live registry is available.</p>
+          </article>
+        </div>
+      </section>
+      <section class="sn-literacy" aria-labelledby="sn-literacy-title">
+        <p class="sn-eyebrow">Follow the evidence, not an impression</p>
+        <h2 id="sn-literacy-title">Four relationships that are not interchangeable</h2>
+        <div class="sn-literacy-grid">
+          <article><span aria-hidden="true">01</span><h3>Publisher &amp; operator</h3><p>The entity identified in our reviewed publisher records. This may not reveal the ultimate parent, voting control, or beneficial owners.</p></article>
+          <article><span aria-hidden="true">02</span><h3>Reporting &amp; syndication</h3><p>A shared wire story or press release is not independent confirmation. The current network does not automatically trace article-level syndication.</p></article>
+          <article><span aria-hidden="true">03</span><h3>Ownership &amp; influence</h3><p>Common ownership can be relevant context, but it is not proof of identical editorial decisions or coordinated narratives.</p></article>
+          <article><span aria-hidden="true">04</span><h3>Origin &amp; geography</h3><p>A publisher's home country and a feed's routing region do not establish the location of an event or the origin of an individual report.</p></article>
+        </div>
+        <p class="sn-future">Next research layer: independently supported corporate ownership chains and article-level reporting origins, with dated relationship evidence and explicit unknowns. Nothing appears in this explorer before a defensible record exists.</p>
+      </section>
+      <footer class="sn-footer">
+        <p>GlobalDeets · Source-first world news and open evidence</p>
+        <div><a href="about.html">About</a><a href="/observatory/coverage/">Source methodology</a><a href="contact.html">Corrections &amp; contact</a><a href="donate.html">Support the project</a></div>
+      </footer>
+    </main>
+  </body>
+</html>

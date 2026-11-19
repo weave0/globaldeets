@@ -160,6 +160,11 @@
         )
       );
     }
+    const publisherRecordHref = /^[a-z0-9-]+$/.test(item.sourceId || '')
+      ? 'source-network.html?source=' + encodeURIComponent(item.sourceId) : null;
+    if (href && publisherRecordHref) {
+      row.append(el('a', { className: 'desk-story-context', href: publisherRecordHref }, 'About this publisher'));
+    }
     const storyHref = storyContextHref(item);
     if (href && storyHref) {
       row.append(

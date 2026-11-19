@@ -1,5 +1,5 @@
 // Basic service worker for offline caching
-const CACHE_NAME = 'globaldeets-cache-v11';
+const CACHE_NAME = 'globaldeets-cache-v12';
 const CACHE_PREFIX = 'globaldeets-cache-';
 // The offline shell: every precached page plus every same-origin asset those pages load (including
 // news-reader-bridge.css, which news.js injects). tests/offline-shell-agreement.test.mjs keeps this
@@ -8,6 +8,9 @@ const CORE_ASSETS = [
   '/',
   'index.html',
   'news.html',
+  'source-network.html',
+  'source-network.css',
+  'source-network.js',
   'categories.html',
   'timeline.html',
   'offline.html',
@@ -44,7 +47,7 @@ const CORE_ASSETS = [
 const OFFLINE_COPY_HEADER = 'X-GlobalDeets-Offline-Copy';
 const CACHED_AT_HEADER = 'X-GlobalDeets-Cached-At';
 const OFFLINE_MISS_HEADER = 'X-GlobalDeets-Offline-Miss';
-const OFFLINE_PAGES = new Set(['index', 'news', 'categories', 'timeline', 'offline']);
+const OFFLINE_PAGES = new Set(['index', 'news', 'categories', 'timeline', 'source-network', 'offline']);
 // Only the actual story feed is rendered with an explicit "saved copy" warning.
 // Source authority, admissions, coverage and health must remain live-only or visibly unavailable.
 const PUBLIC_NEWS_API_PATHS = new Set(['/api/news']);
@@ -53,7 +56,7 @@ const PUBLIC_NEWS_API_PATHS = new Set(['/api/news']);
 const PUBLIC_STORY_RECORDS = new Set(['/story/santa-ynez-pipeline/story.json']);
 const PUBLIC_PAGES = new Set([
   '/', '/index.html', '/news', '/news.html', '/categories', '/categories.html',
-  '/timeline', '/timeline.html', '/offline', '/offline.html', '/globe', '/globe.html',
+  '/timeline', '/timeline.html', '/source-network', '/source-network.html', '/offline', '/offline.html', '/globe', '/globe.html',
   '/worldmap', '/worldmap.html', '/about', '/about.html', '/contact', '/contact.html',
   '/knowledge', '/knowledge.html', '/donate', '/donate.html',
   '/story/santa-ynez-pipeline', '/story/santa-ynez-pipeline/',
