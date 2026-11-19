@@ -242,6 +242,10 @@
       search.addEventListener('input', onFilter);
       region.addEventListener('change', onFilter);
       clear.addEventListener('click', () => { search.value = ''; region.value = 'all'; onFilter(); search.focus(); });
+      const requestedSourceId = new URL(window.location.href).searchParams.get('source');
+      if (requestedSourceId && state.sources.some(source => source.sourceId === requestedSourceId)) {
+        state.selectedId = requestedSourceId;
+      }
       renderRoster();
       renderInspector();
     } catch {
