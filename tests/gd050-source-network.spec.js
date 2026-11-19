@@ -93,3 +93,12 @@ test('mobile layout has no horizontal overflow and enables keyboard details',asy
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth);
   expect(overflow).toBe(false);
 });
+
+test('a direct news attribution link selects the exact reviewed source',async({page})=>{
+  await mockRegistry(page);
+  await page.goto('/source-network.html?source=gamma');
+  await expect(page.locator('#sn-inspector h3')).toHaveText('Gamma News');
+  await expect(page.locator('#sn-publishers button[aria-pressed="true"]')).toContainText('Gamma News');
+  await page.goto('/source-network.html?source=not-a-reviewed-source');
+  await expect(page.locator('#sn-inspector h3')).toHaveText('Choose a publisher');
+});
