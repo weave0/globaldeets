@@ -43,7 +43,7 @@ test('source relationships expose documented same-label peers, not inferred owne
   await page.getByRole('button',{name:/Alpha Daily/}).click();
   await expect(page.locator('#sn-inspector')).toContainText('Shared Operator');
   await expect(page.locator('#sn-inspector')).toContainText('Beta Radio');
-  await expect(page.locator('#sn-inspector')).toContainText('This may not');
+  await expect(page.locator('#sn-inspector')).toContainText('do not automatically prove a complete ownership chain');
   await expect(page.locator('#sn-inspector a[href="https://example.org/alpha"]')).toHaveCount(1);
   await page.locator('.sn-inline-select').click();
   await expect(page.locator('#sn-inspector h3')).toHaveText('Beta Radio');
