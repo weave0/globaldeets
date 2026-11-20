@@ -19,7 +19,7 @@
   const visibleCount = byId('sn-visible-count');
   const review = byId('sn-review');
   const TIMEOUT_MS = 12000;
-  const state = { sources: null, selectedId: null, reviewedAt: null };
+  const state = { sources: null, selectedId: null, reviewedAt: null, relationships: null };
 
   function element(tag, text, className) {
     const node = document.createElement(tag);
@@ -79,6 +79,98 @@
     // Exact label grouping is a navigation aid, never a corporate family determination.
     return state.sources.filter(candidate => candidate.sourceId !== source.sourceId &&
       operatorName(candidate) === operator);
+  }
+
+
+  function validRelationships(data, sourceFingerprint) {
+    if (!data || data.schemaVersion !== 1 || data.sourceFingerprint !== sourceFingerprint ||
+        data.validation?.valid !== true || !Array.isArray(data.entities) ||
+        !Array.isArray(data.edges)) return false;
+    const ids = new Set(data.entities.map(item => item.id));
+    const sourceIds = new Set(state.sources.map(item => item.sourceId));
+    if (ids.size !== data.entities.length) return false;
+    const edges = new Set();
+    for (const edge of data.edges) {
+      if (!edge || typeof edge.id !== 'string' || edges.has(edge.id) ||
+          !ids.has(edge.toEntityId) ||
+          ((!!edge.fromSourceId) === (!!edge.fromEntityId)) ||
+          (edge.fromSourceId && !sourceIds.has(edge.fromSourceId)) ||
+          (edge.fromEntityId && !ids.has(edge.fromEntityId)) ||
+          !['published-by', 'owned-by', 'operated-by', 'part-of-group', 'part-of-network'].includes(edge.relation) ||
+          typeof edge.summary !== 'string' || !edge.summary.trim() ||
+          !/^\\d{4}-\\d{2}-\\d{2}$/.test(edge.reviewedAt || '') ||
+          !Array.isArray(edge.evidence) || !edge.evidence.length ||
+          !edge.evidence.every(ref => ref && typeof ref.title === 'string' && ref.title.trim() &&
+            typeof ref.url === 'string' && !!evidenceLink(ref.url, ref.title))) return false;
+      edges.add(edge.id);
+    }
+    return true;
+  }
+
+  function renderVerifiedLinks(source) {
+    const box = element('section', null, 'sn-reviewed-links');
+    box.append(element('h4', 'Reviewed organizational relationships'));
+    const graph = state.relationships;
+    if (!graph) {
+      box.append(element('p', 'Verified relationship evidence is unavailable. No ownership chain is asserted.'));
+      return box;
+    }
+    const entityById = new Map(graph.entities.map(item => [item.id, item]));
+    const entries = graph.edges.filter(edge => edge.fromSourceId === source.sourceId);
+    if (!entries.length) {
+      box.append(element('p', 'No independently reviewed relationship edge is recorded for this publisher. This is a research gap, not evidence of independent ownership.'));
+      return box;
+    }
+    const list = element('ol', null, 'sn-edge-list');
+    const visited = new Set();
+    function addEdge(edge, depth) {
+      if (visited.has(edge.id) || depth > 8) return;
+      visited.add(edge.id);
+      const entity = entityById.get(edge.toEntityId);
+      if (!entity) return;
+      const li = element('li', null, 'sn-edge');
+      const heading = element('strong', edge.relation.replaceAll('-', ' ') + ': ' + entity.name);
+      li.append(heading, element('p', edge.summary));
+      li.append(element('small', 'Relationship reviewed ' + edge.reviewedAt));
+      const refs = element('ul', null, 'sn-edge-evidence');
+      for (const ref of edge.evidence) {
+        const link = evidenceLink(ref.url, ref.title);
+        if (!link) continue;
+        const item = element('li');
+        item.append(link);
+        refs.append(item);
+      }
+      li.append(refs);
+      list.append(li);
+      for (const next of graph.edges.filter(candidate => candidate.fromEntityId === entity.id)) {
+        addEdge(next, depth + 1);
+      }
+    }
+    for (const edge of entries) addEdge(edge, 0);
+    box.append(list);
+    box.append(element('p', 'Arrows describe only the documented relationship. Missing links, control percentages, reporting influence and ultimate beneficial ownership remain unknown.', 'sn-footnote'));
+    return box;
+  }
+
+  async function loadRelationships(sourceFingerprint) {
+    // This API is live-only: the service worker does not cache authority responses.
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    try {
+      const response = await fetch('/api/news/relationships', {
+        headers: { Accept: 'application/json' }, signal: controller.signal,
+        cache: 'no-store',
+      });
+      if (!response.ok) return;
+      const data = await response.json();
+      if (!validRelationships(data, sourceFingerprint)) return;
+      state.relationships = data;
+    } catch {
+      // Registry still works; missing evidence must be presented explicitly.
+    } finally {
+      clearTimeout(timeout);
+      renderInspector();
+    }
   }
 
   function selection() {
@@ -141,6 +233,7 @@
       relationship.append(list);
     }
     inspector.append(relationship);
+    inspector.append(renderVerifiedLinks(source));
 
     const evidence = element('section', null, 'sn-evidence');
     evidence.append(element('h4', 'Review the underlying source references'));
@@ -248,6 +341,7 @@
       }
       renderRoster();
       renderInspector();
+      loadRelationships(data.sourceFingerprint);
     } catch {
       failed();
     } finally {
