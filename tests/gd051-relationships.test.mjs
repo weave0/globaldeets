@@ -16,6 +16,11 @@ for (const file of ['api/news.js', 'lib/story-membership.js', 'lib/news-source-p
   copyFileSync(fileURLToPath(new URL('../functions/' + file, import.meta.url)), dest);
 }
 writeFileSync(join(dir, 'package.json'), '{"type":"module"}');
+copyFileSync(
+  fileURLToPath(new URL('../functions/lib/article-origin-trace.js', import.meta.url)),
+  join(dir, 'lib', 'article-origin-trace.js')
+);
+
 const model = await import(pathToFileURL(join(dir, 'lib/source-ownership-evidence.js')).href);
 const api = await import(pathToFileURL(join(dir, 'api/news/relationships.js')).href);
 
