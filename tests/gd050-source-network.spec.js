@@ -102,3 +102,53 @@ test('a direct news attribution link selects the exact reviewed source',async({p
   await page.goto('/source-network.html?source=not-a-reviewed-source');
   await expect(page.locator('#sn-inspector h3')).toHaveText('Choose a publisher');
 });
+
+
+test('GD-051 shows dated evidence-backed paths, then fails closed if fingerprint differs',async({page})=>{
+  await mockRegistry(page);
+  const graph={
+    schemaVersion:1, sourceFingerprint:FINGERPRINT, validation:{valid:true},
+    entities:[
+      {id:'operator',name:'Alpha Group',country:'GB'},
+      {id:'owner',name:'Trust',country:'GB'},
+    ],
+    edges:[
+      {id:'one',fromSourceId:'alpha',relation:'operated-by',toEntityId:'operator',
+        summary:'Recorded operation, not editorial coordination.',reviewedAt:'2026-11-19',
+        evidence:[{title:'Operating disclosure',url:'https://example.org/operator'}]},
+      {id:'two',fromEntityId:'operator',relation:'owned-by',toEntityId:'owner',
+        summary:'The group is owned by the Trust.',reviewedAt:'2026-11-19',
+        evidence:[{title:'Ownership filing',url:'https://example.org/ownership'}]},
+    ],
+  };
+  await page.route('**/api/news/relationships',route=>route.fulfill({
+    status:200,contentType:'application/json',body:JSON.stringify(graph)
+  }));
+  await page.goto('/source-network.html?source=alpha');
+  await expect(page.locator('.sn-edge')).toHaveCount(2);
+  await expect(page.locator('.sn-reviewed-links')).toContainText('Trust');
+  await expect(page.locator('.sn-reviewed-links a[href="https://example.org/ownership"]')).toHaveCount(1);
+  await page.unroute('**/api/news/relationships');
+  await page.route('**/api/news/relationships',route=>route.fulfill({
+    status:200,contentType:'application/json',body:JSON.stringify({...graph,sourceFingerprint:'wrong'})
+  }));
+  await page.reload();
+  await expect(page.locator('.sn-reviewed-links')).toContainText('evidence is unavailable');
+  await expect(page.locator('.sn-edge')).toHaveCount(0);
+});
+
+test('GD-051 rejects unsafe evidence URLs without taking down publisher registry',async({page})=>{
+  await mockRegistry(page);
+  await page.route('**/api/news/relationships',route=>route.fulfill({
+    status:200,contentType:'application/json',body:JSON.stringify({
+      schemaVersion:1,sourceFingerprint:FINGERPRINT,validation:{valid:true},
+      entities:[{id:'operator',name:'Operator',country:'US'}],
+      edges:[{id:'one',fromSourceId:'alpha',relation:'owned-by',toEntityId:'operator',
+        summary:'Bad fixture',reviewedAt:'2026-11-19',
+        evidence:[{title:'unsafe',url:'javascript:alert(1)'}]}]
+    })
+  }));
+  await page.goto('/source-network.html?source=alpha');
+  await expect(page.locator('.sn-reviewed-links')).toContainText('evidence is unavailable');
+  await expect(page.locator('#sn-publishers button')).toHaveCount(4);
+});
