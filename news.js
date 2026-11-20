@@ -592,6 +592,7 @@
             : ''
         }
       </div>
+      ${buildOriginContext(item)}
       ${buildSourceContext(item, provenance, admission)}`;
     return card;
   }
@@ -672,6 +673,58 @@
           <a href="/observatory/coverage/">Inspect portfolio evidence and gaps →</a>
         </div>
       </details>`;
+  }
+
+  // Item-level signals remain visible even when optional publisher context fails.
+  function buildOriginContext(item) {
+    const trace = item?.feedOriginHint;
+    if (!trace || trace.version !== 'gd052-feed-origin-v1' ||
+        !['not-recorded', 'unresolved-marker', 'same-article-host-reference',
+          'external-host-reference', 'mixed-references'].includes(trace.status)) return '';
+    const messages = {
+      'not-recorded': 'No item-level source URL was found in the feed markers inspected. That does not establish that the reporting is original.',
+      'unresolved-marker': 'A source-reference marker was present but could not be safely resolved. Its meaning remains unknown.',
+      'same-article-host-reference': 'The feed declares a source link on the same host as this article link. Same-host metadata does not prove firsthand reporting.',
+      'external-host-reference': 'The feed declares a source link on a different host from the article link. This warrants investigation; it is not proof of syndication.',
+      'mixed-references': 'The feed has competing or semantically different source links. No single reporting origin has been established.',
+    };
+    const markerType = trace.markerKind === 'feed-source' ? 'feed source' :
+      trace.markerKind === 'original-link' ? 'original-link marker' : null;
+    const link = (() => {
+      if (typeof trace.referenceUrl !== 'string') return null;
+      try {
+        const url = new URL(trace.referenceUrl);
+        return url.protocol === 'https:' && !url.username && !url.password ? url.href : null;
+      } catch { return null; }
+    })();
+    const ref = link
+      ? '<a href="' + escapeAttr(link) + '" target="_blank" rel="noopener noreferrer">Inspect the feed-declared link<span class="visually-hidden"> (opens in a new tab)</span></a>'
+      : '';
+    const overlap = item.exactLinkOverlap;
+    let linkStatement = 'No identical article URL was observed in another monitored publisher feed within this collected snapshot. This does not prove exclusivity.';
+    if (overlap?.matchType === 'exact-article-url' &&
+        Number.isInteger(overlap.distinctPublisherCount) &&
+        overlap.distinctPublisherCount > 1 && overlap.distinctPublisherCount <= 21 &&
+        Array.isArray(overlap.otherPublishers) &&
+        overlap.otherPublishers.length === overlap.distinctPublisherCount - 1 &&
+        overlap.otherPublishers.every(other => /^[a-z0-9-]+$/.test(other.sourceId || '') &&
+          typeof other.name === 'string' && other.name.length <= 120)) {
+      const linked = overlap.otherPublishers.map(other =>
+        '<a href="source-network.html?source=' + encodeURIComponent(other.sourceId) + '">' + escapeHtml(other.name) + '</a>'
+      ).join(', ');
+      linkStatement = 'This identical article URL appeared in ' + overlap.distinctPublisherCount +
+        ' distinct monitored publisher feeds in the same collection snapshot. Other feeds: ' +
+        linked + '. Repeated links are not independent corroboration.';
+    }
+    return '<details class="news-origin-context">' +
+      '<summary>Article origin signals</summary>' +
+      '<div class="news-origin-context-body">' +
+        '<p class="news-origin-state"><strong>Feed metadata:</strong> ' + escapeHtml(messages[trace.status]) + '</p>' +
+        (markerType ? '<p class="news-origin-kind">Marker: ' + escapeHtml(markerType) + '.</p>' : '') +
+        (ref ? '<p class="news-origin-reference">' + ref + '</p>' : '') +
+        '<p class="news-origin-overlap"><strong>Exact URL overlap:</strong> ' + linkStatement + '</p>' +
+        '<p class="news-origin-caveat">These signals describe only this source feed and GlobalDeets\u2019 bounded feed snapshot. They cannot establish original reporting, editorial independence, story agreement, coordinated narratives, reuse rights, or the origin of the underlying event.</p>' +
+      '</div></details>';
   }
 
   function rightsExplanation(status, displayMode) {
