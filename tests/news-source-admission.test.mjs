@@ -19,6 +19,11 @@ copyFileSync(
   join(functions, 'lib', 'story-membership.js')
 );
 
+copyFileSync(
+  fileURLToPath(new URL('../functions/lib/article-origin-trace.js', import.meta.url)),
+  join(functions, 'lib', 'article-origin-trace.js')
+);
+
 const news = await import(pathToFileURL(newsPath).href);
 const admission = await import(pathToFileURL(admissionPath).href);
 
