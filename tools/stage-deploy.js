@@ -39,6 +39,7 @@ const REQUIRED_DEPLOY_FILES = [
   'story/santa-ynez-pipeline/story.js',
   'story/santa-ynez-pipeline/story.json',
   'functions/lib/story-intelligence.js',
+  'functions/lib/article-origin-trace.js',
   'functions/lib/story-membership.js',
   'functions/api/intelligence/stories/[[storyKey]].js',
   'functions/api/intelligence/story-measurement.js',
