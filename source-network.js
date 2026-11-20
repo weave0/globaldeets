@@ -98,7 +98,7 @@
           (edge.fromEntityId && !ids.has(edge.fromEntityId)) ||
           !['published-by', 'owned-by', 'operated-by', 'part-of-group', 'part-of-network'].includes(edge.relation) ||
           typeof edge.summary !== 'string' || !edge.summary.trim() ||
-          !/^\\d{4}-\\d{2}-\\d{2}$/.test(edge.reviewedAt || '') ||
+          !/^\d{4}-\d{2}-\d{2}$/.test(edge.reviewedAt || '') ||
           !Array.isArray(edge.evidence) || !edge.evidence.length ||
           !edge.evidence.every(ref => ref && typeof ref.title === 'string' && ref.title.trim() &&
             typeof ref.url === 'string' && !!evidenceLink(ref.url, ref.title))) return false;
