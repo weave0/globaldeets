@@ -101,5 +101,5 @@ test('origin disclosures are keyboard operable without mobile overflow', async (
   await summary.focus();
   await page.keyboard.press('Enter');
   await expect(page.locator('.news-card').first().locator('.news-origin-reference')).toBeVisible();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
 });
