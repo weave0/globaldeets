@@ -44,6 +44,8 @@ async function verifyHomepageSelection(page) {
   requireCondition(response.ok(), `governed homepage selection returned HTTP ${response.status()}`);
   const data = await response.json();
   requireCondition(Array.isArray(data?.items), 'homepage did not receive a governed report selection');
+  requireCondition(data.articleOriginTraceVersion === 'gd052-feed-origin-v1',
+    'feed origin-trace contract is missing or stale');
   requireCondition(
     data.selection?.mode === 'diverse' &&
       data.selection?.policyVersion === 'gd040-publisher-region-rotation-v1',
@@ -159,6 +161,12 @@ async function verifyNews(page) {
     'reader coverage context did not render governed scope caveats'
   );
   await page.locator('.news-source-context').first().waitFor({ state: 'attached', timeout: 20_000 });
+  const origin = page.locator('.news-origin-context').first();
+  await origin.waitFor({ state: 'attached', timeout: 20_000 });
+  await origin.locator('summary').click();
+  requireCondition((await origin.locator('.news-origin-state').count()) === 1 &&
+      (await origin.locator('.news-origin-overlap').count()) === 1,
+    'reader article-level origin signals did not render');
   requireCondition(
     (await page.locator('link[data-gd022-reader-bridge]').count()) === 1,
     'reader evidence-bridge stylesheet was not loaded'
@@ -187,6 +195,9 @@ async function verifyMobileSurface(browser, viewport, label) {
     await verifyNoHorizontalOverflow(page, `${label} news reader`);
     await requireTouchTarget(page.locator('.region-tab').first(), `${label} region tab`);
     await requireTouchTarget(sourceContext.locator('summary'), `${label} source context disclosure`);
+    const originContext = page.locator('.news-origin-context').first();
+    await originContext.waitFor({ state: 'attached', timeout: 20_000 });
+    await requireTouchTarget(originContext.locator('summary'), `${label} article origin disclosure`);
     await requireTouchTarget(page.locator('.news-read-link').first(), `${label} publisher link`);
   } finally {
     await context.close();

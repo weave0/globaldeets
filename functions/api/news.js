@@ -2,6 +2,7 @@
 // Cloudflare Pages Function — GET /api/news
 
 import { STORY_MEMBERSHIP_VERSION, withStoryMembership } from '../lib/story-membership.js';
+import { ARTICLE_ORIGIN_TRACE_VERSION, extractFeedOriginHint, addExactArticleLinkOverlap } from '../lib/article-origin-trace.js';
 //
 // Params:
 //   ?region=global|middle-east|europe|asia|americas|pacific|africa
@@ -230,10 +231,11 @@ export function getFeedCacheIdentity(admissionFingerprint) {
     throw new TypeError('admission fingerprint is required');
   }
   return {
-    cacheKey: `${CACHE_KEY_PREFIX}_${STORY_MEMBERSHIP_VERSION}_${admissionFingerprint}`,
+    cacheKey: `${CACHE_KEY_PREFIX}_${STORY_MEMBERSHIP_VERSION}_${ARTICLE_ORIGIN_TRACE_VERSION}_${admissionFingerprint}`,
     admissionFingerprint,
     displayPolicyVersion: DISPLAY_POLICY_VERSION,
     storyMembershipVersion: STORY_MEMBERSHIP_VERSION,
+    articleOriginTraceVersion: ARTICLE_ORIGIN_TRACE_VERSION,
   };
 }
 
@@ -312,6 +314,9 @@ export async function applyAdmissionPolicy(items, contract = null) {
       }
     }
 
+    if (item.feedOriginHint?.version === ARTICLE_ORIGIN_TRACE_VERSION) {
+      governed.feedOriginHint = item.feedOriginHint;
+    }
     governedItems.push(withStoryMembership(governed));
   }
 
@@ -365,6 +370,7 @@ export async function onRequestGet({ env, request }) {
         admissionFingerprint: cacheIdentity.admissionFingerprint,
         displayPolicyVersion: cacheIdentity.displayPolicyVersion,
         storyMembershipVersion: STORY_MEMBERSHIP_VERSION,
+        articleOriginTraceVersion: ARTICLE_ORIGIN_TRACE_VERSION,
       }),
       { headers }
     );
@@ -383,6 +389,7 @@ export async function onRequestGet({ env, request }) {
       admissionFingerprint: cacheIdentity.admissionFingerprint,
       displayPolicyVersion: cacheIdentity.displayPolicyVersion,
       storyMembershipVersion: STORY_MEMBERSHIP_VERSION,
+      articleOriginTraceVersion: ARTICLE_ORIGIN_TRACE_VERSION,
     }),
     { headers }
   );
@@ -409,6 +416,7 @@ export async function regenerateFeed(env, cacheIdentity, admissionContract, sour
   // Governance is applied before translation and before KV persistence. Restricted summaries
   // therefore never enter the translated or cached consumer payload.
   const { items, admissionById } = await applyAdmissionPolicy(acquiredItems, admissionContract);
+  addExactArticleLinkOverlap(items);
   await translateNonEnglish(items, env, admissionById);
   await writeCaches(env, items, sourceHealth, cacheIdentity.cacheKey);
   return { items, sourceHealth };
@@ -684,6 +692,7 @@ function parseRSS(xml, sourceName, region, lang = 'en') {
       lang,
       translated: false,
       originalLang: lang,
+      feedOriginHint: extractFeedOriginHint(block, link),
     });
   }
 
