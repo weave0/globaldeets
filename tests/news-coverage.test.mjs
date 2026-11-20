@@ -28,6 +28,11 @@ copyFileSync(
   join(fixtureFunctions, 'lib', 'story-membership.js')
 );
 
+copyFileSync(
+  fileURLToPath(new URL('../functions/lib/article-origin-trace.js', import.meta.url)),
+  join(fixtureFunctions, 'lib', 'article-origin-trace.js')
+);
+
 const newsModule = await import(pathToFileURL(fixtureNews).href);
 const provenanceModule = await import(pathToFileURL(fixtureProvenanceLib).href);
 const admissionModule = await import(pathToFileURL(fixtureAdmissionLib).href);
