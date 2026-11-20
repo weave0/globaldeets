@@ -103,3 +103,47 @@ test('origin disclosures are keyboard operable without mobile overflow', async (
   await expect(page.locator('.news-card').first().locator('.news-origin-reference')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
 });
+
+
+test('GD-053 evidence lens filters only loaded items and makes deep links shareable', async ({ page }) => {
+  await routeFeed(page);
+  await page.goto('/news.html?signal=shared-url');
+  const select = page.locator('#news-evidence-filter');
+  await expect(select).toHaveValue('shared-url');
+  await expect(page.locator('#news-grid .news-card')).toHaveCount(2);
+  await expect(page.locator('.news-origin-context[open]')).toHaveCount(2);
+  await expect(page.locator('#news-status')).toContainText('2 matching loaded-story filters');
+
+  await select.selectOption('external-link');
+  await expect(page).toHaveURL(/signal=external-link/);
+  await expect(page.locator('#news-grid .news-card')).toHaveCount(1);
+  await expect(page.locator('.news-card .news-headline')).toContainText('First attribution example');
+
+  await select.selectOption('source-link');
+  await expect(page.locator('#news-grid .news-card')).toHaveCount(2);
+  await select.selectOption('no-resolved-link');
+  await expect(page.locator('#news-grid .news-card')).toHaveCount(1);
+  await expect(page.locator('.news-card .news-headline')).toContainText('Unresolved attributed article');
+
+  await select.selectOption('all');
+  await expect(page).not.toHaveURL(/signal=/);
+  await expect(page.locator('#news-grid .news-card')).toHaveCount(3);
+  await expect(page.locator('.news-origin-context[open]')).toHaveCount(0);
+});
+
+test('GD-053 evidence lens composes with search, fails closed and fits narrow phones', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await routeFeed(page);
+  await page.goto('/news.html?signal=invalid-option');
+  await expect(page.locator('#news-evidence-filter')).toHaveValue('all');
+  await page.locator('#news-evidence-filter').selectOption('shared-url');
+  await page.locator('#news-search').fill('unmatched');
+  await expect(page.locator('[data-state="no-evidence-matches"]')).toContainText('No loaded stories');
+  await page.getByRole('button', { name: 'Clear filters' }).click();
+  await expect(page.locator('#news-evidence-filter')).toHaveValue('all');
+  await expect(page.locator('#news-search')).toHaveValue('');
+  await expect(page.locator('#news-grid .news-card')).toHaveCount(3);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
+  const size = await page.locator('#news-evidence-filter').boundingBox();
+  expect(size.height).toBeGreaterThanOrEqual(44);
+});
