@@ -17,6 +17,11 @@ for (const [, target] of files) mkdirSync(dirname(target), { recursive: true });
 writeFileSync(join(functions, 'package.json'), '{"type":"module"}\n');
 for (const [source, target] of files) copyFileSync(fileURLToPath(new URL(source, import.meta.url)), target);
 
+copyFileSync(
+  fileURLToPath(new URL('../functions/lib/article-origin-trace.js', import.meta.url)),
+  join(functions, 'lib', 'article-origin-trace.js')
+);
+
 const news = await import(pathToFileURL(join(functions, 'api', 'news.js')).href);
 const api = await import(pathToFileURL(join(functions, 'api', 'news', 'admission.js')).href);
 
