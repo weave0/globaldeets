@@ -39,7 +39,7 @@ const RETIRED_PATHS = [
 
 const CORE_PAGES = [
   '/', '/news', '/categories', '/timeline', '/globe', '/worldmap', '/knowledge',
-  '/about', '/contact', '/donate', '/offline', '/source-network', '/app.js', '/world-desk.js',
+  '/about', '/contact', '/donate', '/offline', '/source-network', '/source-discovery', '/app.js', '/world-desk.js',
   '/news.js', '/globe-hero.js', '/404.html',
   '/dossiers/santa-ynez-pipeline/', '/observatory/coverage/',
 ];

@@ -37,6 +37,7 @@ const ROUTES = [
   { path: '/', label: 'Home', expect: 200, type: 'text/html' },
   { path: '/news', label: 'News', expect: 200, type: 'text/html' },
   { path: '/source-network', label: 'Source relationships', expect: 200, type: 'text/html' },
+  { path: '/source-discovery', label: 'Global source discovery', expect: 200, type: 'text/html' },
   { path: '/globe', label: 'Globe', expect: 200, type: 'text/html' },
   { path: '/about', label: 'About', expect: 200, type: 'text/html' },
   { path: '/knowledge', label: 'Knowledge', expect: 200, type: 'text/html' },

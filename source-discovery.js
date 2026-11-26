@@ -98,14 +98,15 @@
     if (entry.status === 'monitored') {
       article.append(link('/source-network.html?source='+encodeURIComponent(entry.id),'Inspect publisher record','discovery-primary',false));
     } else {
-      article.append(link(entry.url,'Open publisher website','discovery-primary'));
+      const selectedEdition=entry.editions?.find(edition=>edition.lang===language.value);
+      article.append(link(selectedEdition?.url || entry.url,selectedEdition ? 'Read '+langName(selectedEdition.lang)+' edition' : 'Open publisher website','discovery-primary'));
     }
     if (entry.editions?.length) {
       const wrap = el('details');
       wrap.append(el('summary','Publisher-listed language editions'));
       const links = el('div',null,'discovery-editions');
       for (const edition of entry.editions) {
-        const a=link(edition.url,langName(edition.lang)); a.lang=edition.lang; links.append(a);
+        const a=link(edition.url,langName(edition.lang)); links.append(a);
       }
       wrap.append(links,el('p','Listed editions may be inactive or translated; these are not additional monitored feeds.'));
       if (entry.editions.some(edition => edition.lang === language.value)) wrap.open=true;
