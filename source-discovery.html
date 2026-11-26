@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b131c" />
+  <meta name="description" content="Explore GlobalDeets' monitored news inputs and additional source websites by region and language. Read at the original publisher, and inspect explicit source-research boundaries." />
+  <title>Explore Global Reporting | GlobalDeets</title>
+  <link rel="canonical" href="https://globaldeets.com/source-discovery" />
+  <link rel="icon" href="assets/favicon.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="editorial-reader.css" />
+  <link rel="stylesheet" href="source-network.css" />
+  <link rel="stylesheet" href="source-discovery.css" />
+  <script src="source-discovery.js" defer></script>
+</head>
+<body class="gd-editorial sn-page discovery-page">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="sn-topbar"><div class="sn-topbar-inner">
+    <a class="sn-brand" href="/" aria-label="GlobalDeets home"><img src="assets/logo-mark.png" alt="" width="38" height="38" /><span>GlobalDeets</span></a>
+    <nav class="sn-topnav" aria-label="Primary navigation">
+      <a href="/">World Desk</a><a href="/news.html">Latest news</a>
+      <a href="/source-network.html">Publisher relationships</a><a href="/observatory/coverage/">Evidence</a>
+      <a href="/source-discovery" aria-current="page">Global discovery</a>
+    </nav>
+  </div></header>
+  <main id="main-content" class="sn-main">
+    <div class="sn-breadcrumb"><a href="/">World Desk</a><span aria-hidden="true">/</span><span>Global discovery</span></div>
+    <section class="discovery-hero" aria-labelledby="discovery-title">
+      <p class="sn-eyebrow">Read beyond the feed</p>
+      <h1 id="discovery-title">Explore global reporting</h1>
+      <p class="sn-lead">Discover news websites in more languages and regions. Open original publisher pages directly, or inspect which feeds GlobalDeets monitors and which are still in research.</p>
+      <p class="sn-note">A directory of selected sources and language editions, not comprehensive world coverage, an event map, an independence rating, or a reuse license.</p>
+    </section>
+    <section aria-labelledby="discovery-inventory-title" class="discovery-inventory">
+      <h2 id="discovery-inventory-title">What is in our feed — and beyond it</h2>
+      <div class="discovery-metrics">
+        <div><strong id="discovery-monitored">—</strong><span>Configured feeds</span></div>
+        <div><strong id="discovery-feed-languages">—</strong><span>Configured feed languages</span></div>
+        <div><strong id="discovery-research">—</strong><span>Feed-research candidates</span></div>
+        <div><strong id="discovery-direct">—</strong><span>Additional website / edition records</span></div>
+      </div>
+      <p id="discovery-gap" class="sn-meta">Configured-language comparison is unavailable until the registry validates.</p>
+      <p id="discovery-review" class="sn-meta"></p>
+    </section>
+    <section aria-labelledby="discovery-filter-title" class="discovery-workspace">
+      <h2 id="discovery-filter-title">Find a source</h2>
+      <p class="sn-meta">Region means configured feed routing or a directory grouping; language means configured feed language or an observed/listed website edition. Neither locates an individual event.</p>
+      <div class="discovery-controls">
+        <label for="discovery-search">Search name, language or focus<input id="discovery-search" type="search" placeholder="e.g. Bengali, Samoa, Guatemala" autocomplete="off" disabled /></label>
+        <label for="discovery-region">Region<select id="discovery-region" disabled><option value="all">All regions</option><option value="africa">Africa</option><option value="americas">Americas</option><option value="asia">Asia</option><option value="europe">Europe</option><option value="middle-east">Middle East</option><option value="pacific">Pacific</option><option value="global">Global / international</option></select></label>
+        <label for="discovery-language">Language<select id="discovery-language" disabled><option value="all">All languages</option><option value="unrepresented">Not in configured feeds</option></select></label>
+        <label for="discovery-status-filter">Source relationship<select id="discovery-status-filter" disabled><option value="additional">Beyond the feed</option><option value="all">All records</option><option value="monitored">Configured feeds</option><option value="research">Feed research only</option><option value="link-only">Direct website links only</option></select></label>
+        <button id="discovery-clear" type="button" disabled>Reset filters</button>
+      </div>
+      <p id="discovery-status" role="status" aria-live="polite">Checking source registry…</p>
+      <div id="discovery-results" aria-busy="true"></div>
+    </section>
+    <section class="discovery-method" aria-labelledby="discovery-method-title">
+      <h2 id="discovery-method-title">What these labels mean</h2>
+      <p><strong>Configured feed:</strong> part of the governed ingestion inventory, not a live health certification. <strong>Feed research:</strong> an existing candidate with separate endpoint and rights review, not an admitted source. <strong>Direct website:</strong> a reviewed navigational link; feed availability, reuse permission and independence are not established.</p>
+      <p>Language editions can share editors, reporting or translations. Counts are records, not independent newsrooms. We do not download, reproduce, translate or rank these additional news articles. Links may require subscription or move.</p>
+      <p><a href="/source-network.html">Inspect publisher provenance</a> · <a href="/observatory/coverage/">Explore coverage and evidence gaps</a> · <a href="/contact.html">Suggest a correction or source</a></p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,31 @@
+/* GD-056. A focused directory, no new remote fonts, map or media. */
+.discovery-hero { padding: clamp(1.25rem,4vw,3.2rem) 0 1.4rem; }
+.discovery-hero h1 { font: 600 clamp(2rem,5.5vw,4.1rem)/1.06 Georgia,serif; margin: 0 0 .8rem; letter-spacing:-.035em; }
+.discovery-page h2 { font: 600 clamp(1.35rem,2.8vw,2rem)/1.2 Georgia,serif; margin: 0 0 .65rem; }
+.discovery-inventory,.discovery-workspace,.discovery-method { padding:1.25rem 0; border-top:1px solid #354651; }
+.discovery-metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.65rem; margin:.75rem 0; }
+.discovery-metrics>div { min-width:0; border-top:2px solid #678a90; background:#172431; padding:.8rem; overflow-wrap:anywhere; }
+.discovery-metrics strong { display:block; font:600 clamp(1.5rem,3vw,2.2rem)/1.2 Georgia,serif; color:#f4e2ba; }
+.discovery-metrics span { font-size:.82rem; color:#c5d4d8; }
+.discovery-controls { display:grid; grid-template-columns:minmax(0,1.5fr) repeat(3,minmax(0,1fr)) auto; gap:.65rem; align-items:end; margin:1rem 0; }
+.discovery-controls label { display:grid; min-width:0; gap:.3rem; font-size:.8rem; font-weight:650; color:#d5e1e3; }
+.discovery-controls input,.discovery-controls select,.discovery-controls button { box-sizing:border-box; min-width:0; width:100%; min-height:44px; padding:.45rem .6rem; background:#182c38; color:#eef1eb; border:1px solid #63818b; border-radius:5px; font:inherit; font-size:.86rem; }
+.discovery-controls button { cursor:pointer; }
+.discovery-controls :disabled { opacity:.65; cursor:default; }
+.discovery-group { margin:1.2rem 0; }
+.discovery-group h3 { margin:0 0 .7rem; font-size:1.15rem; }
+.discovery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.8rem; }
+.discovery-record { display:flex; flex-direction:column; min-width:0; padding:.95rem; background:#152431; border:1px solid #3b5360; border-radius:8px; overflow-wrap:anywhere; }
+.discovery-record h4 { font:600 1.23rem/1.2 Georgia,serif; margin:.25rem 0; color:#f6eee0; }
+.discovery-record p,.discovery-method p { margin:.4rem 0; color:#d0dde0; font-size:.88rem; line-height:1.6; }
+.discovery-record .discovery-label { color:#dcbf86; font-size:.74rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; }
+.discovery-record .discovery-primary { display:inline-flex; min-height:44px; align-items:center; align-self:flex-start; padding:.35rem .1rem; font-weight:750; margin-top:auto; }
+.discovery-record details { margin-top:.4rem; font-size:.8rem; color:#c6d5d9; }
+.discovery-record summary { display:flex; align-items:center; min-height:44px; cursor:pointer; font-weight:650; }
+.discovery-record ul { padding-left:1.2rem; }
+.discovery-record li { margin:.3rem 0; }
+.discovery-record a { overflow-wrap:anywhere; }
+.discovery-editions { display:flex; flex-wrap:wrap; gap:.45rem; }
+.discovery-editions a { min-height:44px; display:inline-flex; align-items:center; border:1px solid #63818b; border-radius:5px; padding:.3rem .5rem; }
+@media(max-width:900px){.discovery-controls{grid-template-columns:repeat(2,minmax(0,1fr))}.discovery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:550px){.discovery-grid{grid-template-columns:minmax(0,1fr)}.discovery-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.discovery-controls{grid-template-columns:minmax(0,1fr)}}
