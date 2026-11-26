@@ -41,6 +41,8 @@
   let searchTerm = '';
   const EVIDENCE_FILTERS = new Set(['all', 'source-link', 'external-link', 'shared-url', 'no-resolved-link']);
   let evidenceFilter = initialEvidenceFilter();
+  let distributionData = null;
+  let feedSourceFingerprint = null;
   let sourceById = new Map();
   let admissionById = new Map();
   let coverageData = null;
@@ -73,7 +75,22 @@
     });
     loadNews(true);
     hydrateTrustSurface();
+    refreshDistribution();
+    window.addEventListener('offline', () => {
+      distributionData = null;
+      renderVisibleCards();
+    });
+    window.addEventListener('online', refreshDistribution);
     document.getElementById('load-more-btn')?.addEventListener('click', () => loadNews(false));
+  }
+
+  async function refreshDistribution() {
+    const data = await window.GDDistribution?.load();
+    distributionData = data || null;
+    if (distributionData?.sourceFingerprint === feedSourceFingerprint && !feedOfflineCopyAt &&
+        allItems.some(item => window.GDDistribution.matches(distributionData, item).length)) {
+      renderVisibleCards();
+    }
   }
 
   function initialRegion() {
@@ -447,6 +464,7 @@
         window.__globalDeetsNewsRegion = request.region;
         feedRetrievedAt = new Date();
         feedOfflineCopyAt = data.offlineCopyAt || null;
+        feedSourceFingerprint = data.sourceFingerprint || null;
         renderVisibleCards();
         updateStatus();
         renderAlerts();
@@ -656,6 +674,11 @@
       </div>
       ${buildOriginContext(item)}
       ${buildSourceContext(item, provenance, admission)}`;
+    if (distributionData && !feedOfflineCopyAt &&
+        distributionData.sourceFingerprint === feedSourceFingerprint) {
+      const context = window.GDDistribution?.renderArticle(distributionData, item);
+      if (context) card.append(context);
+    }
     return card;
   }
 

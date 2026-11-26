@@ -254,11 +254,11 @@ async function verifyServiceWorker(browser) {
     );
     const cached = await page.evaluate(async () => {
       const names = await caches.keys();
-      const cache = await caches.open('globaldeets-cache-v12');
-      const shell = await Promise.all(['/index.html', '/news.html', '/source-network.html', '/source-network.js', '/source-network.css', '/styles.css', '/editorial-reader.css', '/news.js'].map(path => cache.match(path)));
+      const cache = await caches.open('globaldeets-cache-v13');
+      const shell = await Promise.all(['/index.html', '/news.html', '/source-network.html', '/source-network.js', '/source-network.css', '/article-distribution.js', '/styles.css', '/editorial-reader.css', '/news.js'].map(path => cache.match(path)));
       return { names, complete: shell.every(Boolean) };
     });
-    requireCondition(cached.names.includes('globaldeets-cache-v12'), 'production cache v12 did not install');
+    requireCondition(cached.names.includes('globaldeets-cache-v13'), 'production cache v13 did not install');
     requireCondition(cached.complete, 'the production offline shell is incomplete after first install');
 
     // Browser-context route aborts can prevent navigation before the controlling worker
@@ -322,6 +322,22 @@ async function verifySourceNetwork(page) {
   await page.locator('#sn-publishers .sn-publisher-btn').first().click();
   requireCondition(await page.locator('#sn-inspector .sn-details').count() === 1,
     'source relationship details are not accessible');
+  const authority = await page.request.get(BASE + '/api/news/syndication');
+  requireCondition(authority.ok(), 'article distribution authority unavailable');
+  requireCondition(/no-store/i.test(authority.headers()['cache-control'] || ''), 'article distribution authority must not be cached');
+  const distribution = await authority.json();
+  requireCondition(distribution.validation?.valid === true && distribution.scope === 'reviewed-article-pairs-only' &&
+    Array.isArray(distribution.records), 'article distribution authority invalid');
+  const record = distribution.records.find(entry => entry.status === 'active');
+  if (record) {
+    await page.goto(BASE + '/source-network.html?source=' + encodeURIComponent(record.origin.sourceId),
+      { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    const visible = page.locator('.sn-distribution .gd-distribution-record').filter({ hasText: record.title });
+    await visible.first().waitFor({ state: 'visible', timeout: 20_000 });
+    const hrefs = await visible.first().locator('a').evaluateAll(links => links.map(link => link.href));
+    requireCondition(hrefs.includes(record.origin.url) && hrefs.includes(record.republication.url),
+      'reviewed distribution record does not expose both exact article URLs');
+  }
   await verifyNoHorizontalOverflow(page, 'source relationships page');
 }
 (async () => {

@@ -19,7 +19,7 @@
   const visibleCount = byId('sn-visible-count');
   const review = byId('sn-review');
   const TIMEOUT_MS = 12000;
-  const state = { sources: null, selectedId: null, reviewedAt: null, relationships: null };
+  const state = { sources: null, selectedId: null, reviewedAt: null, relationships: null, distribution: null, sourceFingerprint: null };
 
   function element(tag, text, className) {
     const node = document.createElement(tag);
@@ -173,6 +173,14 @@
     }
   }
 
+  async function loadDistribution() {
+    const data = await window.GDDistribution?.load();
+    const ids = new Set((state.sources || []).map(source => source.sourceId));
+    state.distribution = data && data.sourceFingerprint === state.sourceFingerprint &&
+      data.records.every(entry => ids.has(entry.origin.sourceId) && ids.has(entry.republication.sourceId)) ? data : null;
+    renderInspector();
+  }
+
   function selection() {
     const term = search.value.trim().toLocaleLowerCase('en');
     const selectedRegion = region.value;
@@ -234,6 +242,8 @@
     }
     inspector.append(relationship);
     inspector.append(renderVerifiedLinks(source));
+    const distribution = window.GDDistribution?.renderPublisher(state.distribution, source.sourceId);
+    if (distribution) inspector.append(distribution);
 
     const evidence = element('section', null, 'sn-evidence');
     evidence.append(element('h4', 'Review the underlying source references'));
@@ -325,6 +335,7 @@
       if (!validRecords(data)) throw new Error('Registry validation failed');
       state.sources = data.sources.slice().sort((a, b) => a.name.localeCompare(b.name));
       state.reviewedAt = data.reviewedAt || null;
+      state.sourceFingerprint = data.sourceFingerprint;
       [search, region, clear].forEach(control => { control.disabled = false; });
       count.textContent = String(state.sources.length);
       operatorsCount.textContent = String(new Set(state.sources.map(operatorName).filter(Boolean)).size);
@@ -342,6 +353,9 @@
       renderRoster();
       renderInspector();
       loadRelationships(data.sourceFingerprint);
+      loadDistribution();
+      window.addEventListener('offline', () => { state.distribution = null; renderInspector(); });
+      window.addEventListener('online', loadDistribution);
     } catch {
       failed();
     } finally {
