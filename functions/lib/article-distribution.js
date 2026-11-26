@@ -58,7 +58,7 @@ function endpoint(value, sourceIds) {
 // Validation proves registry shape and constraints, not the truth of the external
 // evidence. A dated review of both exact article pages is a separate admission step.
 export function validateDistributionRecords(records = DISTRIBUTION_RECORDS, sources = SOURCE_PROVENANCE) {
-  if (!Array.isArray(records) || !Array.isArray(sources)) return { valid: false, errors: ['registry-array-required'] };
+  if (!Array.isArray(records) || records.length > 1000 || !Array.isArray(sources)) return { valid: false, errors: ['registry-array-required'] };
   const sourceIds = new Set(sources.map(source => source?.sourceId));
   const errors = [];
   const ids = new Set();

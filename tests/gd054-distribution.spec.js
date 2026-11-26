@@ -90,3 +90,14 @@ test('publisher directory exposes historical pairs and explicit withdrawal histo
   await expect(section.locator('.gd-distribution-record').first().locator('a')).toHaveCount(2);
   expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
 });
+
+test('an online refresh removes a previously rendered assertion if the authority withdraws it', async ({ page }) => {
+  await mockNews(page, authority());
+  await page.goto('/news.html');
+  await expect(page.locator('.news-distribution-context')).toHaveCount(2);
+  await page.unroute('**/api/news**');
+  await mockNews(page, authority([{ ...record, status: 'withdrawn', withdrawnAt: '2026-11-25', withdrawalReason: 'Correction' }]));
+  await page.evaluate(() => window.dispatchEvent(new Event('online')));
+  await expect(page.locator('.news-distribution-context')).toHaveCount(0);
+  await expect(page.locator('.news-card')).toHaveCount(4);
+});

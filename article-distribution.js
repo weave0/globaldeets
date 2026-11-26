@@ -110,7 +110,7 @@
     return details;
   }
   function renderPublisher(data, sourceId) {
-    const section = node('section', null, 'sn-reviewed-links sn-distribution');
+    const section = node('section', null, 'sn-distribution');
     section.append(node('h4', 'Documented article distribution'));
     if (!data) {
       section.append(node('p', 'Current distribution evidence is unavailable. No article distribution relationship is asserted.'));

@@ -42,6 +42,7 @@
   const EVIDENCE_FILTERS = new Set(['all', 'source-link', 'external-link', 'shared-url', 'no-resolved-link']);
   let evidenceFilter = initialEvidenceFilter();
   let distributionData = null;
+  let distributionGeneration = 0;
   let feedSourceFingerprint = null;
   let sourceById = new Map();
   let admissionById = new Map();
@@ -77,20 +78,23 @@
     hydrateTrustSurface();
     refreshDistribution();
     window.addEventListener('offline', () => {
+      distributionGeneration++;
       distributionData = null;
-      renderVisibleCards();
+      if (document.querySelector('.news-distribution-context')) renderVisibleCards();
     });
     window.addEventListener('online', refreshDistribution);
     document.getElementById('load-more-btn')?.addEventListener('click', () => loadNews(false));
   }
 
   async function refreshDistribution() {
+    const generation = ++distributionGeneration;
     const data = await window.GDDistribution?.load();
+    if (generation !== distributionGeneration) return;
+    const hadRenderedEvidence = Boolean(document.querySelector('.news-distribution-context'));
     distributionData = data || null;
-    if (distributionData?.sourceFingerprint === feedSourceFingerprint && !feedOfflineCopyAt &&
-        allItems.some(item => window.GDDistribution.matches(distributionData, item).length)) {
-      renderVisibleCards();
-    }
+    const hasMatches = distributionData?.sourceFingerprint === feedSourceFingerprint &&
+      !feedOfflineCopyAt && allItems.some(item => window.GDDistribution.matches(distributionData, item).length);
+    if (hadRenderedEvidence || hasMatches) renderVisibleCards();
   }
 
   function initialRegion() {

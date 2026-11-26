@@ -173,8 +173,11 @@
     }
   }
 
+  let distributionGeneration = 0;
   async function loadDistribution() {
+    const generation = ++distributionGeneration;
     const data = await window.GDDistribution?.load();
+    if (generation !== distributionGeneration) return;
     const ids = new Set((state.sources || []).map(source => source.sourceId));
     state.distribution = data && data.sourceFingerprint === state.sourceFingerprint &&
       data.records.every(entry => ids.has(entry.origin.sourceId) && ids.has(entry.republication.sourceId)) ? data : null;
@@ -354,7 +357,7 @@
       renderInspector();
       loadRelationships(data.sourceFingerprint);
       loadDistribution();
-      window.addEventListener('offline', () => { state.distribution = null; renderInspector(); });
+      window.addEventListener('offline', () => { distributionGeneration++; state.distribution = null; renderInspector(); });
       window.addEventListener('online', loadDistribution);
     } catch {
       failed();
