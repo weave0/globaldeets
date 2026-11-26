@@ -1,0 +1,17 @@
+# GD-056 — Global reporting discovery, reviewed 2026-11-25
+
+## Why
+The canonical configured portfolio contains 21 feeds: 20 English and one Japanese. Feed-language concentration is not event coverage, audience reach, bias, or a count of independent reporting. A source directory can immediately broaden readers' access without widening ingestion or misrepresenting permission.
+
+## Three mutually exclusive record states
+- Configured: derived from SOURCES, provenance and the admission ledger. No copied source list or new feed.
+- Research: all seven existing SOURCE_RESEARCH_CANDIDATES joined by exact candidate ID to dated website-discovery metadata. Existing policy records remain the sole usage ledger.
+- Direct link only: 13 first-party website / edition records inspected on this review date, outside the research and production feed inventory. A direct link is a navigation aid, not endorsement, verified feed access, proof of ownership, originality, or commercial reuse clearance. Two editions explicitly link to existing monitored publishers; Global Voices language links stay in one candidate record. Site language can be observed or listed, not guaranteed for every article. Region for non-monitored records is a directory grouping of coverage focus, not a publisher legal domicile or event location.
+
+## Research review
+First-party evidence URLs are stored in the registry, with dated notes. The direct links include French-language sources serving Senegal and DR Congo, Fiji and Samoa sources, Māori-focused news with language controls, Ukrainian, Nepali, Bengali and Spanish sites, and Arabic and Chinese editions of monitored outlets. Global Voices lists language editions including Swahili, Yoruba, Igbo and Amharic, but the individual editions' activity is not certified. Its publisher-created content policy describes CC BY attribution and separate rights for third-party media; regular republication may warrant direct contact. Agência Brasil's policy permits attributed journalistic use while separately flagging partner-content and commercial-use conditions. Neither is automatically eligible. RTVE publishes an RSS directory but its reuse terms were not resolved here. No new feed probe, archive, scrape, translation or external request is made by the public directory.
+
+Blocked first-party pages (not included in this tranche): APS Senegal, Mwananchi Tanzania, BBC Swahili, Africanews French and several other leads. A failed retrieval does not mean an outage. Further research should prioritize original African-language journalism, South Asian and Pacific local reporting, Latin American and Indigenous-language sources, then assess endpoint authority, bounded health, byline and item-origin evidence, and actual intended reuse. Do not interpret a language edition or author signal as proof of originality.
+
+## Architecture
+GET /api/news/discovery is live-only, no-store, with source and admission fingerprints. The server checks canonical contracts and rejects duplicate/missing metadata, unsafe URLs, unknown related source IDs and candidate promotion. The browser checks payload scope, typed records, counts, URLs, distinct language sets and rules before showing any claims. Filters are local and region/language/state selections shareable; search terms stay local. The page shell may be cached, not authority data. Existing feed and rights behavior is unchanged. Tests cover semantic separation, malicious data, selection, mobile layout, offline and production verification. No new paid service or scheduled task.

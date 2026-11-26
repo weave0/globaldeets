@@ -254,11 +254,11 @@ async function verifyServiceWorker(browser) {
     );
     const cached = await page.evaluate(async () => {
       const names = await caches.keys();
-      const cache = await caches.open('globaldeets-cache-v13');
-      const shell = await Promise.all(['/index.html', '/news.html', '/source-network.html', '/source-network.js', '/source-network.css', '/article-distribution.js', '/styles.css', '/editorial-reader.css', '/news.js'].map(path => cache.match(path)));
+      const cache = await caches.open('globaldeets-cache-v14');
+      const shell = await Promise.all(['/index.html', '/news.html', '/source-network.html', '/source-network.js', '/source-network.css', '/article-distribution.js', '/source-discovery.html', '/source-discovery.js', '/source-discovery.css', '/styles.css', '/editorial-reader.css', '/news.js'].map(path => cache.match(path)));
       return { names, complete: shell.every(Boolean) };
     });
-    requireCondition(cached.names.includes('globaldeets-cache-v13'), 'production cache v13 did not install');
+    requireCondition(cached.names.includes('globaldeets-cache-v14'), 'production cache v14 did not install');
     requireCondition(cached.complete, 'the production offline shell is incomplete after first install');
 
     // Browser-context route aborts can prevent navigation before the controlling worker
@@ -308,6 +308,25 @@ async function verifyServiceWorker(browser) {
   }
 }
 
+async function verifyDiscovery(page) {
+  const authority = await page.request.get(BASE + '/api/news/discovery');
+  requireCondition(authority.ok(), 'source discovery authority unavailable');
+  requireCondition(/no-store/i.test(authority.headers()['cache-control'] || ''), 'discovery authority must not be cached');
+  const payload = await authority.json();
+  requireCondition(payload.validation?.valid === true && payload.counts?.monitored > 0 &&
+    payload.counts?.research > 0 && payload.counts?.linkOnly > 0, 'source discovery registry is invalid or empty');
+  await page.goto(BASE + '/source-discovery.html', {waitUntil:'domcontentloaded',timeout:30000});
+  await page.locator('#discovery-status-filter').waitFor({state:'visible'});
+  await page.waitForFunction(() => !document.getElementById('discovery-status-filter')?.disabled,undefined,{timeout:20000});
+  requireCondition(await page.locator('.discovery-record[data-status="research"]').count() === payload.counts.research &&
+    await page.locator('.discovery-record[data-status="link-only"]').count() === payload.counts.linkOnly,
+    'discovery view does not preserve research/link-only distinctions');
+  await page.locator('#discovery-status-filter').selectOption('monitored');
+  requireCondition(await page.locator('.discovery-record[data-status="monitored"]').count() === payload.counts.monitored,
+    'discovery monitored inventory does not agree with authority');
+  await verifyNoHorizontalOverflow(page, 'global source discovery');
+}
+
 async function verifySourceNetwork(page) {
   const response = await page.goto(`${BASE}/source-network.html`, {
     waitUntil: 'domcontentloaded', timeout: 30_000,
@@ -349,6 +368,7 @@ async function verifySourceNetwork(page) {
     await verifyHomepage(page);
     await verifyNews(page);
     await verifySourceNetwork(page);
+    await verifyDiscovery(page);
     await verifyServiceWorker(browser);
     await verifyMobileSurface(browser, { width: 390, height: 844 }, 'iPhone-class');
     await verifyMobileSurface(browser, { width: 360, height: 800 }, 'narrow Android-class');
