@@ -97,7 +97,7 @@ test('an online refresh removes a previously rendered assertion if the authority
   await expect(page.locator('.news-distribution-context')).toHaveCount(2);
   await page.unroute('**/api/news**');
   await mockNews(page, authority([{ ...record, status: 'withdrawn', withdrawnAt: '2026-11-25', withdrawalReason: 'Correction' }]));
-  await page.evaluate(() => window.dispatchEvent(new Event('online')));
+  await page.evaluate(() => window.dispatchEvent(new window.Event('online')));
   await expect(page.locator('.news-distribution-context')).toHaveCount(0);
   await expect(page.locator('.news-card')).toHaveCount(4);
 });
