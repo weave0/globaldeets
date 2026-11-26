@@ -41,6 +41,9 @@
   let searchTerm = '';
   const EVIDENCE_FILTERS = new Set(['all', 'source-link', 'external-link', 'shared-url', 'no-resolved-link']);
   let evidenceFilter = initialEvidenceFilter();
+  let distributionData = null;
+  let distributionGeneration = 0;
+  let feedSourceFingerprint = null;
   let sourceById = new Map();
   let admissionById = new Map();
   let coverageData = null;
@@ -73,7 +76,25 @@
     });
     loadNews(true);
     hydrateTrustSurface();
+    refreshDistribution();
+    window.addEventListener('offline', () => {
+      distributionGeneration++;
+      distributionData = null;
+      if (document.querySelector('.news-distribution-context')) renderVisibleCards();
+    });
+    window.addEventListener('online', refreshDistribution);
     document.getElementById('load-more-btn')?.addEventListener('click', () => loadNews(false));
+  }
+
+  async function refreshDistribution() {
+    const generation = ++distributionGeneration;
+    const data = await window.GDDistribution?.load();
+    if (generation !== distributionGeneration) return;
+    const hadRenderedEvidence = Boolean(document.querySelector('.news-distribution-context'));
+    distributionData = data || null;
+    const hasMatches = distributionData?.sourceFingerprint === feedSourceFingerprint &&
+      !feedOfflineCopyAt && allItems.some(item => window.GDDistribution.matches(distributionData, item).length);
+    if (hadRenderedEvidence || hasMatches) renderVisibleCards();
   }
 
   function initialRegion() {
@@ -447,6 +468,7 @@
         window.__globalDeetsNewsRegion = request.region;
         feedRetrievedAt = new Date();
         feedOfflineCopyAt = data.offlineCopyAt || null;
+        feedSourceFingerprint = data.sourceFingerprint || null;
         renderVisibleCards();
         updateStatus();
         renderAlerts();
@@ -656,6 +678,11 @@
       </div>
       ${buildOriginContext(item)}
       ${buildSourceContext(item, provenance, admission)}`;
+    if (distributionData && !feedOfflineCopyAt &&
+        distributionData.sourceFingerprint === feedSourceFingerprint) {
+      const context = window.GDDistribution?.renderArticle(distributionData, item);
+      if (context) card.append(context);
+    }
     return card;
   }
 
