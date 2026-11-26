@@ -148,7 +148,7 @@ export function getSourceFingerprint(sources = SOURCES) {
 }
 
 export const SOURCE_FINGERPRINT = getSourceFingerprint();
-export const DISPLAY_POLICY_VERSION = 'gd021-admission-v1';
+export const DISPLAY_POLICY_VERSION = 'gd057-admission-v2';
 export const NEWS_SELECTION_POLICY_VERSION = 'gd040-publisher-region-rotation-v1';
 export const DIVERSE_FRESHNESS_HOURS = 36;
 export const CACHE_KEY_PREFIX = `news_feed_v3_${SOURCE_FINGERPRINT}_${DISPLAY_POLICY_VERSION}`;
