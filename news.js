@@ -39,6 +39,8 @@
     : '';
   let allItems = [];
   let searchTerm = '';
+  const EVIDENCE_FILTERS = new Set(['all', 'source-link', 'external-link', 'shared-url', 'no-resolved-link']);
+  let evidenceFilter = initialEvidenceFilter();
   let sourceById = new Map();
   let admissionById = new Map();
   let coverageData = null;
@@ -62,6 +64,7 @@
     installReaderBridgeStyles();
     renderTabs();
     bindSearch();
+    bindEvidenceFilter();
     document.getElementById('news-grid')?.addEventListener('click', event => {
       const target = event.target instanceof window.Element ? event.target : event.target?.parentElement;
       const link = target?.closest?.('a.news-context-link');
@@ -82,11 +85,20 @@
     }
   }
 
+  function initialEvidenceFilter() {
+    try {
+      const requested = new URLSearchParams(location.search).get('signal') || 'all';
+      return EVIDENCE_FILTERS.has(requested) ? requested : 'all';
+    } catch { return 'all'; }
+  }
+
   function syncRegionToUrl() {
     try {
       const url = new URL(location.href);
       if (currentRegion === 'global') url.searchParams.delete('region');
       else url.searchParams.set('region', currentRegion);
+      if (evidenceFilter === 'all') url.searchParams.delete('signal');
+      else url.searchParams.set('signal', evidenceFilter);
       history.replaceState(history.state, '', url);
     } catch {
       // Shareable URLs are a convenience; the feed works without them.
@@ -110,6 +122,38 @@
       renderVisibleCards();
       updateStatus();
     });
+  }
+
+  function bindEvidenceFilter() {
+    const select = document.getElementById('news-evidence-filter');
+    if (!select) return;
+    select.value = evidenceFilter;
+    select.addEventListener('change', () => {
+      evidenceFilter = EVIDENCE_FILTERS.has(select.value) ? select.value : 'all';
+      syncRegionToUrl();
+      renderVisibleCards();
+      updateStatus();
+    });
+  }
+
+  function matchesEvidenceFilter(item) {
+    if (evidenceFilter === 'all') return true;
+    const trace = item?.feedOriginHint;
+    const status = trace?.version === 'gd052-feed-origin-v1' ? trace.status : null;
+    if (evidenceFilter === 'source-link') {
+      return status === 'same-article-host-reference' || status === 'external-host-reference';
+    }
+    if (evidenceFilter === 'external-link') return status === 'external-host-reference';
+    if (evidenceFilter === 'shared-url') {
+      const overlap = item?.exactLinkOverlap;
+      return overlap?.matchType === 'exact-article-url' &&
+        Number.isInteger(overlap.distinctPublisherCount) &&
+        overlap.distinctPublisherCount >= 2 && overlap.distinctPublisherCount <= 21 &&
+        Array.isArray(overlap.otherPublishers) &&
+        overlap.otherPublishers.length === overlap.distinctPublisherCount - 1;
+    }
+    // This filter means no *resolved feed marker*, not no other reporting origin.
+    return !['same-article-host-reference', 'external-host-reference'].includes(status);
   }
 
   // Preserve the editorial source-and-coverage disclosure already rendered by HTML.
@@ -474,7 +518,25 @@
     const empty = document.createElement('div');
     empty.className = 'news-empty';
     const message = document.createElement('p');
-    if (searchTerm && allItems.length) {
+    if (evidenceFilter !== 'all' && allItems.length) {
+      empty.dataset.state = 'no-evidence-matches';
+      message.textContent = 'No loaded stories match this evidence lens and search. This does not establish that the signal is absent from other reports or older snapshots.';
+      const clear = document.createElement('button');
+      clear.type = 'button';
+      clear.textContent = 'Clear filters';
+      clear.addEventListener('click', () => {
+        evidenceFilter = 'all';
+        searchTerm = '';
+        const select = document.getElementById('news-evidence-filter');
+        if (select) select.value = 'all';
+        const input = document.getElementById('news-search');
+        if (input) input.value = '';
+        syncRegionToUrl();
+        renderVisibleCards();
+        updateStatus();
+      });
+      empty.append(message, clear);
+    } else if (searchTerm && allItems.length) {
       empty.dataset.state = 'no-matches';
       message.textContent = `None of the ${allItems.length} loaded stories match “${searchTerm}”. The filter only searches stories already loaded on this page.`;
       const clear = document.createElement('button');
@@ -716,7 +778,7 @@
         ' distinct monitored publisher feeds in the same collection snapshot. Other feeds: ' +
         linked + '. Repeated links are not independent corroboration.';
     }
-    return '<details class="news-origin-context">' +
+    return '<details class="news-origin-context"' + (evidenceFilter !== 'all' ? ' open' : '') + '>' +
       '<summary>Article origin signals</summary>' +
       '<div class="news-origin-context-body">' +
         '<p class="news-origin-state"><strong>Feed metadata:</strong> ' + escapeHtml(messages[trace.status]) + '</p>' +
@@ -750,14 +812,14 @@
   }
 
   function getVisibleItems() {
-    if (!searchTerm) return allItems;
-    return allItems.filter(item =>
-      [item.headline, item.summary, item.source, item.region]
+    return allItems.filter(item => {
+      if (!matchesEvidenceFilter(item)) return false;
+      return !searchTerm || [item.headline, item.summary, item.source, item.region]
         .filter(Boolean)
         .join(' ')
         .toLowerCase()
-        .includes(searchTerm)
-    );
+        .includes(searchTerm);
+    });
   }
 
   function updateStatus() {
@@ -774,7 +836,8 @@
     }
     const total = window.__globalDeetsNewsTotal ?? '?';
     const visibleItems = getVisibleItems();
-    const searchNote = searchTerm ? ` · ${visibleItems.length} matching filter` : '';
+    const searchNote = (searchTerm || evidenceFilter !== 'all')
+      ? ` · ${visibleItems.length} matching loaded-story filters` : '';
     status.textContent = `${allItems.length} of ${total} stories${searchNote}`;
   }
 

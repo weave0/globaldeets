@@ -7,3 +7,11 @@
 .news-origin-context-body p{font-size:.83rem;line-height:1.55;color:var(--text-secondary,#b8c4d6);margin:.55rem 0}
 .news-origin-context-body .news-origin-caveat{font-size:.76rem;color:var(--text-muted,#8b9bb0)}
 .news-origin-context-body a{color:var(--primary-light,#93c5fd);text-underline-offset:3px}
+
+/* GD-053: one-row article evidence lens; never adds a second toolbar row on a short phone. */
+body.gd-editorial .news-toolbar{grid-template-columns:minmax(0,1fr) minmax(280px,340px)}
+body.gd-editorial .news-page .news-tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.4rem;min-width:0}
+body.gd-editorial .news-page .news-search-input,body.gd-editorial .news-page .news-evidence-select{min-width:0;width:100%;box-sizing:border-box;min-height:44px}
+body.gd-editorial .news-page .news-evidence-select{background:var(--paper-card,#fff);color:var(--ink,#111);border:1px solid #4b6470;border-radius:2px;padding:.25rem .35rem;font-size:.81rem;cursor:pointer}
+body.gd-editorial .news-page .news-evidence-select:focus-visible{outline:3px solid #345e64;outline-offset:2px}
+@media(max-width:700px){body.gd-editorial .news-toolbar{grid-template-columns:minmax(0,1fr)}body.gd-editorial .news-page .news-tools{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
