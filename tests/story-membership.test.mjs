@@ -5,6 +5,7 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import { applyAdmissionPolicy, translateNonEnglish } from '../functions/api/news.js';
+import * as admissionContract from '../functions/lib/news-source-admission.js';
 import { onRequestPost } from '../functions/api/intelligence/story-measurement.js';
 import { evaluationStoryKeys } from '../functions/lib/story-evaluation-fixtures.js';
 import { listMaintainedStories, projectMaintainedStory } from '../functions/lib/story-intelligence.js';
@@ -93,11 +94,25 @@ test('only the exact approved article URL receives story context', async () => {
   });
   const near = item({
     id: 'near',
-    source: 'Fixture Wire',
+    source: 'NPR',
     sourceUrl: 'https://example.com/other-pipeline',
     story: { href: '/story/santa-ynez-pipeline/', storyKey: 'santa-ynez-pipeline' },
   });
-  const { items } = await applyAdmissionPolicy([forged, near, item({ id: 'copy' })]);
+  // The maintained dossier is not itself a live feed admission. Verify both
+  // the production exclusion and the story projection with a test-only admission.
+  const raw = [forged, near, item({ id: 'copy' })];
+  const production = await applyAdmissionPolicy(raw);
+  assert.equal(production.items.length, 1);
+  assert.equal(production.items[0].sourceId, 'npr');
+  assert.equal(production.items[0].story, undefined);
+  const testContract = {
+    ...admissionContract,
+    SOURCE_ADMISSIONS: [
+      ...admissionContract.SOURCE_ADMISSIONS,
+      { sourceId: 'los-angeles-times', allowedUseStatus: 'unknown', permittedUse: [] },
+    ],
+  };
+  const { items } = await applyAdmissionPolicy(raw, testContract);
   assert.equal(items.length, 3);
   assert.equal(items.filter(entry => entry.story).length, 2);
   assert.deepEqual(items[0].story, approved);

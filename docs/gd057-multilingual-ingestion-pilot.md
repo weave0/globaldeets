@@ -1,0 +1,26 @@
+# GD-057 — Rights-aware multilingual ingestion (shadow pilot)
+
+## Policy review — 2026-11-26
+
+- Global Voices: https://globalvoices.org/feeds/ lists the official feeds and refers to attribution rules. https://globalvoices.org/about/global-voices-attribution-policy/ permits sharing/adaptation of publisher-created content subject to exceptions, credits the author and original URL, requires license and change disclosure, and requests contact for regular republication. The policy's linked license is https://creativecommons.org/licenses/by/3.0/. Third-party photo/audio/video permissions are separate. Website editions may be translations, not new original reporting. Do not confuse original publisher-created writing with first-hand reporting.
+- Agência Brasil: https://agenciabrasil.ebc.com.br/sobre describes attributed journalistic reuse, correction responsibilities, commercial-use contact and partner restrictions. https://agenciabrasil.ebc.com.br/feed/ lists latest news and a separate partner feed. https://agenciabrasil.ebc.com.br/geral/noticia/2026-02/agencia-brasil-cresce-20-em-visualizacoes-em-2025 explicitly discusses author credits and prohibited international agency republication. The about page direct fetch timed out during this review; its indexed first-party policy and corroborating publisher article were available. Do not infer blanket translation or monetized-aggregator permission. Keep a policy-scope hold until clarified.
+- CC attribution guide: https://creativecommons.org/reusing-cc-licensed-content/. These reviews are engineering governance, not a legal opinion.
+
+## Architecture
+
+No production source is admitted. The existing bounded research probe reuses one already-governed RSS fetch per candidate, no redirect follow, 10-second timeout, 512 KiB limit, and no new request. GD-057 only adds a research assessment for the two candidate IDs. The strict RSS/channel/item scanner samples at most 30 direct items. It refuses malformed structure, nested item lookalikes, ambiguous metadata, non-exact/foreign URLs, duplicate article URLs within the sample, future publication dates, source markers and unresolved rights or translation markers. Presence of a compatible byline/link or license marker is not clearance. The scanner is not a full XML namespace validator and is not a production parser. Unsupported feed shapes fail closed.
+
+The SHA-256 is of the exact raw RSS item XML snapshot, not an article-page hash or proof of the linked page's contents. Raw content is not persisted. An item can be considered for a future release only if a separate human review record matches the exact candidate, article URL, item hash, observed title/byline/publication date, first-party policy and license, confirmed original publisher-created status, language, attribution and regular-reuse scope. Reviews expire after seven days and withdrawals or ambiguous review matches fail closed. This conservative pilot accepts only original headline/link use for release consideration, not excerpts, adaptation, images or translation. Even an exact match never grants production eligibility. Agência Brasil remains held independently of per-item review.
+
+The checked-in review ledger is intentionally empty; synthetic tests exercise the positive path. The exported local metadata collector can support a human inspecting exact first-party article pages. Do not log or publish its output. No first-party article contents are fetched by the tool, no review is auto-created, no bodies or individual article metadata enter CI logs, and no production API imports the shadow module.
+
+The existing GD-048 research workflow displays aggregate counts and blocker reasons; one item can have multiple blockers. A missing/failed network sample is not proof of a publisher outage. The production consumer additionally excludes unadmitted acquired source IDs rather than allowing legacy headline-link fallback.
+
+## Human-review procedure
+
+1. Run the existing research workflow; examine freshness, counts, duplicates and metadata completeness. If unreachable, preserve the failure and retry later; never bypass access restrictions.
+2. In a controlled local review, inspect the exact first-party article and publisher policy; verify original author/byline, title, date, language, item restrictions, rights notices, partner content, source/translation credit and requested use. Contact Global Voices about regular reuse and EBC about GlobalDeets' commercial and translation use before activation. Do not treat no visible marker as proof of rights.
+3. Retain only necessary evidence metadata and exact snapshot digest in a version-controlled review record, with dated note. If the source changes, a review expires or the record is withdrawn, withhold the item. Do not publish synthetic or shadow approvals.
+4. Next release: build a separately reviewed production allowlist strategy and attribution-preserving reader payload, with translation provenance and per-item revocation/cache invalidation. Test it before modifying source admission. Do not admit either candidate merely because the probe succeeded.
+
+No added dependencies, Cloudflare services, AI calls, recurring schedules, public article collection or source inventory changes.

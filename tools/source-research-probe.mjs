@@ -4,6 +4,7 @@
 import { pathToFileURL } from 'node:url';
 import { SOURCE_RESEARCH_CANDIDATES, SOURCE_ADMISSIONS } from '../functions/lib/news-source-admission.js';
 import { classifyItemSourceHints } from './source-origin-signals.mjs';
+import { PILOT_IDS, inspectMultilingualPilot } from './multilingual-item-review.mjs';
 
 export const PROBE_VERSION = 'gd049-research-probe-v2';
 export const MAX_FEED_BYTES = 512 * 1024;
@@ -280,6 +281,16 @@ export async function probeResearchCandidate(candidate, { fetchImpl = fetch, now
     report.bytesRead = new TextEncoder().encode(xml).byteLength;
     report.evidence = inspectFeed(xml, { now, publisherHost: url.hostname });
     report.observation = 'xml-structure-observed';
+    if (PILOT_IDS.includes(candidate.candidateId)) {
+      try {
+        report.multilingualPilot = inspectMultilingualPilot(xml, candidate, { now });
+      } catch {
+        // Preserve the general probe; an unsupported shape never becomes a pilot approval.
+        report.multilingualPilot = { version:'gd057-shadow-v1', candidateId:candidate.candidateId,
+          observation:'pilot-structure-unavailable', productionEligible:false, publicItems:0,
+          translationCalls:0, mediaItems:0, retainedArticleBodies:0 };
+      }
+    }
   } catch (error) {
     report.observation = 'probe-failed';
     report.error = error instanceof Error ? error.message.slice(0, 160) : 'unknown error';
