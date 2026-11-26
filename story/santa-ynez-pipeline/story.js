@@ -108,6 +108,7 @@
       chronology(view),
       reporting(view),
       publisherComparison(view),
+      eventComparison(view),
       statements(view),
       evidence(view),
       unresolved(view),
@@ -116,6 +117,7 @@
       notes(view),
     ].join('');
     body.setAttribute('aria-busy', 'false');
+    bindEventComparison(view);
   }
 
   function applyFixtureIdentity(view) {
@@ -155,6 +157,7 @@
       ['Latest understanding', 'understanding-heading'],
       ['Chronology', 'chronology-heading'],
       ['Publisher comparison', 'comparison-heading'],
+      ['Compare event evidence', 'event-comparison-heading'],
       ['Evidence', 'evidence-heading'],
       ['Corrections', 'corrections-heading'],
       ['Unresolved', 'unresolved-heading'],
@@ -221,6 +224,118 @@
       (distinct === 1 ? '' : 's') + ' in this reviewed record. ' +
       (sufficient ? esc(note) : 'Publisher variety on the live feed does not imply corroboration here.') + '</p>' +
       rows);
+  }
+
+
+  // GD-055: compare explicit event memberships in the reviewed record, never
+  // infer a common event from similar headlines, dates, locations or URLs.
+  function comparisonEvents(view) {
+    if (view.graphValid !== true || view.identityMismatch === true ||
+        !Array.isArray(view.events) || !Array.isArray(view.grouping?.eventIds)) return [];
+    const declared = new Set(view.grouping.eventIds);
+    const events = view.events.filter(event => event && declared.has(event.id) &&
+      typeof event.id === 'string' && typeof event.title === 'string' && event.title.trim() &&
+      typeof event.anchor === 'string' && /^event-[a-z0-9-]+$/.test(event.anchor));
+    if (new Set(events.map(event => event.id)).size !== events.length ||
+        new Set(events.map(event => event.anchor)).size !== events.length) return [];
+    return events;
+  }
+
+  function comparisonUrl(value) {
+    if (typeof value !== 'string' || value.length > 2048 || !value.startsWith('https://')) return null;
+    try {
+      const url = new URL(value);
+      return !url.username && !url.password && url.href === value ? value : null;
+    } catch { return null; }
+  }
+
+  function comparisonRows(records, eventId, label) {
+    const byUrl = new Map();
+    for (const entry of Array.isArray(records) ? records : []) {
+      if (!entry || !Array.isArray(entry.eventIds) || !entry.eventIds.includes(eventId)) continue;
+      const url = comparisonUrl(entry.url);
+      if (!url) continue;
+      const name = label(entry);
+      if (!byUrl.has(url)) byUrl.set(url, { url, names: new Set(), translated: false, language: new Set() });
+      const row = byUrl.get(url);
+      row.names.add(name);
+      const lang = entry.translation?.lang;
+      if (typeof lang === 'string' && /^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(lang)) row.language.add(lang);
+      if (entry.translation?.label) row.translated = true;
+    }
+    return [...byUrl.values()];
+  }
+
+  function compareEvent(view, event) {
+    const reporting = comparisonRows(view.reporting?.origins, event.id, entry => entry.name || 'Publisher not named');
+    const statements = comparisonRows(view.statements, event.id, entry => entry.name || 'Institution not named');
+    const documents = comparisonRows(view.evidence, event.id, entry =>
+      (entry.issuerName || 'Issuer not named') + ' — ' + (entry.documentTypeLabel || 'Primary document'));
+    const unique = new Set([...reporting, ...statements, ...documents].map(row => row.url));
+    return { reporting, statements, documents, unique: unique.size };
+  }
+
+  function eventComparison(view) {
+    const events = comparisonEvents(view);
+    if (!events.length) return section('event-comparison-heading', 'Compare event evidence',
+      '<p class="story-note">Event-specific comparison is unavailable for this record.</p>');
+    const options = events.map(event => '<option value="' + esc(event.anchor) + '">' +
+      esc((event.startedAt ? formatDate(event.startedAt) + ' — ' : '') + event.title) + '</option>').join('');
+    return section('event-comparison-heading', 'Compare event evidence',
+      '<p class="story-note">Choose one recorded event to compare linked reporting, institutional statements and primary documents. The same URL can appear in more than one role. No connection is inferred from headline similarity.</p>' +
+      '<label class="story-event-label" for="story-event-select">Recorded event</label>' +
+      '<select id="story-event-select" class="story-event-select">' + options + '</select>' +
+      '<p id="story-event-count" class="story-note" role="status"></p>' +
+      '<div id="story-event-results" class="story-event-results"></div>' +
+      '<p class="story-note">Separate URLs are not evidence of independent reporting or corroboration. Documented distribution must be checked separately. The record does not establish comprehensive geographic or language coverage.</p>');
+  }
+
+  function comparisonGroup(role, title, rows, emptyText) {
+    const list = rows.map(row => {
+      const names = [...row.names].join(' / ');
+      const langs = [...row.language].join(', ');
+      return '<li>' + externalLink(row.url, names) +
+        (langs ? '<p class="story-note">Recorded language metadata: ' + esc(langs) + '</p>' : '') +
+        (row.translated ? '<p class="story-note">Translation metadata is recorded; inspect the original source.</p>' : '') +
+        '</li>';
+    }).join('');
+    return '<div class="story-event-role" data-evidence-role="' + role + '"><h3>' +
+      esc(title) + ' <span class="story-event-number">' + rows.length + '</span></h3>' +
+      (list ? '<ul class="story-event-links">' + list + '</ul>' : '<p class="story-note">' + esc(emptyText) + '</p>') + '</div>';
+  }
+
+  function bindEventComparison(view) {
+    const events = comparisonEvents(view);
+    const select = document.getElementById('story-event-select');
+    const results = document.getElementById('story-event-results');
+    const count = document.getElementById('story-event-count');
+    if (!select || !results || !count || !events.length) return;
+    const requested = new URLSearchParams(location.search).get('compare');
+    const initial = events.find(event => event.anchor === requested) ||
+      events.find(event => compareEvent(view, event).reporting.length > 0) || events[0];
+    select.value = initial.anchor;
+    function draw(event) {
+      const data = compareEvent(view, event);
+      count.textContent = data.unique + ' distinct linked URL' + (data.unique === 1 ? '' : 's') +
+        ' across all roles for this event. Counts describe only this maintained record.';
+      results.innerHTML = comparisonGroup('reporting', 'Publisher reporting', data.reporting,
+        'No publisher-report URL is attached to this event in the record. This does not establish that nobody reported it.') +
+        comparisonGroup('statement', 'Institutional statements', data.statements,
+          'No institutional-statement URL is attached to this event in the record.') +
+        comparisonGroup('document', 'Primary documents', data.documents,
+          'No primary-document URL is attached to this event in the record.');
+    }
+    draw(initial);
+    select.addEventListener('change', () => {
+      const event = events.find(candidate => candidate.anchor === select.value);
+      if (!event) return;
+      draw(event);
+      try {
+        const url = new URL(location.href);
+        url.searchParams.set('compare', event.anchor);
+        history.replaceState(history.state, '', url);
+      } catch { /* Comparison remains available without a shareable selection. */ }
+    });
   }
 
   function understanding(view) {

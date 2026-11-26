@@ -566,3 +566,64 @@ async function openFixture(page, key) {
   await page.goto('/tests/fixtures/story-states/index.html');
   await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
 }
+
+test('GD-055 compares only the selected event and keeps overlapping evidence roles distinct', async ({ page }) => {
+  await page.route('**/api/intelligence/stories/**', route => route.abort());
+  await page.goto(STORY);
+  await expect(page.locator('body[data-story-ready="true"]')).toBeAttached();
+  const select = page.locator('#story-event-select');
+  const results = page.locator('#story-event-results');
+  const role = name => results.locator('[data-evidence-role="' + name + '"]');
+  await expect(select).toHaveValue('event-santa-ynez-2026-08-19-cdca-related-pipeline-order');
+  await expect(role('reporting').locator('a')).toHaveCount(1);
+  await expect(role('reporting').locator('a')).toHaveAttribute('href', LATIMES);
+  await expect(role('statement').locator('a')).toHaveCount(2);
+  await expect(role('document').locator('a')).toHaveCount(3);
+  await select.selectOption('event-santa-ynez-2026-03-13-doe-dpa-restart-order');
+  await expect(role('reporting').locator('a')).toHaveCount(0);
+  await expect(role('reporting')).toContainText('does not establish that nobody reported it');
+  await expect(role('statement').locator('a')).toHaveCount(2);
+  await expect(role('document').locator('a')).toHaveCount(2);
+  await expect(page.locator('#story-event-count')).toContainText('2 distinct linked URLs');
+  await expect(page).toHaveURL(/compare=event-santa-ynez-2026-03-13-doe-dpa-restart-order/);
+  await page.reload();
+  await expect(select).toHaveValue('event-santa-ynez-2026-03-13-doe-dpa-restart-order');
+});
+test('GD-055 uses exact membership, rejects unsafe links and deduplicates URLs', async ({ page }) => {
+  const shipped = JSON.parse(readFileSync(join(__dirname, '..', 'story', 'santa-ynez-pipeline', 'story.json'), 'utf8'));
+  const original = shipped.reporting.origins[0];
+  shipped.reporting.origins.push(
+    { ...original, name: 'Duplicate URL', sourceIds: ['duplicate'] },
+    { ...original, name: 'Wrong event', url: 'https://example.org/wrong', eventIds: ['invented'] },
+    { ...original, name: 'Unsafe', url: 'javascript:alert(1)' },
+    { ...original, name: 'Credentials', url: 'https://user@host.example/article' }
+  );
+  await page.route('**/story/santa-ynez-pipeline/story.json', route =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(shipped) }));
+  await page.route('**/api/intelligence/stories/**', route => route.abort());
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto(STORY + '?compare=unknown');
+  const select = page.locator('#story-event-select');
+  await expect(select).toHaveValue('event-santa-ynez-2026-08-19-cdca-related-pipeline-order');
+  const reporting = page.locator('#story-event-results [data-evidence-role="reporting"]');
+  await expect(reporting.locator('a')).toHaveCount(1);
+  await expect(reporting.locator('a')).toHaveAttribute('href', LATIMES);
+  await expect(reporting).not.toContainText('Wrong event');
+  await expect(reporting).not.toContainText('Unsafe');
+  await expect(reporting).not.toContainText('Credentials');
+  await select.focus();
+  await expect(select).toBeFocused();
+  const height = await select.evaluate(el => el.getBoundingClientRect().height);
+  expect(height).toBeGreaterThanOrEqual(44);
+  await expectNoHorizontalOverflow(page);
+});
+test('GD-055 withholds the comparison when the graph integrity is unavailable', async ({ page }) => {
+  const shipped = JSON.parse(readFileSync(join(__dirname, '..', 'story', 'santa-ynez-pipeline', 'story.json'), 'utf8'));
+  shipped.graphValid = false;
+  await page.route('**/story/santa-ynez-pipeline/story.json', route =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(shipped) }));
+  await page.route('**/api/intelligence/stories/**', route => route.abort());
+  await page.goto(STORY);
+  await expect(page.locator('section[aria-labelledby="event-comparison-heading"]')).toContainText('Event-specific comparison is unavailable');
+  await expect(page.locator('#story-event-select')).toHaveCount(0);
+});
