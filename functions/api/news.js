@@ -262,6 +262,9 @@ export async function applyAdmissionPolicy(items, contract = null) {
   for (const item of Array.isArray(items) ? items : []) {
     const sourceId = slugifySourceName(item?.source || '');
     const admission = admissionById.get(sourceId);
+    // Research candidates and unexpected acquired items must not fall back to
+    // the legacy headline-link mode. Only governed sources may enter the feed.
+    if (!admission) continue;
     const itemStatus = item?.itemAllowedUseStatus ?? null;
 
     let decision;

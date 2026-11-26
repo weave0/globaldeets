@@ -8,6 +8,7 @@ on:
       - '.github/workflows/gd048-research-evidence.yml'
       - 'tools/source-research-probe.mjs'
       - 'tools/source-origin-signals.mjs'
+      - 'tools/multilingual-item-review.mjs'
 
 permissions:
   contents: read
@@ -68,6 +69,16 @@ jobs:
               evidence.sourceHintCounts?.unresolved ?? '—',
               evidence.itemsRequiringIndividualProvenanceReview ?? '—'].join(' | ') + ' |';
           });
+          const pilotRows = run.results.filter(result => result.multilingualPilot).map(result => {
+            const pilot = result.multilingualPilot;
+            if (pilot.productionEligible !== false || pilot.publicItems !== 0 || pilot.translationCalls !== 0 ||
+                pilot.mediaItems !== 0 || pilot.retainedArticleBodies !== 0)
+              throw new Error('multilingual shadow boundary violated');
+            return '| ' + [result.candidateId, pilot.observation || 'RSS shadow assessed',
+              pilot.sampledItems ?? '—', pilot.structurallyReady ?? '—',
+              pilot.reviewedForReleaseConsideration ?? '—',
+              Object.entries(pilot.blockers || {}).map(([key,count]) => key + ': ' + count).join('; ') || '—'].join(' | ') + ' |';
+          });
           const summary = [
             '# GD-048: live feed *research* observations',
             '',
@@ -78,6 +89,14 @@ jobs:
             '| Candidate | HTTP | Observation | Sampled items | Newest age (hours) | Duplicate links | Author signals | Author + URL pairs | Off-publisher-host URLs | Publisher source hints | External/partner-host hints | Conflicts | Unresolved | Items still requiring review |',
             '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
             ...rows,
+            '',
+            '## GD-057: multilingual item review readiness (research only)',
+            '',
+            '| Candidate | Observation | Sampled | Structurally ready | Exact current review matches | Blockers (overlap possible) |',
+            '| --- | --- | --- | --- | --- | --- |',
+            ...pilotRows,
+            '',
+            'No article metadata, content, source admissions, translations or public items are written by this shadow evaluation.',
             '',
             'Failures and redirects require follow-up; even successful XML observation retains the research-only gate.',
             '',

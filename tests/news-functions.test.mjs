@@ -589,3 +589,14 @@ test('/api/news/health remains available when snapshot write fails', async t => 
   assert.equal(json.totalSources, SOURCES.length);
   assert.ok(errors.some(entry => entry.includes('"phase":"kv_write_health"')));
 });
+
+test('unadmitted source items cannot enter even the headline-link consumer payload', async () => {
+  const { items } = await applyAdmissionPolicy([
+    rawStory('Global Voices (originating stories)', { itemAllowedUseStatus:'verified-public-use' }),
+    rawStory('Agencia Brasil', { lang:'pt', originalLang:'pt' }),
+    rawStory('Unexpected feed', { itemAllowedUseStatus:'verified-public-use' }),
+    rawStory('NPR'),
+  ]);
+  assert.equal(items.length, 1);
+  assert.equal(items[0].sourceId, 'npr');
+});
